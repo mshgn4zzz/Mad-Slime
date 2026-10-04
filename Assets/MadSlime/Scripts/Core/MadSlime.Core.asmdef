@@ -1,7 +1,9 @@
 {
     "name": "MadSlime.Core",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "QuickOutline"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
