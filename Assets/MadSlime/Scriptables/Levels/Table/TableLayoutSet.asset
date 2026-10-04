@@ -16,107 +16,300 @@ MonoBehaviour:
   - _shape: 2
     _center: {x: 0, y: 0}
     _radius: 100
-    _count: 1000
+    _count: 300
     _autoSpacing: 1
-    _spacing: 1.51
+    _spacing: 0
     _minTier: 0
     _maxTier: 0
-  - _shape: 2
-    _center: {x: 0, y: 0}
-    _radius: 100
-    _count: 150
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -62, y: 62}
+    _radius: 0
+    _count: 64
     _autoSpacing: 1
-    _spacing: 16.33
-    _minTier: 1
+    _spacing: 0
+    _minTier: 0
     _maxTier: 1
-  - _shape: 0
-    _center: {x: -11.690582, y: 35.52987}
-    _radius: 100
-    _count: 150
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -62, y: 62}
+    _radius: 31
+    _count: 32
     _autoSpacing: 1
-    _spacing: 16.33
+    _spacing: 0
     _minTier: 0
     _maxTier: 0
+    _singleType: 0
   - _shape: 0
-    _center: {x: 70.7966, y: 73.56628}
-    _radius: 100
-    _count: 300
+    _center: {x: 62, y: -62}
+    _radius: 0
+    _count: 64
     _autoSpacing: 1
-    _spacing: 16.33
+    _spacing: 0
+    _minTier: 0
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 62, y: -62}
+    _radius: 31
+    _count: 32
+    _autoSpacing: 1
+    _spacing: 0
     _minTier: 0
     _maxTier: 0
+    _singleType: 0
   - _shape: 0
-    _center: {x: 42.575523, y: 11.021526}
-    _radius: 100
-    _count: 300
+    _center: {x: -84, y: 0}
+    _radius: 0
+    _count: 64
     _autoSpacing: 1
-    _spacing: 16.33
+    _spacing: 0
+    _minTier: 0
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -84, y: 0}
+    _radius: 31
+    _count: 32
+    _autoSpacing: 1
+    _spacing: 0
     _minTier: 0
     _maxTier: 0
+    _singleType: 0
   - _shape: 0
-    _center: {x: -1.1775513, y: -58.040947}
-    _radius: 100
-    _count: 300
+    _center: {x: 0, y: -84}
+    _radius: 0
+    _count: 64
     _autoSpacing: 1
-    _spacing: 16.33
+    _spacing: 0
+    _minTier: 0
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 0, y: -84}
+    _radius: 31
+    _count: 32
+    _autoSpacing: 1
+    _spacing: 0
     _minTier: 0
     _maxTier: 0
+    _singleType: 0
   - _shape: 0
-    _center: {x: -63.279022, y: -16.60624}
-    _radius: 100
-    _count: 300
+    _center: {x: 62, y: 62}
+    _radius: 0
+    _count: 64
     _autoSpacing: 1
-    _spacing: 16.33
+    _spacing: 0
+    _minTier: 0
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 2
+    _center: {x: 62, y: 62}
+    _radius: 31
+    _count: 26
+    _autoSpacing: 1
+    _spacing: 0
     _minTier: 0
     _maxTier: 0
+    _singleType: 0
   - _shape: 0
-    _center: {x: -71.49039, y: 72.19993}
-    _radius: 100
-    _count: 300
+    _center: {x: -62, y: -62}
+    _radius: 0
+    _count: 64
     _autoSpacing: 1
-    _spacing: 16.33
+    _spacing: 0
+    _minTier: 0
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 2
+    _center: {x: -62, y: -62}
+    _radius: 31
+    _count: 26
+    _autoSpacing: 1
+    _spacing: 0
     _minTier: 0
     _maxTier: 0
+    _singleType: 0
   - _shape: 0
-    _center: {x: 46.940567, y: -33.85743}
-    _radius: 100
-    _count: 9
-    _autoSpacing: 0
-    _spacing: 13.3
-    _minTier: 2
-    _maxTier: 2
+    _center: {x: 84, y: 0}
+    _radius: 0
+    _count: 64
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 0
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 2
+    _center: {x: 84, y: 0}
+    _radius: 31
+    _count: 26
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
   - _shape: 0
-    _center: {x: -65.43152, y: -72.54765}
-    _radius: 100
-    _count: 9
-    _autoSpacing: 0
-    _spacing: 13.3
-    _minTier: 2
-    _maxTier: 2
-  - _shape: 0
-    _center: {x: -61.091133, y: 30.351845}
-    _radius: 100
-    _count: 9
-    _autoSpacing: 0
-    _spacing: 13.3
-    _minTier: 2
-    _maxTier: 2
-  - _shape: 0
-    _center: {x: 38.39596, y: 62.28248}
-    _radius: 100
-    _count: 9
-    _autoSpacing: 0
-    _spacing: 13.3
-    _minTier: 2
-    _maxTier: 2
+    _center: {x: 0, y: 84}
+    _radius: 0
+    _count: 64
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 0
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 2
+    _center: {x: 0, y: 84}
+    _radius: 31
+    _count: 26
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
   - _shape: 2
     _center: {x: 0, y: 0}
     _radius: 100
-    _count: 9
-    _autoSpacing: 0
-    _spacing: 13.3
+    _count: 14
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 2
+    _center: {x: 0, y: 0}
+    _radius: 100
+    _count: 16
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 2
+    _center: {x: 0, y: 0}
+    _radius: 100
+    _count: 8
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 4
+    _maxTier: 4
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 0, y: 0}
+    _radius: 0
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0
     _minTier: 5
     _maxTier: 5
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 45, y: 0}
+    _radius: 0
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 5
+    _maxTier: 5
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -45, y: 0}
+    _radius: 0
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 5
+    _maxTier: 5
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 0, y: 45}
+    _radius: 0
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 5
+    _maxTier: 5
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 0, y: -45}
+    _radius: 0
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 5
+    _maxTier: 5
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 25, y: 25}
+    _radius: 0
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 5
+    _maxTier: 5
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -25, y: 25}
+    _radius: 0
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 5
+    _maxTier: 5
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 25, y: -25}
+    _radius: 0
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 5
+    _maxTier: 5
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -25, y: -25}
+    _radius: 0
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 5
+    _maxTier: 5
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 87, y: 45}
+    _radius: 0
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 5
+    _maxTier: 5
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -87, y: -45}
+    _radius: 0
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 5
+    _maxTier: 5
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -45, y: 87}
+    _radius: 0
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 5
+    _maxTier: 5
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 45, y: -87}
+    _radius: 0
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0
+    _minTier: 5
+    _maxTier: 5
+    _singleType: 0
   _allowMirroring: 0
   _autoSpacingFactor: 2.2
   _scatterDistanceFactor: 0.7
