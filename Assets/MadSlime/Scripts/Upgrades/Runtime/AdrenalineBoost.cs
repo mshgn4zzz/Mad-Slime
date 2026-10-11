@@ -9,8 +9,6 @@ namespace Player
 {
     public class AdrenalineBoost : MonoBehaviour
     {
-        [SerializeField] private UpgradesConfig _config;
-
         private PlayerUpgrades _upgrades;
         private Movement.Movement _movement;
         private bool _isBoosted;
@@ -27,12 +25,6 @@ namespace Player
 
         private void Awake()
         {
-            if (_config == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: UpgradesConfig is not assigned. Drag the UpgradesConfig asset into the _config field.");
-            }
-
             if (_upgrades == null)
             {
                 throw new InvalidOperationException(
@@ -45,7 +37,6 @@ namespace Player
                     $"{name}: Movement was not injected. Check that GameLifetimeScope registers Movement and AdrenalineBoost.");
             }
 
-            _config.GetPerk(PerkType.Adrenaline);
         }
 
         public void Enable()
@@ -55,13 +46,13 @@ namespace Player
                 return;
             }
 
-            if (_upgrades.HasAdrenaline == false)
+            if (_upgrades.HasAdrenaline() == false)
             {
                 return;
             }
 
             _isBoosted = true;
-            _movement.SetBoostMultiplier(_config.GetPerk(PerkType.Adrenaline).Value);
+            _movement.SetBoostMultiplier(_upgrades.GetPerk(PerkType.Adrenaline).Value);
 
             BoostStarted?.Invoke();
         }

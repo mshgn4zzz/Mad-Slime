@@ -16,7 +16,7 @@ namespace CameraSystem
 
         private ItemCollector _itemCollector;
         private PlayerTier _playerTier;
-        private TierTable _tierTable;
+        private TierLookup _tierLookup;
         private float _pull;
         private Tween _recoverTween;
 
@@ -27,7 +27,7 @@ namespace CameraSystem
         {
             _itemCollector = itemCollector;
             _playerTier = playerTier;
-            _tierTable = tierTable;
+            _tierLookup = new TierLookup(tierTable);
         }
 
         private void Awake()
@@ -38,7 +38,7 @@ namespace CameraSystem
                     $"{name}: CameraImpulseConfig is not assigned. Drag the CameraImpulseConfig asset into the _config field.");
             }
 
-            if (_tierTable == null)
+            if (_tierLookup == null)
             {
                 throw new InvalidOperationException(
                     $"{name}: TierTable was not injected. Check that ProjectLifetimeScope has the TierTable asset assigned.");
@@ -61,7 +61,7 @@ namespace CameraSystem
 
         private void OnItemCollected(Item item)
         {
-            float mass = _tierTable.Get(item.Definition.Tier).Mass;
+            float mass = _tierLookup.Get(item.Definition.Tier).Mass;
             float strength = _config.MassToPullStrength.Evaluate(mass);
             float newPull = Mathf.Min(_pull + strength, _config.MaxPull);
 

@@ -58,6 +58,8 @@ namespace DI
         [SerializeField] private ItemAttractor _itemAttractor;
         [SerializeField] private ItemGhostToggler _itemGhostToggler;
         [SerializeField] private QuotaItemHighlighter _quotaItemHighlighter;
+        [SerializeField] private Collectables.QuotaItemDetector _quotaItemDetector;
+        [SerializeField] private Collectables.CloseItemDetector _closeItemDetector;
         [SerializeField] private SmellAbilityActivator _smellAbilityActivator;
         [SerializeField] private Pauser _pauser;
         [SerializeField] private Timer _timer;
@@ -111,6 +113,8 @@ namespace DI
             builder.RegisterComponent(_itemAttractor);
             builder.RegisterComponent(_itemGhostToggler);
             builder.RegisterComponent(_quotaItemHighlighter);
+            builder.RegisterComponent(_quotaItemDetector);
+            builder.RegisterComponent(_closeItemDetector);
             builder.RegisterComponent(_smellAbilityActivator);
             builder.RegisterComponent(_pauser);
             builder.RegisterComponent(_timer);
@@ -170,6 +174,8 @@ namespace DI
             ValidateAssigned(_itemAttractor, nameof(_itemAttractor));
             ValidateAssigned(_itemGhostToggler, nameof(_itemGhostToggler));
             ValidateAssigned(_quotaItemHighlighter, nameof(_quotaItemHighlighter));
+            ValidateAssigned(_quotaItemDetector, nameof(_quotaItemDetector));
+            ValidateAssigned(_closeItemDetector, nameof(_closeItemDetector));
             ValidateAssigned(_smellAbilityActivator, nameof(_smellAbilityActivator));
             ValidateAssigned(_pauser, nameof(_pauser));
             ValidateAssigned(_timer, nameof(_timer));
