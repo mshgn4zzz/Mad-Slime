@@ -650,7 +650,8 @@ MonoBehaviour:
   _cubeSpawner: {fileID: 1948289416}
   _fillResultCalculator: {fileID: 1948289410}
   _fillTapButton: {fileID: 482700000000000015}
-  _fillFinale: {fileID: 1948289418}
+  _fillCompleteAnimator: {fileID: 1948289418}
+  _fillCompleteSound: {fileID: 1948289420}
   _fillProgressUI: {fileID: 6593674394236639972}
   _fillDebug: {fileID: 482700000000000017}
   _rewarder: {fileID: 1495407475}
@@ -712,6 +713,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _musicPlaylist: {fileID: 11400000, guid: 851b4581b784f28479a2cf7f0e42514b, type: 2}
+  _winWindowDelay: 1
 --- !u!4 &1495407472
 Transform:
   m_ObjectHideFlags: 0
@@ -978,6 +980,7 @@ GameObject:
   - component: {fileID: 1948289414}
   - component: {fileID: 1948289416}
   - component: {fileID: 1948289418}
+  - component: {fileID: 1948289420}
   m_Layer: 0
   m_Name: Shape
   m_TagString: Untagged
@@ -1194,6 +1197,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _confetti: {fileID: 2018122354}
+--- !u!114 &1948289420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948289408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ca305ddac12dc476108d9859654e7a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _sfxClip: {fileID: 11400000, guid: fea81d8edd9564c47a3da9480ceeed9f, type: 2}
 --- !u!1001 &2018122353
 PrefabInstance:
   m_ObjectHideFlags: 0

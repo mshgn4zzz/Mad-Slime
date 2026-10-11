@@ -6,13 +6,12 @@ namespace Player
     [Serializable]
     public class RadiusRecipientEntry
     {
-        [Tooltip("Получатель радиуса: детектор, клампер и т.п. — реализует IRadiusRecipient.")]
+        [Tooltip("Получатель радиуса: детектор, клампер и т.п. — реализует IRadiusRecipient. "
+            + "Базовый радиус берётся из компонента получателя на старте и умножается на масштаб тира.")]
         [SerializeField] private MonoBehaviour _recipient;
 
-        [Tooltip("Базовый радиус на первом тире; скейлер умножает его на масштаб тира.")]
-        [SerializeField, Min(0f)] private float _baseRadius;
-
         private IRadiusRecipient _radiusRecipient;
+        private float _baseRadius;
 
         public IRadiusRecipient Recipient => _radiusRecipient;
         public float BaseRadius => _baseRadius;
@@ -32,6 +31,7 @@ namespace Player
             }
 
             _radiusRecipient = radiusRecipient;
+            _baseRadius = _radiusRecipient.Radius;
         }
     }
 }

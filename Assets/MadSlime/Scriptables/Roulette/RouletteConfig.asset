@@ -16,30 +16,34 @@ MonoBehaviour:
   - _rewardKind: 0
     _coins: 50
     _skin: {fileID: 0}
-    _dropChance: 20
+    _dropChance: 0
   - _rewardKind: 0
     _coins: 150
     _skin: {fileID: 0}
-    _dropChance: 12
+    _dropChance: 0
   - _rewardKind: 0
     _coins: 300
     _skin: {fileID: 0}
-    _dropChance: 8
+    _dropChance: 0
   - _rewardKind: 0
     _coins: 600
     _skin: {fileID: 0}
-    _dropChance: 4
+    _dropChance: 0
   - _rewardKind: 0
     _coins: 1500
     _skin: {fileID: 0}
-    _dropChance: 1.5
+    _dropChance: 0
+  - _rewardKind: 0
+    _coins: 1500
+    _skin: {fileID: 0}
+    _dropChance: 0
+  - _rewardKind: 0
+    _coins: 3000
+    _skin: {fileID: 0}
+    _dropChance: 5
   - _rewardKind: 1
     _coins: 0
-    _skin: {fileID: 11400000, guid: 1f6233159a9e97cf79427226bfc28d31, type: 2}
-    _dropChance: 90
-  - _rewardKind: 1
-    _coins: 0
-    _skin: {fileID: 11400000, guid: a16873fd4e416564cb6438502a43e5a9, type: 2}
+    _skin: {fileID: 0}
     _dropChance: 100
   _exclusiveSkins:
   - {fileID: 11400000, guid: 1f6233159a9e97cf79427226bfc28d31, type: 2}

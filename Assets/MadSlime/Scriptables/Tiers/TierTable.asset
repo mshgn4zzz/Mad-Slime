@@ -20,14 +20,14 @@ MonoBehaviour:
     _scale: 30
     _mass: 500
   - _tier: 2
-    _scale: 50
+    _scale: 60
     _mass: 2000
   - _tier: 3
-    _scale: 65
+    _scale: 100
     _mass: 3500
   - _tier: 4
-    _scale: 80
+    _scale: 150
     _mass: 6000
   - _tier: 5
-    _scale: 100
+    _scale: 300
     _mass: 10000

@@ -9,7 +9,8 @@ using VContainer;
 
 namespace ShapeFill
 {
-    public class FillFinale : MonoBehaviour
+    [RequireComponent(typeof(FillCompleteSound))]
+    public class FillCompleteAnimator : MonoBehaviour
     {
         [Tooltip("Система конфетти на сцене Fill (не префаб-ассет): настраивается в редакторе. На Awake гасится, играет только по FillCompleted.")]
         [SerializeField] private ParticleSystem _confetti;
@@ -17,16 +18,14 @@ namespace ShapeFill
         private FillConfig _config;
         private ShapeFillOrchestrator _orchestrator;
         private GridBuilder _gridBuilder;
-        private IGameSoundPlayer _soundPlayer;
+        private FillCompleteSound _completeSound;
 
         [Inject]
-        public void Construct(ShapeFillOrchestrator orchestrator, GridBuilder gridBuilder, FillConfig config,
-            IGameSoundPlayer soundPlayer)
+        public void Construct(ShapeFillOrchestrator orchestrator, GridBuilder gridBuilder, FillConfig config)
         {
             _orchestrator = orchestrator;
             _gridBuilder = gridBuilder;
             _config = config;
-            _soundPlayer = soundPlayer;
         }
 
         private void Awake()
@@ -34,25 +33,19 @@ namespace ShapeFill
             if (_orchestrator == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: Orchestrator was not injected. Check that FillLifetimeScope registers ShapeFillOrchestrator and FillFinale.");
+                    $"{name}: Orchestrator was not injected. Check that FillLifetimeScope registers ShapeFillOrchestrator and FillCompleteAnimator.");
             }
 
             if (_gridBuilder == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: GridBuilder was not injected. Check that FillLifetimeScope registers GridBuilder and FillFinale.");
+                    $"{name}: GridBuilder was not injected. Check that FillLifetimeScope registers GridBuilder and FillCompleteAnimator.");
             }
 
             if (_config == null)
             {
                 throw new InvalidOperationException(
                     $"{name}: FillConfig was not injected. Check that FillLifetimeScope has the FillConfig assigned.");
-            }
-
-            if (_soundPlayer == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: IGameSoundPlayer was not injected. Check that ProjectLifetimeScope registers AudioPlayer.");
             }
 
             if (_confetti == null)
@@ -65,6 +58,14 @@ namespace ShapeFill
             {
                 throw new InvalidOperationException(
                     $"{name}: Confetti must be a scene instance, not a prefab asset. Drag the scene object into the _confetti field.");
+            }
+
+            _completeSound = GetComponent<FillCompleteSound>();
+
+            if (_completeSound == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: FillCompleteSound was not found. It is required by FillCompleteAnimator and must sit on the same GameObject.");
             }
 
             _confetti.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
@@ -100,6 +101,7 @@ namespace ShapeFill
                     $"{name}: Camera.main is not found. Tag the fill scene camera with the MainCamera tag.");
             }
 
+            _completeSound.Play();
             PlayConfettiAsync().Forget();
             PlayShapePunch();
             PlayCameraKick(mainCamera);
@@ -121,7 +123,6 @@ namespace ShapeFill
                     maxLifetime = Mathf.Max(maxLifetime, main.startLifetime.constantMax);
                 }
 
-                PlayFinaleClip();
                 _confetti.Play(true);
 
                 await UniTask.Delay(TimeSpan.FromSeconds(duration), cancellationToken: cancellationToken);
@@ -134,16 +135,6 @@ namespace ShapeFill
             {
                 return;
             }
-        }
-
-        private void PlayFinaleClip()
-        {
-            if (_config.FinaleClip == null || _soundPlayer == null)
-            {
-                return;
-            }
-
-            _soundPlayer.Play(_config.FinaleClip);
         }
 
         private void PlayShapePunch()

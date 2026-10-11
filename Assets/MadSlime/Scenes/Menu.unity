@@ -677,10 +677,6 @@ MonoBehaviour:
   _leaderboardButton: {fileID: 529690145}
   _settingsButton: {fileID: 63944067}
   _dailyButton: {fileID: 1373315977}
-  _pauseMenu: {fileID: 5859713677950448305, guid: 07369f9036a55ff4e8db9b912f0290c3, type: 3}
-  _leaderboardMenuPrefab: {fileID: 8220248474289526730, guid: 65a7a973925ce514787b4a5cea516689, type: 3}
-  _dailyRoulette: {fileID: 1560748444112562554}
-  _musicPlaylist: {fileID: 11400000, guid: 189043936494be54fb7b4dedf1a99314, type: 2}
 --- !u!114 &206106546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1661,8 +1657,8 @@ RectTransform:
   m_GameObject: {fileID: 652432862}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1.25, y: 1.25, z: 1.25}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6286811584108114462}
   - {fileID: 1952087862}
@@ -1721,8 +1717,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 870000002}
   - component: {fileID: 666189401}
+  - component: {fileID: 870000002}
   - component: {fileID: 666189400}
   - component: {fileID: 666189399}
   - component: {fileID: 666189398}
@@ -1903,6 +1899,10 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   _mainMenu: {fileID: 206106545}
+  _menuSessionHandler: {fileID: 870000000}
+  _rouletteConfig: {fileID: 11400000, guid: 9f034a199c15cd67ea264f0afa3531c4, type: 2}
+  _shopContent: {fileID: 11400000, guid: 3e9b0436cf221244fb683430095afbcf, type: 2}
+  _roulettePresenter: {fileID: 870000001}
   _adScheduler: {fileID: 1028076303}
   _wallet: {fileID: 1028076296}
   _pauser: {fileID: 1028076297}
@@ -1916,10 +1916,6 @@ MonoBehaviour:
   - {fileID: 2059128504}
   - {fileID: 1765293736}
   - {fileID: 384392664}
-  _menuSessionHandler: {fileID: 870000000}
-  _rouletteConfig: {fileID: 11400000, guid: 9f034a199c15cd67ea264f0afa3531c4, type: 2}
-  _roulettePresenter: {fileID: 870000001}
-  _shopContent: {fileID: 11400000, guid: 3e9b0436cf221244fb683430095afbcf, type: 2}
 --- !u!1 &844052691
 GameObject:
   m_ObjectHideFlags: 0
@@ -1995,6 +1991,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 844052691}
   m_CullTransparentMesh: 1
+--- !u!114 &870000000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1028076293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6840be3f3540c1eafabe10a0a16bedc9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _mainMenu: {fileID: 206106545}
+  _musicPlaylist: {fileID: 11400000, guid: 189043936494be54fb7b4dedf1a99314, type: 2}
+  _settingsMenuPrefab: {fileID: 5859713677950448305, guid: 07369f9036a55ff4e8db9b912f0290c3, type: 3}
+  _leaderboardMenuPrefab: {fileID: 8220248474289526730, guid: 65a7a973925ce514787b4a5cea516689, type: 3}
+  _dailyRoulette: {fileID: 870000001}
+--- !u!114 &870000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7471733373252188899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07b907bbcd894d91bf84af4a70dab7ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _view: {fileID: 1560748444112562554}
+--- !u!114 &870000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 666189397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33e5ab73b0afac97e8c359c702b32951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _content: {fileID: 652432863}
+  _showDuration: 0.25
+  _hideDuration: 0.2
+  _showFromScale: 0.6
+  _showEase: 27
+  _hideEase: 26
 --- !u!1 &1028076293
 GameObject:
   m_ObjectHideFlags: 0
@@ -2003,8 +2047,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 870000000}
   - component: {fileID: 1028076294}
+  - component: {fileID: 870000000}
   - component: {fileID: 1028076297}
   - component: {fileID: 1028076296}
   - component: {fileID: 1028076303}
@@ -3981,8 +4025,8 @@ MonoBehaviour:
   _coinIcon: {fileID: 21300000, guid: abb96bbc164304c69af8d0a9cf8cf261, type: 3}
   _winPopupPrefab: {fileID: 5093799342498913054, guid: 401d1e3d257653c46b3eeb3f70dabb6a, type: 3}
   _screenRoot: {fileID: 666189397}
-  _closeButton: {fileID: 1952087864}
   _screenScaleAnimator: {fileID: 870000002}
+  _closeButton: {fileID: 1952087864}
 --- !u!114 &6045276305314912848
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4051,8 +4095,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 870000001}
   - component: {fileID: 6286811584108114462}
+  - component: {fileID: 870000001}
   - component: {fileID: 1560748444112562554}
   - component: {fileID: 7176536224304083786}
   - component: {fileID: 6045276305314912848}
@@ -4073,45 +4117,3 @@ SceneRoots:
   - {fileID: 2022909734}
   - {fileID: 206106549}
   - {fileID: 666189401}
---- !u!114 &870000000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1028076293}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6840be3f3540c1eafabe10a0a16bedc9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier:
-  _settingsMenuPrefab: {fileID: 5859713677950448305, guid: 07369f9036a55ff4e8db9b912f0290c3, type: 3}
-  _leaderboardMenuPrefab: {fileID: 8220248474289526730, guid: 65a7a973925ce514787b4a5cea516689, type: 3}
-  _dailyRoulette: {fileID: 870000001}
-  _musicPlaylist: {fileID: 11400000, guid: 189043936494be54fb7b4dedf1a99314, type: 2}
-  _mainMenu: {fileID: 206106545}
---- !u!114 &870000001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7471733373252188899}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07b907bbcd894d91bf84af4a70dab7ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier:
-  _view: {fileID: 1560748444112562554}
---- !u!114 &870000002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 666189397}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33e5ab73b0afac97e8c359c702b32951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

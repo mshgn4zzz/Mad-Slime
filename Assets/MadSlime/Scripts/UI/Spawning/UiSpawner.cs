@@ -9,7 +9,6 @@ namespace UI
     public class UiSpawner
     {
         private IObjectResolver _resolver;
-        private Dictionary<UiLayer, int> _nextOrders = new Dictionary<UiLayer, int>();
 
         public UiSpawner(IObjectResolver resolver)
         {
@@ -68,19 +67,32 @@ namespace UI
             }
 
             canvas.overrideSorting = true;
-            canvas.sortingOrder = TakeSortingOrder(layer);
+            canvas.sortingOrder = TakeFreeSortingOrder((int)layer, canvas);
         }
 
-        private int TakeSortingOrder(UiLayer layer)
+        private int TakeFreeSortingOrder(int startOrder, Canvas ownCanvas)
         {
-            if (_nextOrders.TryGetValue(layer, out int nextOrder) == false)
+            Canvas[] canvases = UnityEngine.Object.FindObjectsOfType<Canvas>();
+            HashSet<int> occupiedOrders = new HashSet<int>();
+
+            for (int i = 0; i < canvases.Length; i++)
             {
-                nextOrder = (int)layer;
+                Canvas canvas = canvases[i];
+
+                if (canvas != ownCanvas && canvas.isRootCanvas == true)
+                {
+                    occupiedOrders.Add(canvas.sortingOrder);
+                }
             }
 
-            _nextOrders[layer] = nextOrder + 1;
+            int order = startOrder;
 
-            return nextOrder;
+            while (occupiedOrders.Contains(order) == true)
+            {
+                order++;
+            }
+
+            return order;
         }
 
         private void Destroy(GameObject gameObject)
