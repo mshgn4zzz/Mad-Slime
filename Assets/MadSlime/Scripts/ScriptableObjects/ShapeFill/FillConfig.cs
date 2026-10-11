@@ -70,10 +70,6 @@ namespace Scriptables
         [Tooltip("Длительность отъезда камеры (с). Столько же камера возвращается обратно — суммарный цикл 2x.")]
         [SerializeField, Min(0.01f)] private float _fovDuration = 0.6f;
 
-        [Header("Sounds")]
-        [Tooltip("Звук финала филла (puff/конфетти) в момент запуска конфетти. Пусто — без звука.")]
-        [SerializeField] private SfxClip _finaleClip;
-
         public float FillDelay => _fillDelay;
         public float SpawnInterval => _spawnInterval;
         public float FlightDuration => _flightDuration;
@@ -93,6 +89,5 @@ namespace Scriptables
         public float ShapePunchElasticity => _shapePunchElasticity;
         public float FovKick => _fovKick;
         public float FovDuration => _fovDuration;
-        public SfxClip FinaleClip => _finaleClip;
     }
 }

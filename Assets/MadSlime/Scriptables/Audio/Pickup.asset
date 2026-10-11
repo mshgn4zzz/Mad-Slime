@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Pickup
   m_EditorClassIdentifier: 
   _clip: {fileID: 8300000, guid: 0ebb31b856196ac548ac9c731571c60d, type: 3}
-  _volume: 1
+  _volume: 0.269
   _isRandomPitch: 1
   _minPitch: 1
   _maxPitch: 1.2

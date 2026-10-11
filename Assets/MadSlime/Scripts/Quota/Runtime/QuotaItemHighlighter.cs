@@ -1,6 +1,8 @@
 using Collectables;
 using Items;
+using Player;
 using Quota;
+using Skills;
 using System.Collections.Generic;
 using UnityEngine;
 using VContainer;
@@ -14,13 +16,18 @@ namespace Game
 
         private QuotaItemDetector _detector;
         private QuotaBoard _board;
+        private CollectAvailability _collectAvailability;
+        private PlayerTier _playerTier;
         private HashSet<Item> _items = new HashSet<Item>();
 
         [Inject]
-        public void Construct(QuotaItemDetector detector, QuotaBoard board)
+        public void Construct(QuotaItemDetector detector, QuotaBoard board, CollectAvailability collectAvailability,
+            PlayerTier playerTier)
         {
             _detector = detector;
             _board = board;
+            _collectAvailability = collectAvailability;
+            _playerTier = playerTier;
         }
 
         private void OnEnable()
@@ -28,6 +35,7 @@ namespace Game
             _detector.Detected += OnDetected;
             _detector.Exited += OnExited;
             _board.QuotaChanged += OnQuotaChanged;
+            _playerTier.TierChanged += OnTierChanged;
         }
 
         private void OnDisable()
@@ -35,6 +43,7 @@ namespace Game
             _detector.Detected -= OnDetected;
             _detector.Exited -= OnExited;
             _board.QuotaChanged -= OnQuotaChanged;
+            _playerTier.TierChanged -= OnTierChanged;
 
             foreach (Item item in _items)
             {
@@ -47,7 +56,7 @@ namespace Game
         private void OnDetected(Item item)
         {
             _items.Add(item);
-            SetHighlighted(item, _board.IsQuotaItem(item.Definition));
+            SetHighlighted(item, IsHighlightable(item));
         }
 
         private void OnExited(Item item)
@@ -58,13 +67,28 @@ namespace Game
 
         private void OnQuotaChanged(int remaining, QuotaEntry entry)
         {
+            RefreshAll();
+        }
+
+        private void OnTierChanged(SizeTier previousTier, SizeTier currentTier)
+        {
+            RefreshAll();
+        }
+
+        private void RefreshAll()
+        {
             foreach (Item item in _items)
             {
                 if (item != null)
                 {
-                    SetHighlighted(item, _board.IsQuotaItem(item.Definition));
+                    SetHighlighted(item, IsHighlightable(item));
                 }
             }
+        }
+
+        private bool IsHighlightable(Item item)
+        {
+            return _board.IsQuotaItem(item.Definition) && _collectAvailability.CanCollect(item.Definition.Tier);
         }
 
         private void SetHighlighted(Item item, bool isHighlighted)
