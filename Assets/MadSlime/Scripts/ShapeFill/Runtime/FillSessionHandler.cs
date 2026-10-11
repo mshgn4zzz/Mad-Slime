@@ -146,7 +146,12 @@ namespace Game
         private void OnDisable()
         {
             _sceneNavigator.UnregisterSession(StartSession);
-            Finish();
+
+            if (_hasStarted == true)
+            {
+                Finish();
+            }
+
             if (_fillOrchestrator != null)
             {
                 _fillOrchestrator.FillCompleted -= OnFillCompleted;
