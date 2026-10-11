@@ -72,7 +72,7 @@ namespace Detection
             _radius = radius;
         }
 
-        private void OnDrawGizmosSelected()
+        private void OnDrawGizmos()
         {
             Gizmos.color = _gizmoColor;
             Gizmos.DrawWireSphere(transform.position, _radius);

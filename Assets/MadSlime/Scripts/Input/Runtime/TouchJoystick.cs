@@ -19,6 +19,7 @@ namespace PlayerInput
         [SerializeField] private float _movementRange = 120f;
 
         private RectTransform _zone;
+        private Vector2 _dragOrigin;
         private int _activePointerId;
         private bool _isDragging;
 
@@ -82,6 +83,12 @@ namespace PlayerInput
             _background.anchoredPosition = localPoint;
             _handle.anchoredPosition = Vector2.zero;
 
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    _background, eventData.position, eventData.pressEventCamera, out _dragOrigin) == false)
+            {
+                _dragOrigin = Vector2.zero;
+            }
+
             ShowVisuals();
         }
 
@@ -92,15 +99,16 @@ namespace PlayerInput
                 return;
             }
 
-            if (TryGetLocalPoint(eventData, out Vector2 localPoint) == false)
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    _background, eventData.position, eventData.pressEventCamera, out Vector2 localPoint) == false)
             {
                 return;
             }
 
-            Vector2 delta = localPoint - _background.anchoredPosition;
-            Vector2 clampedDelta = Vector2.ClampMagnitude(delta, _movementRange);
+            Vector2 canvasDelta = Vector2.Scale(localPoint - _dragOrigin, _background.localScale);
+            Vector2 clampedDelta = Vector2.ClampMagnitude(canvasDelta, _movementRange);
 
-            _handle.anchoredPosition = clampedDelta;
+            _handle.anchoredPosition = InverseScale(clampedDelta, _background.localScale);
 
             SendValueToControl(clampedDelta / _movementRange);
         }
@@ -143,6 +151,11 @@ namespace PlayerInput
             }
 
             return Touchscreen.current != null;
+        }
+
+        private static Vector2 InverseScale(Vector2 value, Vector3 scale)
+        {
+            return new Vector2(value.x / scale.x, value.y / scale.y);
         }
 
         private bool TryGetLocalPoint(PointerEventData eventData, out Vector2 localPoint)

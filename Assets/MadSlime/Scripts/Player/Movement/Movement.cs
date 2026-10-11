@@ -1,6 +1,5 @@
 using Player;
 using PlayerInput;
-using Scriptables;
 using Skills;
 using System;
 using UnityEngine;
@@ -18,7 +17,6 @@ namespace Movement
         private TierResolver _tierResolver;
         private PlayerUpgrades _upgrades;
         private PlayerInputReader _inputReader;
-        private PlayerConfig _config;
         private float _boostMultiplier = 1f;
         private bool _isControlEnabled;
 
@@ -31,13 +29,12 @@ namespace Movement
 
         [Inject]
         public void Construct(PlayerTier playerTier, TierResolver tierResolver, PlayerUpgrades upgrades,
-            PlayerInputReader inputReader, PlayerConfig config)
+            PlayerInputReader inputReader)
         {
             _playerTier = playerTier;
             _tierResolver = tierResolver;
             _upgrades = upgrades;
             _inputReader = inputReader;
-            _config = config;
         }
 
         private void Awake()
@@ -60,12 +57,6 @@ namespace Movement
                     $"{name}: PlayerTier was not injected. Check that GameLifetimeScope registers PlayerTier and Movement.");
             }
 
-            if (_config == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerConfig was not injected. Check that GameLifetimeScope registers PlayerConfig and Movement.");
-            }
-
             if (TryGetComponent(out Clamper clamper) == false)
             {
                 throw new InvalidOperationException(
@@ -73,8 +64,6 @@ namespace Movement
             }
 
             _mover.Setup(clamper);
-            _rotator.SetSpeed(_config.RotationSpeed);
-
         }
 
         public void Initialize()

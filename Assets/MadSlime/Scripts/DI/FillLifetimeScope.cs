@@ -21,7 +21,8 @@ namespace DI
         [SerializeField] private CubeSpawner _cubeSpawner;
         [SerializeField] private FillResultCalculator _fillResultCalculator;
         [SerializeField] private FillTapButton _fillTapButton;
-        [SerializeField] private FillFinale _fillFinale;
+        [SerializeField] private FillCompleteAnimator _fillCompleteAnimator;
+        [SerializeField] private FillCompleteSound _fillCompleteSound;
         [SerializeField] private FillProgressUI _fillProgressUI;
         [SerializeField] private FillDebug _fillDebug;
         [SerializeField] private Rewarder _rewarder;
@@ -42,7 +43,8 @@ namespace DI
             ValidateAssigned(_cubeSpawner, nameof(_cubeSpawner));
             ValidateAssigned(_fillResultCalculator, nameof(_fillResultCalculator));
             ValidateAssigned(_fillTapButton, nameof(_fillTapButton));
-            ValidateAssigned(_fillFinale, nameof(_fillFinale));
+            ValidateAssigned(_fillCompleteAnimator, nameof(_fillCompleteAnimator));
+            ValidateAssigned(_fillCompleteSound, nameof(_fillCompleteSound));
             ValidateAssigned(_fillProgressUI, nameof(_fillProgressUI));
             ValidateAssigned(_fillDebug, nameof(_fillDebug));
             ValidateAssigned(_rewarder, nameof(_rewarder));
@@ -62,7 +64,8 @@ namespace DI
             builder.RegisterComponent(_cubeSpawner);
             builder.RegisterComponent(_fillResultCalculator);
             builder.RegisterComponent(_fillTapButton);
-            builder.RegisterComponent(_fillFinale);
+            builder.RegisterComponent(_fillCompleteAnimator);
+            builder.RegisterComponent(_fillCompleteSound);
             builder.RegisterComponent(_fillProgressUI);
             builder.RegisterComponent(_fillDebug);
             builder.RegisterComponent(_rewarder);

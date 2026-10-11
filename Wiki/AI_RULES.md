@@ -140,6 +140,8 @@ if (item == null)
 
 ---
 
+# Ни в коем случае не писать тулзы блять без прямого требования, без просьбы напиши тулзу не писать никаких инструментов проверки и настройки
+
 ## Форматирование
 
 - **Соблюдать [Microsoft C# coding conventions](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions).** Это базовая линия стиля.

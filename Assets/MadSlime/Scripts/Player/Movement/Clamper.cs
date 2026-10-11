@@ -6,10 +6,13 @@ namespace Movement
 {
     public class Clamper : MonoBehaviour, IRadiusRecipient
     {
+        [Tooltip("Радиус тела слайма для отступа от границ уровня; скейлер масштабирует его вместе с тиром.")]
+        [SerializeField, Min(0f)] private float _radius = 0.5f;
+
         private Bounds _bounds;
-        private float _radius;
         private bool _hasBounds;
-        private bool _hasRadius;
+
+        public float Radius => _radius;
 
         public void SetBounds(Bounds bounds)
         {
@@ -32,7 +35,6 @@ namespace Movement
             }
 
             _radius = radius;
-            _hasRadius = true;
         }
 
         public Vector3 ClampPosition(Vector3 desiredPosition)
@@ -41,12 +43,6 @@ namespace Movement
             {
                 throw new InvalidOperationException(
                     $"{name}: ClampPosition is called before SetBounds. Level preparation must pass the floor bounds.");
-            }
-
-            if (_hasRadius == false)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: ClampPosition is called before SetRadius. The player scaler must pass the current radius.");
             }
 
             Vector3 clamped = desiredPosition;

@@ -1,19 +1,14 @@
 {
     "CurrentLevel": 2,
     "MaxLevel": 2,
+    "CollectedItemsCount": 7462,
     "Language": "ru",
-    "musicVolume": 0.005058822687715292,
-    "sfxVolume": 0.429993212223053,
-    "Balance": 9988199,
-    "SelectedSkinType": 0,
-    "_openSkins": [
-        0
-    ],
+    "musicVolume": 0.38812756538391116,
+    "sfxVolume": 1.0,
+    "Balance": 10000299,
     "SelectedSkinId": "Crown",
     "_openSkinIds": [
-        "Slime",
-        "Crown",
-        "Phantom"
+        "Crown"
     ],
     "_showcaseSkinIds": [
         "Tung"
@@ -22,13 +17,12 @@
     "AppetiteLevel": 0,
     "TasteLevel": 0,
     "MetabolismLevel": 0,
-    "PurchasedPerks": [
-        0,
-        1,
-        2
+    "PurchasedPerks": [],
+    "LastFreeSpinUnixTime": 1791718209,
+    "RouletteAdSpinTimes": [
+        1791718248,
+        1791718258
     ],
-    "LastFreeSpinUnixTime": 1791373098,
-    "RouletteAdSpinTimes": [],
     "SkinSpinCount": 0,
-    "idSave": 709
+    "idSave": 794
 }

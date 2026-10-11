@@ -12,18 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1801906b686afc47a4a6d209a08dfe0, type: 3}
   m_Name: PlayerConfig
   m_EditorClassIdentifier: 
-  _rotationSpeed: 1260
-  _moveSmoothTime: 0.12
-  _minAbsorbDuration: 0.25
-  _maxAbsorbDuration: 0.5
+  _minAbsorbDuration: 0.4
+  _maxAbsorbDuration: 0.6
   _absorbSpeed: 10
   _minArcFraction: 0.2
   _maxArcFraction: 0.325
   _minSpinSpeed: 520
   _maxSpinSpeed: 1080
-  _smokeSpeedThreshold: 30
-  _shrinkStart: 0.2
-  _absorbEasePower: 2
+  _smokeSpeedThreshold: 20
+  _shrinkStart: 0.5
+  _absorbEasePower: 2.5
   _squashDuration: 0.3
   _squashCurve:
     serializedVersion: 2
@@ -62,7 +60,7 @@ MonoBehaviour:
   _pickupSoundMaxInterval: 0.1
   _pickupSoundMinPitch: 0.95
   _pickupSoundMaxPitch: 1.15
-  _deformMaxStretch: 0.22
+  _deformMaxStretch: 0.3
   _deformSqueeze: 0.55
   _crawlStretchCurve:
     serializedVersion: 2
@@ -150,37 +148,37 @@ MonoBehaviour:
     m_RotationOrder: 4
   _crawlStride: 3
   _stridePerSpeed: 0.28
-  _crawlThrustDepth: 0.55
+  _crawlThrustDepth: 0.56
   _crawlRampTime: 0.15
   _startMass: 6
   _thresholds:
   - _tier: 0
     _requiredMass: 0
     _scaleMultiplier: 2
-    _speed: 6
+    _speed: 5
     _cameraOffsetMultiplier: 1
   - _tier: 1
     _requiredMass: 50
     _scaleMultiplier: 4
-    _speed: 12
+    _speed: 10
     _cameraOffsetMultiplier: 1.5
   - _tier: 2
     _requiredMass: 4000
-    _scaleMultiplier: 6
-    _speed: 18
+    _scaleMultiplier: 8
+    _speed: 15
     _cameraOffsetMultiplier: 2
   - _tier: 3
     _requiredMass: 15000
-    _scaleMultiplier: 10
-    _speed: 21
-    _cameraOffsetMultiplier: 2.4
+    _scaleMultiplier: 15
+    _speed: 20
+    _cameraOffsetMultiplier: 3
   - _tier: 4
     _requiredMass: 40000
-    _scaleMultiplier: 15
-    _speed: 23
-    _cameraOffsetMultiplier: 2.7
-  - _tier: 5
-    _requiredMass: 70000
     _scaleMultiplier: 30
     _speed: 25
-    _cameraOffsetMultiplier: 3
+    _cameraOffsetMultiplier: 5
+  - _tier: 5
+    _requiredMass: 70000
+    _scaleMultiplier: 60
+    _speed: 40
+    _cameraOffsetMultiplier: 8

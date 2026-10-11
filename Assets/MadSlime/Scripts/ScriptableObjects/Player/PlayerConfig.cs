@@ -6,13 +6,6 @@ namespace Scriptables
     [CreateAssetMenu(menuName = "Mad Slime/Player Config", fileName = "NewPlayerConfig")]
     public class PlayerConfig : ScriptableObject
     {
-        [Header("Movement")]
-        [Tooltip("Скорость поворота модели слайма в сторону движения (град/с).")]
-        [SerializeField, Min(1f)] private float _rotationSpeed = 420f;
-
-        [Tooltip("Плавность разгона и торможения (с). Больше = инертнее и мягче, меньше = резче отклик.")]
-        [SerializeField, Min(0.01f)] private float _moveSmoothTime = 0.12f;
-
         [Header("Absorption")]
         [Tooltip("Минимальное время полёта предмета в пасть (с). Предметы рядом не всасываются быстрее.")]
         [SerializeField, Min(0.05f)] private float _minAbsorbDuration = 0.1f;
@@ -108,8 +101,6 @@ namespace Scriptables
         [Tooltip("Пороги тиров: при какой массе открывается тир и что он даёт (масштаб, скорость, отъезд камеры).")]
         [SerializeField] private List<PlayerTierThreshold> _thresholds = new List<PlayerTierThreshold>();
 
-        public float RotationSpeed => _rotationSpeed;
-        public float MoveSmoothTime => _moveSmoothTime;
         public float MinAbsorbDuration => _minAbsorbDuration;
         public float MaxAbsorbDuration => _maxAbsorbDuration;
         public float AbsorbSpeed => _absorbSpeed;

@@ -67,17 +67,21 @@ namespace Roulette
 
             for (int i = 0; i < ids.Count; i++)
             {
-                skins.Add(Find(ids[i]));
+                SkinItem skin = Find(ids[i]);
+
+                if (skin != null && skins.Contains(skin) == false)
+                {
+                    skins.Add(skin);
+                }
             }
 
-            if (skins.Count == 0)
+            for (int i = 0; i < _catalog.Count && skins.Count < slotCount; i++)
             {
-                for (int i = 0; i < _catalog.Count; i++)
+                SkinItem skin = _catalog[i];
+
+                if (IsExclusive(skin) == false && skins.Contains(skin) == false)
                 {
-                    if (IsExclusive(_catalog[i]) == false)
-                    {
-                        skins.Add(_catalog[i]);
-                    }
+                    skins.Add(skin);
                 }
             }
 
