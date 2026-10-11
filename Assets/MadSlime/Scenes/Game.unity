@@ -540,6 +540,7 @@ GameObject:
   - component: {fileID: 394430650}
   - component: {fileID: 394430649}
   - component: {fileID: 394430651}
+  - component: {fileID: 394430652}
   m_Layer: 0
   m_Name: QuotaHighlighter
   m_TagString: Untagged
@@ -559,12 +560,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8ab750b00210f6fe9203d17376ec8dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _radius: 30
-  _layerMask:
-    serializedVersion: 2
-    m_Bits: 8
-  _gizmoColor: {r: 1, g: 0.85, b: 0.2, a: 1}
-  _config: {fileID: 0}
+  _highlightColor: {r: 1, g: 0.85, b: 0.2, a: 1}
+  _outlineWidth: 4
 --- !u!4 &394430650
 Transform:
   m_ObjectHideFlags: 0
@@ -593,6 +590,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _highlighter: {fileID: 394430649}
+--- !u!114 &394430652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 394430648}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 036c883773164fec087ead24c0d6271d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _radius: 3
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 8
+  _gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1 &456849526
 GameObject:
   m_ObjectHideFlags: 0
@@ -706,6 +720,7 @@ GameObject:
   m_Component:
   - component: {fileID: 566941590}
   - component: {fileID: 566941591}
+  - component: {fileID: 566941592}
   m_Layer: 6
   m_Name: GhostToggler
   m_TagString: Untagged
@@ -740,11 +755,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2a4243096283e04e83ef4aaa9bbcf9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerCollider: {fileID: 3849648291218264020}
+--- !u!114 &566941592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 566941589}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33b155ede189101b49d9a48de29c2750, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _radius: 1.2
   _layerMask:
     serializedVersion: 2
     m_Bits: 8
-  _edgeDistance: 0.2
+  _gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1001 &622043849
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1893,6 +1920,7 @@ MonoBehaviour:
   _collectAvailability: {fileID: 7992803093969525699}
   _playerScaler: {fileID: 5571263416282016707}
   _growthAnimator: {fileID: 6520030606848923993}
+  _gameplayHud: {fileID: 292377144}
   _speedSmoke: {fileID: 7992803093969525698}
   _adrenalineBoost: {fileID: 7992803093969525696}
   _adrenalineSound: {fileID: 292377145}
@@ -1918,13 +1946,14 @@ MonoBehaviour:
   _itemAttractor: {fileID: 7643889918465946663}
   _itemGhostToggler: {fileID: 566941591}
   _quotaItemHighlighter: {fileID: 394430649}
+  _quotaItemDetector: {fileID: 394430652}
+  _closeItemDetector: {fileID: 566941592}
   _smellAbilityActivator: {fileID: 394430651}
   _pauser: {fileID: 809963750}
   _timer: {fileID: 292377136}
   _inputReader: {fileID: 6575316736882405105}
   _sceneButtonSounds:
   - {fileID: 1242557220}
-  _gameplayHud: {fileID: 292377144}
 --- !u!4 &1684454172
 Transform:
   m_ObjectHideFlags: 0
@@ -7525,8 +7554,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8653971904166251506}
   - component: {fileID: 4713544579381441721}
+  - component: {fileID: 8653971904166251506}
   - component: {fileID: 1306941302}
   - component: {fileID: 4713544579381441722}
   m_Layer: 0
@@ -8035,10 +8064,12 @@ MonoBehaviour:
     _baseRadius: 0.7
   - _recipient: {fileID: 4219722846896299918}
     _baseRadius: 1
-  - _recipient: {fileID: 394430649}
+  - _recipient: {fileID: 394430652}
     _baseRadius: 3
   - _recipient: {fileID: 7992803093969525702}
     _baseRadius: 0.5
+  - _recipient: {fileID: 566941592}
+    _baseRadius: 1.2
 --- !u!114 &5638792502079913924
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8451,7 +8482,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fca419d10cfd05749a56c09f0f9bf5c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _config: {fileID: 11400000, guid: 90f4b9db17c6b2ffc98874fb1b3cbd0d, type: 2}
 --- !u!114 &7992803093969525697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8675,17 +8705,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!1660057539 &9223372036854775807
-SceneRoots:
-  m_ObjectHideFlags: 0
-  m_Roots:
-  - {fileID: 1684454172}
-  - {fileID: 1691083852}
-  - {fileID: 1809261850}
-  - {fileID: 292377135}
-  - {fileID: 5850846105485772491}
-  - {fileID: 1784792494}
-  - {fileID: 812539640}
 --- !u!114 &8653971904166251506
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8698,3 +8717,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0299364149894ccf8168092b0de01d62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 1684454172}
+  - {fileID: 1691083852}
+  - {fileID: 1809261850}
+  - {fileID: 292377135}
+  - {fileID: 5850846105485772491}
+  - {fileID: 1784792494}
+  - {fileID: 812539640}

@@ -99,7 +99,7 @@ namespace Quota
                 return;
             }
 
-            _collectedForeignFill += _upgrades.ForeignFillMultiplier;
+            _collectedForeignFill += _upgrades.GetForeignFillMultiplier();
         }
 
         private void CheckCompletion()

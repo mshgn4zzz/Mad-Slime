@@ -138,7 +138,7 @@ namespace Movement
 
         private void ApplySpeed()
         {
-            float baseSpeed = _tierResolver.GetSpeedFor(_playerTier.CurrentTier) * _upgrades.SpeedMultiplier;
+            float baseSpeed = _tierResolver.GetSpeedFor(_playerTier.CurrentTier) * _upgrades.GetSpeedMultiplier();
 
             _movementSpeed = baseSpeed * _boostMultiplier;
 

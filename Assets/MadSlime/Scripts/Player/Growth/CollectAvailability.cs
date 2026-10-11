@@ -39,7 +39,7 @@ namespace Player
         {
             int allowedTier = (int)_playerTier.CurrentTier;
 
-            if (_upgrades.HasAmbitions == true)
+            if (_upgrades.HasAmbitions() == true)
             {
                 allowedTier += AmbitionTierOffset;
             }
