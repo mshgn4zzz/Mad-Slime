@@ -121,17 +121,23 @@ namespace Roulette
             _arrowAngle = Mathf.Atan2(arrowOffset.y, arrowOffset.x) * Mathf.Rad2Deg;
             _averageSectorAngle = FullCircleDegrees / _sectorAngles.Length;
 
+            if (sectors.Count != _sectorIcons.Count)
+            {
+                throw new InvalidOperationException($"{name}: rewards and wheel sectors must have the same count.");
+            }
+
             for (int i = 0; i < _sectorIcons.Count; i++)
             {
-                RouletteSectorIcon sector = sectors[i % sectors.Count];
+                RouletteSectorIcon sector = sectors[i];
 
                 if (sector.Icon == null)
                 {
                     throw new InvalidOperationException(
-                        $"{name}: sector icon at index {i % sectors.Count} is null.");
+                        $"{name}: sector icon at index {i} is null.");
                 }
 
                 _sectorIcons[i].sprite = sector.Icon;
+                _sectorIcons[i].preserveAspect = true;
                 ApplySectorLabel(_sectorLabels[i], sector.Label);
             }
 

@@ -17,7 +17,7 @@ namespace Roulette
         [SerializeField] private Image _fade;
         [SerializeField, Tooltip("Иконка скина: спрайт подставляется из скина при выигрыше.")]
         private Image _skinIcon;
-        [SerializeField, Tooltip("Иконка монет: спрайт назначается в префабе, включается при денежном выигрыше.")]
+        [SerializeField, Tooltip("Иконка монет: спрайт подставляется по сумме денежного выигрыша.")]
         private Image _coinIcon;
         [SerializeField, Tooltip("Фон-подложка под призом: спрайт переключается по редкости.")]
         private Image _prizeFrame;
@@ -65,11 +65,6 @@ namespace Roulette
                     $"{name}: a plate sprite is not assigned. Drag the GUI Kit grade label sprites (blue, green, purple, orange) into the fields.");
             }
 
-            if (_coinIcon.sprite == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: CoinIcon has no sprite. Assign the coin sprite on the CoinIcon image in the prefab.");
-            }
         }
 
         private void OnEnable()
@@ -111,8 +106,15 @@ namespace Roulette
             ShowRarity(rarity, rarityName);
         }
 
-        public void InitializeCoins(int amount)
+        public void InitializeCoins(int amount, Sprite icon)
         {
+            if (icon == null)
+            {
+                throw new ArgumentNullException(nameof(icon));
+            }
+
+            _coinIcon.sprite = icon;
+            _coinIcon.preserveAspect = true;
             _skinIcon.gameObject.SetActive(false);
             _coinIcon.gameObject.SetActive(true);
 
