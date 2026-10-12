@@ -12,6 +12,7 @@ namespace EditorTools
     public class ItemPropFactory : EditorWindow
     {
         private const string PrefsKey = "MadSlime.ItemPropFactory";
+        private const float NormalizedModelSize = 0.15f;
         private const int IconSize = 256;
         private const float IconCameraDistance = 10f;
         private const float IconOrthographicPadding = 1.8f;
@@ -407,6 +408,7 @@ namespace EditorTools
 
             BoxCollider collider = root.AddComponent<BoxCollider>();
             ApplyCollider(collider, ComputeBounds(root));
+            ApplyNormalizedScale(root, collider);
 
             Item item = root.AddComponent<Item>();
             WriteItemFields(item, collider, job.FallbackDefinition);
@@ -431,6 +433,7 @@ namespace EditorTools
                 }
 
                 ApplyCollider(collider, ComputeBounds(contents));
+                ApplyNormalizedScale(contents, collider);
 
                 Item item = contents.GetComponent<Item>();
 
@@ -511,6 +514,21 @@ namespace EditorTools
             }
 
             serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private void ApplyNormalizedScale(GameObject root, BoxCollider collider)
+        {
+            float largestDimension = Mathf.Max(collider.size.x, collider.size.y, collider.size.z);
+            root.transform.localScale = Vector3.one * (NormalizedModelSize / largestDimension);
+            Vector3 pivotOffset = collider.center;
+            pivotOffset.y -= collider.size.y * 0.5f;
+
+            for (int childIndex = 0; childIndex < root.transform.childCount; childIndex++)
+            {
+                root.transform.GetChild(childIndex).localPosition -= pivotOffset;
+            }
+
+            collider.center -= pivotOffset;
         }
 
         private static void ApplyCollider(BoxCollider collider, Bounds bounds)

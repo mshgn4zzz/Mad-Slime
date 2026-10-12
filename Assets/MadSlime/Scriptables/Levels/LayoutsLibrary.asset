@@ -14,3 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _layouts:
   - {fileID: 11400000, guid: 79f850a49727d7f4baf2325c2abd9ba5, type: 2}
+  - {fileID: 11400000, guid: 0318828e02d25f641a94ce43e11a41b4, type: 2}
+  - {fileID: 11400000, guid: 710d29f52da743d88741e6260d38b8b3, type: 2}
+  - {fileID: 11400000, guid: 95387b2c0602434ca567bbe8655678e3, type: 2}
+  - {fileID: 11400000, guid: d621e4615102486384fdc9faa19aed68, type: 2}
+  - {fileID: 11400000, guid: 0a974b42ed8f4b1cbcf6e77b419029e8, type: 2}
+  - {fileID: 11400000, guid: f4ed7e2315c442f5ad606fd9aa001e2d, type: 2}
+  - {fileID: 11400000, guid: 6457dd30b6e5459c9bee608c6fe71435, type: 2}

@@ -1,0 +1,408 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cabfd7a58666dd469a0eeed6f3ec8e0, type: 3}
+  m_Name: LayoutSetTerraces
+  m_EditorClassIdentifier:
+  _zones:
+  - _shape: 1
+    _center: {x: 0, y: 0}
+    _radius: 6
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 2
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 0, y: 0}
+    _radius: 8
+    _count: 20
+    _autoSpacing: 0
+    _spacing: 2
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 0, y: 0}
+    _radius: 10
+    _count: 24
+    _autoSpacing: 0
+    _spacing: 2
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 15.000
+    _count: 40
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 18.000
+    _count: 48
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 21.000
+    _count: 56
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 24.000
+    _count: 64
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 27.000
+    _count: 72
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 30.000
+    _count: 80
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 33.000
+    _count: 88
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 36.000
+    _count: 96
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 39.000
+    _count: 104
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 42.000
+    _count: 112
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 45.000
+    _count: 120
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 48.000
+    _count: 128
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 51.000
+    _count: 136
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 54.000
+    _count: 144
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 57.000
+    _count: 152
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 60.000
+    _count: 160
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 63.000
+    _count: 168
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 66.000
+    _count: 176
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 69.000
+    _count: 184
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 72.000
+    _count: 192
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 75.000
+    _count: 200
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 78.000
+    _count: 208
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 81.000
+    _count: 216
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 84.000
+    _count: 224
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 87.000
+    _count: 232
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 90.000
+    _count: 240
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 93.000
+    _count: 248
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 101.000
+    _count: 115
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 108.000
+    _count: 123
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 115.000
+    _count: 131
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 122.000
+    _count: 139
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 129.000
+    _count: 147
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 136.000
+    _count: 155
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 139.000
+    _count: 79
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 153.000
+    _count: 87
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 167.000
+    _count: 95
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 177.000
+    _count: 61
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 200.000
+    _count: 69
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 220.000
+    _count: 24
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 4
+    _maxTier: 4
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 250.000
+    _count: 8
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 5
+    _maxTier: 5
+    _singleType: 0
+  _allowMirroring: 1
+  _autoSpacingFactor: 2.3
+  _scatterDistanceFactor: 0.95
+  _smallItemStartClearRadius: 2
+  _startClearRadius: 10
+  _largeItemGap: 0.75

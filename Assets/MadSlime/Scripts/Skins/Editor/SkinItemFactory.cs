@@ -12,7 +12,7 @@ namespace EditorTools
         private const string PrefsKey = "MadSlime.SkinItemFactory";
         private const int IconSize = 256;
         private const float IconCameraDistance = 10f;
-        private const float IconOrthographicPadding = 1.8f;
+        private const float IconOrthographicPadding = 1f;
         private const float IconLightIntensity = 1.2f;
         private const string DefaultSkinsPath = "Assets/MadSlime/Scriptables/Skins";
         private const string DefaultPrefabsPath = "Assets/MadSlime/Resources/Models/Player";
@@ -319,7 +319,7 @@ namespace EditorTools
 
             Light light = lightGO.AddComponent<Light>();
             light.type = LightType.Directional;
-            light.transform.rotation = Quaternion.Euler(45f, -30f, 0f);
+            light.transform.rotation = Quaternion.Euler(35f, 210f, 0f);
             light.intensity = IconLightIntensity;
             light.cullingMask = 1 << iconLayer;
             light.shadows = LightShadows.None;
@@ -364,8 +364,8 @@ namespace EditorTools
                 bounds.Encapsulate(renderers[i].bounds);
             }
 
-            Vector3 offset = new Vector3(-1f, 1f, -1f).normalized * IconCameraDistance;
-            cam.transform.position = bounds.center + offset;
+            Vector3 offset = Quaternion.Euler(0f, 30f, 0f) * new Vector3(0f, 0.35f, 1f);
+            cam.transform.position = bounds.center + offset.normalized * IconCameraDistance;
             cam.transform.LookAt(bounds.center);
 
             cam.orthographicSize = bounds.extents.magnitude * IconOrthographicPadding;

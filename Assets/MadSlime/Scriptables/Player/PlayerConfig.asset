@@ -61,13 +61,12 @@ MonoBehaviour:
   _pickupSoundMinPitch: 0.95
   _pickupSoundMaxPitch: 1.15
   _deformMaxStretch: 0.3
-  _deformSqueeze: 0.55
   _crawlStretchCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.2
+      value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -75,7 +74,7 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.3
+      time: 0.35
       value: 1
       inSlope: 0
       outSlope: 0
@@ -84,8 +83,8 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.65
-      value: 0.35
+      time: 0.7
+      value: 0.4
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -94,7 +93,7 @@ MonoBehaviour:
       outWeight: 0
     - serializedVersion: 3
       time: 1
-      value: 0.2
+      value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -104,81 +103,38 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _crawlThrustCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 0.3
-      value: 1.45
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 0.65
-      value: 0.6
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  _crawlStride: 3
-  _stridePerSpeed: 0.28
-  _crawlThrustDepth: 0.56
+  _movementSquashFrequency: 1.6
+  _finalSquashFrequencyMultiplier: 2
   _crawlRampTime: 0.15
   _startMass: 6
   _thresholds:
   - _tier: 0
     _requiredMass: 0
     _scaleMultiplier: 2
-    _speed: 5
+    _speed: 6
     _cameraOffsetMultiplier: 1
   - _tier: 1
     _requiredMass: 50
     _scaleMultiplier: 4
-    _speed: 10
+    _speed: 13
     _cameraOffsetMultiplier: 1.5
   - _tier: 2
     _requiredMass: 4000
     _scaleMultiplier: 8
-    _speed: 15
+    _speed: 20
     _cameraOffsetMultiplier: 2
   - _tier: 3
     _requiredMass: 15000
     _scaleMultiplier: 15
-    _speed: 20
+    _speed: 40
     _cameraOffsetMultiplier: 3
   - _tier: 4
     _requiredMass: 40000
     _scaleMultiplier: 30
-    _speed: 25
+    _speed: 60
     _cameraOffsetMultiplier: 5
   - _tier: 5
     _requiredMass: 70000
     _scaleMultiplier: 60
-    _speed: 40
+    _speed: 80
     _cameraOffsetMultiplier: 8

@@ -7,6 +7,8 @@ namespace Roulette
 {
     public class SkinShowcase
     {
+        private const float FullChance = 100f;
+
         private RouletteConfig _config;
         private RouletteProbabilityRules _probabilityRules;
         private ISkinStorage _storage;
@@ -50,7 +52,8 @@ namespace Roulette
             {
                 SkinItem skin = _catalog[i];
 
-                if (IsExclusive(skin) == false && _inventory.IsOpen(skin.Id) == false)
+                if (IsExclusive(skin) == false && _inventory.IsOpen(skin.Id) == false
+                    && _probabilityRules.GetSkinDropChance(skin.Rarity) > 0f)
                 {
                     return true;
                 }
@@ -75,11 +78,14 @@ namespace Roulette
                 }
             }
 
+            EnsureRarityRepresentation(skins, slotCount);
+
             for (int i = 0; i < _catalog.Count && skins.Count < slotCount; i++)
             {
                 SkinItem skin = _catalog[i];
 
-                if (IsExclusive(skin) == false && skins.Contains(skin) == false)
+                if (IsExclusive(skin) == false && _inventory.IsOpen(skin.Id) == false
+                    && _probabilityRules.GetSkinDropChance(skin.Rarity) > 0f && skins.Contains(skin) == false)
                 {
                     skins.Add(skin);
                 }
@@ -87,7 +93,18 @@ namespace Roulette
 
             if (skins.Count == 0)
             {
-                throw new InvalidOperationException("Skin roulette requires ordinary skins in its catalog.");
+                for (int i = 0; i < _catalog.Count; i++)
+                {
+                    if (IsExclusive(_catalog[i]) == false)
+                    {
+                        skins.Add(_catalog[i]);
+                    }
+                }
+
+                if (skins.Count == 0)
+                {
+                    throw new InvalidOperationException("Skin roulette requires ordinary skins in its catalog.");
+                }
             }
 
             if (ids.Count > slotCount)
@@ -110,17 +127,89 @@ namespace Roulette
                 }
             }
 
+            float availableChance = 0f;
+            HashSet<SkinRarity> availableRarities = new HashSet<SkinRarity>();
+
+            for (int i = 0; i < entries.Count; i++)
+            {
+                if (availableRarities.Add(entries[i].Rarity) == true)
+                {
+                    availableChance += _probabilityRules.GetSkinDropChance(entries[i].Rarity);
+                }
+            }
+
             List<RouletteSlot> slots = new List<RouletteSlot>();
 
             for (int i = 0; i < entries.Count; i++)
             {
                 SkinItem skin = entries[i];
                 int raritySlots = CountRarity(entries, skin.Rarity);
-                float weight = _probabilityRules.GetSkinDropChance(skin.Rarity) / raritySlots;
+                float weight = 0f;
+
+                if (availableChance > 0f)
+                {
+                    weight = FullChance * _probabilityRules.GetSkinDropChance(skin.Rarity) / availableChance / raritySlots;
+                }
                 slots.Add(new RouletteSlot(skin, 0, weight, false));
             }
 
             return slots;
+        }
+
+        private void EnsureRarityRepresentation(List<SkinItem> skins, int slotCount)
+        {
+            for (int rarityIndex = 0; rarityIndex <= (int)SkinRarity.Legendary; rarityIndex++)
+            {
+                SkinRarity rarity = (SkinRarity)rarityIndex;
+
+                if (_probabilityRules.GetSkinDropChance(rarity) <= 0f || CountRarity(skins, rarity) > 0)
+                {
+                    continue;
+                }
+
+                SkinItem candidate = FindAvailable(rarity);
+
+                if (candidate == null)
+                {
+                    continue;
+                }
+
+                if (skins.Count >= slotCount)
+                {
+                    RemoveRepeatedRarity(skins);
+                }
+
+                skins.Add(candidate);
+            }
+        }
+
+        private SkinItem FindAvailable(SkinRarity rarity)
+        {
+            for (int i = 0; i < _catalog.Count; i++)
+            {
+                SkinItem skin = _catalog[i];
+
+                if (skin.Rarity == rarity && IsExclusive(skin) == false && _inventory.IsOpen(skin.Id) == false)
+                {
+                    return skin;
+                }
+            }
+
+            return null;
+        }
+
+        private void RemoveRepeatedRarity(List<SkinItem> skins)
+        {
+            for (int i = skins.Count - 1; i >= 0; i--)
+            {
+                if (CountRarity(skins, skins[i].Rarity) > 1)
+                {
+                    skins.RemoveAt(i);
+                    return;
+                }
+            }
+
+            throw new InvalidOperationException("Skin roulette needs at least one sector for every available rarity with a positive chance.");
         }
 
         private void AppendQuota(List<string> formed, List<string> existing, SkinRarity rarity, int quota)
@@ -178,6 +267,11 @@ namespace Roulette
 
         private bool IsExclusive(SkinItem skin)
         {
+            if (skin.Rarity == SkinRarity.Legendary)
+            {
+                return true;
+            }
+
             for (int i = 0; i < _config.ExclusiveSkins.Count; i++)
             {
                 if (_config.ExclusiveSkins[i].Id == skin.Id)

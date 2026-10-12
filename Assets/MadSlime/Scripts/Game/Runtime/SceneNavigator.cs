@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Saves;
+using Skins;
 using VContainer;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -28,17 +29,20 @@ namespace Game
         private Action _currentSessionStart;
         private Action _currentSessionFinish;
         private Canvas _loadingScreenInstance;
+        private LoadingScreenView _loadingView;
 
         public SceneId CurrentSceneId => _currentSceneId;
 
         public SceneId PreviousSceneId => _previousSceneId;
 
         private ISavesReadiness _readiness;
+        private SkinInventory _skinInventory;
 
         [Inject]
-        public void Construct(ISavesReadiness readiness)
+        public void Construct(ISavesReadiness readiness, SkinInventory skinInventory)
         {
             _readiness = readiness;
+            _skinInventory = skinInventory;
         }
 
         public bool IsTransitioning => _isTransitioning;
@@ -114,8 +118,12 @@ namespace Game
             {
                 ShowLoadingScreen();
                 await UniTask.WaitUntil(IsSaveReady, cancellationToken: sessionToken);
+                _skinInventory.Initialize();
+                _loadingView.SetSkin(_skinInventory.SelectedSkinId);
+                await UniTask.NextFrame(cancellationToken: sessionToken);
                 EnsureInitialized();
                 await preparation.Invoke(sessionToken);
+                await _loadingView.CompleteAsync(sessionToken);
                 sessionToken.ThrowIfCancellationRequested();
                 _currentSessionStart = sessionStart;
                 _currentSessionFinish = sessionFinish;
@@ -205,6 +213,7 @@ namespace Game
             _currentSessionFinish?.Invoke();
             CancellationToken cancellationToken = this.GetCancellationTokenOnDestroy();
 
+            await UniTask.NextFrame(cancellationToken: cancellationToken);
             SceneId sourceSceneId = _currentSceneId;
             Scene sourceScene = SceneManager.GetSceneByName(GetSceneName(sourceSceneId));
 
@@ -243,6 +252,7 @@ namespace Game
             SceneManager.SetActiveScene(targetScene);
             await UniTask.WaitUntil(IsIncomingSessionRegistered, cancellationToken: cancellationToken);
             await _pendingPreparation.Invoke(_pendingSessionToken);
+            await _loadingView.CompleteAsync(cancellationToken);
             _pendingSessionToken.ThrowIfCancellationRequested();
 
             if (sourceScene.isLoaded)
@@ -265,6 +275,14 @@ namespace Game
             HideLoadingScreen();
         }
 
+        public void ReportPreparationProgress(float progress)
+        {
+            if (_loadingView != null)
+            {
+                _loadingView.SetProgress(progress);
+            }
+        }
+
         private void ShowLoadingScreen()
         {
             if (_loadingScreenPrefab == null)
@@ -279,6 +297,20 @@ namespace Game
             }
 
             _loadingScreenInstance = Instantiate(_loadingScreenPrefab, transform);
+
+            if (_loadingScreenInstance.TryGetComponent(out _loadingView) == false)
+            {
+                throw new InvalidOperationException($"{name}: the loading prefab must contain LoadingScreenView.");
+            }
+
+            string skinId = SkinInventory.InitialSkinId;
+
+            if (_readiness.IsReady == true)
+            {
+                skinId = _skinInventory.SelectedSkinId;
+            }
+
+            _loadingView.SetSkin(skinId);
         }
 
         private void HideLoadingScreen()
@@ -290,6 +322,7 @@ namespace Game
 
             Destroy(_loadingScreenInstance.gameObject);
             _loadingScreenInstance = null;
+            _loadingView = null;
         }
 
         private static void DisableOutgoingSystems(Scene sourceScene)

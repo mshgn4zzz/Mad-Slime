@@ -19,10 +19,14 @@ namespace Player
         private PlayerTier _playerTier;
         private TierResolver _tierResolver;
 
+        public event Action<float> RelativeScaleChanged;
+
         private float _baseColliderRadius;
         private float _baseColliderHeight;
         private float _baseColliderCenterY;
         private float _currentMultiplier = 1f;
+        private float _initialMultiplier = 1f;
+        private float _relativeScale = 1f;
 
         [Inject]
         public void Construct(PlayerTier playerTier, TierResolver tierResolver)
@@ -95,6 +99,7 @@ namespace Player
 
             float targetMultiplier = _tierResolver.GetScaleFor(currentTier);
 
+            _initialMultiplier = targetMultiplier;
             _currentMultiplier = targetMultiplier;
             ApplyMultiplier();
         }
@@ -115,10 +120,15 @@ namespace Player
             ApplyMultiplier();
         }
 
+        public float RelativeScale => _relativeScale;
+
         private void ApplyMultiplier()
         {
             _modelTransform.localScale = Vector3.one * _currentMultiplier;
             _modelTransform.localPosition = new Vector3(0f, _baseColliderCenterY * _currentMultiplier, 0f);
+
+            _relativeScale = _currentMultiplier / _initialMultiplier;
+            RelativeScaleChanged?.Invoke(_relativeScale);
 
             _playerCollider.height = _baseColliderHeight * _currentMultiplier;
             _playerCollider.radius = _baseColliderRadius * _currentMultiplier;

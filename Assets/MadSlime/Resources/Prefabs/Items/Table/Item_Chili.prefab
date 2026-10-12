@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7723809818026352774}
   - component: {fileID: 2135421274998680955}
+  - component: {fileID: 7723809818026352774}
   - component: {fileID: 4267546099392978565}
   - component: {fileID: 3248723085793609923}
   - component: {fileID: 7723809818026352674}
@@ -30,12 +30,25 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.65203923, y: 0.65203923, z: 0.65203923}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2775249995704055544}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7723809818026352774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 412670562047978862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa669f528708ba027a628953ef1ce0c8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  _collider: {fileID: 4267546099392978565}
 --- !u!65 &4267546099392978565
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -56,7 +69,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.107586235, y: 0.034135126, z: 0.2300475}
-  m_Center: {x: -0.004935015, y: 0.0015795948, z: 0.00848189}
+  m_Center: {x: 0, y: 0.017067563, z: 0}
 --- !u!114 &3248723085793609923
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94,15 +107,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 309828826319317368, guid: 1807159ec89ebce49b7e618e03e6d277, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.0011617928
+      value: 0.0037732222
       objectReference: {fileID: 0}
     - target: {fileID: 309828826319317368, guid: 1807159ec89ebce49b7e618e03e6d277, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.015487968
       objectReference: {fileID: 0}
     - target: {fileID: 309828826319317368, guid: 1807159ec89ebce49b7e618e03e6d277, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.0005767876
+      value: -0.009058678
       objectReference: {fileID: 0}
     - target: {fileID: 309828826319317368, guid: 1807159ec89ebce49b7e618e03e6d277, type: 3}
       propertyPath: m_LocalRotation.w
@@ -136,6 +149,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chili
       objectReference: {fileID: 0}
+    - target: {fileID: 1443288719899464215, guid: 1807159ec89ebce49b7e618e03e6d277, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1443288719899464215, guid: 1807159ec89ebce49b7e618e03e6d277, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1443288719899464215, guid: 1807159ec89ebce49b7e618e03e6d277, type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1443288719899464215, guid: 1807159ec89ebce49b7e618e03e6d277, type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1443288719899464215, guid: 1807159ec89ebce49b7e618e03e6d277, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value:
+      objectReference: {fileID: 2100000, guid: 9c79b029c507f0ded91147e39c88cf0e, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -146,16 +179,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 309828826319317368, guid: 1807159ec89ebce49b7e618e03e6d277, type: 3}
   m_PrefabInstance: {fileID: 2508241692715933568}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7723809818026352774
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 412670562047978862}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa669f528708ba027a628953ef1ce0c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier:
-  _collider: {fileID: 4267546099392978565}

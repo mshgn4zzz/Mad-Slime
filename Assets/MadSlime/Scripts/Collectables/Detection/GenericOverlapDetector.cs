@@ -26,7 +26,7 @@ namespace Detection
         protected virtual void Update()
         {
             _currentTargets.Clear();
-            int hitsCount = Physics.OverlapSphereNonAlloc(transform.position, _radius, _buffer, _layerMask);
+            int hitsCount = CollectHits();
 
             for (int i = 0; i < hitsCount; i++)
             {
@@ -49,6 +49,19 @@ namespace Detection
             HashSet<T> reusableTargets = _previousTargets;
             _previousTargets = _currentTargets;
             _currentTargets = reusableTargets;
+        }
+
+        private int CollectHits()
+        {
+            int hitsCount = Physics.OverlapSphereNonAlloc(transform.position, _radius, _buffer, _layerMask);
+
+            while (hitsCount == _buffer.Length)
+            {
+                Array.Resize(ref _buffer, _buffer.Length * 2);
+                hitsCount = Physics.OverlapSphereNonAlloc(transform.position, _radius, _buffer, _layerMask);
+            }
+
+            return hitsCount;
         }
 
         protected virtual void OnDisable()

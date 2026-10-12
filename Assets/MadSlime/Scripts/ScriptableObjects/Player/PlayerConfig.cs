@@ -60,36 +60,23 @@ namespace Scriptables
         [Tooltip("Максимальный питч звука сбора.")]
         [SerializeField, Range(0.1f, 3f)] private float _pickupSoundMaxPitch = 1.15f;
 
-        [Header("Deform")]
-        [Tooltip("Максимальное вытягивание слайма вдоль движения на полной скорости (доля). 0.2 = +20% по оси движения.")]
+        [Header("Movement Squash")]
+        [Tooltip("Глубина сжатия по высоте при движении. 0.2 = высота сжимается до 80% и возвращается к исходной.")]
         [SerializeField, Range(0f, 0.5f)] private float _deformMaxStretch = 0.22f;
 
-        [Tooltip("Насколько сжимаются поперечные оси при вытягивании. 0.5 = половина от величины вытягивания.")]
-        [SerializeField, Range(0f, 1f)] private float _deformSqueeze = 0.55f;
-
-        [Header("Crawl")]
-        [Tooltip("Форма вытягивания за цикл ползка: X — фаза цикла (0–1), Y — доля от Deform Max Stretch (можно ниже нуля — вжим вдоль движения). Значение в нуле должно совпадать со значением в единице, иначе цикл щёлкает на стыке.")]
+        [Header("Movement Cycle")]
+        [Tooltip("Форма сжатия: X — фаза шага (0–1), Y — глубина сжатия (0–1). 0 — исходный размер, 1 — максимальное сжатие. Значение в нуле должно совпадать со значением в единице, иначе цикл щёлкает на стыке.")]
         [SerializeField] private AnimationCurve _crawlStretchCurve = new AnimationCurve(
-            new Keyframe(0f, 0.2f),
-            new Keyframe(0.3f, 1f),
-            new Keyframe(0.65f, 0.35f),
-            new Keyframe(1f, 0.2f));
+            new Keyframe(0f, 0f),
+            new Keyframe(0.35f, 1f),
+            new Keyframe(0.7f, 0.4f),
+            new Keyframe(1f, 0f));
 
-        [Tooltip("Множитель скорости за цикл ползка: X — фаза цикла (0–1), Y — множитель (1 = обычная скорость). Держи среднее по циклу около единицы, иначе уедет фактическая скорость. Значение в нуле должно совпадать со значением в единице.")]
-        [SerializeField] private AnimationCurve _crawlThrustCurve = new AnimationCurve(
-            new Keyframe(0f, 1f),
-            new Keyframe(0.3f, 1.45f),
-            new Keyframe(0.65f, 0.6f),
-            new Keyframe(1f, 1f));
+        [Tooltip("Частота вдавливания при движении (циклы/с). Не зависит от скорости игрока.")]
+        [SerializeField, Min(0.01f)] private float _movementSquashFrequency = 1.6f;
 
-        [Tooltip("Базовая длина шага ползка: сколько метров пути занимает полный цикл.")]
-        [SerializeField, Min(0f)] private float _crawlStride = 3f;
-
-        [Tooltip("Прирост длины шага на единицу скорости (с). Шаг = база + скорость × значение. Чем больше, тем ближе частота ползка к константе на больших тирах (предел частоты = 1 / значение).")]
-        [SerializeField, Min(0f)] private float _stridePerSpeed = 0.28f;
-
-        [Tooltip("Глубина рывка: насколько сильно скорость пульсирует внутри цикла. 0 = ровная скорость, остаётся только анимация ползка; 1 = максимальные рывки.")]
-        [SerializeField, Range(0f, 1f)] private float _crawlThrustDepth = 0.55f;
+        [Tooltip("Во сколько раз ускоряется вдавливание к концу финального отсчёта.")]
+        [SerializeField, Min(1f)] private float _finalSquashFrequencyMultiplier = 2f;
 
         [Tooltip("Плавность включения и затухания цикла ползка (с). Больше = мягче старт и остановка.")]
         [SerializeField, Min(0.01f)] private float _crawlRampTime = 0.15f;
@@ -118,12 +105,9 @@ namespace Scriptables
         public float PickupSoundMinPitch => _pickupSoundMinPitch;
         public float PickupSoundMaxPitch => _pickupSoundMaxPitch;
         public float DeformMaxStretch => _deformMaxStretch;
-        public float DeformSqueeze => _deformSqueeze;
         public AnimationCurve CrawlStretchCurve => _crawlStretchCurve;
-        public AnimationCurve CrawlThrustCurve => _crawlThrustCurve;
-        public float CrawlStride => _crawlStride;
-        public float StridePerSpeed => _stridePerSpeed;
-        public float CrawlThrustDepth => _crawlThrustDepth;
+        public float MovementSquashFrequency => _movementSquashFrequency;
+        public float FinalSquashFrequencyMultiplier => _finalSquashFrequencyMultiplier;
         public float CrawlRampTime => _crawlRampTime;
         public int StartMass => _startMass;
         public IReadOnlyList<PlayerTierThreshold> Thresholds => _thresholds;

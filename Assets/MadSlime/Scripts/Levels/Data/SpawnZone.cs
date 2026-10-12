@@ -6,7 +6,7 @@ namespace Scriptables
     [System.Serializable]
     public class SpawnZone
     {
-        [Tooltip("Форма зоны раскладки: Grid (сетка), Circle (круг), Scatter (хаотичный россыпь), CircleGrid (кольцо из сетки).")]
+        [Tooltip("Форма зоны раскладки: Grid (сетка), Circle (круг), Scatter (хаотичный россыпь), CircleGrid (концентрические ряды), SquareRing (периметр квадрата), SquareScatter (хаос в квадрате).")]
         [SerializeField] private SpawnShape _shape = SpawnShape.Circle;
 
         [Tooltip("Центр зоны в координатах комнаты.")]

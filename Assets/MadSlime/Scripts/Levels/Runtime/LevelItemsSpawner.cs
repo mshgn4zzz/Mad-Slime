@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Collectables;
 using Items;
 using UnityEngine;
@@ -8,6 +10,8 @@ namespace Game
 {
     public class LevelItemsSpawner
     {
+        private const float SpawnFrameBudgetSeconds = 0.006f;
+
         private ItemFactory _itemFactory;
         private Transform _itemsRoot;
         private ItemCollector _collector;
@@ -52,7 +56,11 @@ namespace Game
 
             Vector3 scaledSize = Vector3.Scale(boxCollider.size, prefab.transform.lossyScale);
 
-            return Mathf.Max(scaledSize.x, scaledSize.z) * 0.5f;
+            Vector3 scaledCenter = Vector3.Scale(boxCollider.center, prefab.transform.lossyScale);
+            float footprintRadius = new Vector2(scaledSize.x, scaledSize.z).magnitude * 0.5f;
+            float pivotOffset = new Vector2(scaledCenter.x, scaledCenter.z).magnitude;
+
+            return footprintRadius + pivotOffset;
         }
 
         public void Attach(ItemCollector collector)
@@ -93,16 +101,30 @@ namespace Game
             _spawnedCounts.Clear();
         }
 
-        public void Spawn(IReadOnlyList<LevelPlacement> placements)
+        public async UniTask SpawnAsync(IReadOnlyList<LevelPlacement> placements, Action<float> progress,
+            CancellationToken cancellationToken)
         {
+            float frameStart = Time.realtimeSinceStartup;
+
             for (int i = 0; i < placements.Count; i++)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 LevelPlacement placement = placements[i];
                 Item item = _itemFactory.Create(placement.Prefab, placement.Definition,
                     placement.Position, placement.Scale, _itemsRoot);
                 _activeItems.Add(item);
                 CountSpawned(placement.Definition);
+
+                if (Time.realtimeSinceStartup - frameStart >= SpawnFrameBudgetSeconds)
+                {
+                    float completed = (i + 1) / (float)placements.Count;
+                    progress?.Invoke(completed);
+                    await UniTask.NextFrame(cancellationToken: cancellationToken);
+                    frameStart = Time.realtimeSinceStartup;
+                }
             }
+
+            progress?.Invoke(1f);
         }
 
         private void OnItemCollected(Item item)
