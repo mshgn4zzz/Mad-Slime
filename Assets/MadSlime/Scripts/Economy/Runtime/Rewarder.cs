@@ -1,4 +1,5 @@
 using Scriptables;
+using Saves;
 using System;
 using UnityEngine;
 using VContainer;
@@ -10,6 +11,8 @@ namespace Game
         [SerializeField] private RewardConfig _config;
 
         private Wallet _wallet;
+        private ILevelStorage _levelStorage;
+        private int _levelReward;
         private int _grantedAmount;
         private bool _isLevelResultCommitted;
 
@@ -20,9 +23,10 @@ namespace Game
         public bool IsWin => _isWin;
 
         [Inject]
-        public void Construct(Wallet wallet)
+        public void Construct(Wallet wallet, ILevelStorage levelStorage)
         {
             _wallet = wallet;
+            _levelStorage = levelStorage;
         }
 
         private void Awake()
@@ -44,6 +48,11 @@ namespace Game
                 throw new InvalidOperationException(
                     $"{name}: Wallet was not injected. Check that FillLifetimeScope registers Wallet and Rewarder.");
             }
+
+            if (_levelStorage == null)
+            {
+                throw new InvalidOperationException($"{name}: ILevelStorage was not injected.");
+            }
         }
 
         public void CommitLevelResult(float percent)
@@ -60,6 +69,7 @@ namespace Game
                     "CommitLevelResult requires a fill percent within 0..1.");
             }
 
+            _levelReward = _config.GetReward(_levelStorage.CurrentLevel);
             _isLevelResultCommitted = true;
             _isWin = percent >= 1f;
             _grantedAmount = CalculateReward(percent);
@@ -85,14 +95,14 @@ namespace Game
 
             _isWin = true;
 
-            int topUp = _config.BaseReward - _grantedAmount;
+            int topUp = _levelReward - _grantedAmount;
 
             if (topUp > 0)
             {
                 _wallet.Add(topUp);
             }
 
-            _grantedAmount = _config.BaseReward;
+            _grantedAmount = _levelReward;
         }
 
         public void ResetLevelResult()
@@ -100,18 +110,19 @@ namespace Game
             _isLevelResultCommitted = false;
             _isWin = false;
             _grantedAmount = 0;
+            _levelReward = 0;
         }
 
         private int CalculateReward(float percent)
         {
             if (percent >= 1f)
             {
-                return _config.BaseReward;
+                return _levelReward;
             }
 
             if (percent >= _config.LoseMultiplierThreshold)
             {
-                return _config.BaseReward / _config.LoseRewardDivisor;
+                return _levelReward / _config.LoseRewardDivisor;
             }
 
             return 0;

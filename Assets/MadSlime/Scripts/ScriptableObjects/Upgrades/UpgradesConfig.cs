@@ -7,7 +7,7 @@ namespace Upgrades
     [CreateAssetMenu(menuName = "Mad Slime/Upgrades Config", fileName = "NewUpgradesConfig")]
     public class UpgradesConfig : ScriptableObject
     {
-        [Tooltip("Ступенчатые прокачки: цена ступени = BaseCost + CostStep * текущий уровень ступени.")]
+        [Tooltip("Ступенчатые прокачки: цена ступени = BaseCost * CostMultiplier в степени текущего уровня.")]
         [SerializeField] private List<UpgradeEntry> _upgrades = new List<UpgradeEntry>();
 
         [Tooltip("Одноразовые покупки: стоят дорого, покупаются один раз, бафф навсегда.")]
@@ -39,8 +39,8 @@ namespace Upgrades
         [Tooltip("Цена первой ступени.")]
         [SerializeField, Min(0)] private int _baseCost = 200;
 
-        [Tooltip("Насколько дороже каждая следующая ступень.")]
-        [SerializeField, Min(0)] private int _costStep = 150;
+        [Tooltip("Множитель цены каждой следующей ступени. 2 = удвоение.")]
+        [SerializeField, Min(1)] private int _costMultiplier = 2;
 
         [Tooltip("Прирост эффекта за КАЖДУЮ ступень отдельно (доля от 1), по порядку. " +
             "Число значений обязано совпадать с MaxSteps.")]
@@ -52,7 +52,7 @@ namespace Upgrades
         public UpgradeType Type => _type;
         public Sprite Icon => _icon;
         public int BaseCost => _baseCost;
-        public int CostStep => _costStep;
+        public int CostMultiplier => _costMultiplier;
         public IReadOnlyList<float> StepValues => _stepValues;
         public int MaxSteps => _maxSteps;
 
