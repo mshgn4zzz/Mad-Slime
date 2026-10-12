@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8352274594719945553}
   - component: {fileID: 8237682062453097111}
+  - component: {fileID: 8352274594719945553}
   - component: {fileID: 7735408281314249958}
   - component: {fileID: 8352274594719945453}
   - component: {fileID: 990361985922047315}
@@ -30,12 +30,25 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.43936947, y: 0.43936947, z: 0.43936947}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5323751303141229793}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8352274594719945553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4944913330619673294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa669f528708ba027a628953ef1ce0c8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  _collider: {fileID: 7735408281314249958}
 --- !u!65 &7735408281314249958
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -56,7 +69,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.24618489, y: 0.14883295, z: 0.34139833}
-  m_Center: {x: 0.005171597, y: 0.07441647, z: 0.007386595}
+  m_Center: {x: 0, y: 0.07441647, z: 0}
 --- !u!114 &8352274594719945453
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,13 +105,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8237682062453097111}
     m_Modifications:
+    - target: {fileID: 1839487413851446523, guid: 19420a44b1421a3408ae628eb8bc0470, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1839487413851446523, guid: 19420a44b1421a3408ae628eb8bc0470, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1839487413851446523, guid: 19420a44b1421a3408ae628eb8bc0470, type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1839487413851446523, guid: 19420a44b1421a3408ae628eb8bc0470, type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1839487413851446523, guid: 19420a44b1421a3408ae628eb8bc0470, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value:
+      objectReference: {fileID: 2100000, guid: 76a4b7ff62250e481b336b0ee7bd3e4d, type: 2}
     - target: {fileID: 6608224049038899812, guid: 19420a44b1421a3408ae628eb8bc0470, type: 3}
       propertyPath: m_Name
       value: Book_08
       objectReference: {fileID: 0}
     - target: {fileID: 7319805613229858893, guid: 19420a44b1421a3408ae628eb8bc0470, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.005171597
       objectReference: {fileID: 0}
     - target: {fileID: 7319805613229858893, guid: 19420a44b1421a3408ae628eb8bc0470, type: 3}
       propertyPath: m_LocalPosition.y
@@ -106,7 +139,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7319805613229858893, guid: 19420a44b1421a3408ae628eb8bc0470, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.007386595
       objectReference: {fileID: 0}
     - target: {fileID: 7319805613229858893, guid: 19420a44b1421a3408ae628eb8bc0470, type: 3}
       propertyPath: m_LocalRotation.w
@@ -146,16 +179,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7319805613229858893, guid: 19420a44b1421a3408ae628eb8bc0470, type: 3}
   m_PrefabInstance: {fileID: 3203449078184174764}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8352274594719945553
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4944913330619673294}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa669f528708ba027a628953ef1ce0c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier:
-  _collider: {fileID: 7735408281314249958}

@@ -8,9 +8,13 @@ namespace Player
 {
     public class SpeedSmoke : MonoBehaviour
     {
-        [Tooltip("Заранее расставленный в сцене зацикленный партикл дыма: код только включает и выключает проигрывание, настройки не трогает.")]
+        [Tooltip("Заранее расставленный в сцене зацикленный партикл дыма: масштаб растёт вместе с игроком, настройки эффекта задаются в сцене.")]
         [SerializeField] private ParticleSystem _smoke;
 
+        [SerializeField] private PlayerScaler _playerScaler;
+
+        private Vector3 _baseSmokeScale;
+        private Vector3 _baseSmokePosition;
         private PlayerConfig _config;
         private Movement.Movement _movement;
         private bool _isSmoking;
@@ -42,12 +46,21 @@ namespace Player
                     $"{name}: Movement was not injected. Check that GameLifetimeScope registers Movement and SpeedSmoke.");
             }
 
+            if (_playerScaler == null)
+            {
+                throw new InvalidOperationException($"{name}: PlayerScaler must be assigned for smoke growth.");
+            }
+
+            _baseSmokeScale = _smoke.transform.localScale;
+            _baseSmokePosition = _smoke.transform.localPosition;
             _smoke.Stop(true, ParticleSystemStopBehavior.StopEmitting);
         }
 
         private void OnEnable()
         {
             _movement.SpeedChanged += OnSpeedChanged;
+            _playerScaler.RelativeScaleChanged += OnScaleChanged;
+            OnScaleChanged(_playerScaler.RelativeScale);
 
             Refresh();
         }
@@ -55,8 +68,15 @@ namespace Player
         private void OnDisable()
         {
             _movement.SpeedChanged -= OnSpeedChanged;
+            _playerScaler.RelativeScaleChanged -= OnScaleChanged;
 
             SetSmoking(false);
+        }
+
+        private void OnScaleChanged(float multiplier)
+        {
+            _smoke.transform.localScale = _baseSmokeScale * multiplier;
+            _smoke.transform.localPosition = _baseSmokePosition * multiplier;
         }
 
         private void OnSpeedChanged()

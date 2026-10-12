@@ -74,19 +74,6 @@ namespace Items
 
             _outlines = new Outline[_renderers.Length];
 
-            for (int i = 0; i < _renderers.Length; i++)
-            {
-                Outline outline = _renderers[i].GetComponent<Outline>();
-
-                if (outline == null)
-                {
-                    outline = _renderers[i].gameObject.AddComponent<Outline>();
-                }
-
-                outline.enabled = false;
-                _outlines[i] = outline;
-            }
-
             _propertyBlock = new MaterialPropertyBlock();
             _ghostTargetOpacity = _ghostMaterial.GetFloat(OpacityId);
             _currentOpacity = SolidOpacity;
@@ -181,8 +168,22 @@ namespace Items
 
         private void ApplyOutline()
         {
+            if (_isHighlighted == false)
+            {
+                DisableOutlines();
+                return;
+            }
+
             for (int i = 0; i < _outlines.Length; i++)
             {
+                if (_outlines[i] == null)
+                {
+                    if (_renderers[i].TryGetComponent(out _outlines[i]) == false)
+                    {
+                        _outlines[i] = _renderers[i].gameObject.AddComponent<Outline>();
+                    }
+                }
+
                 _outlines[i].OutlineColor = _highlightColor;
                 _outlines[i].OutlineWidth = _outlineWidth;
                 _outlines[i].enabled = _isHighlighted;
@@ -193,7 +194,10 @@ namespace Items
         {
             for (int i = 0; i < _outlines.Length; i++)
             {
-                _outlines[i].enabled = false;
+                if (_outlines[i] != null)
+                {
+                    _outlines[i].enabled = false;
+                }
             }
         }
 

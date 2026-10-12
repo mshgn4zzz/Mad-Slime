@@ -5,6 +5,8 @@ namespace Skins
 {
     public class SkinInventory
     {
+        public const string InitialSkinId = "Slime";
+
         private ISkinStorage _storage;
 
         public string SelectedSkinId => _storage.SelectedSkinId;
@@ -19,9 +21,22 @@ namespace Skins
             _storage = storage;
         }
 
+        public void Initialize()
+        {
+            if (_storage.ReadOpenSkinIds().Contains(InitialSkinId) == false)
+            {
+                _storage.OpenSkin(InitialSkinId);
+            }
+
+            if (string.IsNullOrWhiteSpace(_storage.SelectedSkinId) == true || IsOpen(_storage.SelectedSkinId) == false)
+            {
+                _storage.SelectSkin(InitialSkinId);
+            }
+        }
+
         public bool IsOpen(string skinId)
         {
-            return _storage.IsSkinOpen(skinId);
+            return skinId == InitialSkinId || _storage.IsSkinOpen(skinId);
         }
 
         public bool Grant(string skinId)

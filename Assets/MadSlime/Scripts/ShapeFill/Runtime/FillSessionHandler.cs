@@ -414,12 +414,19 @@ namespace Game
         {
             LevelConfig config = _configResolver.GetConfigFor(_levelStorage.CurrentLevel);
 
-            if (config.Theme == null || config.Theme.FillShapeTexture == null)
+            if (config.Theme == null)
             {
                 return;
             }
 
-            _gridBuilder.SetShapeTexture(config.Theme.FillShapeTexture);
+            Texture2D shapeTexture = config.Theme.PickFillShapeTexture();
+
+            if (shapeTexture == null)
+            {
+                throw new InvalidOperationException($"{config.Theme.name}: fill shape texture is missing.");
+            }
+
+            _gridBuilder.SetShapeTexture(shapeTexture);
         }
     }
 }

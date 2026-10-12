@@ -30,3 +30,7 @@ MonoBehaviour:
   - {fileID: 9023252196822773935, guid: 2ccb83b25da2ca24db60dd938961f4f4, type: 3}
   _fillShapeTexture: {fileID: 2800000, guid: 3b231483b4881ac40bf16d5f097cbe3d, type: 3}
   _music: {fileID: 8300000, guid: 16da009790821ab468d790a51a05367e, type: 3}
+  _fillShapeTextures:
+  - {fileID: 2800000, guid: 3b231483b4881ac40bf16d5f097cbe3d, type: 3}
+  - {fileID: 2800000, guid: 3bcbcdfed6e96c745a2dbeac6743fb82, type: 3}
+  - {fileID: 2800000, guid: 546eefbfd97eb39469a9c59db6d1d8d1, type: 3}

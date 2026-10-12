@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8060550142550762903}
   - component: {fileID: 2299311034459060797}
+  - component: {fileID: 8060550142550762903}
   - component: {fileID: 1466418388519740292}
   - component: {fileID: 1925624883454111833}
   - component: {fileID: 189063060086866515}
@@ -30,12 +30,25 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.82434964, y: 0.82434964, z: 0.82434964}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4459276435389735451}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8060550142550762903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8060550142550762803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa669f528708ba027a628953ef1ce0c8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  _collider: {fileID: 1466418388519740292}
 --- !u!65 &1466418388519740292
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -56,7 +69,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.030546432, y: 0.03073543, z: 0.18196163}
-  m_Center: {x: 0, y: 0.0070502833, z: 0}
+  m_Center: {x: 0, y: 0.015367715, z: 0}
 --- !u!114 &1925624883454111833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,7 +111,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 39261578494415192, guid: e1fedcc8305562745afd885bd4daad31, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.008317431
       objectReference: {fileID: 0}
     - target: {fileID: 39261578494415192, guid: e1fedcc8305562745afd885bd4daad31, type: 3}
       propertyPath: m_LocalPosition.z
@@ -132,6 +145,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 706761853563358617, guid: e1fedcc8305562745afd885bd4daad31, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 706761853563358617, guid: e1fedcc8305562745afd885bd4daad31, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 706761853563358617, guid: e1fedcc8305562745afd885bd4daad31, type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 706761853563358617, guid: e1fedcc8305562745afd885bd4daad31, type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 706761853563358617, guid: e1fedcc8305562745afd885bd4daad31, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value:
+      objectReference: {fileID: 2100000, guid: 76a4b7ff62250e481b336b0ee7bd3e4d, type: 2}
     - target: {fileID: 6780304027101069807, guid: e1fedcc8305562745afd885bd4daad31, type: 3}
       propertyPath: m_Name
       value: Toothbrush_01
@@ -146,16 +179,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 39261578494415192, guid: e1fedcc8305562745afd885bd4daad31, type: 3}
   m_PrefabInstance: {fileID: 4425336906071929667}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8060550142550762903
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8060550142550762803}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa669f528708ba027a628953ef1ce0c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier:
-  _collider: {fileID: 1466418388519740292}

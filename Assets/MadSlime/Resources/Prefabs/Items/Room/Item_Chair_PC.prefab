@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7609293959749050778}
   - component: {fileID: 4779475376450222545}
+  - component: {fileID: 7609293959749050778}
   - component: {fileID: 500297633395026038}
   - component: {fileID: 7102312582659932696}
   - component: {fileID: 2819801427864303912}
@@ -30,12 +30,25 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.1434747, y: 0.1434747, z: 0.1434747}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7609293959749050678}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7609293959749050778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7465679071741089771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa669f528708ba027a628953ef1ce0c8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  _collider: {fileID: 500297633395026038}
 --- !u!65 &500297633395026038
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -56,7 +69,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.7498002, y: 1.0454805, z: 0.7323413}
-  m_Center: {x: -0.0038363934, y: 0.5217701, z: -0.0035312176}
+  m_Center: {x: 0, y: 0.52274024, z: 0}
 --- !u!114 &7102312582659932696
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,15 +111,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6046104236518294910, guid: 70e2c0e604ad76842be1afb419a6737d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.0038363934
       objectReference: {fileID: 0}
     - target: {fileID: 6046104236518294910, guid: 70e2c0e604ad76842be1afb419a6737d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.0009701252
       objectReference: {fileID: 0}
     - target: {fileID: 6046104236518294910, guid: 70e2c0e604ad76842be1afb419a6737d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.0035312176
       objectReference: {fileID: 0}
     - target: {fileID: 6046104236518294910, guid: 70e2c0e604ad76842be1afb419a6737d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -136,6 +149,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8683196893884174410, guid: 70e2c0e604ad76842be1afb419a6737d, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8683196893884174410, guid: 70e2c0e604ad76842be1afb419a6737d, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8683196893884174410, guid: 70e2c0e604ad76842be1afb419a6737d, type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8683196893884174410, guid: 70e2c0e604ad76842be1afb419a6737d, type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8683196893884174410, guid: 70e2c0e604ad76842be1afb419a6737d, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value:
+      objectReference: {fileID: 2100000, guid: 76a4b7ff62250e481b336b0ee7bd3e4d, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -146,16 +179,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6046104236518294910, guid: 70e2c0e604ad76842be1afb419a6737d, type: 3}
   m_PrefabInstance: {fileID: 4211348674803295304}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7609293959749050778
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7465679071741089771}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa669f528708ba027a628953ef1ce0c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier:
-  _collider: {fileID: 500297633395026038}

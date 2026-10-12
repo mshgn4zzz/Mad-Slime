@@ -217,9 +217,10 @@ namespace Game
             _sceneNavigator.RegisterSession(PrepareSessionAsync, RunSession, FinishSession, _sessionSource.Token);
         }
 
-        private UniTask PrepareSessionAsync(CancellationToken cancellationToken)
+        private async UniTask PrepareSessionAsync(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            _inputReader.enabled = false;
             _playerTier.Initialize();
             _playerScaler.ApplyInitialScale();
             _movement.Initialize();
@@ -229,21 +230,21 @@ namespace Game
             LevelConfig config = _configResolver.GetConfigFor(_levelStorage.CurrentLevel);
 
             _timer.Setup(config.TimerDuration);
-            _levelGenerator.Generate();
+            await _levelGenerator.GenerateAsync(_sceneNavigator.ReportPreparationProgress, cancellationToken);
             _quotaCounter.ResetSession();
-            _state = SessionState.WaitingForStart;
             _isFinalCountdownStarted = false;
             _pauser.RequestPause();
             ApplyPause();
             SceneSessionPrepared?.Invoke();
-            return UniTask.CompletedTask;
         }
 
         private void RunSession()
         {
             _musicPlayer.Play(_musicPlaylist);
             _quotaCounter.Attach(_itemCollector);
+            _state = SessionState.WaitingForStart;
             ApplyPause();
+            _inputReader.enabled = true;
 
             Action sceneSessionStarted = SceneSessionStarted;
             sceneSessionStarted?.Invoke();
@@ -319,6 +320,15 @@ namespace Game
                 return;
             }
 
+            float urgency = 0f;
+
+            if (_finalCountdownSeconds > 0f)
+            {
+                urgency = 1f - Mathf.Clamp01(remainingSeconds / _finalCountdownSeconds);
+            }
+
+            _crawlAnimator.SetUrgency(urgency);
+
             if (_isFinalCountdownStarted == true)
             {
                 return;
@@ -388,6 +398,7 @@ namespace Game
 
         private void DisableFinalCountdownEffects()
         {
+            _crawlAnimator.SetUrgency(0f);
             _adrenalineBoost.Disable();
             _finalCountdownVignette.StopPulse();
             _timerTickSound.StopTicking();

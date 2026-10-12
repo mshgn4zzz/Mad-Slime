@@ -13,14 +13,20 @@ namespace Player
         [SerializeField] private ShopContent _shopContent;
         [SerializeField] private Transform _skinsContainer;
 
+        public event Action<GameObject> ModelChanged;
+
+        public GameObject CurrentModel => _currentModel;
+
         private ISkinStorage _skinStorage;
+        private SkinInventory _inventory;
         private ISavesReadiness _savesReadiness;
         private GameObject _currentModel;
 
         [Inject]
-        public void Construct(ISkinStorage skinStorage, ISavesReadiness savesReadiness)
+        public void Construct(ISkinStorage skinStorage, ISavesReadiness savesReadiness, SkinInventory inventory)
         {
             _skinStorage = skinStorage;
+            _inventory = inventory;
             _savesReadiness = savesReadiness;
         }
 
@@ -74,13 +80,21 @@ namespace Player
                 return;
             }
 
+            _inventory.Initialize();
             string selectedId = _skinStorage.SelectedSkinId;
 
             SkinItem matchingItem = FindItem(selectedId);
 
-            if (matchingItem == null)
+            if (matchingItem == null || matchingItem.Model == null)
             {
-                return;
+                matchingItem = FindItem(SkinInventory.InitialSkinId);
+
+                if (matchingItem == null || matchingItem.Model == null)
+                {
+                    throw new InvalidOperationException($"{name}: the initial Slime skin and its model must exist in ShopContent.");
+                }
+
+                _inventory.Select(matchingItem.Id);
             }
 
             if (_currentModel != null)
@@ -89,6 +103,7 @@ namespace Player
             }
 
             _currentModel = Instantiate(matchingItem.Model, _skinsContainer);
+            ModelChanged?.Invoke(_currentModel);
         }
 
         private SkinItem FindItem(string skinId)

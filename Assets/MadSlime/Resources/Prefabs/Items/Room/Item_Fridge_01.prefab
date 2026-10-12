@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7132566590846541292}
   - component: {fileID: 3255747879834854740}
+  - component: {fileID: 7132566590846541292}
   - component: {fileID: 1771661954606569621}
   - component: {fileID: 7132566590846541192}
   - component: {fileID: 5328522264689436125}
@@ -30,12 +30,25 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.10714286, y: 0.10714286, z: 0.10714286}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5676841593003396667}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7132566590846541292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9133648802659462226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa669f528708ba027a628953ef1ce0c8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  _collider: {fileID: 1771661954606569621}
 --- !u!65 &1771661954606569621
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -56,7 +69,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.68000007, y: 1.4, z: 0.69846666}
-  m_Center: {x: 0, y: 0.7, z: 0.049233317}
+  m_Center: {x: 0, y: 0.7, z: 0}
 --- !u!114 &7132566590846541192
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,10 +105,74 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3255747879834854740}
     m_Modifications:
+    - target: {fileID: 349294964025673452, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 349294964025673452, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 349294964025673452, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 349294964025673452, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 349294964025673452, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value:
+      objectReference: {fileID: 2100000, guid: 76a4b7ff62250e481b336b0ee7bd3e4d, type: 2}
     - target: {fileID: 1846127626841958235, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
       propertyPath: m_Name
       value: Fridge_01
       objectReference: {fileID: 0}
+    - target: {fileID: 1848304096947506286, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1848304096947506286, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1848304096947506286, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1848304096947506286, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1848304096947506286, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value:
+      objectReference: {fileID: 2100000, guid: 76a4b7ff62250e481b336b0ee7bd3e4d, type: 2}
+    - target: {fileID: 3435261158229293976, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3435261158229293976, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3435261158229293976, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3435261158229293976, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3435261158229293976, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value:
+      objectReference: {fileID: 2100000, guid: 76a4b7ff62250e481b336b0ee7bd3e4d, type: 2}
+    - target: {fileID: 3435261158229293976, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value:
+      objectReference: {fileID: 2100000, guid: 803a5554de88fb2bd92dee4e3a12bb62, type: 2}
     - target: {fileID: 3585842044887211447, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -106,7 +183,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3585842044887211447, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.049233317
       objectReference: {fileID: 0}
     - target: {fileID: 3585842044887211447, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
       propertyPath: m_LocalRotation.w
@@ -146,16 +223,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3585842044887211447, guid: 07ed45d24c00a20419c02b6fe2ceb905, type: 3}
   m_PrefabInstance: {fileID: 9154490989338481548}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7132566590846541292
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9133648802659462226}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa669f528708ba027a628953ef1ce0c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier:
-  _collider: {fileID: 1771661954606569621}

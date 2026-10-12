@@ -19,6 +19,18 @@ namespace Scriptables
         [Tooltip("Минимальная дистанция между предметами = шаг × этот множитель. Меньше = плотнее рой.")]
         [SerializeField] private float _scatterDistanceFactor = 0.7f;
 
+        [Tooltip("Радиус свободной зоны для Medium и более крупных предметов вокруг (0, 0). Учитывается весь габарит предмета.")]
+        [SerializeField, Min(0f)] private float _startClearRadius = 10f;
+
+        [Tooltip("Радиус свободной зоны для Small вокруг (0, 0). Учитывается весь габарит предмета.")]
+        [SerializeField, Min(0f)] private float _smallItemStartClearRadius = 2f;
+
+        [Tooltip("Дополнительный зазор между Large и более крупными предметами.")]
+        [SerializeField, Min(0f)] private float _largeItemGap = 1f;
+
+        public float StartClearRadius => _startClearRadius;
+        public float SmallItemStartClearRadius => _smallItemStartClearRadius;
+        public float LargeItemGap => _largeItemGap;
         public IReadOnlyList<SpawnZone> Zones => _zones;
         public bool AllowMirroring => _allowMirroring;
         public float AutoSpacingFactor => _autoSpacingFactor;

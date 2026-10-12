@@ -10,28 +10,28 @@ namespace Roulette
     public class RouletteConfig : ScriptableObject
     {
         [Header("Main Roulette")]
-        [Tooltip("Секторы ежедневной рулетки: монеты и эксклюзивные скины. Вес сектора задаёт его шанс.")]
+        [Tooltip("Секторы ежедневной рулетки: монеты и эксклюзивные скины. Один элемент на один сектор колеса, ровно один сектор Skin. Проценты должны давать сумму 100.")]
         [SerializeField] private List<RouletteSector> _sectors = new List<RouletteSector>();
 
-        [Tooltip("Эксклюзивные скины: достаются только из этой рулетки, в скин-рулетке магазина не выпадают.")]
+        [Tooltip("Легендарные эксклюзивные скины: достаются только из ежедневной рулетки. При выпадении сектора Skin выбирается случайный скин из этого списка.")]
         [SerializeField] private List<SkinItem> _exclusiveSkins = new List<SkinItem>();
 
         [Header("Skin Roulette")]
-        [Tooltip("Шанс обычных скинов в процентах: сумма всех четырёх нормализуется до 100. 0 — редкость не выпадает.")]
+        [Tooltip("Шанс обычных скинов в процентах (если доступных скинов редкости нет, её доля распределяется пропорционально между оставшимися): сумма трёх значений должна быть 100. 0 — редкость не выпадает.")]
 
-        [SerializeField, Min(0f)] private float _commonDropChance = 100f;
+        [SerializeField, Range(0f, 100f)] private float _commonDropChance = 80f;
 
         [Tooltip("Шанс редких скинов в процентах.")]
 
-        [SerializeField, Min(0f)] private float _rareDropChance = 45f;
+        [SerializeField, Range(0f, 100f)] private float _rareDropChance = 17f;
 
         [Tooltip("Шанс эпических скинов в процентах.")]
 
-        [SerializeField, Min(0f)] private float _epicDropChance = 15f;
+        [SerializeField, Range(0f, 100f)] private float _epicDropChance = 3f;
 
         [Tooltip("Шанс легендарных скинов в процентах.")]
 
-        [SerializeField, Min(0f)] private float _legendaryDropChance = 4f;
+        [SerializeField, HideInInspector] private float _legendaryDropChance;
 
         [Tooltip("Минимальный порог цены крутки скин-рулетки: с неё цена стартует и ниже не опускается.")]
 
@@ -48,16 +48,16 @@ namespace Roulette
 
         [Header("Skin Showcase")]
         [Tooltip("Сколько легендарных скинов держит витрина скин-рулетки. Витрина формируется один раз и обновляется только после выбивания скина.")]
-        [SerializeField, Min(0)] private int _showcaseLegendaryCount = 1;
+        [SerializeField, HideInInspector] private int _showcaseLegendaryCount;
 
         [Tooltip("Сколько эпических скинов держит витрина скин-рулетки.")]
         [SerializeField, Min(0)] private int _showcaseEpicCount = 2;
 
-        [Tooltip("Сколько редких скинов держит витрина скин-рулетки. Сумма трёх чисел не должна превышать число слотов колеса.")]
+        [Tooltip("Сколько редких скинов держит витрина скин-рулетки. Сумма трёх чисел не должна превышать число слотов колеса. Пустые места занимают доступные скины.")]
         [SerializeField, Min(0)] private int _showcaseRareCount = 5;
 
         [Header("Rarity")]
-        [Tooltip("Таблица редкостей скинов: веса выпадения и цвета плашек.")]
+        [Tooltip("Цвета плашек редкостей. Шансы задаются выше.")]
         [SerializeField] private SkinRarityTable _rarityTable;
 
         [Header("Timers")]
@@ -156,16 +156,12 @@ namespace Roulette
         [Tooltip("Количество монет (для типа Coins).")]
         [SerializeField, Min(0)] private int _coins = 100;
 
-        [Tooltip("Эксклюзивный скин (для типа Skin). Берётся из списка эксклюзивных.")]
-        [SerializeField] private SkinItem _skin;
+        [Tooltip("Шанс сектора в процентах: сумма по всем секторам должна быть 100. 0 — сектор не выпадает.")]
 
-        [Tooltip("Шанс сектора в процентах: сумма по всем секторам нормализуется до 100. 0 — сектор не выпадает.")]
-
-        [SerializeField, Min(0f)] private float _dropChance = 25f;
+        [SerializeField, Range(0f, 100f)] private float _dropChance = 25f;
 
         public RewardKind RewardType => _rewardKind;
         public int Coins => _coins;
-        public SkinItem Skin => _skin;
         public float DropChance => _dropChance;
     }
 }

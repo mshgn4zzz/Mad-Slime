@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Collectables;
 using Items;
 using Quota;
@@ -112,7 +114,7 @@ namespace Game
             return _floorRenderer.bounds;
         }
 
-        public void Generate()
+        public async UniTask GenerateAsync(Action<float> progress, CancellationToken cancellationToken)
         {
             LevelConfig config = _configResolver.GetConfigFor(_levelStorage.CurrentLevel);
             LayoutSet layout = _placementPlanner.PickLayout(_layoutsLibrary);
@@ -124,7 +126,8 @@ namespace Game
             _clamper.SetBounds(floorBounds);
             ApplyTheme(config);
             _itemsSpawner.Clear();
-            _itemsSpawner.Spawn(placements);
+            await _itemsSpawner.SpawnAsync(placements, progress, cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
             Physics.SyncTransforms();
 
             List<QuotaEntry> quota = _quotaGenerator.Generate(_itemsSpawner.SpawnedCounts, config);

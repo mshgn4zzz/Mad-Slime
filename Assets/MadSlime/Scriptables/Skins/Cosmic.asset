@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cabfd7a58666dd469a0eeed6f3ec8e0, type: 3}
-  m_Name: RoomLayoutSet
+  m_Script: {fileID: 11500000, guid: e79f510ee66e4552921654b4409ab2d9, type: 3}
+  m_Name: Cosmic
   m_EditorClassIdentifier: 
-  _zones: []
-  _allowMirroring: 0
-  _autoSpacingFactor: 2.2
-  _scatterDistanceFactor: 0.7
+  _model: {fileID: 4977957973449071420, guid: a7cfad1fc9739c2b6b6be7207588928a, type: 3}
+  _icon: {fileID: 21300000, guid: 01e66a8488ff3fc62adcee3979664a7d, type: 3}
+  _rarity: 3
+  _id: Cosmic
