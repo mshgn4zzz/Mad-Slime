@@ -52,18 +52,16 @@ namespace Roulette
         {
             List<RouletteSlot> slots = new List<RouletteSlot>();
 
+            if (_config.Sectors.Count != _dailySlotCount)
+            {
+                throw new InvalidOperationException("Daily roulette must configure exactly one reward per wheel sector.");
+            }
+
             for (int i = 0; i < _dailySlotCount; i++)
             {
-                RouletteSector sector = _config.Sectors[i % _config.Sectors.Count];
-                int copies = _dailySlotCount / _config.Sectors.Count;
-
-                if (i % _config.Sectors.Count < _dailySlotCount % _config.Sectors.Count)
-                {
-                    copies++;
-                }
-
+                RouletteSector sector = _config.Sectors[i];
                 bool isHidden = sector.RewardType == RouletteSector.RewardKind.Skin;
-                slots.Add(new RouletteSlot(sector.Skin, sector.Coins, sector.DropChance / copies, isHidden));
+                slots.Add(new RouletteSlot(null, sector.Coins, sector.DropChance, isHidden));
             }
 
             return slots;

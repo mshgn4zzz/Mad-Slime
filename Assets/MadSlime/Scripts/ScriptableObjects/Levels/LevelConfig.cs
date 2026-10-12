@@ -14,34 +14,34 @@ namespace Scriptables
         [SerializeField] private PropSet _propSet;
 
         [Tooltip("Минимальный тир предметов, спавнящихся на уровне.")]
-        [SerializeField, Min(0)] private int _minTier;
+        [SerializeField] private SizeTier _minTier = SizeTier.Small;
 
         [Tooltip("Максимальный тир предметов на уровне.")]
-        [SerializeField, Min(0)] private int _maxTier = 3;
+        [SerializeField] private SizeTier _maxTier = SizeTier.Huge;
 
         [Tooltip("Длительность таймера уровня (с).")]
         [SerializeField] private float _timerDuration = 90f;
 
         [Header("Quota Generation")]
         [Tooltip("Минимум разных типов предметов в квоте.")]
-        [SerializeField] private int _quotaTypesMin = 1;
+        [SerializeField, Min(1)] private int _quotaTypesMin = 1;
 
         [Tooltip("Максимум разных типов предметов в квоте.")]
-        [SerializeField] private int _quotaTypesMax = 3;
+        [SerializeField, Min(1)] private int _quotaTypesMax = 3;
 
         [Tooltip("Минимальное количество предметов по одному типу квоты.")]
-        [SerializeField] private int _quotaTargetMin = 3;
+        [SerializeField, Min(1)] private int _quotaTargetMin = 3;
 
         [Tooltip("Максимальное количество предметов по одному типу квоты.")]
-        [SerializeField] private int _quotaTargetMax = 8;
+        [SerializeField, Min(1)] private int _quotaTargetMax = 8;
 
-        [Tooltip("Сколько типов квоты может принадлежать одному тиру.")]
-        [SerializeField] private int _quotaMaxSameTier = 2;
+        [Tooltip("Предпочтительный максимум типов одного тира. При нехватке разнообразия минимум типов квоты имеет приоритет.")]
+        [SerializeField, Min(1)] private int _quotaMaxSameTier = 2;
 
         public LevelTheme Theme => _theme;
         public PropSet PropSet => _propSet;
-        public SizeTier MinTier => (SizeTier)_minTier;
-        public SizeTier MaxTier => (SizeTier)_maxTier;
+        public SizeTier MinTier => _minTier;
+        public SizeTier MaxTier => _maxTier;
         public float TimerDuration => _timerDuration;
         public int QuotaTypesMin => _quotaTypesMin;
         public int QuotaTypesMax => _quotaTypesMax;

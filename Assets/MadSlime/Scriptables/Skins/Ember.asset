@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e79f510ee66e4552921654b4409ab2d9, type: 3}
+  m_Name: Ember
+  m_EditorClassIdentifier: 
+  _model: {fileID: 4265783164136173413, guid: 05eab5b09f2ec75eeba0ef473ba79540, type: 3}
+  _icon: {fileID: 21300000, guid: 043d6976efe5aeeb29e9d9b65c9ca248, type: 3}
+  _rarity: 3
+  _id: Ember

@@ -7,6 +7,8 @@ namespace Game
 {
     public class ZoneLayoutPlanner
     {
+        private const int ScatterAttemptsPerItem = 32;
+
         private const double FullCircleRadians = Math.PI * 2.0;
 
         private List<Vector3> _positions = new List<Vector3>(64);
@@ -44,7 +46,7 @@ namespace Game
             return Mathf.Max(0.5f, maxRadius * layout.AutoSpacingFactor);
         }
 
-        public void Collect(SpawnZone zone, Vector2 center, float spacing, LayoutSet layout)
+        public void Collect(SpawnZone zone, Vector2 center, float spacing, LayoutSet layout, float itemInset = 0f)
         {
             _positions.Clear();
 
@@ -59,11 +61,15 @@ namespace Game
                     break;
 
                 case SpawnShape.Circle:
-                    CollectCircle(center, zone.Radius, zone.Count);
+                    CollectCircle(center, Mathf.Max(0f, zone.Radius - itemInset), zone.Count);
+                    break;
+
+                case SpawnShape.SquareRing:
+                    CollectSquareRing(center, Mathf.Max(0f, zone.Radius - itemInset), zone.Count);
                     break;
 
                 default:
-                    CollectScatter(zone, center, spacing, layout);
+                    CollectScatter(zone, center, spacing, layout, itemInset);
                     break;
             }
         }
@@ -71,7 +77,14 @@ namespace Game
         public void CollectPlacements(SpawnZone zone, Vector2 center, float spacing, LayoutSet layout,
             IReadOnlyList<float> poolRadii, bool singleType)
         {
-            Collect(zone, center, spacing, layout);
+            float largestRadius = 0f;
+
+            for (int i = 0; i < poolRadii.Count; i++)
+            {
+                largestRadius = Mathf.Max(largestRadius, poolRadii[i]);
+            }
+
+            Collect(zone, center, spacing, layout, largestRadius);
 
             _placements.Clear();
 
@@ -115,7 +128,12 @@ namespace Game
                     return itemRadius <= spacing * 0.5f;
 
                 case SpawnShape.Circle:
+                case SpawnShape.SquareRing:
                     return true;
+
+                case SpawnShape.SquareScatter:
+                    return Mathf.Abs(position.x - center.x) + itemRadius <= zone.Radius
+                        && Mathf.Abs(position.z - center.y) + itemRadius <= zone.Radius;
 
                 default:
                     return IsInsideRadius(zone, center, position, itemRadius);
@@ -227,11 +245,50 @@ namespace Game
             }
         }
 
-        private void CollectScatter(SpawnZone zone, Vector2 center, float spacing, LayoutSet layout)
+        private void CollectSquareRing(Vector2 center, float radius, int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                float perimeterPosition = i * 4f / count;
+                int edge = Mathf.FloorToInt(perimeterPosition);
+                float edgeOffset = (perimeterPosition - edge) * radius * 2f - radius;
+                Vector3 position;
+
+                switch (edge)
+                {
+                    case 0:
+                        position = new Vector3(center.x + edgeOffset, 0f, center.y - radius);
+                        break;
+
+                    case 1:
+                        position = new Vector3(center.x + radius, 0f, center.y + edgeOffset);
+                        break;
+
+                    case 2:
+                        position = new Vector3(center.x - edgeOffset, 0f, center.y + radius);
+                        break;
+
+                    default:
+                        position = new Vector3(center.x - radius, 0f, center.y - edgeOffset);
+                        break;
+                }
+
+                _positions.Add(position);
+            }
+        }
+
+        private void CollectScatter(SpawnZone zone, Vector2 center, float spacing, LayoutSet layout, float itemInset)
         {
             float minDistance = spacing * layout.ScatterDistanceFactor;
             float minDistanceSqr = minDistance * minDistance;
-            int attemptsLimit = zone.Count * 10;
+            float usableRadius = zone.Radius - itemInset;
+
+            if (usableRadius < 0f)
+            {
+                return;
+            }
+
+            int attemptsLimit = zone.Count * ScatterAttemptsPerItem;
             int attempts = 0;
 
             while (_positions.Count < zone.Count && attempts < attemptsLimit)
@@ -239,12 +296,24 @@ namespace Game
                 attempts++;
 
                 double angle = _random.NextDouble() * FullCircleRadians;
-                double distance = zone.Radius * Math.Sqrt(_random.NextDouble());
+                double distance = usableRadius * Math.Sqrt(_random.NextDouble());
 
-                Vector3 candidate = new Vector3(
-                    center.x + Mathf.Cos((float)angle) * (float)distance,
-                    0f,
-                    center.y + Mathf.Sin((float)angle) * (float)distance);
+                Vector3 candidate;
+
+                if (zone.Shape == SpawnShape.SquareScatter)
+                {
+                    candidate = new Vector3(
+                        center.x + ((float)_random.NextDouble() * 2f - 1f) * usableRadius,
+                        0f,
+                        center.y + ((float)_random.NextDouble() * 2f - 1f) * usableRadius);
+                }
+                else
+                {
+                    candidate = new Vector3(
+                        center.x + Mathf.Cos((float)angle) * (float)distance,
+                        0f,
+                        center.y + Mathf.Sin((float)angle) * (float)distance);
+                }
 
                 if (IsFarEnough(candidate, minDistanceSqr) == true)
                 {

@@ -6,6 +6,9 @@ namespace Roulette
 {
     public class RouletteConfigValidator
     {
+        private const float FullChance = 100f;
+        private const float ChanceTolerance = 0.01f;
+
         public void Validate(RouletteConfig config, IReadOnlyList<SkinItem> catalog, int dailySlotCount, int skinSlotCount)
         {
             if (config == null || config.RarityTable == null)
@@ -13,9 +16,9 @@ namespace Roulette
                 throw new InvalidOperationException("Roulette config and rarity table must be assigned.");
             }
 
-            if (config.Sectors.Count == 0 || config.Sectors.Count > dailySlotCount || skinSlotCount <= 0)
+            if (config.Sectors.Count != dailySlotCount || skinSlotCount <= 0)
             {
-                throw new InvalidOperationException("Roulette sectors do not fit wheel capacity.");
+                throw new InvalidOperationException("Configure exactly one daily reward per wheel sector.");
             }
 
             if (config.SkinSpinMinCost <= 0 || config.SkinSpinCostStep < 0
@@ -37,7 +40,13 @@ namespace Roulette
                 throw new InvalidOperationException("Roulette motion configuration is invalid.");
             }
 
+            if (config.LegendaryDropChance != 0f || config.ShowcaseLegendaryCount != 0)
+            {
+                throw new InvalidOperationException("Legendary skins are daily exclusives and cannot appear in paid roulette.");
+            }
+
             float sectorWeight = 0f;
+            int hiddenSectors = 0;
 
             for (int i = 0; i < config.Sectors.Count; i++)
             {
@@ -55,15 +64,20 @@ namespace Roulette
                     throw new InvalidOperationException("Roulette coin sector must grant a positive amount.");
                 }
 
-                if (sector.RewardType == RouletteSector.RewardKind.Skin && config.ExclusiveSkins.Count == 0)
+                if (sector.RewardType == RouletteSector.RewardKind.Skin)
                 {
-                    throw new InvalidOperationException("Hidden roulette sector requires exclusive skins.");
+                    hiddenSectors++;
+
+                    if (config.ExclusiveSkins.Count == 0)
+                    {
+                        throw new InvalidOperationException("Hidden roulette sector requires exclusive skins.");
+                    }
                 }
             }
 
-            if (sectorWeight <= 0f || float.IsInfinity(sectorWeight) == true)
+            if (hiddenSectors != 1 || Math.Abs(sectorWeight - FullChance) > ChanceTolerance)
             {
-                throw new InvalidOperationException("Daily roulette requires a positive total weight.");
+                throw new InvalidOperationException("Daily roulette requires exactly one hidden sector and a total chance of 100%.");
             }
 
             RouletteProbabilityRules probabilityRules = new RouletteProbabilityRules(config);
@@ -87,9 +101,9 @@ namespace Roulette
                 skinWeight += weight;
             }
 
-            if (showcaseSize <= 0 || showcaseSize > skinSlotCount || skinWeight <= 0f)
+            if (showcaseSize <= 0 || showcaseSize > skinSlotCount || Math.Abs(skinWeight - FullChance) > ChanceTolerance)
             {
-                throw new InvalidOperationException("Skin showcase must fit wheel capacity and have positive weights.");
+                throw new InvalidOperationException("Skin showcase must fit the wheel; rarity chances must total 100%.");
             }
 
             if (catalog == null || catalog.Count == 0)
@@ -116,16 +130,29 @@ namespace Roulette
                 SkinItem skin = config.ExclusiveSkins[i];
                 ValidateSkin(skin);
 
+                if (skin.Rarity != SkinRarity.Legendary)
+                {
+                    throw new InvalidOperationException("Daily exclusive skins must be Legendary.");
+                }
+
                 if (ids.Contains(skin.Id) == false || exclusiveIds.Add(skin.Id) == false)
                 {
                     throw new InvalidOperationException("Exclusive skins must be unique entries from the skin catalog.");
+                }
+            }
+
+            for (int i = 0; i < catalog.Count; i++)
+            {
+                if (catalog[i].Rarity == SkinRarity.Legendary && exclusiveIds.Contains(catalog[i].Id) == false)
+                {
+                    throw new InvalidOperationException("Every Legendary skin must belong to the daily exclusive pool.");
                 }
             }
         }
 
         private bool IsWeightValid(float weight)
         {
-            return weight >= 0f && float.IsNaN(weight) == false && float.IsInfinity(weight) == false;
+            return weight >= 0f && weight <= FullChance && float.IsNaN(weight) == false && float.IsInfinity(weight) == false;
         }
 
         private void ValidateSkin(SkinItem skin)

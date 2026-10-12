@@ -1,0 +1,1515 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cabfd7a58666dd469a0eeed6f3ec8e0, type: 3}
+  m_Name: LayoutSetSectors
+  m_EditorClassIdentifier:
+  _zones:
+  - _shape: 1
+    _center: {x: 0, y: 0}
+    _radius: 6
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 2
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 0, y: 0}
+    _radius: 8
+    _count: 20
+    _autoSpacing: 0
+    _spacing: 2
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 0, y: 0}
+    _radius: 10
+    _count: 24
+    _autoSpacing: 0
+    _spacing: 2
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 30.000, y: 0.000}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 55.000, y: 0.000}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 80.000, y: 0.000}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 105.000, y: 0.000}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 130.000, y: 0.000}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 155.000, y: 0.000}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 180.000, y: 0.000}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 205.000, y: 0.000}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 230.000, y: 0.000}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 47.553, y: 15.451}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 95.106, y: 30.902}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 142.658, y: 46.353}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 190.211, y: 61.803}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 75.000, y: 0.000}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 125.000, y: 0.000}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 175.000, y: 0.000}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 24.271, y: 17.634}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 44.496, y: 32.328}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 64.721, y: 47.023}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 84.947, y: 61.717}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 105.172, y: 76.412}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 125.398, y: 91.107}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 145.623, y: 105.801}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 165.848, y: 120.496}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 186.074, y: 135.191}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 29.389, y: 40.451}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 58.779, y: 80.902}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 88.168, y: 121.353}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 117.557, y: 161.803}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 60.676, y: 44.084}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 101.127, y: 73.473}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 141.578, y: 102.862}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 9.271, y: 28.532}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 16.996, y: 52.308}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 24.721, y: 76.085}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 32.447, y: 99.861}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 40.172, y: 123.637}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 47.898, y: 147.414}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 55.623, y: 171.190}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 63.348, y: 194.967}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 71.074, y: 218.743}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 0.000, y: 50.000}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 0.000, y: 100.000}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 0.000, y: 150.000}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 0.000, y: 200.000}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 23.176, y: 71.329}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 38.627, y: 118.882}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 54.078, y: 166.435}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -9.271, y: 28.532}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -16.996, y: 52.308}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -24.721, y: 76.085}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -32.447, y: 99.861}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -40.172, y: 123.637}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -47.898, y: 147.414}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -55.623, y: 171.190}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -63.348, y: 194.967}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -71.074, y: 218.743}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -29.389, y: 40.451}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -58.779, y: 80.902}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -88.168, y: 121.353}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -117.557, y: 161.803}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -23.176, y: 71.329}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -38.627, y: 118.882}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -54.078, y: 166.435}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -24.271, y: 17.634}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -44.496, y: 32.328}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -64.721, y: 47.023}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -84.947, y: 61.717}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -105.172, y: 76.412}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -125.398, y: 91.107}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -145.623, y: 105.801}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -165.848, y: 120.496}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -186.074, y: 135.191}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -47.553, y: 15.451}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -95.106, y: 30.902}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -142.658, y: 46.353}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -190.211, y: 61.803}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -60.676, y: 44.084}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -101.127, y: 73.473}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -141.578, y: 102.862}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -30.000, y: 0.000}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -55.000, y: 0.000}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -80.000, y: 0.000}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -105.000, y: 0.000}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -130.000, y: 0.000}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -155.000, y: 0.000}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -180.000, y: 0.000}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -205.000, y: 0.000}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -230.000, y: 0.000}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -47.553, y: -15.451}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -95.106, y: -30.902}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -142.658, y: -46.353}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -190.211, y: -61.803}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -75.000, y: 0.000}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -125.000, y: 0.000}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -175.000, y: 0.000}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -24.271, y: -17.634}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -44.496, y: -32.328}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -64.721, y: -47.023}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -84.947, y: -61.717}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -105.172, y: -76.412}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -125.398, y: -91.107}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -145.623, y: -105.801}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -165.848, y: -120.496}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -186.074, y: -135.191}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -29.389, y: -40.451}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -58.779, y: -80.902}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -88.168, y: -121.353}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -117.557, y: -161.803}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -60.676, y: -44.084}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -101.127, y: -73.473}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -141.578, y: -102.862}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -9.271, y: -28.532}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -16.996, y: -52.308}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -24.721, y: -76.085}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -32.447, y: -99.861}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -40.172, y: -123.637}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -47.898, y: -147.414}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -55.623, y: -171.190}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -63.348, y: -194.967}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -71.074, y: -218.743}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -0.000, y: -50.000}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -0.000, y: -100.000}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -0.000, y: -150.000}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -0.000, y: -200.000}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -23.176, y: -71.329}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -38.627, y: -118.882}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -54.078, y: -166.435}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 9.271, y: -28.532}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 16.996, y: -52.308}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 24.721, y: -76.085}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 32.447, y: -99.861}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 40.172, y: -123.637}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 47.898, y: -147.414}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 55.623, y: -171.190}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 63.348, y: -194.967}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 71.074, y: -218.743}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 29.389, y: -40.451}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 58.779, y: -80.902}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 88.168, y: -121.353}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 117.557, y: -161.803}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 23.176, y: -71.329}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 38.627, y: -118.882}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 54.078, y: -166.435}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 24.271, y: -17.634}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 44.496, y: -32.328}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 64.721, y: -47.023}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 84.947, y: -61.717}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 105.172, y: -76.412}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 125.398, y: -91.107}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 145.623, y: -105.801}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 165.848, y: -120.496}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 186.074, y: -135.191}
+    _radius: 14
+    _count: 48
+    _autoSpacing: 0
+    _spacing: 3
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 47.553, y: -15.451}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 95.106, y: -30.902}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 142.658, y: -46.353}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 190.211, y: -61.803}
+    _radius: 20
+    _count: 16
+    _autoSpacing: 0
+    _spacing: 7
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 60.676, y: -44.084}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 101.127, y: -73.473}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 141.578, y: -102.862}
+    _radius: 25
+    _count: 8
+    _autoSpacing: 0
+    _spacing: 14
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 0.000, y: 0.000}
+    _radius: 150
+    _count: 36
+    _autoSpacing: 0
+    _spacing: 0
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 0.000, y: 0.000}
+    _radius: 185
+    _count: 28
+    _autoSpacing: 0
+    _spacing: 0
+    _minTier: 4
+    _maxTier: 4
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 0.000, y: 0.000}
+    _radius: 250
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 0
+    _minTier: 5
+    _maxTier: 5
+    _singleType: 0
+  _allowMirroring: 1
+  _autoSpacingFactor: 2.3
+  _scatterDistanceFactor: 0.95
+  _smallItemStartClearRadius: 2
+  _startClearRadius: 10
+  _largeItemGap: 0.75

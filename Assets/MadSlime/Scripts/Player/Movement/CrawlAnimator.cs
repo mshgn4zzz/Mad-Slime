@@ -1,6 +1,6 @@
 using Scriptables;
+using Player;
 using System;
-using PlayerInput;
 using UnityEngine;
 using VContainer;
 
@@ -11,21 +11,21 @@ namespace Movement
         private const float RestStrengthEpsilon = 0.001f;
 
         [SerializeField] private Mover _mover;
+        [SerializeField] private ModelDeformer _deformer;
 
         private PlayerConfig _config;
-        private PlayerInputReader _inputReader;
-        private Vector3 _baseScale;
-        private Vector3 _lastPosition;
         private float _crawlPhase;
         private float _crawlStrength;
         private float _crawlStrengthVelocityRef;
-        private bool _isAtRestScale;
+        private float _frequency;
+
+        public float Frequency => _frequency;
 
         [Inject]
-        public void Construct(PlayerConfig config, PlayerInputReader inputReader)
+        public void Construct(PlayerConfig config)
         {
             _config = config;
-            _inputReader = inputReader;
+            _frequency = config.MovementSquashFrequency;
         }
 
         private void Awake()
@@ -42,36 +42,52 @@ namespace Movement
                     $"{name}: PlayerConfig was not injected. Check that GameLifetimeScope registers PlayerConfig and CrawlAnimator.");
             }
 
-            if (_inputReader == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerInputReader was not injected. Check that GameLifetimeScope registers PlayerInputReader and CrawlAnimator.");
-            }
-
             if (_config.CrawlStretchCurve == null || _config.CrawlStretchCurve.length == 0)
             {
                 throw new InvalidOperationException(
                     "PlayerConfig has an empty CrawlStretchCurve. Add keyframes to the Crawl section.");
             }
 
-            _baseScale = transform.localScale;
-            _lastPosition = _mover.transform.position;
-            _isAtRestScale = true;
+            if (_deformer == null)
+            {
+                throw new InvalidOperationException($"{name}: assign the player ModelDeformer.");
+            }
         }
 
-        private void Update()
+        public void SetUrgency(float progress)
         {
-            UpdateCrawlStrength(Time.deltaTime);
+            float urgency = Mathf.Clamp01(progress);
+            float multiplier = Mathf.Lerp(1f, _config.FinalSquashFrequencyMultiplier, urgency);
+            _frequency = _config.MovementSquashFrequency * multiplier;
+        }
+
+        private void OnDisable()
+        {
+            _deformer.SetMovementCompression(0f);
+            _crawlStrength = 0f;
+            _crawlStrengthVelocityRef = 0f;
+        }
+
+        private void LateUpdate()
+        {
+            float deltaTime = Time.deltaTime;
+
+            if (deltaTime <= 0f)
+            {
+                return;
+            }
+
+            UpdateCrawlStrength(deltaTime);
             AdvanceCrawlPhase();
             ApplyDeform();
         }
 
         private void UpdateCrawlStrength(float deltaTime)
         {
-            bool hasInput = _inputReader.MoveInput.sqrMagnitude > 0f;
+            bool isMoving = _mover.Velocity.sqrMagnitude > RestStrengthEpsilon;
             float targetStrength;
 
-            if (hasInput == true)
+            if (isMoving == true)
             {
                 targetStrength = 1f;
             }
@@ -96,48 +112,14 @@ namespace Movement
 
         private void AdvanceCrawlPhase()
         {
-            Vector3 currentPosition = _mover.transform.position;
-            float traveledDistance = Vector3.Distance(currentPosition, _lastPosition);
-
-            _lastPosition = currentPosition;
-
-            if (traveledDistance <= 0f)
-            {
-                return;
-            }
-
-            float stride = _config.CrawlStride + _mover.Velocity.magnitude * _config.StridePerSpeed;
-
-            if (stride <= 0f)
-            {
-                return;
-            }
-
-            _crawlPhase = (_crawlPhase + traveledDistance / stride) % 1f;
+            _crawlPhase = (_crawlPhase + Time.deltaTime * _frequency) % 1f;
         }
 
         private void ApplyDeform()
         {
-            if (_crawlStrength <= RestStrengthEpsilon)
-            {
-                if (_isAtRestScale == false)
-                {
-                    _isAtRestScale = true;
-                    transform.localScale = _baseScale;
-                }
-
-                return;
-            }
-
-            _isAtRestScale = false;
-
-            float stretch = _crawlStrength * _config.DeformMaxStretch * _config.CrawlStretchCurve.Evaluate(_crawlPhase);
-            float squeeze = 1f - stretch * _config.DeformSqueeze;
-
-            transform.localScale = new Vector3(
-                _baseScale.x * squeeze,
-                _baseScale.y * squeeze,
-                _baseScale.z * (1f + stretch));
+            float cycleCompression = Mathf.Clamp01(_config.CrawlStretchCurve.Evaluate(_crawlPhase));
+            float compression = _crawlStrength * _config.DeformMaxStretch * cycleCompression;
+            _deformer.SetMovementCompression(compression);
         }
     }
 }

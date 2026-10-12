@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5693388964895285398}
   - component: {fileID: 9211669569000292117}
+  - component: {fileID: 5693388964895285398}
   - component: {fileID: 208129885884059484}
   - component: {fileID: 557471785623285591}
   - component: {fileID: 4043785875542063555}
@@ -30,12 +30,25 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.6838525, y: 0.6838525, z: 0.6838525}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4237365241035577154}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5693388964895285398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1548937852924066588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa669f528708ba027a628953ef1ce0c8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  _collider: {fileID: 208129885884059484}
 --- !u!65 &208129885884059484
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -56,7 +69,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.2173821, y: 0.020647194, z: 0.21934555}
-  m_Center: {x: 0.003733635, y: 0.010323595, z: -0.0076957718}
+  m_Center: {x: 0, y: 0.010323597, z: 0}
 --- !u!114 &557471785623285591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,17 +105,37 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 9211669569000292117}
     m_Modifications:
+    - target: {fileID: 7316083273617820703, guid: 91886e26378d5c8459647771afc74426, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7316083273617820703, guid: 91886e26378d5c8459647771afc74426, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7316083273617820703, guid: 91886e26378d5c8459647771afc74426, type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7316083273617820703, guid: 91886e26378d5c8459647771afc74426, type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7316083273617820703, guid: 91886e26378d5c8459647771afc74426, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value:
+      objectReference: {fileID: 2100000, guid: 9c79b029c507f0ded91147e39c88cf0e, type: 2}
     - target: {fileID: 8488403649040824176, guid: 91886e26378d5c8459647771afc74426, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.003733635
       objectReference: {fileID: 0}
     - target: {fileID: 8488403649040824176, guid: 91886e26378d5c8459647771afc74426, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.0000000018626451
       objectReference: {fileID: 0}
     - target: {fileID: 8488403649040824176, guid: 91886e26378d5c8459647771afc74426, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.0076957718
       objectReference: {fileID: 0}
     - target: {fileID: 8488403649040824176, guid: 91886e26378d5c8459647771afc74426, type: 3}
       propertyPath: m_LocalRotation.w
@@ -146,16 +179,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8488403649040824176, guid: 91886e26378d5c8459647771afc74426, type: 3}
   m_PrefabInstance: {fileID: 5693388964895285298}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5693388964895285398
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1548937852924066588}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa669f528708ba027a628953ef1ce0c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier:
-  _collider: {fileID: 208129885884059484}

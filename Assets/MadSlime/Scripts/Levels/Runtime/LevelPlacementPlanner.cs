@@ -10,6 +10,10 @@ namespace Game
 {
     public class LevelPlacementPlanner
     {
+        private const SizeTier ObstacleMinimumTier = SizeTier.Large;
+
+        private List<Vector3> _obstaclePositions = new List<Vector3>();
+        private List<float> _obstacleRadii = new List<float>();
         private TierLookup _tierLookup;
         private ZoneLayoutPlanner _layoutPlanner = new ZoneLayoutPlanner(new System.Random());
         private List<Item> _zonePool = new List<Item>(16);
@@ -42,60 +46,83 @@ namespace Game
         {
             _tierLookup = new TierLookup(tierTable);
             _placements.Clear();
+            _obstaclePositions.Clear();
+            _obstacleRadii.Clear();
             bool mirrorX = layout.AllowMirroring == true && Random.value > 0.5f;
             bool mirrorZ = layout.AllowMirroring == true && Random.value > 0.5f;
 
-            for (int i = 0; i < layout.Zones.Count; i++)
+            for (int tierIndex = (int)config.MaxTier; tierIndex >= (int)config.MinTier; tierIndex--)
             {
-                SpawnZone zone = layout.Zones[i];
-                BuildZonePool(zone, assignedVariants, tierTable);
+                SizeTier tier = (SizeTier)tierIndex;
 
-                if (_zonePool.Count == 0)
+                for (int i = 0; i < layout.Zones.Count; i++)
                 {
-                    throw new InvalidOperationException(
-                        $"Zone {i} ({zone.Shape}) of layout '{layout.name}' has no props in tiers " +
-                        $"{zone.MinTier}-{zone.MaxTier} for level config '{config.name}'.");
+                    SpawnZone zone = layout.Zones[i];
+
+                    if (tier < zone.MinTier || tier > zone.MaxTier)
+                    {
+                        continue;
+                    }
+
+                    BuildZonePool(zone, assignedVariants, tier);
+
+                    if (_zonePool.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    float spacing = ZoneLayoutPlanner.ResolveSpacing(zone, layout, _zoneRadii);
+                    Vector2 center = zone.Center;
+
+                    if (mirrorX == true)
+                    {
+                        center.x = -center.x;
+                    }
+
+                    if (mirrorZ == true)
+                    {
+                        center.y = -center.y;
+                    }
+
+                    _layoutPlanner.CollectPlacements(zone, center, spacing, layout, _zoneRadii, zone.SingleType);
+                    AppendPlacements(assignedVariants, origin, floorBounds, layout);
                 }
+            }
 
-                float spacing = ZoneLayoutPlanner.ResolveSpacing(zone, layout, _zoneRadii);
-                Vector2 center = zone.Center;
-
-                if (mirrorX == true)
-                {
-                    center.x = -center.x;
-                }
-
-                if (mirrorZ == true)
-                {
-                    center.y = -center.y;
-                }
-
-                _layoutPlanner.CollectPlacements(zone, center, spacing, layout, _zoneRadii, zone.SingleType);
-                AppendPlacements(assignedVariants, tierTable, origin, floorBounds, spacing * 0.5f);
+            if (_placements.Count == 0)
+            {
+                throw new InvalidOperationException($"{layout.name}: no zones match the item tiers of level config '{config.name}'.");
             }
 
             return _placements;
         }
 
-        private void BuildZonePool(SpawnZone zone, Dictionary<Item, ItemDefinition> assignedVariants, TierTable tierTable)
+        private void BuildZonePool(SpawnZone zone, Dictionary<Item, ItemDefinition> assignedVariants, SizeTier tier)
         {
             _zonePool.Clear();
             _zoneRadii.Clear();
 
             foreach (KeyValuePair<Item, ItemDefinition> pair in assignedVariants)
             {
-                if (pair.Value.Tier < zone.MinTier || pair.Value.Tier > zone.MaxTier)
+                if (pair.Value.Tier != tier)
+                {
+                    continue;
+                }
+
+                float radius = LevelItemsSpawner.GetRadiusXZ(pair.Key) * _tierLookup.Get(tier).Scale;
+
+                if (zone.Shape == SpawnShape.Scatter && radius > zone.Radius)
                 {
                     continue;
                 }
 
                 _zonePool.Add(pair.Key);
-                _zoneRadii.Add(LevelItemsSpawner.GetRadiusXZ(pair.Key) * _tierLookup.Get(pair.Value.Tier).Scale);
+                _zoneRadii.Add(radius);
             }
         }
 
-        private void AppendPlacements(Dictionary<Item, ItemDefinition> assignedVariants, TierTable tierTable,
-            Transform origin, Bounds floorBounds, float margin)
+        private void AppendPlacements(Dictionary<Item, ItemDefinition> assignedVariants,
+            Transform origin, Bounds floorBounds, LayoutSet layout)
         {
             IReadOnlyList<ZoneLayoutPlanner.Placement> placements = _layoutPlanner.Placements;
 
@@ -105,9 +132,53 @@ namespace Game
                 Item prefab = _zonePool[placement.PoolIndex];
                 ItemDefinition definition = assignedVariants[prefab];
                 float scale = _tierLookup.Get(definition.Tier).Scale;
-                Vector3 position = ClampToMap(origin.TransformPoint(placement.Position), floorBounds, margin);
+                float radius = _zoneRadii[placement.PoolIndex];
+                Vector3 position = ClampToMap(origin.TransformPoint(placement.Position), floorBounds, radius);
+
+                if (IsSpaceFree(position, radius, definition.Tier, layout) == false)
+                {
+                    continue;
+                }
+
                 _placements.Add(new LevelPlacement(prefab, definition, position, scale));
+
+                if (definition.Tier >= ObstacleMinimumTier)
+                {
+                    _obstaclePositions.Add(position);
+                    _obstacleRadii.Add(radius);
+                }
             }
+        }
+
+        private bool IsSpaceFree(Vector3 position, float radius, SizeTier tier, LayoutSet layout)
+        {
+            float centerDistance = new Vector2(position.x, position.z).magnitude;
+
+            float clearRadius = layout.StartClearRadius;
+
+            if (tier == SizeTier.Small)
+            {
+                clearRadius = layout.SmallItemStartClearRadius;
+            }
+
+            if (centerDistance < clearRadius + radius)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < _obstaclePositions.Count; i++)
+            {
+                Vector3 offset = position - _obstaclePositions[i];
+                offset.y = 0f;
+                float clearance = radius + _obstacleRadii[i] + layout.LargeItemGap;
+
+                if (offset.sqrMagnitude < clearance * clearance)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private Vector3 ClampToMap(Vector3 worldPosition, Bounds floorBounds, float margin)

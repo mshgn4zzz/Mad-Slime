@@ -67,7 +67,7 @@ namespace Audio
                     $"MusicChannel.Play: playlist '{playlist.name}' has no tracks.");
             }
 
-            if (IsSamePlaylist(playlist) == true && _sources[_activeIndex].isPlaying == true)
+            if (IsSamePlaylist(playlist) == true && _sources[_activeIndex].clip != null)
             {
                 return;
             }
@@ -77,7 +77,7 @@ namespace Audio
 
             AudioSource leadSource = _sources[_activeIndex];
 
-            if (leadSource.isPlaying == true)
+            if (leadSource.clip != null)
             {
                 _isSourceFadingOut[_activeIndex] = true;
             }
@@ -102,6 +102,7 @@ namespace Audio
         {
             AudioSource leadSource = _sources[_activeIndex];
 
+            leadSource.Stop();
             leadSource.clip = track;
             leadSource.volume = 0f;
             leadSource.Play();
@@ -147,6 +148,7 @@ namespace Audio
                 if (newVolume <= 0f)
                 {
                     source.Stop();
+                    source.clip = null;
                     _isSourceFadingOut[sourceIndex] = false;
                 }
             }
@@ -157,6 +159,13 @@ namespace Audio
             AudioSource leadSource = _sources[_activeIndex];
 
             if (leadSource.clip == null || leadSource.isPlaying == false)
+            {
+                return;
+            }
+
+            int outgoingIndex = 1 - _activeIndex;
+
+            if (_isLeadFadingIn == true || _isSourceFadingOut[outgoingIndex] == true)
             {
                 return;
             }

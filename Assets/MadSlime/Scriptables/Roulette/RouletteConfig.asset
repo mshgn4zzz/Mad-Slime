@@ -15,50 +15,45 @@ MonoBehaviour:
   _sectors:
   - _rewardKind: 0
     _coins: 50
-    _skin: {fileID: 0}
-    _dropChance: 0
+    _dropChance: 44.4
   - _rewardKind: 0
     _coins: 150
-    _skin: {fileID: 0}
-    _dropChance: 0
+    _dropChance: 27
   - _rewardKind: 0
     _coins: 300
-    _skin: {fileID: 0}
-    _dropChance: 0
+    _dropChance: 16
   - _rewardKind: 0
     _coins: 600
-    _skin: {fileID: 0}
-    _dropChance: 0
+    _dropChance: 8
+  - _rewardKind: 0
+    _coins: 1000
+    _dropChance: 3
   - _rewardKind: 0
     _coins: 1500
-    _skin: {fileID: 0}
-    _dropChance: 0
-  - _rewardKind: 0
-    _coins: 1500
-    _skin: {fileID: 0}
-    _dropChance: 0
+    _dropChance: 1
   - _rewardKind: 0
     _coins: 3000
-    _skin: {fileID: 0}
-    _dropChance: 5
+    _dropChance: 0.5
   - _rewardKind: 1
     _coins: 0
-    _skin: {fileID: 0}
-    _dropChance: 100
+    _dropChance: 0.1
   _exclusiveSkins:
   - {fileID: 11400000, guid: 1f6233159a9e97cf79427226bfc28d31, type: 2}
   - {fileID: 11400000, guid: a16873fd4e416564cb6438502a43e5a9, type: 2}
-  _commonDropChance: 100
-  _rareDropChance: 45
-  _epicDropChance: 15
-  _legendaryDropChance: 4
+  - {fileID: 11400000, guid: 4b7adadddae61f55cb1a1298f3572925, type: 2}
+  - {fileID: 11400000, guid: 45dc0180ba729fffbbff0e329f491ba6, type: 2}
+  - {fileID: 11400000, guid: d4ecaa06b56bf23ed903c441c03f1642, type: 2}
+  _commonDropChance: 80
+  _rareDropChance: 17
+  _epicDropChance: 3
+  _legendaryDropChance: 0
   _skinSpinMinCost: 300
-  _skinSpinMaxCost: 0
+  _skinSpinMaxCost: 3000
   _skinSpinCostStep: 150
   _duplicateCoinsCompensation: 100
-  _showcaseLegendaryCount: 1
+  _showcaseLegendaryCount: 0
   _showcaseEpicCount: 2
-  _showcaseRareCount: 5
+  _showcaseRareCount: 2
   _rarityTable: {fileID: 11400000, guid: 8d1c7cb302a74805e9f7c0823ae73ed6, type: 2}
   _adSpinWindowSeconds: 1800
   _adSpinsPerWindow: 3

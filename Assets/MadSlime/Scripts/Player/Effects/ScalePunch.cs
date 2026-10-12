@@ -8,11 +8,10 @@ namespace Player
     public class ScalePunch : MonoBehaviour
     {
         [SerializeField] private PlayerConfig _config;
-        [SerializeField] private Transform _target;
+        [SerializeField] private ModelDeformer _deformer;
 
         private const float FullProgress = 1f;
 
-        private Vector3 _baseScale;
         private float _progress;
         private Tween _squashTween;
 
@@ -30,13 +29,12 @@ namespace Player
                     $"{name}: PlayerConfig has an empty SquashCurve. Add at least one keyframe to the Collect Squash curve in PlayerConfig.");
             }
 
-            if (_target == null)
+            if (_deformer == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: Target is not assigned. Drag a Transform into the _target field.");
+                    $"{name}: ModelDeformer is not assigned.");
             }
 
-            _baseScale = _target.localScale;
         }
 
         private void OnDisable()
@@ -45,9 +43,9 @@ namespace Player
 
             _progress = 0f;
 
-            if (_target != null)
+            if (_deformer != null)
             {
-                _target.localScale = _baseScale;
+                _deformer.SetCollectCompression(0f);
             }
         }
 
@@ -65,7 +63,7 @@ namespace Player
         private void OnSquashCompleted()
         {
             _progress = 0f;
-            _target.localScale = _baseScale;
+            _deformer.SetCollectCompression(0f);
         }
 
         private float ReadProgress()
@@ -77,7 +75,8 @@ namespace Player
         {
             _progress = progress;
 
-            _target.localScale = _baseScale * _config.SquashCurve.Evaluate(progress);
+            float compression = 1f - Mathf.Clamp01(_config.SquashCurve.Evaluate(progress));
+            _deformer.SetCollectCompression(compression);
         }
 
         private void KillTween()
