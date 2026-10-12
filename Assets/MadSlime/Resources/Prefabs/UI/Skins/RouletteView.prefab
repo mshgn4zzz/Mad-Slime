@@ -57,7 +57,11 @@ MonoBehaviour:
   _adButton: {fileID: 0}
   _adButtonText: {fileID: 0}
   _secretIcon: {fileID: 21300000, guid: 5b40fa94aa06c8f46ad63d2a72e40a27, type: 3}
-  _coinIcon: {fileID: 0}
+  _fewCoinIcon: {fileID: 21300000, guid: 82813c074e2854877b1382f0e987511b, type: 3}
+  _stackCoinIcon: {fileID: 21300000, guid: 2340e003a4a6745a8929491f3b365cea, type: 3}
+  _pileCoinIcon: {fileID: 21300000, guid: 928516686caa643f5b6615dc945cff34, type: 3}
+  _bagCoinIcon: {fileID: 21300000, guid: 8222ee04859dd4fe5b07c16b5439f249, type: 3}
+  _safeCoinIcon: {fileID: 21300000, guid: 61725b696bb9b4c73bb7f577825b65b2, type: 3}
   _winPopupPrefab: {fileID: 5093799342498913054, guid: 401d1e3d257653c46b3eeb3f70dabb6a, type: 3}
   _screenRoot: {fileID: 7471733373879079410}
   _closeButton: {fileID: 0}

@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using Cysharp.Threading.Tasks;
 using Game;
 using UI.Animations;
 using UnityEngine;
@@ -13,11 +11,15 @@ namespace UI
     {
         [SerializeField] private UiEnableTarget[] _sceneStartTargets;
         [SerializeField] private UiEnableTarget[] _sessionStartTargets;
+        [SerializeField] private AnimationScheduler _sceneScheduler;
+        [SerializeField] private AnimationScheduler _gameplayScheduler;
 
         private GameplaySessionHandler _session;
-        private Dictionary<GameObject, UiEnableAnimation> _animations = new Dictionary<GameObject, UiEnableAnimation>();
-        private CancellationTokenSource _sceneSequence;
-        private CancellationTokenSource _gameplaySequence;
+        private List<ReactiveUIView> _views = new List<ReactiveUIView>();
+        private List<Action> _sceneAnimations = new List<Action>();
+        private List<Action> _gameplayAnimations = new List<Action>();
+        private List<float> _sceneDelays = new List<float>();
+        private List<float> _gameplayDelays = new List<float>();
         private bool _isGameplayShown;
 
         [Inject]
@@ -28,8 +30,13 @@ namespace UI
 
         private void Awake()
         {
-            RegisterTargets(_sceneStartTargets);
-            RegisterTargets(_sessionStartTargets);
+            if (_sceneScheduler == null || _gameplayScheduler == null)
+            {
+                throw new InvalidOperationException($"{name}: assign both animation schedulers.");
+            }
+
+            RegisterTargets(_sceneStartTargets, _sceneAnimations, _sceneDelays);
+            RegisterTargets(_sessionStartTargets, _gameplayAnimations, _gameplayDelays);
         }
 
         private void OnEnable()
@@ -39,9 +46,9 @@ namespace UI
             _session.GameplayStarted += OnGameplayStarted;
             _session.SessionFinished += OnFinished;
 
-            foreach (UiEnableAnimation animation in _animations.Values)
+            foreach (ReactiveUIView view in _views)
             {
-                animation.OutroCompleted += OnTargetHidden;
+                view.DisableCompleted += OnTargetHidden;
             }
         }
 
@@ -53,10 +60,9 @@ namespace UI
             _session.SessionFinished -= OnFinished;
             CancelSequences();
 
-            foreach (UiEnableAnimation animation in _animations.Values)
+            foreach (ReactiveUIView view in _views)
             {
-                animation.OutroCompleted -= OnTargetHidden;
-                animation.Cancel();
+                view.DisableCompleted -= OnTargetHidden;
             }
         }
 
@@ -65,69 +71,45 @@ namespace UI
             CancelSequences();
             _isGameplayShown = false;
 
-            foreach (GameObject target in _animations.Keys)
+            foreach (ReactiveUIView view in _views)
             {
-                target.SetActive(false);
+                view.ResetState(false);
+                view.gameObject.SetActive(false);
             }
         }
 
         private void OnStarted()
         {
-            _sceneSequence = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
-            ShowSequenceAsync(_sceneStartTargets, _sceneSequence.Token).Forget();
+            _sceneScheduler.Play(_sceneAnimations, _sceneDelays);
         }
 
         private void OnGameplayStarted()
         {
-            if (_isGameplayShown)
+            if (_isGameplayShown == true)
             {
                 return;
             }
 
             _isGameplayShown = true;
-            _gameplaySequence = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
-            ShowSequenceAsync(_sessionStartTargets, _gameplaySequence.Token).Forget();
+            _gameplayScheduler.Play(_gameplayAnimations, _gameplayDelays);
         }
 
         private void OnFinished()
         {
             CancelSequences();
 
-            foreach (KeyValuePair<GameObject, UiEnableAnimation> target in _animations)
+            foreach (ReactiveUIView view in _views)
             {
-                if (target.Key.activeSelf)
-                {
-                    target.Value.PlayOutro();
-                }
+                view.Disable();
             }
         }
 
-        private async UniTaskVoid ShowSequenceAsync(UiEnableTarget[] targets, CancellationToken cancellationToken)
+        private void OnTargetHidden(ReactiveUIView view)
         {
-            try
-            {
-                for (int i = 0; i < targets.Length; i++)
-                {
-                    await UniTask.Delay(TimeSpan.FromSeconds(targets[i].Delay), DelayType.Realtime,
-                        cancellationToken: cancellationToken);
-                    cancellationToken.ThrowIfCancellationRequested();
-                    GameObject target = targets[i].Target;
-                    target.SetActive(true);
-                    _animations[target].PlayIntro();
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                return;
-            }
+            view.gameObject.SetActive(false);
         }
 
-        private void OnTargetHidden(UiEnableAnimation animation)
-        {
-            animation.gameObject.SetActive(false);
-        }
-
-        private void RegisterTargets(UiEnableTarget[] targets)
+        private void RegisterTargets(UiEnableTarget[] targets, List<Action> animations, List<float> delays)
         {
             if (targets == null)
             {
@@ -136,25 +118,27 @@ namespace UI
 
             for (int i = 0; i < targets.Length; i++)
             {
-                GameObject target = targets[i].Target;
+                ReactiveUIView view = targets[i].View;
 
-                if (target == null || target.TryGetComponent(out UiEnableAnimation animation) == false)
+                if (view == null)
                 {
-                    throw new InvalidOperationException($"{name}: HUD target {i} requires UiEnableAnimation.");
+                    throw new InvalidOperationException($"{name}: HUD target {i} requires ReactiveUIView.");
                 }
 
-                _animations[target] = animation;
+                animations.Add(view.Enable);
+                delays.Add(targets[i].Delay);
+
+                if (_views.Contains(view) == false)
+                {
+                    _views.Add(view);
+                }
             }
         }
 
         private void CancelSequences()
         {
-            _sceneSequence?.Cancel();
-            _sceneSequence?.Dispose();
-            _sceneSequence = null;
-            _gameplaySequence?.Cancel();
-            _gameplaySequence?.Dispose();
-            _gameplaySequence = null;
+            _sceneScheduler.Cancel();
+            _gameplayScheduler.Cancel();
         }
     }
 }

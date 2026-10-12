@@ -142,18 +142,21 @@ namespace Roulette
             for (int i = 0; i < _model.Slots.Count; i++)
             {
                 RouletteSlot slot = _model.Slots[i];
-                Sprite icon = _view.CoinIcon;
-                string label = $"×{slot.Coins}";
+                Sprite icon;
+                string label = null;
 
                 if (slot.IsHidden == true)
                 {
                     icon = _view.SecretIcon;
-                    label = null;
                 }
                 else if (slot.Skin != null)
                 {
                     icon = slot.Skin.Icon;
-                    label = null;
+                }
+                else
+                {
+                    icon = _view.GetCoinIcon(slot.Coins);
+                    label = $"×{slot.Coins}";
                 }
 
                 icons.Add(new RouletteSectorIcon(icon, label));
@@ -269,7 +272,7 @@ namespace Roulette
             }
             else
             {
-                _popup.InitializeCoins(prize.Coins);
+                _popup.InitializeCoins(prize.Coins, _view.GetCoinIcon(prize.Coins));
             }
 
             _spawner.Show(_popup);
