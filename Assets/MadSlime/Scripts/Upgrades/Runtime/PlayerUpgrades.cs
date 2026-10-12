@@ -105,7 +105,15 @@ namespace Upgrades
             }
 
             UpgradeEntry entry = GetUpgrade(type);
-            return entry.BaseCost + entry.CostStep * GetLevel(type);
+            int cost = entry.BaseCost;
+            int level = GetLevel(type);
+
+            for (int i = 0; i < level; i++)
+            {
+                cost = checked(cost * entry.CostMultiplier);
+            }
+
+            return cost;
         }
 
         public void PurchaseStepped(UpgradeType type)

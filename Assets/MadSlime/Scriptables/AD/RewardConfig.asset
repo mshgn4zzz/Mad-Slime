@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: RewardConfig
   m_EditorClassIdentifier: 
   _baseReward: 50
-  _winFullMultiplierThreshold: 1.25
+  _rewardMultiplier: 1.27
+  _maxReward: 5000
   _loseMultiplierThreshold: 0.25
   _loseRewardDivisor: 4
