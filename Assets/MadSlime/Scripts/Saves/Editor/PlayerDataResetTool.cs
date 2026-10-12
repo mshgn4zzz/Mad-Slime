@@ -1,99 +1,45 @@
-using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
+using YG;
 
-public static class PlayerDataResetTool
+namespace EditorTools
 {
-    private const string EditorSavesPath = "Assets/PluginYourGames/Editor/SavesEditorYG2.json";
-    private const int TestBalance = 9999999;
-
-    [MenuItem("Mad Slime/Reset Player Data")]
-    public static void ResetPlayerData()
+    public class PlayerDataResetTool
     {
-        if (EditorApplication.isPlaying == true)
+        private const string EditorSavesPath = "Assets/PluginYourGames/Editor/SavesEditorYG2.json";
+        private const int EmptyBalance = 0;
+        private const int TestBalance = 9999999;
+
+        [MenuItem("Mad Slime/Reset Player Data/From Zero")]
+        public static void ResetPlayerData()
         {
-            Debug.LogWarning("[PlayerDataResetTool] Exit play mode first — the running session would overwrite the reset.");
-            return;
+            Reset(EmptyBalance);
         }
 
-        if (File.Exists(EditorSavesPath) == false)
+        [MenuItem("Mad Slime/Reset Player Data/From Zero With Money")]
+        public static void ResetPlayerDataWithMoney()
         {
-            throw new InvalidOperationException($"Editor saves file not found: {EditorSavesPath}");
+            Reset(TestBalance);
         }
 
-        string json = File.ReadAllText(EditorSavesPath);
-
-        json = ReplaceNumber(json, "CurrentLevel", 1);
-        json = ReplaceNumber(json, "MaxLevel", 1);
-        json = ReplaceNumber(json, "Balance", TestBalance);
-        json = ReplaceStringIfPresent(json, "SelectedSkinId", "");
-        json = ReplaceArrayIfPresent(json, "_openSkinIds", "[]");
-        json = ReplaceArrayIfPresent(json, "_showcaseSkinIds", "[]");
-        json = ReplaceNumber(json, "SpeedLevel", 0);
-        json = ReplaceNumber(json, "AppetiteLevel", 0);
-        json = ReplaceNumber(json, "TasteLevel", 0);
-        json = ReplaceNumber(json, "MetabolismLevel", 0);
-        json = ReplaceArray(json, "PurchasedPerks", "[]");
-        json = ReplaceNumber(json, "LastFreeSpinUnixTime", 0);
-        json = ReplaceArray(json, "RouletteAdSpinTimes", "[]");
-        json = ReplaceNumber(json, "SkinSpinCount", 0);
-
-        File.WriteAllText(EditorSavesPath, json);
-        AssetDatabase.Refresh();
-
-        Debug.Log($"[PlayerDataResetTool] progress reset, balance set to {TestBalance}");
-    }
-
-    private static string ReplaceNumber(string json, string field, int value)
-    {
-        string pattern = "\"" + field + "\":\\s*-?[0-9]+";
-        string replacement = "\"" + field + "\": " + value;
-
-        if (System.Text.RegularExpressions.Regex.IsMatch(json, pattern) == false)
+        private static void Reset(int balance)
         {
-            throw new InvalidOperationException($"Field '{field}' not found in editor saves.");
+            if (EditorApplication.isPlayingOrWillChangePlaymode == true)
+            {
+                Debug.LogWarning("[PlayerDataResetTool] Exit play mode first — the running session would overwrite the reset.");
+                return;
+            }
+
+            SavesYG data = new SavesYG();
+            data.Balance = balance;
+
+            string json = JsonUtility.ToJson(data, true);
+
+            File.WriteAllText(EditorSavesPath, json);
+            AssetDatabase.Refresh();
+
+            Debug.Log($"[PlayerDataResetTool] all player data reset, balance set to {balance}");
         }
-
-        return System.Text.RegularExpressions.Regex.Replace(json, pattern, replacement);
-    }
-
-    private static string ReplaceArray(string json, string field, string value)
-    {
-        string pattern = "\"" + field + "\":\\s*\\[[^\\]]*\\]";
-        string replacement = "\"" + field + "\": " + value;
-
-        if (System.Text.RegularExpressions.Regex.IsMatch(json, pattern) == false)
-        {
-            throw new InvalidOperationException($"Field '{field}' not found in editor saves.");
-        }
-
-        return System.Text.RegularExpressions.Regex.Replace(json, pattern, replacement);
-    }
-
-    private static string ReplaceStringIfPresent(string json, string field, string value)
-    {
-        string pattern = "\"" + field + "\":\\s*\"[^\"]*\"";
-        string replacement = "\"" + field + "\": \"" + value + "\"";
-
-        if (System.Text.RegularExpressions.Regex.IsMatch(json, pattern) == false)
-        {
-            return json;
-        }
-
-        return System.Text.RegularExpressions.Regex.Replace(json, pattern, replacement);
-    }
-
-    private static string ReplaceArrayIfPresent(string json, string field, string value)
-    {
-        string pattern = "\"" + field + "\":\\s*\\[[^\\]]*\\]";
-        string replacement = "\"" + field + "\": " + value;
-
-        if (System.Text.RegularExpressions.Regex.IsMatch(json, pattern) == false)
-        {
-            return json;
-        }
-
-        return System.Text.RegularExpressions.Regex.Replace(json, pattern, replacement);
     }
 }
