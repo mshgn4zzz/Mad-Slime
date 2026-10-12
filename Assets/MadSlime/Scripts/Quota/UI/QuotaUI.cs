@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UI.Animations;
 using VContainer;
 
 namespace Quota
 {
-    [RequireComponent(typeof(QuotaIntroSequence))]
+    [RequireComponent(typeof(AnimationScheduler))]
     public class QuotaUI : MonoBehaviour
     {
         [SerializeField] private QuotaPlateUI _platePrefab;
         [SerializeField] private RectTransform _container;
         [SerializeField, Min(1f)] private float _verticalSpacing = 60f;
-        [SerializeField, Min(0.01f)] private float _plateIntroDuration = 0.25f;
         [Tooltip("Задержка перед выездом каждой следующей плашки (с).")]
         [SerializeField, Min(0f)] private float _plateIntroDurationStep = 0.1f;
-        [SerializeField, Min(0f)] private float _plateIntroSlideOffset = 90f;
+        [SerializeField, Min(0f)] private float _removalSlideOffset = 90f;
         [SerializeField, Min(0.01f)] private float _shiftDuration = 0.25f;
         [SerializeField, Min(0.01f)] private float _removeDuration = 0.2f;
 
@@ -24,7 +24,9 @@ namespace Quota
         private Dictionary<QuotaEntry, QuotaPlateUI> _platesByEntry = new Dictionary<QuotaEntry, QuotaPlateUI>();
         private QuotaBoard _board;
         private QuotaPlateSpawner _plateSpawner;
-        private QuotaIntroSequence _introSequence;
+        private AnimationScheduler _introSequence;
+        private List<Action> _introAnimations = new List<Action>();
+        private List<float> _introDelays = new List<float>();
 
         [Inject]
         public void Construct(QuotaBoard board)
@@ -41,7 +43,7 @@ namespace Quota
 
             if (TryGetComponent(out _introSequence) == false)
             {
-                throw new InvalidOperationException($"{name}: QuotaIntroSequence is required.");
+                throw new InvalidOperationException($"{name}: AnimationScheduler is required.");
             }
 
             _plateSpawner = new QuotaPlateSpawner(_platePrefab, _container);
@@ -87,6 +89,17 @@ namespace Quota
                     throw new InvalidOperationException($"{name}: plate requires QuotaPlateAnimator.");
                 }
 
+                plate.transform.localPosition = new Vector3(0f, -i * _verticalSpacing, 0f);
+                animator.PrepareIntro();
+                _introAnimations.Add(animator.PlayIntro);
+                float delay = 0f;
+
+                if (_introAnimations.Count > 1)
+                {
+                    delay = _plateIntroDurationStep;
+                }
+
+                _introDelays.Add(delay);
                 _plates.Add(plate);
                 _animators.Add(animator);
                 _platesByEntry.Add(entry, plate);
@@ -94,8 +107,7 @@ namespace Quota
 
             if (_plates.Count > 0)
             {
-                _introSequence.Play(_animators, _verticalSpacing, _plateIntroSlideOffset,
-                    _plateIntroDuration, _plateIntroDurationStep);
+                _introSequence.Play(_introAnimations, _introDelays);
             }
         }
 
@@ -122,7 +134,7 @@ namespace Quota
             _animators.RemoveAt(index);
             _removing.Add(animator);
             animator.RemovalCompleted += OnRemovalCompleted;
-            animator.PlayRemoval(_removeDuration, _plateIntroSlideOffset);
+            animator.PlayRemoval(_removeDuration, _removalSlideOffset);
         }
 
         private void OnRemovalCompleted(QuotaPlateAnimator animator)
@@ -159,6 +171,8 @@ namespace Quota
                 Destroy(animator.gameObject);
             }
 
+            _introAnimations.Clear();
+            _introDelays.Clear();
             _plates.Clear();
             _animators.Clear();
             _removing.Clear();

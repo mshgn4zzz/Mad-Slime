@@ -183,9 +183,9 @@ MonoBehaviour:
     _en: In {0}
     _tr: '{0} sonra'
   - _key: roulette_ad_spins
-    _ru: "\u0420\u0415\u041A\u041B\u0410\u041C\u0410 ({0})"
-    _en: AD ({0})
-    _tr: REKLAM ({0})
+    _ru: "ОСТАЛОСЬ: {0}"
+    _en: "LEFT: {0}"
+    _tr: "KALAN: {0}"
   - _key: roulette_won_coins
     _ru: "+{0} \u043C\u043E\u043D\u0435\u0442"
     _en: +{0} coins
@@ -219,37 +219,33 @@ MonoBehaviour:
     _en: STEP {0}/{1}
     _tr: ADIM {0}/{1}
   - _key: upgrade_speed_desc
-    _ru: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C +{0}%"
-    _en: Speed +{0}%
-    _tr: "H\u0131z +{0}%"
+    _ru: "Повышает скорость. Быстрее добирайся до нужных предметов и собирай больше.\nСкорость +{0}%"
+    _en: "Increases movement speed. Reach the items you need faster and collect more.\nSpeed +{0}%"
+    _tr: "Hareket hızını artırır. İhtiyacın olan nesnelere daha hızlı ulaş ve daha fazlasını topla.\nHız +{0}%"
   - _key: upgrade_appetite_desc
-    _ru: "\u041E\u0431\u044A\u0451\u043C +{0}%"
-    _en: Size +{0}%
-    _tr: "B\xFCy\xFCkl\xFCk +{0}%"
+    _ru: "Увеличивает массу от любых съеденных предметов. Быстрее расти и открывай доступ к крупной добыче.\nМасса +{0}%"
+    _en: "Increases the mass gained from every item you eat. Grow faster and unlock bigger prey.\nMass +{0}%"
+    _tr: "Yediğin her nesneden kazandığın kütleyi artırır. Daha hızlı büyü ve daha büyük nesneleri yut.\nKütle +{0}%"
   - _key: upgrade_taste_desc
-    _ru: "\u0421\u044B\u0442\u043D\u043E\u0441\u0442\u044C +{0}%"
-    _en: Fullness +{0}%
-    _tr: Doyuruculuk +{0}%
+    _ru: "Квотовые предметы дают дополнительную массу. Собирай нужные объекты, чтобы быстрее расти.\nМасса от квоты +{0}%"
+    _en: "Quota items give extra mass. Collect the required objects to grow faster.\nMass from quota items +{0}%"
+    _tr: "Kota nesneleri ek kütle kazandırır. Daha hızlı büyümek için gereken nesneleri topla.\nKota nesnelerinden kütle +{0}%"
   - _key: upgrade_metabolism_desc
-    _ru: "\u0423\u0441\u0432\u043E\u0435\u043D\u0438\u0435 +{0}%"
-    _en: Digestion +{0}%
-    _tr: Sindirim +{0}%
+    _ru: "Усиливает вклад предметов вне квоты в заполнение картинки. Даже случайная добыча помогает добраться до 100%.\nВклад в заполнение +{0}%"
+    _en: "Items outside the quota contribute more to filling the picture. Even extra finds help you reach 100%.\nFill contribution +{0}%"
+    _tr: "Kota dışındaki nesnelerin resmi doldurmaya katkısını artırır. Fazladan topladıkların bile %100 doluluğa ulaşmana yardım eder.\nDolum katkısı +{0}%"
   - _key: perk_smell_desc
-    _ru: "\u041A\u0432\u043E\u0442\u043E\u0432\u044B\u0435 \u043F\u0440\u0435\u0434\u043C\u0435\u0442\u044B
-      \u043F\u043E\u0434\u0441\u0432\u0435\u0447\u0435\u043D\u044B"
-    _en: Highlights the required items
-    _tr: Gerekli nesneleri vurgular
+    _ru: "Подсвечивает доступные для поглощения квотовые предметы рядом. Быстрее находи нужную добычу."
+    _en: "Highlights nearby quota items that you can eat. Find the objects you need faster."
+    _tr: "Yakındaki yutabileceğin kota nesnelerini vurgular. İhtiyacın olan nesneleri daha hızlı bul."
   - _key: perk_adrenaline_desc
-    _ru: "\u0423\u0441\u043A\u043E\u0440\u0435\u043D\u0438\u0435, \u043A\u043E\u0433\u0434\u0430
-      \u0432\u0440\u0435\u043C\u044F \u043D\u0430 \u0438\u0441\u0445\u043E\u0434\u0435"
-    _en: Speed boost at the end of the round
-    _tr: "Rauntun sonunda h\u0131zlanma"
+    _ru: "Ускоряет, когда время подходит к концу. Используй последние секунды, чтобы добрать нужные предметы."
+    _en: "Boosts your speed when time is running out. Use the final seconds to grab the items you still need."
+    _tr: "Süre azalırken hızını artırır. Eksik kalan nesneleri toplamak için son saniyeleri kullan."
   - _key: perk_ambitions_desc
-    _ru: "\u041C\u043E\u0436\u043D\u043E \u0435\u0441\u0442\u044C \u043F\u0440\u0435\u0434\u043C\u0435\u0442\u044B
-      \u043D\u0430 \u043E\u0434\u0438\u043D \u0442\u0438\u0440 \u043A\u0440\u0443\u043F\u043D\u0435\u0435
-      \u0441\u0432\u043E\u0435\u0433\u043E"
-    _en: Start one tier higher
-    _tr: "Bir kademeden y\xFCksek ba\u015Fla"
+    _ru: "Позволяет поглощать предметы на один тир крупнее. Крупная добыча становится доступнее."
+    _en: "Lets you eat objects one size tier above your own. Bigger prey becomes easier to reach."
+    _tr: "Senden bir boyut kademesi büyük nesneleri yutmanı sağlar. Büyük nesneleri daha erken yiyebilirsin."
   - _key: shop_one_time
     _ru: "\u041E\u0414\u041D\u041E\u0420\u0410\u0417\u041E\u0412\u042B\u0415 \u041F\u041E\u041A\u0423\u041F\u041A\u0418"
     _en: ONE-TIME BUYS

@@ -4,14 +4,14 @@ using UnityEngine;
 
 namespace UI
 {
-    [RequireComponent(typeof(UiScaleAnimator))]
+    [RequireComponent(typeof(ReactiveUIView))]
     public class BaseWindow : MonoBehaviour, IShowable
     {
         public event Action Closed;
 
         public event Action CloseRequested;
 
-        private UiScaleAnimator _scaleAnimator;
+        private ReactiveUIView _view;
         private bool _isClosing;
         private bool _isCloseRequested;
         private bool _isClosed;
@@ -20,21 +20,21 @@ namespace UI
 
         protected virtual void Awake()
         {
-            if (TryGetComponent(out _scaleAnimator) == false)
+            if (TryGetComponent(out _view) == false)
             {
                 throw new InvalidOperationException(
-                    $"{name}: UiScaleAnimator is missing. The window prefab must contain a UiScaleAnimator component.");
+                    $"{name}: ReactiveUIView is missing. Assign the window animators in its prefab.");
             }
         }
 
         public virtual void Show()
         {
-            _scaleAnimator.HideCompleted -= OnHideCompleted;
+            _view.DisableCompleted -= OnDisableCompleted;
             _isClosing = false;
             _isCloseRequested = false;
             _isClosed = false;
             gameObject.SetActive(true);
-            _scaleAnimator.PlayShow();
+            _view.Enable();
         }
 
         public void Hide()
@@ -64,8 +64,8 @@ namespace UI
             _isClosing = true;
             OnClosing();
 
-            _scaleAnimator.HideCompleted += OnHideCompleted;
-            _scaleAnimator.PlayHide();
+            _view.DisableCompleted += OnDisableCompleted;
+            _view.Disable();
         }
 
         protected virtual void OnClosing()
@@ -74,13 +74,13 @@ namespace UI
 
         protected virtual void OnDisable()
         {
-            if (_scaleAnimator != null)
+            if (_view != null)
             {
-                _scaleAnimator.HideCompleted -= OnHideCompleted;
+                _view.DisableCompleted -= OnDisableCompleted;
             }
         }
 
-        private void OnHideCompleted()
+        private void OnDisableCompleted(ReactiveUIView view)
         {
             if (_isClosed == true)
             {
@@ -88,7 +88,7 @@ namespace UI
             }
 
             _isClosed = true;
-            _scaleAnimator.HideCompleted -= OnHideCompleted;
+            _view.DisableCompleted -= OnDisableCompleted;
 
             Action closed = Closed;
             closed?.Invoke();

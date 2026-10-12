@@ -9,16 +9,25 @@ namespace Roulette
 {
     public class RouletteView : MonoBehaviour, IShowable
     {
+        private const int StackCoinThreshold = 150;
+        private const int PileCoinThreshold = 300;
+        private const int BagCoinThreshold = 1000;
+        private const int SafeCoinThreshold = 3000;
+
         [SerializeField] private RouletteWheel _wheel;
         [SerializeField] private Button _spinButton;
         [SerializeField] private TMP_Text _spinPriceText;
         [SerializeField] private Button _adButton;
         [SerializeField] private TMP_Text _adButtonText;
         [SerializeField] private Sprite _secretIcon;
-        [SerializeField] private Sprite _coinIcon;
+        [SerializeField] private Sprite _fewCoinIcon;
+        [SerializeField] private Sprite _stackCoinIcon;
+        [SerializeField] private Sprite _pileCoinIcon;
+        [SerializeField] private Sprite _bagCoinIcon;
+        [SerializeField] private Sprite _safeCoinIcon;
         [SerializeField] private RouletteWinPopup _winPopupPrefab;
         [SerializeField] private GameObject _screenRoot;
-        [SerializeField] private UiScaleAnimator _screenScaleAnimator;
+        [SerializeField] private ReactiveUIView _screenView;
         [SerializeField] private Button _closeButton;
 
         public event Action SpinRequested;
@@ -29,8 +38,47 @@ namespace Roulette
 
         public RouletteWheel Wheel => _wheel;
         public Sprite SecretIcon => _secretIcon;
-        public Sprite CoinIcon => _coinIcon;
         public RouletteWinPopup WinPopupPrefab => _winPopupPrefab;
+
+        public Sprite GetCoinIcon(int amount)
+        {
+            if (amount <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(amount));
+            }
+
+            Sprite icon;
+
+            switch (amount)
+            {
+                case int safeAmount when safeAmount >= SafeCoinThreshold:
+                    icon = _safeCoinIcon;
+                    break;
+
+                case int bagAmount when bagAmount >= BagCoinThreshold:
+                    icon = _bagCoinIcon;
+                    break;
+
+                case int pileAmount when pileAmount >= PileCoinThreshold:
+                    icon = _pileCoinIcon;
+                    break;
+
+                case int stackAmount when stackAmount >= StackCoinThreshold:
+                    icon = _stackCoinIcon;
+                    break;
+
+                default:
+                    icon = _fewCoinIcon;
+                    break;
+            }
+
+            if (icon == null)
+            {
+                throw new InvalidOperationException($"{name}: assign the coin reward icon for amount {amount}.");
+            }
+
+            return icon;
+        }
 
         private void OnEnable()
         {
@@ -61,9 +109,9 @@ namespace Roulette
                 _closeButton.onClick.RemoveListener(OnCloseClicked);
             }
 
-            if (_screenScaleAnimator != null)
+            if (_screenView != null)
             {
-                _screenScaleAnimator.HideCompleted -= OnHideCompleted;
+                _screenView.DisableCompleted -= OnHideCompleted;
             }
 
             Disabled?.Invoke();
@@ -78,23 +126,23 @@ namespace Roulette
                 _screenRoot.SetActive(true);
             }
 
-            if (_screenScaleAnimator != null)
+            if (_screenView != null)
             {
-                _screenScaleAnimator.PlayShow();
+                _screenView.Enable();
             }
         }
 
         public void Hide()
         {
-            if (_screenScaleAnimator != null)
+            if (_screenView != null)
             {
-                _screenScaleAnimator.HideCompleted -= OnHideCompleted;
-                _screenScaleAnimator.HideCompleted += OnHideCompleted;
-                _screenScaleAnimator.PlayHide();
+                _screenView.DisableCompleted -= OnHideCompleted;
+                _screenView.DisableCompleted += OnHideCompleted;
+                _screenView.Disable();
                 return;
             }
 
-            OnHideCompleted();
+            OnHideCompleted(null);
         }
 
         public void Display(string spinText, bool canSpin, bool showAd, string adText, bool canWatchAd)
@@ -114,11 +162,11 @@ namespace Roulette
             }
         }
 
-        private void OnHideCompleted()
+        private void OnHideCompleted(ReactiveUIView view)
         {
-            if (_screenScaleAnimator != null)
+            if (_screenView != null)
             {
-                _screenScaleAnimator.HideCompleted -= OnHideCompleted;
+                _screenView.DisableCompleted -= OnHideCompleted;
             }
 
             Closed?.Invoke();
