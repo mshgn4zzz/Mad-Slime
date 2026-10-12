@@ -24,7 +24,6 @@ namespace DI
         [SerializeField] private FillCompleteAnimator _fillCompleteAnimator;
         [SerializeField] private FillCompleteSound _fillCompleteSound;
         [SerializeField] private FillProgressUI _fillProgressUI;
-        [SerializeField] private FillDebug _fillDebug;
         [SerializeField] private Rewarder _rewarder;
         [SerializeField] private AdScheduler _adScheduler;
         [SerializeField] private LeaderboardReporter _leaderboardReporter;
@@ -46,7 +45,6 @@ namespace DI
             ValidateAssigned(_fillCompleteAnimator, nameof(_fillCompleteAnimator));
             ValidateAssigned(_fillCompleteSound, nameof(_fillCompleteSound));
             ValidateAssigned(_fillProgressUI, nameof(_fillProgressUI));
-            ValidateAssigned(_fillDebug, nameof(_fillDebug));
             ValidateAssigned(_rewarder, nameof(_rewarder));
             ValidateAssigned(_adScheduler, nameof(_adScheduler));
             ValidateAssigned(_leaderboardReporter, nameof(_leaderboardReporter));
@@ -67,7 +65,6 @@ namespace DI
             builder.RegisterComponent(_fillCompleteAnimator);
             builder.RegisterComponent(_fillCompleteSound);
             builder.RegisterComponent(_fillProgressUI);
-            builder.RegisterComponent(_fillDebug);
             builder.RegisterComponent(_rewarder);
             builder.RegisterComponent(_adScheduler);
             builder.RegisterComponent(_leaderboardReporter);
