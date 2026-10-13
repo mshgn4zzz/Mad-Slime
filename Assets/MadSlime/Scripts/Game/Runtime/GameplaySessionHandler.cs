@@ -253,6 +253,13 @@ namespace Game
 
         private void ApplyPause()
         {
+            if (_state == SessionState.Finished && (_itemDetector == null || _attractableDetector == null
+                || _closeDetector == null || _crawlAnimator == null || _smellAbility == null
+                || _movement == null || _itemCollector == null))
+            {
+                return;
+            }
+
             bool isRunning = _state == SessionState.Running && _pauser.IsPaused == false;
             _itemDetector.enabled = isRunning;
             _attractableDetector.enabled = isRunning;
@@ -273,8 +280,12 @@ namespace Game
 
         private void FinishSession()
         {
+            if (_state == SessionState.Finished)
+            {
+                return;
+            }
+
             bool wasRunning = _state == SessionState.Running;
-            bool wasFinished = _state == SessionState.Finished;
             _state = SessionState.Finished;
             _sessionSource?.Cancel();
             _finishDelaySource?.Cancel();
@@ -292,10 +303,7 @@ namespace Game
                 _gameplayReporter.ReportStop();
             }
 
-            if (wasFinished == false)
-            {
-                SessionFinished?.Invoke();
-            }
+            SessionFinished?.Invoke();
         }
 
         private void OnMovementKeyPressed()

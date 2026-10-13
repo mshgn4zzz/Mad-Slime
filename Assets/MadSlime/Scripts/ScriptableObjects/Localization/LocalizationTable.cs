@@ -32,16 +32,16 @@ namespace Scriptables
     public class LocaleEntry
     {
         [Tooltip("Ключ, по которому код запрашивает строку через Localization.Get.")]
-        [SerializeField] private string _key;
+        [SerializeField, InspectorName("Ключ")] private string _key;
 
         [Tooltip("Русская строка.")]
-        [SerializeField] private string _ru;
+        [SerializeField, InspectorName("Русский (ru)")] private string _ru;
 
         [Tooltip("Английская строка. Пусто — фолбэк на русскую.")]
-        [SerializeField] private string _en;
+        [SerializeField, InspectorName("English (en)")] private string _en;
 
         [Tooltip("Турецкая строка. Пусто — фолбэк на английскую.")]
-        [SerializeField] private string _tr;
+        [SerializeField, InspectorName("Türkçe (tr)")] private string _tr;
 
         public string Key => _key;
 

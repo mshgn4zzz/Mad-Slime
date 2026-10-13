@@ -14,6 +14,7 @@ namespace Roulette
 {
     public class RoulettePresenter : MonoBehaviour
     {
+        public event Action<RoulettePrize> PrizeClaimed;
         [SerializeField] private RouletteView _view;
 
         private RouletteModel _model;
@@ -285,6 +286,7 @@ namespace Roulette
 
         private void OnPopupClosed()
         {
+            PrizeClaimed?.Invoke(_outcome.Prize);
             ReleasePopup();
             _view.Wheel.ReleaseHold();
             _outcome = null;

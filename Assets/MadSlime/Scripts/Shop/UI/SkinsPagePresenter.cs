@@ -1,15 +1,15 @@
-using System;
 using System.Collections.Generic;
 using Skins;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Shop
 {
     public class SkinsPagePresenter : MonoBehaviour
     {
         [SerializeField] private Transform _itemsParent;
+        [SerializeField] private ScrollRect _scroll;
         [SerializeField] private ShopItemViewFactory _factory;
-        [SerializeField, Min(1)] private int _skinsPerRow = 3;
 
         private SkinInventory _inventory;
         private SkinRarityLookup _rarityLookup;
@@ -17,7 +17,7 @@ namespace Shop
         private List<SkinItem> _skins = new List<SkinItem>();
         private List<SkinItem> _exclusiveSkins = new List<SkinItem>();
         private List<ShopItemView> _views = new List<ShopItemView>();
-        private List<GameObject> _fillers = new List<GameObject>();
+        private List<SkinRarityGroupView> _groups = new List<SkinRarityGroupView>();
         private bool _isSetup;
 
         public void Setup(SkinInventory inventory, IEnumerable<SkinItem> skins, IEnumerable<SkinItem> exclusiveSkins,
@@ -100,21 +100,12 @@ namespace Shop
                     end++;
                 }
 
-                SpawnGroup(index, end, true);
-                SpawnGroup(index, end, false);
+                SkinRarityGroupView group = _factory.GetRarityGroup(_itemsParent);
+                group.Initialize(rarity, _rarityLookup.Get(rarity).PlateColor);
+                _groups.Add(group);
+                SpawnGroup(group.ItemsParent, index, end, true);
+                SpawnGroup(group.ItemsParent, index, end, false);
                 index = end;
-            }
-
-            int remainder = _views.Count % _skinsPerRow;
-
-            if (remainder != 0)
-            {
-                for (int i = remainder; i < _skinsPerRow; i++)
-                {
-                    GameObject filler = new GameObject("RowFiller", typeof(RectTransform));
-                    filler.transform.SetParent(_itemsParent, false);
-                    _fillers.Add(filler);
-                }
             }
 
             SkinItem equipped = FindSkin(_inventory.SelectedSkinId);
@@ -125,7 +116,7 @@ namespace Shop
             }
         }
 
-        private void SpawnGroup(int start, int end, bool isOpen)
+        private void SpawnGroup(Transform parent, int start, int end, bool isOpen)
         {
             for (int i = start; i < end; i++)
             {
@@ -136,12 +127,27 @@ namespace Shop
                     continue;
                 }
 
-                ShopItemView view = _factory.Get(_itemsParent);
+                ShopItemView view = _factory.Get(parent);
                 view.Initialize(skin.Id, skin.Icon, _rarityLookup.Get(skin.Rarity).PlateColor,
                     _exclusiveSkins.Contains(skin), isOpen, _inventory.SelectedSkinId == skin.Id);
                 view.Click += OnClicked;
                 _views.Add(view);
             }
+        }
+
+        public void Refresh(string rewardSkinId)
+        {
+            Vector2 position = _scroll.normalizedPosition;
+            Clear();
+            Show();
+
+            foreach (ShopItemView view in _views)
+            {
+                view.SetHighlighted(view.SkinId == rewardSkinId);
+            }
+
+            Canvas.ForceUpdateCanvases();
+            _scroll.normalizedPosition = position;
         }
 
         private void OnClicked(ShopItemView view)
@@ -178,17 +184,18 @@ namespace Shop
             foreach (ShopItemView view in _views)
             {
                 view.Click -= OnClicked;
-                Destroy(view.gameObject);
+                view.gameObject.SetActive(false);
             }
 
             _views.Clear();
 
-            foreach (GameObject filler in _fillers)
+            foreach (SkinRarityGroupView group in _groups)
             {
-                Destroy(filler);
+                group.gameObject.SetActive(false);
+                Destroy(group.gameObject);
             }
 
-            _fillers.Clear();
+            _groups.Clear();
         }
     }
 }

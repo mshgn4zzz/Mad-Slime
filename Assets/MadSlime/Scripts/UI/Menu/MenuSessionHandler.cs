@@ -20,6 +20,7 @@ namespace UI
         [SerializeField] private PauseMenu _settingsMenuPrefab;
         [SerializeField] private LeaderboardMenu _leaderboardMenuPrefab;
         [SerializeField] private RoulettePresenter _dailyRoulette;
+        [SerializeField] private CollectionWindows _collections;
 
         private enum SessionState
         {
@@ -96,6 +97,11 @@ namespace UI
                     $"{name}: Daily roulette is not assigned. Drag the daily RouletteView component into the _dailyRoulette field.");
             }
 
+            if (_collections == null)
+            {
+                throw new InvalidOperationException($"{name}: CollectionWindows is not assigned.");
+            }
+
             if (_musicPlayer == null || _sceneNavigator == null || _uiSpawner == null || _pauser == null)
             {
                 throw new InvalidOperationException(
@@ -107,7 +113,8 @@ namespace UI
         {
             _sessionSource = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
             _mainMenu.PlayClicked += OnPlayClicked;
-            _mainMenu.ShopClicked += OnShopClicked;
+            _mainMenu.SkinsClicked += OnSkinsClicked;
+            _mainMenu.UpgradesClicked += OnUpgradesClicked;
             _mainMenu.LeaderboardClicked += OnLeaderboardClicked;
             _mainMenu.SettingsClicked += OnSettingsClicked;
             _mainMenu.DailyClicked += OnDailyClicked;
@@ -123,7 +130,8 @@ namespace UI
             if (_mainMenu != null)
             {
                 _mainMenu.PlayClicked -= OnPlayClicked;
-                _mainMenu.ShopClicked -= OnShopClicked;
+                _mainMenu.SkinsClicked -= OnSkinsClicked;
+                _mainMenu.UpgradesClicked -= OnUpgradesClicked;
                 _mainMenu.LeaderboardClicked -= OnLeaderboardClicked;
                 _mainMenu.SettingsClicked -= OnSettingsClicked;
                 _mainMenu.DailyClicked -= OnDailyClicked;
@@ -141,6 +149,7 @@ namespace UI
             int sectorCount = _dailyRoulette.View.Wheel.SectorCount;
             new RouletteConfigValidator().Validate(_rouletteConfig, _shopContent.SkinItems, sectorCount, sectorCount);
             _dailyRoulette.Setup(_rouletteFactory.CreateDaily(sectorCount), _adScheduler, _soundPlayer, _uiSpawner, _saveConfirmation);
+            _collections.Setup();
             _levelLabel.SetLevel(_levelStorage.CurrentLevel);
             return UniTask.CompletedTask;
         }
@@ -166,6 +175,7 @@ namespace UI
             _state = SessionState.Finished;
             _sessionSource?.Cancel();
             _dailyRoulette.Hide();
+            _collections.Close();
 
             if (_activeLeaderboard != null)
             {
@@ -190,7 +200,7 @@ namespace UI
             NavigateToGame().Forget();
         }
 
-        private void OnShopClicked()
+        private void OnSkinsClicked()
         {
             if (CanNavigate() == false)
             {
@@ -198,8 +208,18 @@ namespace UI
             }
 
             _dailyRoulette.Hide();
-            _pauser.ResetToPlay();
-            NavigateToShop().Forget();
+            _collections.OpenSkins();
+        }
+
+        private void OnUpgradesClicked()
+        {
+            if (CanNavigate() == false)
+            {
+                return;
+            }
+
+            _dailyRoulette.Hide();
+            _collections.OpenUpgrades();
         }
 
         private void OnLeaderboardClicked()
@@ -287,7 +307,8 @@ namespace UI
 
         private bool CanNavigate()
         {
-            return _state == SessionState.Running && _sceneNavigator.IsTransitioning == false;
+            return _state == SessionState.Running && _sceneNavigator.IsTransitioning == false
+                && _collections.HasWindow() == false;
         }
 
         private async UniTaskVoid NavigateToGame()
@@ -295,9 +316,5 @@ namespace UI
             await _sceneNavigator.LoadGameAsync();
         }
 
-        private async UniTaskVoid NavigateToShop()
-        {
-            await _sceneNavigator.LoadShopAsync();
-        }
     }
 }

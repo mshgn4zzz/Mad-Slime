@@ -75,6 +75,11 @@ namespace Audio
             _tracks = playlist.Tracks;
             _trackIndex = 0;
 
+            if (playlist.RandomStart == true)
+            {
+                _trackIndex = UnityEngine.Random.Range(0, _tracks.Count);
+            }
+
             AudioSource leadSource = _sources[_activeIndex];
 
             if (leadSource.clip != null)
@@ -83,7 +88,7 @@ namespace Audio
             }
 
             _activeIndex = 1 - _activeIndex;
-            StartLeadTrack(_tracks[0]);
+            StartLeadTrack(_tracks[_trackIndex]);
         }
 
         public void Tick(float unscaledDeltaTime)
@@ -158,7 +163,7 @@ namespace Audio
         {
             AudioSource leadSource = _sources[_activeIndex];
 
-            if (leadSource.clip == null || leadSource.isPlaying == false)
+            if (leadSource.clip == null || AudioListener.pause == true)
             {
                 return;
             }
@@ -170,7 +175,12 @@ namespace Audio
                 return;
             }
 
-            float remaining = leadSource.clip.length - leadSource.time;
+            float remaining = 0f;
+
+            if (leadSource.isPlaying == true)
+            {
+                remaining = leadSource.clip.length - leadSource.time;
+            }
 
             if (remaining > _overlapDuration)
             {

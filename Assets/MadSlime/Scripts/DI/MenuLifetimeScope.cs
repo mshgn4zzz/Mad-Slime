@@ -17,6 +17,10 @@ namespace DI
     public class MenuLifetimeScope : LifetimeScope
     {
         [SerializeField] private MainMenu _mainMenu;
+        [SerializeField] private CollectionWindows _collections;
+        [SerializeField] private ModelPlacer _modelPlacer;
+        [SerializeField] private ShopItemViewFactory _skinFactory;
+        [SerializeField] private UpgradeItemViewFactory _upgradeFactory;
         [SerializeField] private MenuSessionHandler _menuSessionHandler;
         [SerializeField] private RouletteConfig _rouletteConfig;
         [SerializeField] private ShopContent _shopContent;
@@ -31,6 +35,10 @@ namespace DI
         protected override void Configure(IContainerBuilder builder)
         {
             ValidateAssigned(_mainMenu, nameof(_mainMenu));
+            ValidateAssigned(_collections, nameof(_collections));
+            ValidateAssigned(_modelPlacer, nameof(_modelPlacer));
+            ValidateAssigned(_skinFactory, nameof(_skinFactory));
+            ValidateAssigned(_upgradeFactory, nameof(_upgradeFactory));
             ValidateAssigned(_menuSessionHandler, nameof(_menuSessionHandler));
             ValidateAssigned(_rouletteConfig, nameof(_rouletteConfig));
             ValidateAssigned(_shopContent, nameof(_shopContent));
@@ -41,6 +49,10 @@ namespace DI
             ValidateAssigned(_levelLabelUI, nameof(_levelLabelUI));
 
             builder.RegisterComponent(_mainMenu);
+            builder.RegisterComponent(_collections);
+            builder.RegisterComponent(_modelPlacer);
+            builder.RegisterComponent(_skinFactory);
+            builder.RegisterComponent(_upgradeFactory);
             builder.RegisterComponent(_menuSessionHandler);
             builder.Register<RouletteFactory>(resolver => new RouletteFactory(_rouletteConfig,
                 resolver.Resolve<IRouletteStorage>(), resolver.Resolve<ISkinStorage>(), resolver.Resolve<SkinInventory>(),

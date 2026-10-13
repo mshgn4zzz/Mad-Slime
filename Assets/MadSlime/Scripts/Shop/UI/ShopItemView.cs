@@ -13,6 +13,9 @@ namespace Shop
         [SerializeField] private GameObject _rouletteBadge;
         [SerializeField] private Image _selectedMark;
 
+        [SerializeField] private Color _highlightColor = new Color(1f, 0.85f, 0.2f, 1f);
+
+        private Color _rarityColor;
         private Button _button;
         private string _skinId;
 
@@ -42,6 +45,7 @@ namespace Shop
         public void Initialize(string skinId, Sprite icon, Color rarityColor, bool isExclusive, bool isUnlocked, bool isSelected)
         {
             _skinId = skinId;
+            _rarityColor = rarityColor;
             _contentImage.sprite = icon;
             _backgroundImage.color = rarityColor;
             _rouletteBadge.SetActive(isExclusive);
@@ -57,6 +61,17 @@ namespace Shop
         public void SetSelected(bool isSelected)
         {
             _selectedMark.gameObject.SetActive(isSelected);
+        }
+
+        public void SetHighlighted(bool isHighlighted)
+        {
+            if (isHighlighted == true)
+            {
+                _backgroundImage.color = _highlightColor;
+                return;
+            }
+
+            _backgroundImage.color = _rarityColor;
         }
 
         private void OnClick()

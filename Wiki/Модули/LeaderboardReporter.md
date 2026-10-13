@@ -6,7 +6,7 @@
 
 ## Механика
 
-- `Report(score)`: не авторизован → только Debug.Log, игроку ничего; авторизован → `ILeaderboardService.SetScore(YandexConfig.LeaderboardName = "max_level", score)`
+- `Report(score)`: не авторизован → только Debug.Log, игроку ничего; авторизован → `ILeaderboardService.SetScore(YandexConfig.LeaderboardName = "CollectedItems", score)`
 - Вызывается **только** из [[FillSessionHandler]]: `LoadNextLevel` и `ExitToMenuAfterWin`, со значением `_progress.MaxLevel`
 
 Таблица топ-10 рендерит [[Окна | LeaderboardMenu]] (через `RequestEntries` + `EntriesReceived`).
