@@ -7,14 +7,17 @@ namespace UI
     public class MainMenu : MonoBehaviour
     {
         [SerializeField] private Button _playButton;
-        [SerializeField] private Button _shopButton;
+        [SerializeField] private Button _skinsButton;
+        [SerializeField] private Button _upgradesButton;
         [SerializeField] private Button _leaderboardButton;
         [SerializeField] private Button _settingsButton;
         [SerializeField] private Button _dailyButton;
 
         public event Action PlayClicked;
 
-        public event Action ShopClicked;
+        public event Action SkinsClicked;
+
+        public event Action UpgradesClicked;
 
         public event Action LeaderboardClicked;
 
@@ -30,10 +33,15 @@ namespace UI
                     $"{name}: PlayButton is not assigned. Drag a Button into the _playButton field.");
             }
 
-            if (_shopButton == null)
+            if (_skinsButton == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: ShopButton is not assigned. Drag a Button into the _shopButton field.");
+                    $"{name}: SkinsButton is not assigned. Drag a Button into the _skinsButton field.");
+            }
+
+            if (_upgradesButton == null)
+            {
+                throw new InvalidOperationException($"{name}: UpgradesButton is not assigned.");
             }
 
             if (_leaderboardButton == null)
@@ -58,7 +66,8 @@ namespace UI
         private void OnEnable()
         {
             _playButton.onClick.AddListener(OnPlayClicked);
-            _shopButton.onClick.AddListener(OnShopClicked);
+            _skinsButton.onClick.AddListener(OnSkinsClicked);
+            _upgradesButton.onClick.AddListener(OnUpgradesClicked);
             _leaderboardButton.onClick.AddListener(OnLeaderboardClicked);
             _settingsButton.onClick.AddListener(OnSettingsClicked);
             _dailyButton.onClick.AddListener(OnDailyClicked);
@@ -67,7 +76,8 @@ namespace UI
         private void OnDisable()
         {
             _playButton.onClick.RemoveListener(OnPlayClicked);
-            _shopButton.onClick.RemoveListener(OnShopClicked);
+            _skinsButton.onClick.RemoveListener(OnSkinsClicked);
+            _upgradesButton.onClick.RemoveListener(OnUpgradesClicked);
             _leaderboardButton.onClick.RemoveListener(OnLeaderboardClicked);
             _settingsButton.onClick.RemoveListener(OnSettingsClicked);
             _dailyButton.onClick.RemoveListener(OnDailyClicked);
@@ -78,9 +88,14 @@ namespace UI
             PlayClicked?.Invoke();
         }
 
-        private void OnShopClicked()
+        private void OnSkinsClicked()
         {
-            ShopClicked?.Invoke();
+            SkinsClicked?.Invoke();
+        }
+
+        private void OnUpgradesClicked()
+        {
+            UpgradesClicked?.Invoke();
         }
 
         private void OnLeaderboardClicked()

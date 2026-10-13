@@ -11,175 +11,175 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c4f2a91d8e34b5f9a01c6d8e2f40b17, type: 3}
   m_Name: Localization
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   _entries:
   - _key: win_title
-    _ru: "\u041F\u041E\u0411\u0415\u0414\u0410"
+    _ru: "ПОБЕДА"
     _en: VICTORY
     _tr: ZAFER
   - _key: fail_title
-    _ru: "\u041F\u0420\u041E\u0418\u0413\u0420\u042B\u0428"
+    _ru: "ПРОИГРЫШ"
     _en: DEFEAT
-    _tr: "YEN\u0130LG\u0130"
+    _tr: "YENİLGİ"
   - _key: earned_label
-    _ru: "\u0417\u0430\u0440\u0430\u0431\u043E\u0442\u0430\u043D\u043E:"
+    _ru: "Заработано:"
     _en: 'Earned:'
-    _tr: "Kazan\u0131lan:"
+    _tr: "Kazanılan:"
   - _key: leaderboard_login_hint
-    _ru: "\u0412\u043E\u0439\u0434\u0438, \u0447\u0442\u043E\u0431\u044B \u043F\u043E\u043F\u0430\u0441\u0442\u044C
-      \u0432 \u0440\u0435\u0439\u0442\u0438\u043D\u0433"
+    _ru: "Войди, чтобы попасть
+      в рейтинг"
     _en: Log in to enter the leaderboard
-    _tr: "Liderlik tablosuna girmek i\xE7in giri\u015F yap"
+    _tr: "Liderlik tablosuna girmek için giriş yap"
   - _key: leaderboard_loading
-    _ru: "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u0440\u0435\u0439\u0442\u0438\u043D\u0433\u0430..."
+    _ru: "Загрузка рейтинга..."
     _en: Loading leaderboard...
-    _tr: "Liderlik tablosu y\xFCkleniyor..."
+    _tr: "Liderlik tablosu yükleniyor..."
   - _key: leaderboard_empty
-    _ru: "\u0420\u0435\u0439\u0442\u0438\u043D\u0433 \u043F\u043E\u043A\u0430 \u043F\u0443\u0441\u0442"
+    _ru: "Рейтинг пока пуст"
     _en: Leaderboard is empty
-    _tr: "Liderlik tablosu bo\u015F"
+    _tr: "Liderlik tablosu boş"
   - _key: leaderboard_error
-    _ru: "\u0420\u0435\u0439\u0442\u0438\u043D\u0433 \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u0435\u043D"
+    _ru: "Рейтинг недоступен"
     _en: Leaderboard unavailable
-    _tr: "Liderlik tablosu kullan\u0131lam\u0131yor"
+    _tr: "Liderlik tablosu kullanılamıyor"
   - _key: lang_self_ru
-    _ru: "\u0420\u0443\u0441\u0441\u043A\u0438\u0439"
-    _en: "\u0420\u0443\u0441\u0441\u043A\u0438\u0439"
-    _tr: "\u0420\u0443\u0441\u0441\u043A\u0438\u0439"
+    _ru: "Русский"
+    _en: "Русский"
+    _tr: "Русский"
   - _key: lang_self_en
     _ru: English
     _en: English
     _tr: English
   - _key: lang_self_tr
-    _ru: "T\xFCrk\xE7e"
-    _en: "T\xFCrk\xE7e"
-    _tr: "T\xFCrk\xE7e"
+    _ru: "Türkçe"
+    _en: "Türkçe"
+    _tr: "Türkçe"
   - _key: level_label
-    _ru: "\u0423\u0440\u043E\u0432\u0435\u043D\u044C {0}"
+    _ru: "Уровень {0}"
     _en: Level {0}
     _tr: Seviye {0}
   - _key: tier_Small
-    _ru: "\u041C\u0430\u043B\u0451\u043A"
+    _ru: "Малёк"
     _en: Small
-    _tr: "K\xFC\xE7\xFCk"
+    _tr: "Küçük"
   - _key: tier_Medium
-    _ru: "\u0421\u0440\u0435\u0434\u043D\u0438\u0439"
+    _ru: "Средний"
     _en: Medium
     _tr: Orta
   - _key: tier_Large
-    _ru: "\u0411\u043E\u043B\u044C\u0448\u043E\u0439"
+    _ru: "Большой"
     _en: Large
-    _tr: "B\xFCy\xFCk"
+    _tr: "Büyük"
   - _key: tier_Huge
-    _ru: "\u041E\u0433\u0440\u043E\u043C\u043D\u044B\u0439"
+    _ru: "Огромный"
     _en: Huge
     _tr: Devasa
   - _key: tier_Giant
-    _ru: "\u0413\u0438\u0433\u0430\u043D\u0442\u0441\u043A\u0438\u0439"
+    _ru: "Гигантский"
     _en: Giant
     _tr: Dev
   - _key: tier_Boss
-    _ru: "\u0411\u043E\u0441\u0441"
+    _ru: "Босс"
     _en: Boss
     _tr: Patron
   - _key: auth_login
-    _ru: "\u0412\u041E\u0419\u0422\u0418"
+    _ru: "ВОЙТИ"
     _en: LOGIN
-    _tr: "G\u0130R\u0130\u015E"
+    _tr: "GİRİŞ"
   - _key: to_menu
-    _ru: "\u0412 \u041C\u0415\u041D\u042E"
+    _ru: "В МЕНЮ"
     _en: MENU
-    _tr: "MEN\xDC"
+    _tr: "MENÜ"
   - _key: menu_play
-    _ru: "\u0418\u0413\u0420\u0410\u0422\u042C"
+    _ru: "ИГРАТЬ"
     _en: PLAY
     _tr: OYNA
   - _key: menu_shop
-    _ru: "\u041C\u0410\u0413\u0410\u0417\u0418\u041D"
+    _ru: "МАГАЗИН"
     _en: SHOP
-    _tr: "MA\u011EAZA"
+    _tr: "MAĞAZA"
   - _key: menu_leaderboard
-    _ru: "\u0420\u0415\u0419\u0422\u0418\u041D\u0413"
+    _ru: "РЕЙТИНГ"
     _en: LEADERBOARD
     _tr: SIRALAMA
   - _key: tab_skins
-    _ru: "\u0421\u041A\u0418\u041D\u042B"
+    _ru: "СКИНЫ"
     _en: SKINS
-    _tr: "KOST\xDCMLER"
+    _tr: "KOSTÜMLER"
   - _key: tab_upgrades
-    _ru: "\u041F\u0420\u041E\u041A\u0410\u0427\u041A\u0410"
+    _ru: "ПРОКАЧКА"
     _en: UPGRADES
-    _tr: "GEL\u0130\u015ET\u0130RMELER"
+    _tr: "GELİŞTİRMELER"
   - _key: tab_roulette
-    _ru: "\u0420\u0423\u041B\u0415\u0422\u041A\u0410"
+    _ru: "РУЛЕТКА"
     _en: ROULETTE
     _tr: RULET
   - _key: tab_all_skins
-    _ru: "\u0412\u0421\u0415 \u0421\u041A\u0418\u041D\u042B"
+    _ru: "ВСЕ СКИНЫ"
     _en: ALL SKINS
-    _tr: "T\xDCM SK\u0130NLER"
+    _tr: "TÜM SKİNLER"
   - _key: tab_album
-    _ru: "\u0410\u041B\u042C\u0411\u041E\u041C"
+    _ru: "АЛЬБОМ"
     _en: ALBUM
-    _tr: "ALB\xDCM"
+    _tr: "ALBÜM"
   - _key: roulette_ad_label
-    _ru: "\u0417\u0410 \u0420\u0415\u041A\u041B\u0410\u041C\u0423"
+    _ru: "ЗА РЕКЛАМУ"
     _en: FOR AD
-    _tr: "REKLAM \u0130LE"
+    _tr: "REKLAM İLE"
   - _key: menu_daily
-    _ru: "\u0415\u0416\u0415\u0414\u041D\u0415\u0412\u041D\u042B\u0419 \u041F\u0420\u0418\u0417"
-    _en: DAILY REWARD
-    _tr: "G\xDCNL\xDCK \xD6D\xDCL"
+    _ru: "РУЛЕТКА"
+    _en: "DAILY WHEEL"
+    _tr: "GÜNLÜK ÇARK"
   - _key: shop_roulette_button
-    _ru: "\u041A\u0420\u0423\u0422\u0418\u0422\u042C"
+    _ru: "КРУТИТЬ"
     _en: SPIN
-    _tr: "\xC7EV\u0130R"
+    _tr: "ÇEVİR"
   - _key: shop_purchased
-    _ru: "\u041A\u0423\u041F\u041B\u0415\u041D\u041E"
+    _ru: "КУПЛЕНО"
     _en: OWNED
     _tr: SATIN ALINDI
   - _key: shop_max
-    _ru: "\u041C\u0410\u041A\u0421"
+    _ru: "МАКС"
     _en: MAX
     _tr: MAKS
   - _key: shop_exclusive
-    _ru: "\u0420\u0423\u041B\u0415\u0422\u041A\u0410"
+    _ru: "РУЛЕТКА"
     _en: ROULETTE
     _tr: RULET
   - _key: upgrade_speed
-    _ru: "\u0421\u043A\u043E\u0440\u043E\u0441\u0442\u044C"
+    _ru: "Скорость"
     _en: Speed
-    _tr: "H\u0131z"
+    _tr: "Hız"
   - _key: upgrade_appetite
-    _ru: "\u0410\u043F\u043F\u0435\u0442\u0438\u0442"
+    _ru: "Аппетит"
     _en: Appetite
-    _tr: "\u0130\u015Ftah"
+    _tr: "İştah"
   - _key: upgrade_taste
-    _ru: "\u0417\u043D\u0430\u0442\u043E\u043A \u0432\u043A\u0443\u0441\u0430"
+    _ru: "Знаток вкуса"
     _en: Connoisseur
-    _tr: "Lezzet Uzman\u0131"
+    _tr: "Lezzet Uzmanı"
   - _key: upgrade_metabolism
-    _ru: "\u041C\u0435\u0442\u0430\u0431\u043E\u043B\u0438\u0437\u043C"
+    _ru: "Метаболизм"
     _en: Metabolism
     _tr: Metabolizma
   - _key: perk_smell
-    _ru: "\u0423\u043B\u0443\u0447\u0448\u0435\u043D\u043D\u044B\u0439 \u043D\u044E\u0445"
+    _ru: "Улучшенный нюх"
     _en: Keen Nose
     _tr: Keskin Koku
   - _key: perk_adrenaline
-    _ru: "\u0410\u0434\u0440\u0435\u043D\u0430\u043B\u0438\u043D"
+    _ru: "Адреналин"
     _en: Adrenaline
     _tr: Adrenalin
   - _key: perk_ambitions
-    _ru: "\u0411\u043E\u043B\u044C\u0448\u0438\u0435 \u0430\u043C\u0431\u0438\u0446\u0438\u0438"
+    _ru: "Большие амбиции"
     _en: Big Ambitions
-    _tr: "B\xFCy\xFCk H\u0131rslar"
+    _tr: "Büyük Hırslar"
   - _key: roulette_free_ready
-    _ru: "\u0411\u0415\u0421\u041F\u041B\u0410\u0422\u041D\u041E"
+    _ru: "БЕСПЛАТНО"
     _en: FREE
-    _tr: "\xDCCRETS\u0130Z"
+    _tr: "ÜCRETSİZ"
   - _key: roulette_free_timer
-    _ru: "\u0427\u0435\u0440\u0435\u0437 {0}"
+    _ru: "Через {0}"
     _en: In {0}
     _tr: '{0} sonra'
   - _key: roulette_ad_spins
@@ -187,35 +187,35 @@ MonoBehaviour:
     _en: "LEFT: {0}"
     _tr: "KALAN: {0}"
   - _key: roulette_won_coins
-    _ru: "+{0} \u043C\u043E\u043D\u0435\u0442"
+    _ru: "+{0} монет"
     _en: +{0} coins
     _tr: +{0} jeton
   - _key: roulette_won_skin
-    _ru: "\u041D\u041E\u0412\u042B\u0419 \u0421\u041A\u0418\u041D!"
+    _ru: "НОВЫЙ СКИН!"
     _en: NEW SKIN!
-    _tr: "YEN\u0130 KOST\xDCM!"
+    _tr: "YENİ KOSTÜM!"
   - _key: fill_rescue
-    _ru: "\u0414\u041E\u0411\u0418\u0422\u042C \u0417\u0410\u041B\u0418\u0412\u041A\u0423"
+    _ru: "ДОБИТЬ ЗАЛИВКУ"
     _en: FINISH THE FILL
-    _tr: "DOLDURMAYI B\u0130T\u0130R"
+    _tr: "DOLDURMAYI BİTİR"
   - _key: rarity_common
-    _ru: "\u041E\u0411\u042B\u0427\u041D\u042B\u0419"
+    _ru: "ОБЫЧНЫЙ"
     _en: COMMON
     _tr: NORMAL
   - _key: rarity_rare
-    _ru: "\u0420\u0415\u0414\u041A\u0418\u0419"
+    _ru: "РЕДКИЙ"
     _en: RARE
-    _tr: "NAD\u0130R"
+    _tr: "NADİR"
   - _key: rarity_epic
-    _ru: "\u042D\u041F\u0418\u0427\u0415\u0421\u041A\u0418\u0419"
+    _ru: "ЭПИЧЕСКИЙ"
     _en: EPIC
-    _tr: "EP\u0130K"
+    _tr: "EPİK"
   - _key: rarity_legendary
-    _ru: "\u041B\u0415\u0413\u0415\u041D\u0414\u0410\u0420\u041D\u042B\u0419"
+    _ru: "ЛЕГЕНДАРНЫЙ"
     _en: LEGENDARY
-    _tr: "EFSANEV\u0130"
+    _tr: "EFSANEVİ"
   - _key: upgrade_step
-    _ru: "\u0428\u0410\u0413 {0}/{1}"
+    _ru: "ШАГ {0}/{1}"
     _en: STEP {0}/{1}
     _tr: ADIM {0}/{1}
   - _key: upgrade_speed_desc
@@ -247,22 +247,70 @@ MonoBehaviour:
     _en: "Lets you eat objects one size tier above your own. Bigger prey becomes easier to reach."
     _tr: "Senden bir boyut kademesi büyük nesneleri yutmanı sağlar. Büyük nesneleri daha erken yiyebilirsin."
   - _key: shop_one_time
-    _ru: "\u041E\u0414\u041D\u041E\u0420\u0410\u0417\u041E\u0412\u042B\u0415 \u041F\u041E\u041A\u0423\u041F\u041A\u0418"
+    _ru: "ОДНОРАЗОВЫЕ ПОКУПКИ"
     _en: ONE-TIME BUYS
-    _tr: "TEK SEFERL\u0130K SATIN ALIMLAR"
+    _tr: "TEK SEFERLİK SATIN ALIMLAR"
   - _key: roulette_take
-    _ru: "\u0417\u0410\u0411\u0420\u0410\u0422\u042C"
+    _ru: "ЗАБРАТЬ"
     _en: TAKE
     _tr: AL
   - _key: roulette_secret
-    _ru: "\u0421\u0415\u041A\u0420\u0415\u0422\u041D\u041E"
+    _ru: "СЕКРЕТНО"
     _en: SECRET
-    _tr: "G\u0130ZL\u0130"
+    _tr: "GİZLİ"
   - _key: menu_settings
-    _ru: "\u041D\u0410\u0421\u0422\u0420\u041E\u0419\u041A\u0418"
+    _ru: "НАСТРОЙКИ"
     _en: SETTINGS
     _tr: AYARLAR
   - _key: leaderboard_title
-    _ru: "\u0420\u0415\u0419\u0422\u0418\u041D\u0413"
+    _ru: "РЕЙТИНГ"
     _en: LEADERBOARD
     _tr: SIRALAMA
+  - _key: game_title
+    _ru: "Безумный слайм"
+    _en: "Mad Slime"
+    _tr: "Çılgın Slime"
+  - _key: skin_open_new
+    _ru: "ОТКРЫТЬ НОВЫЙ СКИН"
+    _en: "UNLOCK NEW SKIN"
+    _tr: "YENİ KOSTÜM AÇ"
+  - _key: skin_roulette_title
+    _ru: "НОВЫЙ СКИН"
+    _en: "NEW SKIN"
+    _tr: "YENİ KOSTÜM"
+  - _key: daily_roulette_title
+    _ru: "ЕЖЕДНЕВНАЯ РУЛЕТКА"
+    _en: "DAILY WHEEL"
+    _tr: "GÜNLÜK ÇARK"
+  - _key: leaderboard_retry
+    _ru: "ПОВТОРИТЬ"
+    _en: "RETRY"
+    _tr: "TEKRAR DENE"
+  - _key: leaderboard_place
+    _ru: "МЕСТО"
+    _en: "RANK"
+    _tr: "SIRA"
+  - _key: leaderboard_player
+    _ru: "ИГРОК"
+    _en: "PLAYER"
+    _tr: "OYUNCU"
+  - _key: leaderboard_score
+    _ru: "СОБРАНО"
+    _en: "COLLECTED"
+    _tr: "TOPLANAN"
+  - _key: skins_common
+    _ru: "ОБЫЧНЫЕ"
+    _en: "COMMON"
+    _tr: "NORMAL"
+  - _key: skins_rare
+    _ru: "РЕДКИЕ"
+    _en: "RARE"
+    _tr: "NADİR"
+  - _key: skins_epic
+    _ru: "ЭПИЧЕСКИЕ"
+    _en: "EPIC"
+    _tr: "EPİK"
+  - _key: skins_legendary
+    _ru: "ЛЕГЕНДАРНЫЕ"
+    _en: "LEGENDARY"
+    _tr: "EFSANEVİ"

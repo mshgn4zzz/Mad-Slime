@@ -22,7 +22,7 @@ namespace Shop
             if (_resolver == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: Resolver was not injected. ShopLifetimeScope must be the first object in the scene hierarchy.");
+                    $"{name}: Resolver was not injected. MenuLifetimeScope must be the first object in the scene hierarchy.");
             }
         }
 

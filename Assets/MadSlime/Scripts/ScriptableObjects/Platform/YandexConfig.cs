@@ -17,7 +17,7 @@ namespace Scriptables
 
         [Header("Leaderboard")]
         [Tooltip("Технический id лидерборда в Яндекс.Консоли (не отображаемое имя).")]
-        [SerializeField] private string _leaderboardName = "max_level";
+        [SerializeField] private string _leaderboardName = "CollectedItems";
 
         public string DoubleRewardId => _doubleRewardId;
         public string FillRescueRewardId => _fillRescueRewardId;
