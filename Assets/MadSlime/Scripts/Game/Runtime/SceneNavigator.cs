@@ -68,7 +68,7 @@ namespace Game
             if (TryResolveLoadedSceneId(out SceneId bootSceneId) == false)
             {
                 throw new InvalidOperationException(
-                    "SceneNavigator: no loaded scene resolves to a known SceneId (Menu, Game, Fill, Shop). " +
+                    "SceneNavigator: no loaded scene resolves to a known SceneId (Menu, Game, Fill). " +
                     "The boot scene must be loaded before SceneNavigator is used.");
             }
 
@@ -171,10 +171,6 @@ namespace Game
             return LoadAsync(SceneId.Fill);
         }
 
-        public UniTask LoadShopAsync()
-        {
-            return LoadAsync(SceneId.Shop);
-        }
 
         private async UniTask LoadAsync(SceneId targetSceneId)
         {
@@ -386,9 +382,6 @@ namespace Game
                 case SceneId.Fill:
                     return "Fill";
 
-                case SceneId.Shop:
-                    return "Shop";
-
                 default:
                     throw new ArgumentOutOfRangeException(
                         nameof(sceneId),
@@ -441,10 +434,6 @@ namespace Game
 
                 case "Fill":
                     sceneId = SceneId.Fill;
-                    return true;
-
-                case "Shop":
-                    sceneId = SceneId.Shop;
                     return true;
 
                 default:

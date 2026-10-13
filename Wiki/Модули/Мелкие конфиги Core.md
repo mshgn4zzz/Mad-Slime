@@ -10,7 +10,7 @@
 | **GhostFadeConfig** | переход обычный вид ↔ призрак: 0.25 с, ease InOutSine. Читается [[Item и IAttractable \| Item]] |
 | **CameraImpulseConfig** | камера-хаптика: кривая «масса съеденного → подтяжка камеры» (0.4→2.5, max 6), отъезд при тир-апе (4, max 8), шейк от тяжёлых пикапов (порог массы 1000, накапливается, max 0.35), FOV-кик на тир-апе 7° |
 | **AttractConfig** (`Mad Slime/Attract Config`) | магнит: сила притяжения 6, разгон ×3 у точки захвата (крутизна 2), орбитальность 0.5 (спираль вокруг игрока) |
-| **YandexConfig** | id rewarded-блоков: `DoubleReward`, `NextLevel` (спасение заливки), `Roulette`; имя лидерборда `max_level` |
+| **YandexConfig** | id rewarded-блоков: `DoubleReward`, `NextLevel` (спасение заливки), `Roulette`; имя лидерборда `CollectedItems` |
 | **LocalizationTable** | ключ → ru/en/tr; фолбэки tr→en→ru→сам ключ; `Get()` — линейный поиск |
 
 ## Связи

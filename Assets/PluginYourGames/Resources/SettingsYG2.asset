@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: efa747916aa66674d96ea40ca8a480b2, type: 3}
   m_Name: SettingsYG2
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   Authorization:
     playerPhotoSize: 1
     authorized: 1
@@ -29,7 +29,7 @@ MonoBehaviour:
     enable: 1
     saveScoreAnonymousPlayers: 1
     listLBSim:
-    - technoName: test
+    - technoName: CollectedItems
       entries: '1. Max: 10
 
         2. Masha: 15
@@ -62,65 +62,65 @@ MonoBehaviour:
         score: 100
         photo: demo image
         uniqueID: 123
-        extraData: 
+        extraData:
       - rank: 2
         name: Masha
         score: 90
         photo: demo image
         uniqueID: 321
-        extraData: 
+        extraData:
       - rank: 3
         name: anonymous
         score: 80
         photo: anonymous
         uniqueID: 456
-        extraData: 
+        extraData:
       - rank: 4
         name: Player 4
         score: 70
         photo: demo image
         uniqueID: 321
-        extraData: 
+        extraData:
       - rank: 5
         name: Player current
         score: 60
         photo: demo image
         uniqueID: 000
-        extraData: 
+        extraData:
       - rank: 6
         name: Player 6
         score: 50
         photo: demo image
         uniqueID: 326
-        extraData: 
+        extraData:
       - rank: 7
         name: Player 7
         score: 40
         photo: demo image
         uniqueID: 327
-        extraData: 
+        extraData:
       - rank: 8
         name: Player 8
         score: 30
         photo: demo image
         uniqueID: 328
-        extraData: 
+        extraData:
       - rank: 9
         name: Player 9
         score: 20
         photo: demo image
         uniqueID: 329
-        extraData: 
+        extraData:
       - rank: 10
         name: Player 10
         score: 10
         photo: demo image
         uniqueID: 330
-        extraData: 
+        extraData:
       currentPlayer:
         rank: 5
         score: 60
-        extraData: 
+        extraData:
     - technoName: time
       entries: '1. Max: 7123
 
@@ -145,41 +145,41 @@ MonoBehaviour:
         score: 7123
         photo: demo image
         uniqueID: 789
-        extraData: 
+        extraData:
       - rank: 2
         name: Maria
         score: 15321
         photo: demo image
         uniqueID: 987
-        extraData: 
+        extraData:
       - rank: 3
         name: anonymous
         score: 62000
         photo: anonymous
         uniqueID: 891
-        extraData: 
+        extraData:
       - rank: 4
         name: Player 4
         score: 122000
         photo: demo image
         uniqueID: 321
-        extraData: 
+        extraData:
       - rank: 5
         name: Player current
         score: 127000
         photo: demo image
         uniqueID: 000
-        extraData: 
+        extraData:
       - rank: 6
         name: Player 6
         score: 340000
         photo: demo image
         uniqueID: 321
-        extraData: 
+        extraData:
       currentPlayer:
         rank: 5
         score: 127000
-        extraData: 
+        extraData:
   Localization:
     setLanguageMod: 1
   RewardedAdv:
