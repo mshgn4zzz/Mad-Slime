@@ -33,6 +33,9 @@ namespace Shop
         [SerializeField] private Camera _previewCamera;
         [SerializeField] private Button _closeButton;
         [SerializeField] private Button _openSkinButton;
+        [SerializeField] private TMP_Text _openSkinLabel;
+        [SerializeField] private TMP_Text _openSkinPrice;
+        [SerializeField] private GameObject _openSkinCost;
         [SerializeField] private TMP_Text _title;
 
         private WindowState _state;
@@ -71,7 +74,8 @@ namespace Shop
         {
             if (_windowRoot == null || _skinsPage == null || _upgradesPage == null || _balance == null
                 || _roulette == null || _preview == null || _previewCamera == null || _closeButton == null
-                || _openSkinButton == null || _title == null)
+                || _openSkinButton == null || _openSkinLabel == null || _openSkinPrice == null
+                || _openSkinCost == null || _title == null)
             {
                 throw new InvalidOperationException($"{name}: assign all collection window references.");
             }
@@ -84,6 +88,7 @@ namespace Shop
             _roulette.Closed += OnRouletteClosed;
             _roulette.PrizeClaimed += OnPrizeClaimed;
             Localization.LanguageChanged += OnLanguageChanged;
+            _wallet.BalanceChanged += OnBalanceChanged;
         }
 
         private void OnDisable()
@@ -93,6 +98,7 @@ namespace Shop
             _roulette.Closed -= OnRouletteClosed;
             _roulette.PrizeClaimed -= OnPrizeClaimed;
             Localization.LanguageChanged -= OnLanguageChanged;
+            _wallet.BalanceChanged -= OnBalanceChanged;
         }
 
         public void Setup()
@@ -135,21 +141,29 @@ namespace Shop
 
         private void OnOpenSkinClicked()
         {
-            if (_state != WindowState.Skins)
+            if (_state != WindowState.Skins || _roulette.CanSpin() == false)
             {
                 return;
             }
 
             _rewardSkinId = null;
             SetState(WindowState.SkinRoulette);
-            _roulette.Show();
+
+            if (_roulette.ShowAndSpin(OnSpinCompleted) == false)
+            {
+                SetState(WindowState.Skins);
+            }
+        }
+
+        private void OnSpinCompleted()
+        {
+            _roulette.Hide();
         }
 
         private void OnCloseClicked()
         {
             if (_state == WindowState.SkinRoulette)
             {
-                _roulette.Hide();
                 return;
             }
 
@@ -165,6 +179,7 @@ namespace Shop
 
             SetState(WindowState.Skins);
             _skinsPage.Refresh(_rewardSkinId);
+            RefreshSkinPurchase();
         }
 
         private void OnPrizeClaimed(RoulettePrize prize)
@@ -179,11 +194,9 @@ namespace Shop
         {
             _state = state;
             bool isSkins = state == WindowState.Skins || state == WindowState.SkinRoulette;
-            bool isRoulette = state == WindowState.SkinRoulette;
             _windowRoot.SetActive(state != WindowState.Closed);
             _skinsPage.gameObject.SetActive(isSkins);
             _upgradesPage.gameObject.SetActive(state == WindowState.Upgrades);
-            _roulette.gameObject.SetActive(isRoulette);
             _previewCamera.gameObject.SetActive(state == WindowState.Skins);
             _openSkinButton.gameObject.SetActive(state == WindowState.Skins);
 
@@ -211,6 +224,34 @@ namespace Shop
                 case WindowState.Closed:
                     break;
             }
+
+            if (_state == WindowState.Skins)
+            {
+                RefreshSkinPurchase();
+            }
+        }
+
+        private void OnBalanceChanged(int previousBalance, int balance)
+        {
+            if (_state == WindowState.Skins)
+            {
+                RefreshSkinPurchase();
+            }
+        }
+
+        private void RefreshSkinPurchase()
+        {
+            bool hasSkins = _roulette.HasAvailableSkin();
+            _openSkinLabel.text = Localization.Get("skin_open_new");
+
+            if (hasSkins == false)
+            {
+                _openSkinLabel.text = Localization.Get("skin_all_collected");
+            }
+
+            _openSkinCost.SetActive(hasSkins);
+            _openSkinPrice.text = _roulette.GetSpinPrice().ToString();
+            _openSkinButton.interactable = hasSkins == true && _roulette.CanSpin();
         }
     }
 }

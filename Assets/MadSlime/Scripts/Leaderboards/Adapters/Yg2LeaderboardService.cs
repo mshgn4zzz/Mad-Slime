@@ -117,7 +117,14 @@ namespace Adapters
 
             for (int playerIndex = 0; playerIndex < sourcePlayers.Length; playerIndex++)
             {
-                entries.Add(MapEntry(sourcePlayers[playerIndex]));
+                LBPlayerData player = sourcePlayers[playerIndex];
+
+                if (player == null || player.rank <= 0 || player.name == InfoYG.NO_DATA)
+                {
+                    continue;
+                }
+
+                entries.Add(MapEntry(player));
             }
 
             return entries.ToArray();

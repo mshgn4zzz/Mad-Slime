@@ -49,6 +49,21 @@ namespace Roulette
             return _access.GetPrice();
         }
 
+        public bool HasAvailableSkin()
+        {
+            for (int i = 0; i < _slots.Count; i++)
+            {
+                RouletteSlot slot = _slots[i];
+
+                if (slot.Skin != null && slot.Weight > 0f && _inventory.IsOpen(slot.Skin.Id) == false)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public int GetFreeRemainSeconds()
         {
             return _access.GetFreeRemainSeconds();
