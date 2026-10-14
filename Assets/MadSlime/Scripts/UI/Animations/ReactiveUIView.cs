@@ -48,6 +48,10 @@ namespace UI.Animations
             {
                 _animators[i].Completed -= OnAnimationCompleted;
             }
+
+            _isActive = false;
+            _pendingAnimations = 0;
+            SetInteraction(false);
         }
 
         public void Enable()
@@ -60,7 +64,7 @@ namespace UI.Animations
             }
 
             _isActive = true;
-            _pendingAnimations = _animators.Length;
+            _pendingAnimations = CountActiveAnimators();
             SetInteraction(true);
             EnableRequested?.Invoke();
             CompleteEmptyView();
@@ -70,11 +74,16 @@ namespace UI.Animations
         {
             if (_isActive == false)
             {
+                if (_pendingAnimations == 0)
+                {
+                    NotifyCompleted();
+                }
+
                 return;
             }
 
             _isActive = false;
-            _pendingAnimations = _animators.Length;
+            _pendingAnimations = CountActiveAnimators();
             SetInteraction(false);
             DisableRequested?.Invoke();
             CompleteEmptyView();
@@ -99,7 +108,7 @@ namespace UI.Animations
 
         private void CompleteEmptyView()
         {
-            if (_animators.Length == 0)
+            if (_pendingAnimations == 0)
             {
                 NotifyCompleted();
             }
@@ -107,12 +116,32 @@ namespace UI.Animations
 
         private void OnAnimationCompleted()
         {
+            if (_pendingAnimations <= 0)
+            {
+                return;
+            }
+
             _pendingAnimations--;
 
             if (_pendingAnimations == 0)
             {
                 NotifyCompleted();
             }
+        }
+
+        private int CountActiveAnimators()
+        {
+            int count = 0;
+
+            for (int i = 0; i < _animators.Length; i++)
+            {
+                if (_animators[i].isActiveAndEnabled == true)
+                {
+                    count++;
+                }
+            }
+
+            return count;
         }
 
         private void NotifyCompleted()

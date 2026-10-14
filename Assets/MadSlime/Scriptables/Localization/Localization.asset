@@ -271,9 +271,9 @@ MonoBehaviour:
     _en: "Mad Slime"
     _tr: "Çılgın Slime"
   - _key: skin_open_new
-    _ru: "ОТКРЫТЬ НОВЫЙ СКИН"
-    _en: "UNLOCK NEW SKIN"
-    _tr: "YENİ KOSTÜM AÇ"
+    _ru: "НОВЫЙ СКИН!"
+    _en: "NEW SKIN!"
+    _tr: "YENİ KOSTÜM!"
   - _key: skin_roulette_title
     _ru: "НОВЫЙ СКИН"
     _en: "NEW SKIN"

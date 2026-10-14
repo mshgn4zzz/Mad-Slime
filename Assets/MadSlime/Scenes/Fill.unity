@@ -660,8 +660,6 @@ MonoBehaviour:
   _pauser: {fileID: 1495407473}
   _fillUIFabric: {fileID: 644641159827276039}
   _flyingCubeArrivalSound: {fileID: 1948289414}
-  _sceneButtonSounds:
-  - {fileID: 3783574669433125315}
 --- !u!4 &1076171417
 Transform:
   m_ObjectHideFlags: 0

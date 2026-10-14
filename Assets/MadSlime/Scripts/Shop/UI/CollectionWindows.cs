@@ -213,13 +213,11 @@ namespace Shop
             switch (_state)
             {
                 case WindowState.Skins:
+                case WindowState.SkinRoulette:
                     _title.text = Localization.Get("tab_skins");
                     break;
                 case WindowState.Upgrades:
                     _title.text = Localization.Get("tab_upgrades");
-                    break;
-                case WindowState.SkinRoulette:
-                    _title.text = Localization.Get("skin_roulette_title");
                     break;
                 case WindowState.Closed:
                     break;
