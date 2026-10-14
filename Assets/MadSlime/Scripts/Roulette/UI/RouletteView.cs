@@ -129,7 +129,7 @@ namespace Roulette
 
             if (_screenView != null)
             {
-                Canvas.ForceUpdateCanvases();
+                _screenView.DisableCompleted -= OnHideCompleted;
                 _screenView.Enable();
             }
         }
@@ -148,13 +148,18 @@ namespace Roulette
         }
 
         public void Display(string title, bool showSpin, string spinText, bool canSpin, bool showAd, string adText,
-            bool canWatchAd, bool canClose)
+            bool canWatchAd, bool showClose, bool canClose)
         {
             _title.text = title;
             _spinButton.gameObject.SetActive(showSpin);
             _spinPriceText.text = spinText;
             _spinButton.interactable = canSpin;
-            _closeButton.interactable = canClose;
+
+            if (_closeButton != null)
+            {
+                _closeButton.gameObject.SetActive(showClose);
+                _closeButton.interactable = canClose;
+            }
 
             if (_adButton != null)
             {

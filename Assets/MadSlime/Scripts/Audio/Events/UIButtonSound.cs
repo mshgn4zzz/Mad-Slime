@@ -22,22 +22,22 @@ namespace Audio
 
         private void Awake()
         {
+            if (TryGetComponent(out _button) == false)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: Button component is missing. UIButtonSound requires the Button component on the same object.");
+            }
+
             if (_soundPlayer == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: IUISoundPlayer was not injected. Scene buttons are injected through the scene scope's UI Button Sounds list (runtime-spawned objects are injected automatically via IObjectResolver.Instantiate).");
+                    $"{name}: IUISoundPlayer was not injected. Scene buttons are injected by the scene LifetimeScope; spawned buttons must use IObjectResolver.Instantiate.");
             }
 
             if (_sfxClip == null)
             {
                 throw new InvalidOperationException(
                     $"{name}: SfxClip is not assigned. Drag a SfxClip asset into the _sfxClip field.");
-            }
-
-            if (TryGetComponent(out _button) == false)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Button component is missing. UIButtonSound requires the Button component on the same object.");
             }
         }
 
@@ -48,7 +48,10 @@ namespace Audio
 
         private void OnDisable()
         {
-            _button.onClick.RemoveListener(PlayClick);
+            if (_button != null)
+            {
+                _button.onClick.RemoveListener(PlayClick);
+            }
         }
 
         private void PlayClick()

@@ -219,23 +219,46 @@ namespace Game
             }
 
             string targetSceneName = GetSceneName(targetSceneId);
-            AsyncOperation loadOperation = SceneManager.LoadSceneAsync(targetSceneName, LoadSceneMode.Additive);
-
-            if (loadOperation == null)
+            void OnTargetSceneLoaded(Scene loadedScene, LoadSceneMode mode)
             {
-                throw new InvalidOperationException(
-                    $"SceneNavigator: failed to start loading scene '{targetSceneName}'. Check that it is present in the build settings.");
+                if (loadedScene.name == targetSceneName && sourceScene.isLoaded)
+                {
+                    // Keep audio available during loading; hand it over before the new scene's first frame.
+                    GameObject[] roots = sourceScene.GetRootGameObjects();
+
+                    for (int i = 0; i < roots.Length; i++)
+                    {
+                        DisableAll<AudioListener>(roots[i]);
+                    }
+                }
             }
 
-            loadOperation.allowSceneActivation = false;
+            SceneManager.sceneLoaded += OnTargetSceneLoaded;
 
-            while (loadOperation.progress < ActivationProgressThreshold)
+            try
             {
-                await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
-            }
+                AsyncOperation loadOperation = SceneManager.LoadSceneAsync(targetSceneName, LoadSceneMode.Additive);
 
-            loadOperation.allowSceneActivation = true;
-            await loadOperation.ToUniTask(cancellationToken: cancellationToken);
+                if (loadOperation == null)
+                {
+                    throw new InvalidOperationException(
+                        $"SceneNavigator: failed to start loading scene '{targetSceneName}'. Check that it is present in the build settings.");
+                }
+
+                loadOperation.allowSceneActivation = false;
+
+                while (loadOperation.progress < ActivationProgressThreshold)
+                {
+                    await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
+                }
+
+                loadOperation.allowSceneActivation = true;
+                await loadOperation.ToUniTask(cancellationToken: cancellationToken);
+            }
+            finally
+            {
+                SceneManager.sceneLoaded -= OnTargetSceneLoaded;
+            }
 
             Scene targetScene = SceneManager.GetSceneByName(targetSceneName);
 
@@ -327,7 +350,6 @@ namespace Game
 
             for (int rootIndex = 0; rootIndex < roots.Length; rootIndex++)
             {
-                DisableAll<AudioListener>(roots[rootIndex]);
                 DisableAll<EventSystem>(roots[rootIndex]);
                 DisableAll<Canvas>(roots[rootIndex]);
             }

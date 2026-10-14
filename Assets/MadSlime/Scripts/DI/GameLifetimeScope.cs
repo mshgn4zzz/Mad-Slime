@@ -8,7 +8,6 @@ using PlayerInput;
 using Quota;
 using Scriptables;
 using System;
-using System.Collections.Generic;
 using UI;
 using UI.Animations;
 using UnityEngine;
@@ -65,7 +64,6 @@ namespace DI
         [SerializeField] private Timer _timer;
         [SerializeField] private PlayerInputReader _inputReader;
 
-        [SerializeField] private List<UIButtonSound> _sceneButtonSounds;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -128,10 +126,7 @@ namespace DI
             container.Resolve<CollectedItemsCounter>();
             container.Resolve<SceneNavigator>().EnsureInitialized();
 
-            for (int i = 0; i < _sceneButtonSounds.Count; i++)
-            {
-                container.Inject(_sceneButtonSounds[i]);
-            }
+            SceneButtonSoundInjector.Inject(container, gameObject.scene);
         }
 
         private void ValidateAll()

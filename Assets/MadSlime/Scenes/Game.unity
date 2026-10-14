@@ -957,7 +957,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 138203926}
-  m_Father: {fileID: 1589578815}
+  m_Father: {fileID: 900000000000100201}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -1450,7 +1450,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1589578815}
+  m_Father: {fileID: 900000000000100201}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -1687,8 +1687,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1141905906}
-  - {fileID: 626131058}
+  - {fileID: 900000000000100201}
   m_Father: {fileID: 4077507396727418702}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1790,7 +1789,7 @@ MonoBehaviour:
   _hideDuration: 0.35
   _showEase: 9
   _hideEase: 8
-  _target: {fileID: 1589578815}
+  _target: {fileID: 900000000000100201}
   _disabledOffset: {x: 0, y: -340}
 --- !u!1 &1600959883
 GameObject:
@@ -1944,8 +1943,6 @@ MonoBehaviour:
   _pauser: {fileID: 809963750}
   _timer: {fileID: 292377136}
   _inputReader: {fileID: 6575316736882405105}
-  _sceneButtonSounds:
-  - {fileID: 2051215661}
 --- !u!4 &1684454172
 Transform:
   m_ObjectHideFlags: 0
@@ -9111,3 +9108,40 @@ SceneRoots:
   - {fileID: 5850846105485772491}
   - {fileID: 1784792494}
   - {fileID: 812539640}
+--- !u!1 &900000000000100200
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 900000000000100201}
+  m_Layer: 5
+  m_Name: GrowthBarContent
+  m_TagString: Untagged
+  m_Icon: {instanceID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &900000000000100201
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900000000000100200}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1141905906}
+  - {fileID: 626131058}
+  m_Father: {fileID: 1589578815}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
