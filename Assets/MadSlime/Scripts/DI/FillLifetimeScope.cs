@@ -4,7 +4,6 @@ using Scriptables;
 using ShapeFill;
 using System;
 using UI;
-using System.Collections.Generic;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -75,14 +74,9 @@ namespace DI
             builder.RegisterComponent(_flyingCubeArrivalSound);
         }
 
-        [SerializeField] private List<UIButtonSound> _sceneButtonSounds;
-
         private void InjectSceneButtonSounds(IObjectResolver container)
         {
-            for (int i = 0; i < _sceneButtonSounds.Count; i++)
-            {
-                container.Inject(_sceneButtonSounds[i]);
-            }
+            SceneButtonSoundInjector.Inject(container, gameObject.scene);
         }
 
         private void ValidateAssigned(object dependency, string fieldName)

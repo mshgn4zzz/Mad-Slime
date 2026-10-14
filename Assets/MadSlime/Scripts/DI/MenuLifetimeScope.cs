@@ -7,7 +7,6 @@ using Scriptables;
 using Roulette;
 using System;
 using UI;
-using System.Collections.Generic;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -29,8 +28,6 @@ namespace DI
         [SerializeField] private Wallet _wallet;
         [SerializeField] private Pauser _pauser;
         [SerializeField] private LevelLabelUI _levelLabelUI;
-
-        [SerializeField] private List<UIButtonSound> _sceneButtonSounds;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -75,10 +72,7 @@ namespace DI
             container.Resolve<SceneNavigator>().EnsureInitialized();
             container.Resolve<Pauser>().ResetToPlay();
 
-            for (int i = 0; i < _sceneButtonSounds.Count; i++)
-            {
-                container.Inject(_sceneButtonSounds[i]);
-            }
+            SceneButtonSoundInjector.Inject(container, gameObject.scene);
         }
 
         private void ValidateAssigned(object dependency, string fieldName)

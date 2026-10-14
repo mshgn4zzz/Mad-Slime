@@ -12,17 +12,19 @@ namespace UI.Animations
         [SerializeField] private Ease _showEase = Ease.OutCubic;
         [SerializeField] private Ease _hideEase = Ease.InCubic;
 
-        private ReactiveUIView _view;
+        private ReactiveUIView _reactiveView;
         private Tween _currentTween;
 
         public event Action Completed;
 
         protected float ShowDuration => _showDuration;
         protected float HideDuration => _hideDuration;
+        protected ReactiveUIView View => _reactiveView;
+        protected bool IsAnimating => _currentTween != null;
 
         protected virtual void Awake()
         {
-            if (TryGetComponent(out _view) == false)
+            if (TryGetComponent(out _reactiveView) == false)
             {
                 throw new InvalidOperationException($"{name}: ReactiveUIView is required.");
             }
@@ -30,17 +32,17 @@ namespace UI.Animations
 
         protected virtual void OnEnable()
         {
-            _view.EnableRequested += OnEnableRequested;
-            _view.DisableRequested += OnDisableRequested;
-            _view.StateReset += OnStateReset;
-            OnStateReset(_view.IsActive);
+            _reactiveView.EnableRequested += OnEnableRequested;
+            _reactiveView.DisableRequested += OnDisableRequested;
+            _reactiveView.StateReset += OnStateReset;
+            OnStateReset(_reactiveView.IsActive);
         }
 
         protected virtual void OnDisable()
         {
-            _view.EnableRequested -= OnEnableRequested;
-            _view.DisableRequested -= OnDisableRequested;
-            _view.StateReset -= OnStateReset;
+            _reactiveView.EnableRequested -= OnEnableRequested;
+            _reactiveView.DisableRequested -= OnDisableRequested;
+            _reactiveView.StateReset -= OnStateReset;
             KillTween();
         }
 

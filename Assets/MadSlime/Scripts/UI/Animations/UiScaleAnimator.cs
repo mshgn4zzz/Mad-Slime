@@ -15,7 +15,7 @@ namespace UI.Animations
 
         private Vector3 _baseScale;
         private RectTransform _targetRect;
-        private ReactiveUIView _view;
+        private bool _needsScaleRefresh;
 
         protected override void Awake()
         {
@@ -35,7 +35,7 @@ namespace UI.Animations
                     throw new InvalidOperationException($"{name}: fitting to bounds requires a RectTransform target.");
                 }
 
-                TryGetComponent(out _view);
+                _needsScaleRefresh = true;
             }
         }
 
@@ -84,10 +84,19 @@ namespace UI.Animations
 
         private void OnRectTransformDimensionsChange()
         {
-            if (_view != null && _view.IsActive == true)
+            _needsScaleRefresh = _bounds != null;
+        }
+
+        private void LateUpdate()
+        {
+            // Apply layout changes outside canvas rebuild callbacks and let transitions finish.
+            if (_needsScaleRefresh == false || View == null || View.IsActive == false || IsAnimating == true)
             {
-                _view.ResetState(true);
+                return;
             }
+
+            _needsScaleRefresh = false;
+            ApplyEnabledState();
         }
     }
 }

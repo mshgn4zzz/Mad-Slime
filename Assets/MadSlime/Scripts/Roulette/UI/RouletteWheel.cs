@@ -35,6 +35,8 @@ namespace Roulette
         private int _pendingTargetIndex;
         private bool _isSpinning;
         private bool _isBuilt;
+        private RectTransform _punchedIcon;
+        private Vector3 _iconScaleBeforePunch;
 
         public event Action Tick;
         public event Action Completed;
@@ -174,10 +176,9 @@ namespace Roulette
                     $"RouletteWheel.Spin received a target index outside the 0..{_sectorAngles.Length - 1} sector range.");
             }
 
+            Stop();
             _isSpinning = true;
             _pendingTargetIndex = targetIndex;
-
-            DOTween.Kill(this);
 
             int turns = Random.Range(_config.MinTurns, _config.MaxTurns + 1);
             float targetAngle = Mod(_arrowAngle - _sectorAngles[targetIndex], FullCircleDegrees);
@@ -306,7 +307,10 @@ namespace Roulette
         {
             float punchDuration = Mathf.Min(_config.WinDwellSeconds, MaxWinPunchDurationSeconds);
 
-            _sectorIcons[_pendingTargetIndex].rectTransform
+            _punchedIcon = _sectorIcons[_pendingTargetIndex].rectTransform;
+            _iconScaleBeforePunch = _punchedIcon.localScale;
+
+            _punchedIcon
                 .DOPunchScale(new Vector3(WinPunchStrength, WinPunchStrength, 0f), punchDuration, WinPunchVibrato, WinPunchElasticity)
                 .SetTarget(this)
                 .SetUpdate(true)
@@ -316,6 +320,13 @@ namespace Roulette
         public void Stop()
         {
             DOTween.Kill(this);
+
+            if (_punchedIcon != null)
+            {
+                _punchedIcon.localScale = _iconScaleBeforePunch;
+                _punchedIcon = null;
+            }
+
             _isSpinning = false;
         }
 

@@ -423,7 +423,8 @@ namespace Roulette
             bool canSpin = _isBusy == false && (_hasSaveFailed == true || _model.CanSpin(false));
             bool showAd = _model.HasAdvertising == true && _hasSaveFailed == false;
             _view.Display(title, _model.HasAdvertising == true || _hasSaveFailed == true, spinText, canSpin,
-                showAd, adText, _isBusy == false && _model.CanSpin(true), _isBusy == false);
+                showAd, adText, _isBusy == false && _model.CanSpin(true), _model.HasAdvertising,
+                _isBusy == false);
         }
 
         private string GetRarityKey(SkinRarity rarity)
