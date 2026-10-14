@@ -14,6 +14,8 @@ namespace Roulette
 {
     public class RoulettePresenter : MonoBehaviour
     {
+        private const float ButtonRefreshInterval = 1f;
+
         public event Action<RoulettePrize> PrizeClaimed;
         [SerializeField] private RouletteView _view;
 
@@ -30,6 +32,8 @@ namespace Roulette
         private bool _isBusy;
         private bool _isWaitingForAd;
         private bool _isSubscribed;
+        private bool _hasSaveFailed;
+        private Action _onComplete;
         private float _nextRefreshTime;
 
         public event Action Closed;
@@ -47,7 +51,36 @@ namespace Roulette
             _spawner = spawner;
             _sound = new RouletteSoundFeedback();
             _view.Wheel.Setup(model.Config);
+            _model.RefreshSlots();
             Subscribe();
+        }
+
+        public int GetSpinPrice()
+        {
+            return _model.GetPrice();
+        }
+
+        public bool CanSpin()
+        {
+            return _isBusy == false && _model.CanSpin(false);
+        }
+
+        public bool HasAvailableSkin()
+        {
+            return _model.HasAvailableSkin();
+        }
+
+        public bool ShowAndSpin(Action onComplete)
+        {
+            if (_isShown == true || CanSpin() == false)
+            {
+                return false;
+            }
+
+            _onComplete = onComplete;
+            Show();
+            Spin(false);
+            return true;
         }
 
         public void Show()
@@ -99,7 +132,7 @@ namespace Roulette
 
             _view.SpinRequested += OnSpinRequested;
             _view.AdRequested += OnAdRequested;
-            _view.CloseRequested += Hide;
+            _view.CloseRequested += OnCloseRequested;
             _view.Closed += OnViewClosed;
             _view.Disabled += StopPresentation;
             _view.Wheel.Completed += OnWheelCompleted;
@@ -116,7 +149,7 @@ namespace Roulette
 
             _view.SpinRequested -= OnSpinRequested;
             _view.AdRequested -= OnAdRequested;
-            _view.CloseRequested -= Hide;
+            _view.CloseRequested -= OnCloseRequested;
             _view.Closed -= OnViewClosed;
             _view.Disabled -= StopPresentation;
             _view.Wheel.Completed -= OnWheelCompleted;
@@ -131,8 +164,16 @@ namespace Roulette
                 return;
             }
 
-            _nextRefreshTime = Time.unscaledTime + 1f;
+            _nextRefreshTime = Time.unscaledTime + ButtonRefreshInterval;
             RefreshButtons();
+        }
+
+        private void OnCloseRequested()
+        {
+            if (_isBusy == false)
+            {
+                Hide();
+            }
         }
 
         private void BuildWheel()
@@ -170,6 +211,15 @@ namespace Roulette
         {
             if (_isShown == false || _isBusy == true)
             {
+                return;
+            }
+
+            if (_hasSaveFailed == true)
+            {
+                _hasSaveFailed = false;
+                _isBusy = true;
+                RefreshButtons();
+                ConfirmAndSpinAsync(_presentationCancellation.Token).Forget();
                 return;
             }
 
@@ -233,13 +283,20 @@ namespace Roulette
             try
             {
                 await _saveConfirmation.ConfirmSavedAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
             }
             catch (OperationCanceledException)
             {
                 return;
             }
+            catch (Exception)
+            {
+                _hasSaveFailed = true;
+                _isBusy = false;
+                RefreshButtons();
+                return;
+            }
 
-            cancellationToken.ThrowIfCancellationRequested();
             _sound.PlaySpin();
             _view.Wheel.Spin(_outcome.SlotIndex);
         }
@@ -263,7 +320,7 @@ namespace Roulette
 
             _sound.PlayWin();
             _popup = _spawner.Spawn(_view.WinPopupPrefab, UiLayer.Popup);
-            _popup.CloseRequested += OnPopupCloseRequested;
+            _popup.Setup(_spawner);
             _popup.Closed += OnPopupClosed;
             RoulettePrize prize = _outcome.Prize;
 
@@ -277,20 +334,27 @@ namespace Roulette
             }
 
             _spawner.Show(_popup);
-        }
 
-        private void OnPopupCloseRequested()
-        {
-            _popup.BeginClose();
+            if (_onComplete != null)
+            {
+                Action onComplete = _onComplete;
+                _onComplete = null;
+                _popup.Closed -= OnPopupClosed;
+                _popup = null;
+                PrizeClaimed?.Invoke(prize);
+                onComplete.Invoke();
+            }
         }
 
         private void OnPopupClosed()
         {
             PrizeClaimed?.Invoke(_outcome.Prize);
-            ReleasePopup();
+            _popup.Closed -= OnPopupClosed;
+            _popup = null;
             _view.Wheel.ReleaseHold();
             _outcome = null;
             _isBusy = false;
+
             BuildWheel();
             RefreshButtons();
         }
@@ -302,7 +366,6 @@ namespace Roulette
                 return;
             }
 
-            _popup.CloseRequested -= OnPopupCloseRequested;
             _popup.Closed -= OnPopupClosed;
             _spawner.Release(_popup);
             _popup = null;
@@ -313,6 +376,8 @@ namespace Roulette
             _isShown = false;
             _isBusy = false;
             _isWaitingForAd = false;
+            _hasSaveFailed = false;
+            _onComplete = null;
             _outcome = null;
 
             if (_presentationCancellation != null)
@@ -333,10 +398,12 @@ namespace Roulette
 
         private void RefreshButtons()
         {
+            string title = Localization.Get("skin_roulette_title");
             string spinText = _model.GetPrice().ToString();
 
             if (_model.HasAdvertising == true)
             {
+                title = Localization.Get("daily_roulette_title");
                 int remaining = _model.GetFreeRemainSeconds();
                 spinText = Localization.Get("roulette_free_ready");
 
@@ -346,9 +413,17 @@ namespace Roulette
                 }
             }
 
+            if (_hasSaveFailed == true)
+            {
+                title = Localization.Get("roulette_save_error");
+                spinText = Localization.Get("leaderboard_retry");
+            }
+
             string adText = string.Format(Localization.Get("roulette_ad_spins"), _model.GetAdSpinsLeft());
-            _view.Display(spinText, _isBusy == false && _model.CanSpin(false), _model.HasAdvertising,
-                adText, _isBusy == false && _model.CanSpin(true));
+            bool canSpin = _isBusy == false && (_hasSaveFailed == true || _model.CanSpin(false));
+            bool showAd = _model.HasAdvertising == true && _hasSaveFailed == false;
+            _view.Display(title, _model.HasAdvertising == true || _hasSaveFailed == true, spinText, canSpin,
+                showAd, adText, _isBusy == false && _model.CanSpin(true), _isBusy == false);
         }
 
         private string GetRarityKey(SkinRarity rarity)

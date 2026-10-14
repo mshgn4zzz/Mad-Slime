@@ -41,6 +41,19 @@ namespace Roulette
         [SerializeField] private TMP_Text _plateText;
         [SerializeField] private Button _takeButton;
 
+        private UiSpawner _spawner;
+
+        public void Setup(UiSpawner spawner)
+        {
+            if (spawner == null)
+            {
+                throw new ArgumentNullException(nameof(spawner));
+            }
+
+            _spawner = spawner;
+            Closed += OnClosed;
+        }
+
         protected override void Awake()
         {
             base.Awake();
@@ -74,6 +87,7 @@ namespace Roulette
 
         protected override void OnDisable()
         {
+            Closed -= OnClosed;
             _takeButton.onClick.RemoveListener(OnTakeClicked);
             base.OnDisable();
         }
@@ -167,7 +181,12 @@ namespace Roulette
         private void OnTakeClicked()
         {
             _takeButton.interactable = false;
-            RequestClose();
+            BeginClose();
+        }
+
+        private void OnClosed()
+        {
+            _spawner.Release(this);
         }
     }
 }

@@ -30,7 +30,8 @@ namespace Adapters
                 throw new InvalidOperationException("Cannot confirm a save before SDK readiness.");
             }
 
-            if (_hasSaved == false)
+            if (_hasSaved == false || _latestSave.Status == UniTaskStatus.Faulted
+                || _latestSave.Status == UniTaskStatus.Canceled)
             {
                 Save();
             }
