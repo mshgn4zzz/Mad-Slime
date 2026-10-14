@@ -314,3 +314,11 @@ MonoBehaviour:
     _ru: "ЛЕГЕНДАРНЫЕ"
     _en: "LEGENDARY"
     _tr: "EFSANEVİ"
+  - _key: skin_all_collected
+    _ru: "ВСЕ СКИНЫ ОТКРЫТЫ"
+    _en: "ALL SKINS UNLOCKED"
+    _tr: "TÜM KOSTÜMLER AÇILDI"
+  - _key: roulette_save_error
+    _ru: "НЕ УДАЛОСЬ СОХРАНИТЬ"
+    _en: "COULD NOT SAVE"
+    _tr: "KAYDEDİLEMEDİ"

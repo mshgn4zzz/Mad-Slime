@@ -29,6 +29,7 @@ namespace Roulette
         [SerializeField] private GameObject _screenRoot;
         [SerializeField] private ReactiveUIView _screenView;
         [SerializeField] private Button _closeButton;
+        [SerializeField] private TMP_Text _title;
 
         public event Action SpinRequested;
         public event Action AdRequested;
@@ -128,6 +129,7 @@ namespace Roulette
 
             if (_screenView != null)
             {
+                Canvas.ForceUpdateCanvases();
                 _screenView.Enable();
             }
         }
@@ -145,10 +147,14 @@ namespace Roulette
             OnHideCompleted(null);
         }
 
-        public void Display(string spinText, bool canSpin, bool showAd, string adText, bool canWatchAd)
+        public void Display(string title, bool showSpin, string spinText, bool canSpin, bool showAd, string adText,
+            bool canWatchAd, bool canClose)
         {
+            _title.text = title;
+            _spinButton.gameObject.SetActive(showSpin);
             _spinPriceText.text = spinText;
             _spinButton.interactable = canSpin;
+            _closeButton.interactable = canClose;
 
             if (_adButton != null)
             {
