@@ -28,7 +28,7 @@ namespace UI
         [SerializeField] private YandexConfig _yandexConfig;
 
         private UiSpawner _uiSpawner;
-        private FillSessionHandler _sessionHandler;
+        private FillSceneOrchestrator _orchestrator;
         private Wallet _wallet;
         private AdScheduler _adScheduler;
         private ISaveConfirmation _saveConfirmation;
@@ -48,11 +48,11 @@ namespace UI
         private int _lastFailRewardAmount;
 
         [Inject]
-        public void Construct(UiSpawner uiSpawner, FillSessionHandler sessionHandler, Wallet wallet,
+        public void Construct(UiSpawner uiSpawner, FillSceneOrchestrator orchestrator, Wallet wallet,
             AdScheduler adScheduler, ISaveConfirmation saveConfirmation)
         {
             _uiSpawner = uiSpawner;
-            _sessionHandler = sessionHandler;
+            _orchestrator = orchestrator;
             _wallet = wallet;
             _adScheduler = adScheduler;
             _saveConfirmation = saveConfirmation;
@@ -66,10 +66,10 @@ namespace UI
                     $"{name}: UiSpawner was not injected. Check that FillLifetimeScope registers UiSpawner and FillUIFabric.");
             }
 
-            if (_sessionHandler == null)
+            if (_orchestrator == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: FillSessionHandler was not injected. Check that FillLifetimeScope registers FillSessionHandler and FillUIFabric.");
+                    $"{name}: FillSceneOrchestrator was not injected. Check that FillLifetimeScope registers FillSceneOrchestrator and FillUIFabric.");
             }
 
             if (_wallet == null)
@@ -105,24 +105,24 @@ namespace UI
 
         private void OnEnable()
         {
-            if (_sessionHandler.IsFinished == true)
+            if (_orchestrator.IsFinished == true)
             {
                 return;
             }
 
             _isActive = true;
             _windowCancellation = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
-            _sessionHandler.Failed += OnGameFailed;
-            _sessionHandler.Win += OnGameWin;
-            _sessionHandler.Finished += OnSessionFinished;
+            _orchestrator.Failed += OnGameFailed;
+            _orchestrator.Win += OnGameWin;
+            _orchestrator.Finished += OnSessionFinished;
             _pauseButton.onClick.AddListener(OnPauseButtonClick);
         }
 
         private void OnDisable()
         {
-            _sessionHandler.Failed -= OnGameFailed;
-            _sessionHandler.Win -= OnGameWin;
-            _sessionHandler.Finished -= OnSessionFinished;
+            _orchestrator.Failed -= OnGameFailed;
+            _orchestrator.Win -= OnGameWin;
+            _orchestrator.Finished -= OnSessionFinished;
             _pauseButton.onClick.RemoveListener(OnPauseButtonClick);
             OnSessionFinished();
         }
@@ -180,7 +180,7 @@ namespace UI
             _isRescueResolved = false;
             _isClosingWindow = false;
             _activeFailMenu = _uiSpawner.Spawn(_failMenuPrefab, UiLayer.Popup);
-            _activeFailMenu.Initialize(rewardAmount, _sessionHandler.CanRescueFill);
+            _activeFailMenu.Initialize(rewardAmount, _orchestrator.CanRescueFill);
             _activeFailMenu.RescueRequested += OnFailRescueRequested;
             _activeFailMenu.RestartRequested += OnFailRestartRequested;
             _activeFailMenu.MenuRequested += OnFailMenuRequested;
@@ -353,7 +353,7 @@ namespace UI
             }
 
             _hasPauseRequest = true;
-            _sessionHandler.PauseByRequest();
+            _orchestrator.PauseByRequest();
             _activePauseMenu = _uiSpawner.Spawn(_pauseMenuPrefab, UiLayer.Popup);
             _activePauseMenu.Initialize(false);
             _activePauseMenu.CloseButtonClicked += OnPauseMenuCloseClicked;
@@ -400,7 +400,7 @@ namespace UI
             }
 
             _hasPauseRequest = false;
-            _sessionHandler.ResumeByRequest();
+            _orchestrator.ResumeByRequest();
         }
 
         private void CompleteWindowAction()
@@ -417,16 +417,16 @@ namespace UI
             switch (action)
             {
                 case WindowAction.NextLevel:
-                    _sessionHandler.LoadNextLevel();
+                    _orchestrator.LoadNextLevel();
                     break;
                 case WindowAction.Restart:
-                    _sessionHandler.RestartLevel();
+                    _orchestrator.RestartLevel();
                     break;
                 case WindowAction.Menu:
-                    _sessionHandler.ExitToMenu();
+                    _orchestrator.ExitToMenu();
                     break;
                 case WindowAction.Rescue:
-                    _sessionHandler.RescueFill();
+                    _orchestrator.RescueFill();
                     break;
             }
         }

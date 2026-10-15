@@ -6,8 +6,6 @@ using Cysharp.Threading.Tasks;
 using Game;
 using Scriptables;
 using Saves;
-using Skins;
-using UI;
 using UnityEngine;
 
 namespace Roulette
@@ -16,31 +14,30 @@ namespace Roulette
     {
         private const float ButtonRefreshInterval = 1f;
 
-        public event Action<RoulettePrize> PrizeClaimed;
         [SerializeField] private RouletteView _view;
 
         private RouletteModel _model;
         private ISaveConfirmation _saveConfirmation;
         private AdScheduler _adScheduler;
-        private UiSpawner _spawner;
         private RouletteSoundFeedback _sound;
         private IUISoundPlayer _soundPlayer;
         private RouletteOutcome _outcome;
-        private RouletteWinPopup _popup;
         private CancellationTokenSource _presentationCancellation;
         private bool _isShown;
         private bool _isBusy;
         private bool _isWaitingForAd;
         private bool _isSubscribed;
         private bool _hasSaveFailed;
-        private Action _onComplete;
+        private Action<RoulettePrize> _onComplete;
         private float _nextRefreshTime;
+
+        public event Action CloseRequested;
 
         public event Action Closed;
 
         public RouletteView View => _view;
 
-        public void Setup(RouletteModel model, AdScheduler adScheduler, IUISoundPlayer soundPlayer, UiSpawner spawner,
+        public void Setup(RouletteModel model, AdScheduler adScheduler, IUISoundPlayer soundPlayer,
             ISaveConfirmation saveConfirmation)
         {
             Unsubscribe();
@@ -48,11 +45,14 @@ namespace Roulette
             _saveConfirmation = saveConfirmation;
             _adScheduler = adScheduler;
             _soundPlayer = soundPlayer;
-            _spawner = spawner;
             _sound = new RouletteSoundFeedback();
             _view.Wheel.Setup(model.Config);
             _model.RefreshSlots();
-            Subscribe();
+
+            if (isActiveAndEnabled == true)
+            {
+                Subscribe();
+            }
         }
 
         public int GetSpinPrice()
@@ -70,26 +70,31 @@ namespace Roulette
             return _model.HasAvailableSkin();
         }
 
-        public bool ShowAndSpin(Action onComplete)
+        public bool ShowAndSpin(Action<RoulettePrize> onComplete)
         {
             if (_isShown == true || CanSpin() == false)
             {
                 return false;
             }
 
-            _onComplete = onComplete;
-            Show();
+            Show(onComplete);
             Spin(false);
             return true;
         }
 
-        public void Show()
+        public void Show(Action<RoulettePrize> onComplete)
         {
             if (_isShown == true)
             {
                 return;
             }
 
+            if (onComplete == null)
+            {
+                throw new ArgumentNullException(nameof(onComplete));
+            }
+
+            _onComplete = onComplete;
             Subscribe();
             _isShown = true;
             _presentationCancellation = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
@@ -107,6 +112,20 @@ namespace Roulette
 
             StopPresentation();
             _view.Hide();
+        }
+
+        public void ResumeAfterPrize()
+        {
+            if (_isShown == false)
+            {
+                return;
+            }
+
+            _view.Wheel.Stop();
+            _outcome = null;
+            _isBusy = false;
+            BuildWheel();
+            RefreshButtons();
         }
 
         private void OnEnable()
@@ -172,7 +191,7 @@ namespace Roulette
         {
             if (_isBusy == false)
             {
-                Hide();
+                CloseRequested?.Invoke();
             }
         }
 
@@ -319,56 +338,9 @@ namespace Roulette
             }
 
             _sound.PlayWin();
-            _popup = _spawner.Spawn(_view.WinPopupPrefab, UiLayer.Popup);
-            _popup.Setup(_spawner);
-            _popup.Closed += OnPopupClosed;
             RoulettePrize prize = _outcome.Prize;
-
-            if (prize.Skin != null)
-            {
-                _popup.InitializeSkin(prize.Skin, prize.Skin.Rarity, Localization.Get(GetRarityKey(prize.Skin.Rarity)));
-            }
-            else
-            {
-                _popup.InitializeCoins(prize.Coins, _view.GetCoinIcon(prize.Coins));
-            }
-
-            _spawner.Show(_popup);
-
-            if (_onComplete != null)
-            {
-                Action onComplete = _onComplete;
-                _onComplete = null;
-                _popup.Closed -= OnPopupClosed;
-                _popup = null;
-                PrizeClaimed?.Invoke(prize);
-                onComplete.Invoke();
-            }
-        }
-
-        private void OnPopupClosed()
-        {
-            PrizeClaimed?.Invoke(_outcome.Prize);
-            _popup.Closed -= OnPopupClosed;
-            _popup = null;
-            _view.Wheel.ReleaseHold();
-            _outcome = null;
-            _isBusy = false;
-
-            BuildWheel();
-            RefreshButtons();
-        }
-
-        private void ReleasePopup()
-        {
-            if (_popup == null)
-            {
-                return;
-            }
-
-            _popup.Closed -= OnPopupClosed;
-            _spawner.Release(_popup);
-            _popup = null;
+            Action<RoulettePrize> onComplete = _onComplete;
+            onComplete?.Invoke(prize);
         }
 
         private void StopPresentation()
@@ -387,7 +359,6 @@ namespace Roulette
                 _presentationCancellation = null;
             }
 
-            ReleasePopup();
             _view.Wheel.Stop();
         }
 
@@ -425,21 +396,6 @@ namespace Roulette
             _view.Display(title, _model.HasAdvertising == true || _hasSaveFailed == true, spinText, canSpin,
                 showAd, adText, _isBusy == false && _model.CanSpin(true), _model.HasAdvertising,
                 _isBusy == false);
-        }
-
-        private string GetRarityKey(SkinRarity rarity)
-        {
-            switch (rarity)
-            {
-                case SkinRarity.Rare:
-                    return "rarity_rare";
-                case SkinRarity.Epic:
-                    return "rarity_epic";
-                case SkinRarity.Legendary:
-                    return "rarity_legendary";
-                default:
-                    return "rarity_common";
-            }
         }
     }
 }

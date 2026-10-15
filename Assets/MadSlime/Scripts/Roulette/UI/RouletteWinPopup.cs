@@ -1,4 +1,5 @@
 using System;
+using Game;
 using Skins;
 using TMPro;
 using UI;
@@ -41,19 +42,6 @@ namespace Roulette
         [SerializeField] private TMP_Text _plateText;
         [SerializeField] private Button _takeButton;
 
-        private UiSpawner _spawner;
-
-        public void Setup(UiSpawner spawner)
-        {
-            if (spawner == null)
-            {
-                throw new ArgumentNullException(nameof(spawner));
-            }
-
-            _spawner = spawner;
-            Closed += OnClosed;
-        }
-
         protected override void Awake()
         {
             base.Awake();
@@ -87,7 +75,6 @@ namespace Roulette
 
         protected override void OnDisable()
         {
-            Closed -= OnClosed;
             _takeButton.onClick.RemoveListener(OnTakeClicked);
             base.OnDisable();
         }
@@ -99,7 +86,24 @@ namespace Roulette
             base.Show();
         }
 
-        public void InitializeSkin(SkinItem skin, SkinRarity rarity, string rarityName)
+        public void Initialize(RoulettePrize prize, RouletteView source)
+        {
+            if (prize == null || source == null)
+            {
+                throw new ArgumentNullException(nameof(prize), "Assign the roulette prize and its source view.");
+            }
+
+            if (prize.Skin != null)
+            {
+                InitializeSkin(prize.Skin, prize.Skin.Rarity, Localization.Get(GetRarityKey(prize.Skin.Rarity)));
+            }
+            else
+            {
+                InitializeCoins(prize.Coins, source.GetCoinIcon(prize.Coins));
+            }
+        }
+
+        private void InitializeSkin(SkinItem skin, SkinRarity rarity, string rarityName)
         {
             if (skin == null)
             {
@@ -120,7 +124,7 @@ namespace Roulette
             ShowRarity(rarity, rarityName);
         }
 
-        public void InitializeCoins(int amount, Sprite icon)
+        private void InitializeCoins(int amount, Sprite icon)
         {
             if (icon == null)
             {
@@ -178,15 +182,25 @@ namespace Roulette
             }
         }
 
+        private string GetRarityKey(SkinRarity rarity)
+        {
+            switch (rarity)
+            {
+                case SkinRarity.Rare:
+                    return "rarity_rare";
+                case SkinRarity.Epic:
+                    return "rarity_epic";
+                case SkinRarity.Legendary:
+                    return "rarity_legendary";
+                default:
+                    return "rarity_common";
+            }
+        }
+
         private void OnTakeClicked()
         {
             _takeButton.interactable = false;
-            BeginClose();
-        }
-
-        private void OnClosed()
-        {
-            _spawner.Release(this);
+            RequestClose();
         }
     }
 }

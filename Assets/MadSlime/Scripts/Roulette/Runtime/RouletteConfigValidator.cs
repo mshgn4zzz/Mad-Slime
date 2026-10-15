@@ -45,6 +45,8 @@ namespace Roulette
                 throw new InvalidOperationException("Legendary skins are daily exclusives and cannot appear in paid roulette.");
             }
 
+            config.NormalizeDailyChances();
+
             float sectorWeight = 0f;
             int hiddenSectors = 0;
 

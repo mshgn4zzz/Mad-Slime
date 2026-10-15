@@ -7,6 +7,8 @@ namespace Shop
     public class ModelPlacer : MonoBehaviour
     {
         private const float FaceTurnDegrees = 45f;
+        private const float ClipMargin = 0.05f;
+        private const float HalfFactor = 0.5f;
 
         [SerializeField] private PreviewRotator _rotator;
         [SerializeField] private float _padding = 0.85f;
@@ -14,12 +16,11 @@ namespace Shop
         private float _previewZoom = 1f;
         [SerializeField, Min(0.1f), Tooltip("Размер модели до применения общего масштаба: максимальная высота или диаметр при вращении.")]
         private float _normalizedSize = 2f;
-        [SerializeField, Tooltip("Подъём модели над центром экрана после подгонки.")]
-        private float _lift = 0f;
         [SerializeField] private Transform _modelsParent;
         [SerializeField] private Camera _camera;
 
-        private readonly List<Vector3> _worldCorners = new List<Vector3>();
+        private List<Vector3> _worldCorners = new List<Vector3>();
+        private List<Vector3> _modelCorners = new List<Vector3>();
 
         private GameObject _currentModel;
         private Vector3 _rotationAnchor;
@@ -42,6 +43,16 @@ namespace Shop
                 throw new InvalidOperationException(
                     $"{name}: ModelPlacer requires _camera to be assigned in the inspector.");
             }
+        }
+
+        private void OnEnable()
+        {
+            _rotator.Rotated += OnModelRotated;
+        }
+
+        private void OnDisable()
+        {
+            _rotator.Rotated -= OnModelRotated;
         }
 
         public void SetModel(GameObject model)
@@ -67,12 +78,12 @@ namespace Shop
 
             FaceCamera(_currentModel.transform.rotation);
             FitToCamera(skinModel);
-            _rotator.Setup(_currentModel.transform, _rotationAnchor);
         }
 
         public void Clear()
         {
             _rotator.Setup(null, Vector3.zero);
+            _modelCorners.Clear();
 
             if (_currentModel != null)
             {
@@ -113,43 +124,74 @@ namespace Shop
                 throw new InvalidOperationException($"{name}: preview model '{skinModel.name}' has empty bounds.");
             }
 
-            // Only the spawned preview is normalized; preserve the prefab's proportions.
             float targetSize = Mathf.Max(0.1f, _normalizedSize);
             float scale = targetSize / originalSize * Mathf.Max(0.1f, _previewZoom);
             Transform modelTransform = _currentModel.transform;
             Vector3 originalPosition = modelTransform.position;
+            _modelCorners.Clear();
+
+            for (int i = 0; i < _worldCorners.Count; i++)
+            {
+                _modelCorners.Add(modelTransform.InverseTransformPoint(_worldCorners[i]));
+            }
+
             modelTransform.localScale *= scale;
             Vector3 scaledCenter = originalPosition + (worldBounds.center - originalPosition) * scale;
             float halfHeight = worldBounds.extents.y * scale;
             radius *= scale;
+            float normalizedExtent = targetSize * HalfFactor;
+            float commonSize = CalculateCameraSize(normalizedExtent, normalizedExtent);
+            float requiredSize = CalculateCameraSize(radius, halfHeight);
+            _camera.orthographicSize = Mathf.Max(commonSize, requiredSize);
+
             Vector3 forward = _camera.transform.forward;
             float depthExtent = ProjectCylinder(radius, halfHeight, forward);
-            float liftDepth = Vector3.Dot(Vector3.up * _lift, forward);
-            // Normalization changes world size independently of the camera parent's scale.
-            // Keep the entire rotating model beyond the near plane, not just its center.
-            float minimumDepth = _camera.nearClipPlane + depthExtent + 0.05f - liftDepth;
-            Vector3 anchor = GetViewCenter(worldBounds.center, minimumDepth) + Vector3.up * _lift;
-            float farthestDepth = Vector3.Dot(anchor - _camera.transform.position, forward) + depthExtent;
-            _camera.farClipPlane = Mathf.Max(_camera.farClipPlane, farthestDepth + 0.05f);
+            float minimumDepth = _camera.nearClipPlane + depthExtent + ClipMargin;
+            Vector3 anchor = GetViewCenter(worldBounds.center, minimumDepth);
             modelTransform.position += anchor - scaledCenter;
             _rotationAnchor = anchor;
+            float farthestDepth = Vector3.Dot(anchor - _camera.transform.position, forward) + depthExtent;
+            _camera.farClipPlane = Mathf.Max(_camera.farClipPlane, farthestDepth + ClipMargin);
+            AlignToCameraBottom();
+        }
 
-            // A vertical cylinder encloses every yaw angle, including hands and feet.
-            // Project it onto the actual camera axes so a tilted camera cannot crop it.
-            Vector3 right = _camera.transform.right;
-            Vector3 up = _camera.transform.up;
-            float horizontalExtent = ProjectCylinder(radius, halfHeight, right)
-                + Mathf.Abs(Vector3.Dot(Vector3.up * _lift, right));
-            float verticalExtent = ProjectCylinder(radius, halfHeight, up)
-                + Mathf.Abs(Vector3.Dot(Vector3.up * _lift, up));
-            float aspect = Mathf.Max(0.01f, _camera.aspect);
-            float requiredSize = Mathf.Max(verticalExtent, horizontalExtent / aspect);
+        private float CalculateCameraSize(float radius, float halfHeight)
+        {
+            float horizontalExtent = ProjectCylinder(radius, halfHeight, _camera.transform.right);
+            float verticalExtent = ProjectCylinder(radius, halfHeight, _camera.transform.up);
+            float requiredSize = Mathf.Max(verticalExtent, horizontalExtent / _camera.aspect);
             float fill = Mathf.Clamp(_padding, 0.1f, 0.95f);
-            float normalizedExtent = targetSize * 0.5f;
-            float commonSize = Mathf.Max(
-                ProjectCylinder(normalizedExtent, normalizedExtent, up),
-                ProjectCylinder(normalizedExtent, normalizedExtent, right) / aspect) / fill;
-            _camera.orthographicSize = Mathf.Max(commonSize, requiredSize / fill);
+            return requiredSize / fill;
+        }
+
+        private void OnModelRotated()
+        {
+            AlignToCameraBottom();
+        }
+
+        private void AlignToCameraBottom()
+        {
+            if (_currentModel == null)
+            {
+                return;
+            }
+
+            Transform modelTransform = _currentModel.transform;
+            Vector3 cameraUp = _camera.transform.up;
+            Vector3 cameraPosition = _camera.transform.position;
+            float minimumHeight = Mathf.Infinity;
+
+            for (int i = 0; i < _modelCorners.Count; i++)
+            {
+                Vector3 corner = modelTransform.TransformPoint(_modelCorners[i]);
+                float height = Vector3.Dot(corner - cameraPosition, cameraUp);
+                minimumHeight = Mathf.Min(minimumHeight, height);
+            }
+
+            Vector3 offset = cameraUp * (-_camera.orthographicSize - minimumHeight);
+            modelTransform.position += offset;
+            _rotationAnchor += offset;
+            _rotator.Setup(modelTransform, _rotationAnchor);
         }
 
         private static float ProjectCylinder(float radius, float halfHeight, Vector3 axis)

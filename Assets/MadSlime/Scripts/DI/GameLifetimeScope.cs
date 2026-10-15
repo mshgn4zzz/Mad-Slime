@@ -36,7 +36,7 @@ namespace DI
         [SerializeField] private AdrenalineBoost _adrenalineBoost;
         [SerializeField] private AdrenalineSound _adrenalineSound;
         [SerializeField] private FinalCountdownVignette _finalCountdownVignette;
-        [SerializeField] private GameplaySessionHandler _sessionHandler;
+        [SerializeField] private GameplayOrchestrator _gameplayOrchestrator;
         [SerializeField] private QuotaUI _quotaUI;
         [SerializeField] private CameraPullAnimator _cameraPullAnimator;
         [SerializeField] private CameraShakeAnimator _cameraShakeAnimator;
@@ -90,7 +90,7 @@ namespace DI
             builder.RegisterComponent(_adrenalineBoost);
             builder.RegisterComponent(_adrenalineSound);
             builder.RegisterComponent(_finalCountdownVignette);
-            builder.RegisterComponent(_sessionHandler);
+            builder.RegisterComponent(_gameplayOrchestrator);
             builder.RegisterComponent(_quotaUI);
             builder.RegisterComponent(_cameraPullAnimator);
             builder.RegisterComponent(_cameraShakeAnimator);
@@ -148,7 +148,7 @@ namespace DI
             ValidateAssigned(_adrenalineBoost, nameof(_adrenalineBoost));
             ValidateAssigned(_adrenalineSound, nameof(_adrenalineSound));
             ValidateAssigned(_finalCountdownVignette, nameof(_finalCountdownVignette));
-            ValidateAssigned(_sessionHandler, nameof(_sessionHandler));
+            ValidateAssigned(_gameplayOrchestrator, nameof(_gameplayOrchestrator));
             ValidateAssigned(_quotaUI, nameof(_quotaUI));
             ValidateAssigned(_cameraPullAnimator, nameof(_cameraPullAnimator));
             ValidateAssigned(_cameraShakeAnimator, nameof(_cameraShakeAnimator));

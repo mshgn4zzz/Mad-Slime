@@ -15,52 +15,51 @@ namespace DI
 {
     public class MenuLifetimeScope : LifetimeScope
     {
-        [SerializeField] private MainMenu _mainMenu;
-        [SerializeField] private CollectionWindows _collections;
+        [SerializeField] private MenuNavigation _navigation;
+        [SerializeField] private MenuContent _content;
         [SerializeField] private ModelPlacer _modelPlacer;
         [SerializeField] private ShopItemViewFactory _skinFactory;
         [SerializeField] private UpgradeItemViewFactory _upgradeFactory;
-        [SerializeField] private MenuSessionHandler _menuSessionHandler;
+        [SerializeField] private MenuOrchestrator _menuOrchestrator;
         [SerializeField] private RouletteConfig _rouletteConfig;
         [SerializeField] private ShopContent _shopContent;
-        [SerializeField] private RoulettePresenter _roulettePresenter;
+        [SerializeField] private RoulettePreparation _roulettePreparation;
         [SerializeField] private AdScheduler _adScheduler;
         [SerializeField] private Wallet _wallet;
         [SerializeField] private Pauser _pauser;
-        [SerializeField] private LevelLabelUI _levelLabelUI;
+        [SerializeField] private Transform _runtimeWindows;
 
         protected override void Configure(IContainerBuilder builder)
         {
-            ValidateAssigned(_mainMenu, nameof(_mainMenu));
-            ValidateAssigned(_collections, nameof(_collections));
+            ValidateAssigned(_navigation, nameof(_navigation));
+            ValidateAssigned(_content, nameof(_content));
             ValidateAssigned(_modelPlacer, nameof(_modelPlacer));
             ValidateAssigned(_skinFactory, nameof(_skinFactory));
             ValidateAssigned(_upgradeFactory, nameof(_upgradeFactory));
-            ValidateAssigned(_menuSessionHandler, nameof(_menuSessionHandler));
+            ValidateAssigned(_menuOrchestrator, nameof(_menuOrchestrator));
             ValidateAssigned(_rouletteConfig, nameof(_rouletteConfig));
             ValidateAssigned(_shopContent, nameof(_shopContent));
-            ValidateAssigned(_roulettePresenter, nameof(_roulettePresenter));
+            ValidateAssigned(_roulettePreparation, nameof(_roulettePreparation));
             ValidateAssigned(_adScheduler, nameof(_adScheduler));
             ValidateAssigned(_wallet, nameof(_wallet));
             ValidateAssigned(_pauser, nameof(_pauser));
-            ValidateAssigned(_levelLabelUI, nameof(_levelLabelUI));
+            ValidateAssigned(_runtimeWindows, nameof(_runtimeWindows));
 
-            builder.RegisterComponent(_mainMenu);
-            builder.RegisterComponent(_collections);
+            builder.RegisterComponent(_navigation);
+            builder.RegisterComponent(_content);
             builder.RegisterComponent(_modelPlacer);
             builder.RegisterComponent(_skinFactory);
             builder.RegisterComponent(_upgradeFactory);
-            builder.RegisterComponent(_menuSessionHandler);
+            builder.RegisterComponent(_menuOrchestrator);
             builder.Register<RouletteFactory>(resolver => new RouletteFactory(_rouletteConfig,
                 resolver.Resolve<IRouletteStorage>(), resolver.Resolve<ISkinStorage>(), resolver.Resolve<SkinInventory>(),
                 resolver.Resolve<Wallet>(), resolver.Resolve<Saver>().ExecuteTransaction), Lifetime.Scoped);
-            builder.RegisterComponent(_roulettePresenter);
+            builder.RegisterComponent(_roulettePreparation);
             builder.RegisterInstance(_shopContent);
             builder.RegisterInstance(_rouletteConfig);
             builder.RegisterComponent(_adScheduler);
             builder.RegisterComponent(_wallet);
             builder.RegisterComponent(_pauser);
-            builder.RegisterComponent(_levelLabelUI);
 
             builder.Register<UiSpawner>(Lifetime.Scoped);
 
@@ -69,6 +68,7 @@ namespace DI
 
         private void InitializeScene(IObjectResolver container)
         {
+            container.Resolve<UiSpawner>().SetParent(_runtimeWindows);
             container.Resolve<SceneNavigator>().EnsureInitialized();
             container.Resolve<Pauser>().ResetToPlay();
 
@@ -80,7 +80,7 @@ namespace DI
             if (dependency == null)
             {
                 throw new InvalidOperationException(
-                    $"MenuLifetimeScope: '{fieldName}' is not assigned. Select the DI object in the scene and drag the missing reference.");
+                    $"MenuLifetimeScope: '{fieldName}' is not assigned. Select MenuScope in the scene and drag the missing reference.");
             }
         }
     }
