@@ -1629,6 +1629,9 @@ MonoBehaviour:
   m_EditorClassIdentifier:
   _closeButton: {fileID: 187253888244200764}
   _menuButton: {fileID: 1282445216682022522}
+  _languageButton: {fileID: 6056218880018769591}
+  _languagePositionWithMenuButton: {x: 0, y: 300}
+  _languagePositionWithoutMenuButton: {x: 0, y: 120}
   _settingsPanel: {fileID: 5404395884382921240}
 --- !u!114 &3942097030992020907
 MonoBehaviour:

@@ -219,33 +219,33 @@ MonoBehaviour:
     _en: STEP {0}/{1}
     _tr: ADIM {0}/{1}
   - _key: upgrade_speed_desc
-    _ru: "Повышает скорость. Быстрее добирайся до нужных предметов и собирай больше.\nСкорость +{0}%"
-    _en: "Increases movement speed. Reach the items you need faster and collect more.\nSpeed +{0}%"
-    _tr: "Hareket hızını artırır. İhtiyacın olan nesnelere daha hızlı ulaş ve daha fazlasını topla.\nHız +{0}%"
+    _ru: "Быстрее двигайся и собирай предметы.\nСкорость +{0}%"
+    _en: "Move faster and collect items.\nSpeed +{0}%"
+    _tr: "Daha hızlı hareket et ve nesneleri topla.\nHız +{0}%"
   - _key: upgrade_appetite_desc
-    _ru: "Увеличивает массу от любых съеденных предметов. Быстрее расти и открывай доступ к крупной добыче.\nМасса +{0}%"
-    _en: "Increases the mass gained from every item you eat. Grow faster and unlock bigger prey.\nMass +{0}%"
-    _tr: "Yediğin her nesneden kazandığın kütleyi artırır. Daha hızlı büyü ve daha büyük nesneleri yut.\nKütle +{0}%"
+    _ru: "Больше массы за каждый съеденный предмет.\nМасса +{0}%"
+    _en: "Gain more mass from every item you eat.\nMass +{0}%"
+    _tr: "Yediğin her nesneden daha çok kütle kazan.\nKütle +{0}%"
   - _key: upgrade_taste_desc
-    _ru: "Квотовые предметы дают дополнительную массу. Собирай нужные объекты, чтобы быстрее расти.\nМасса от квоты +{0}%"
-    _en: "Quota items give extra mass. Collect the required objects to grow faster.\nMass from quota items +{0}%"
-    _tr: "Kota nesneleri ek kütle kazandırır. Daha hızlı büyümek için gereken nesneleri topla.\nKota nesnelerinden kütle +{0}%"
+    _ru: "Больше массы за квотовые предметы.\nМасса от квоты +{0}%"
+    _en: "Quota items give more mass.\nQuota mass +{0}%"
+    _tr: "Kota nesneleri daha çok kütle verir.\nKota kütlesi +{0}%"
   - _key: upgrade_metabolism_desc
-    _ru: "Усиливает вклад предметов вне квоты в заполнение картинки. Даже случайная добыча помогает добраться до 100%.\nВклад в заполнение +{0}%"
-    _en: "Items outside the quota contribute more to filling the picture. Even extra finds help you reach 100%.\nFill contribution +{0}%"
-    _tr: "Kota dışındaki nesnelerin resmi doldurmaya katkısını artırır. Fazladan topladıkların bile %100 doluluğa ulaşmana yardım eder.\nDolum katkısı +{0}%"
+    _ru: "Предметы вне квоты сильнее заполняют картинку.\nВклад +{0}%"
+    _en: "Non-quota items fill more of the picture.\nFill contribution +{0}%"
+    _tr: "Kota dışı nesneler resmi daha çok doldurur.\nDolum katkısı +{0}%"
   - _key: perk_smell_desc
-    _ru: "Подсвечивает доступные для поглощения квотовые предметы рядом. Быстрее находи нужную добычу."
-    _en: "Highlights nearby quota items that you can eat. Find the objects you need faster."
-    _tr: "Yakındaki yutabileceğin kota nesnelerini vurgular. İhtiyacın olan nesneleri daha hızlı bul."
+    _ru: "Подсвечивает рядом квотовые предметы, которые можно съесть."
+    _en: "Highlights nearby quota items you can eat."
+    _tr: "Yakındaki yenebilir kota nesnelerini vurgular."
   - _key: perk_adrenaline_desc
-    _ru: "Ускоряет, когда время подходит к концу. Используй последние секунды, чтобы добрать нужные предметы."
-    _en: "Boosts your speed when time is running out. Use the final seconds to grab the items you still need."
-    _tr: "Süre azalırken hızını artırır. Eksik kalan nesneleri toplamak için son saniyeleri kullan."
+    _ru: "Ускоряет движение, когда время на исходе."
+    _en: "Move faster when time is running out."
+    _tr: "Süre azalınca hareket hızını artırır."
   - _key: perk_ambitions_desc
-    _ru: "Позволяет поглощать предметы на один тир крупнее. Крупная добыча становится доступнее."
-    _en: "Lets you eat objects one size tier above your own. Bigger prey becomes easier to reach."
-    _tr: "Senden bir boyut kademesi büyük nesneleri yutmanı sağlar. Büyük nesneleri daha erken yiyebilirsin."
+    _ru: "Позволяет съесть предметы на один тир крупнее."
+    _en: "Eat objects one size tier above your own."
+    _tr: "Senden bir boyut kademesi büyük nesneleri yut."
   - _key: shop_one_time
     _ru: "ОДНОРАЗОВЫЕ ПОКУПКИ"
     _en: ONE-TIME BUYS

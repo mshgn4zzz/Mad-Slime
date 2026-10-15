@@ -18,7 +18,7 @@ namespace Shop
         [SerializeField] private UpgradesPagePresenter _upgradesPage;
         [SerializeField] private ShopBalanceView _skinsBalance;
         [SerializeField] private ShopBalanceView _upgradesBalance;
-        [SerializeField] private RoulettePresenter _roulette;
+        [SerializeField] private RoulettePreparation _roulettePreparation;
         [SerializeField] private ModelPlacer _preview;
         [SerializeField] private Button _openSkinButton;
         [SerializeField] private TMP_Text _openSkinLabel;
@@ -53,7 +53,7 @@ namespace Shop
         private void Awake()
         {
             if (_skinsPage == null || _upgradesPage == null || _skinsBalance == null || _upgradesBalance == null
-                || _roulette == null || _preview == null || _openSkinButton == null || _openSkinLabel == null
+                || _roulettePreparation == null || _preview == null || _openSkinButton == null || _openSkinLabel == null
                 || _openSkinPrice == null || _openSkinCost == null || _skinsTitle == null || _upgradesTitle == null
                 || _levelLabel == null)
             {
@@ -86,6 +86,7 @@ namespace Shop
 
         public void RefreshSkins(string rewardSkinId)
         {
+            _roulettePreparation.SkinModel.RefreshSlots();
             _skinsPage.Refresh(rewardSkinId);
             RefreshSkinPurchase();
         }
@@ -112,7 +113,8 @@ namespace Shop
 
         private void RefreshSkinPurchase()
         {
-            bool hasSkins = _roulette.HasAvailableSkin();
+            RouletteModel roulette = _roulettePreparation.SkinModel;
+            bool hasSkins = roulette.HasAvailableSkin();
             _openSkinButton.gameObject.SetActive(hasSkins);
 
             if (hasSkins == false)
@@ -122,8 +124,8 @@ namespace Shop
 
             _openSkinLabel.text = Localization.Get("skin_open_new");
             _openSkinCost.SetActive(true);
-            _openSkinPrice.text = _roulette.GetSpinPrice().ToString();
-            _openSkinButton.interactable = _roulette.CanSpin();
+            _openSkinPrice.text = roulette.GetPrice().ToString();
+            _openSkinButton.interactable = roulette.CanSpin(false);
         }
     }
 }

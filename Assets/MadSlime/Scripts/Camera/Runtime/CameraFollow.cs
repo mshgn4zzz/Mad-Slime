@@ -1,16 +1,13 @@
 using System;
+using Scriptables;
 using UnityEngine;
-using VContainer;
 
 namespace CameraSystem
 {
     public class CameraFollow : MonoBehaviour
     {
         [SerializeField] private Transform _target;
-        [SerializeField] private float _positionSmoothTime = 0.25f;
-        [SerializeField] private float _maxPositionSpeed = 50f;
-        [SerializeField, Min(0.1f)] private float _shakeFrequency = 25f;
-        [SerializeField, Range(0f, 1f)] private Vector2 _shakeAxes = new Vector2(1f, 1f);
+        [SerializeField] private CameraConfig _config;
         [SerializeField] private CameraPullAnimator _pullAnimator;
         [SerializeField] private CameraShakeAnimator _shakeAnimator;
         [SerializeField] private CameraFovKickAnimator _fovKickAnimator;
@@ -19,10 +16,15 @@ namespace CameraSystem
         private Vector3 _currentOffset;
         private Vector3 _startOffset;
         private Camera _camera;
-        private float _baseFov;
 
         private void Awake()
         {
+            if (_config == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: CameraConfig is not assigned. Drag the CameraConfig asset into the _config field.");
+            }
+
             if (_target == null)
             {
                 throw new InvalidOperationException(
@@ -42,7 +44,7 @@ namespace CameraSystem
             }
 
             _camera = cameraComponent;
-            _baseFov = _camera.fieldOfView;
+            _camera.fieldOfView = _config.BaseFov;
 
             _currentOffset = transform.position - _target.position;
             _startOffset = _currentOffset;
@@ -55,17 +57,17 @@ namespace CameraSystem
 
         private void LateUpdate()
         {
-            float offsetLength = Mathf.Max(1f, _currentOffset.magnitude - _pullAnimator.Pull);
+            float offsetLength = Mathf.Max(_config.MinDistance, _currentOffset.magnitude - _pullAnimator.Pull);
             Vector3 desiredPosition = _target.position + _currentOffset.normalized * offsetLength;
 
             transform.position = Vector3.SmoothDamp(
                 transform.position,
                 desiredPosition,
                 ref _positionVelocity,
-                _positionSmoothTime,
-                _maxPositionSpeed) + GetShakeOffset();
+                _config.PositionSmoothTime,
+                _config.MaxPositionSpeed) + GetShakeOffset();
 
-            _camera.fieldOfView = _baseFov + _fovKickAnimator.FovKick;
+            _camera.fieldOfView = _config.BaseFov + _fovKickAnimator.FovKick;
         }
 
         private Vector3 GetShakeOffset()
@@ -75,11 +77,11 @@ namespace CameraSystem
                 return Vector3.zero;
             }
 
-            float noiseTime = Time.time * _shakeFrequency;
+            float noiseTime = Time.time * _config.ShakeFrequency;
             float noiseX = Mathf.PerlinNoise(noiseTime, 0f) * 2f - 1f;
             float noiseY = Mathf.PerlinNoise(0f, noiseTime) * 2f - 1f;
 
-            return (transform.right * (noiseX * _shakeAxes.x) + transform.up * (noiseY * _shakeAxes.y))
+            return (transform.right * (noiseX * _config.ShakeAxes.x) + transform.up * (noiseY * _config.ShakeAxes.y))
                 * _shakeAnimator.Shake;
         }
     }

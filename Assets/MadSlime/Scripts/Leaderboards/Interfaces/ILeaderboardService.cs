@@ -1,4 +1,5 @@
-using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 
 namespace Core
 {
@@ -8,15 +9,9 @@ namespace Core
 
         string PlayerId { get; }
 
-        string PlayerName { get; }
-
-        event Action<LeaderboardData> EntriesReceived;
-
-        event Action EntriesFailed;
-
         void SetScore(string leaderboardName, int score);
 
-        void RequestEntries(string leaderboardName, int topCount, int aroundCount);
+        UniTask<LeaderboardData> RequestEntriesAsync(string leaderboardName, int topCount, CancellationToken cancellationToken);
 
         void OpenAuthDialog();
     }

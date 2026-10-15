@@ -18,6 +18,7 @@ namespace DI
     {
         [SerializeField] private PlayerUpgrades _playerUpgrades;
         [SerializeField] private SaveConfirmation _saveConfirmation;
+        [SerializeField] private Yg2LeaderboardService _leaderboardService;
         [SerializeField] private LevelsCatalog _levelsCatalog;
         [SerializeField] private LocalizationService _localizationService;
         [SerializeField] private TierTable _tierTable;
@@ -28,6 +29,11 @@ namespace DI
 
         protected override void Configure(IContainerBuilder builder)
         {
+            if (_leaderboardService == null)
+            {
+                throw new InvalidOperationException("ProjectLifetimeScope: leaderboard service is not assigned.");
+            }
+
             if (_playerUpgrades == null)
             {
                 throw new InvalidOperationException(
@@ -112,7 +118,7 @@ namespace DI
             builder.RegisterInstance(quotaCounter);
             builder.Register<LevelConfigResolver>(Lifetime.Singleton);
             builder.Register<IAdsService>(resolver => new Yg2AdsService(), Lifetime.Singleton);
-            builder.Register<ILeaderboardService>(resolver => new Yg2LeaderboardService(), Lifetime.Singleton);
+            builder.RegisterComponent(_leaderboardService).As<ILeaderboardService>();
             builder.Register<ILanguageProvider>(resolver => new Yg2LanguageProvider(), Lifetime.Singleton);
             builder.Register<IGameVisibility, Yg2GameVisibility>(Lifetime.Singleton);
             builder.Register<IGameplayReporter>(resolver => new Yg2GameplayReporter(), Lifetime.Singleton);

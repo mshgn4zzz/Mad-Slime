@@ -1,10 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
 using Core;
+using Cysharp.Threading.Tasks;
 using Game;
 using Saves;
 using Scriptables;
-using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using VContainer;
 
@@ -13,22 +17,31 @@ namespace UI
     public class LeaderboardMenu : BaseWindow
     {
         private const int TopCount = 10;
-        private const int AroundCount = 1;
+        private const int SdkTimeoutSeconds = 8;
+
+        private enum State
+        {
+            Loading,
+            Ready,
+            Empty,
+            Error
+        }
 
         [SerializeField] private Button _closeButton;
         [SerializeField] private Button _authButton;
-        [SerializeField] private TMP_Text _entriesText;
+        [FormerlySerializedAs("_entriesText")]
+        [SerializeField] private TMP_Text _statusText;
         [SerializeField] private Button _retryButton;
-        [SerializeField] private Image[] _rowImages;
-        [SerializeField] private TMP_Text[] _rankTexts;
-        [SerializeField] private TMP_Text[] _nameTexts;
-        [SerializeField] private TMP_Text[] _scoreTexts;
-        [SerializeField] private Color _rowColor = new Color(0f, 0f, 0f, 0.12f);
-        [SerializeField] private Color _ownRowColor = new Color(0.12f, 0.5f, 0.8f, 0.6f);
+        [SerializeField] private LeaderboardRowViewFactory _rowFactory;
+        [SerializeField] private ScrollRect _scroll;
         [SerializeField] private YandexConfig _config;
 
         private ISavesReadiness _savesReadiness;
         private ILeaderboardService _leaderboardService;
+        private List<LeaderboardRowView> _rows = new List<LeaderboardRowView>();
+        private LeaderboardRowView _ownRow;
+        private CancellationTokenSource _loadSource;
+        private State _state;
 
         [Inject]
         public void Construct(ISavesReadiness savesReadiness, ILeaderboardService leaderboardService)
@@ -39,188 +52,244 @@ namespace UI
 
         public void Initialize()
         {
-            if (_closeButton == null)
+            if (_closeButton == null || _authButton == null || _retryButton == null
+                || _rowFactory == null || _scroll == null || _scroll.content == null || _scroll.viewport == null
+                || _config == null
+                || string.IsNullOrEmpty(_config.LeaderboardName))
             {
-                throw new InvalidOperationException(
-                    $"{name}: CloseButton is not assigned. Drag a Button into the _closeButton field.");
-            }
-
-            if (_authButton == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: AuthButton is not assigned. Drag a Button into the _authButton field.");
-            }
-
-            if (_entriesText == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: EntriesText is not assigned. Drag a TMP_Text into the _entriesText field.");
-            }
-
-            if (_retryButton == null || _rowImages == null || _rowImages.Length == 0
-                || _rankTexts == null || _nameTexts == null || _scoreTexts == null
-                || _rankTexts.Length != _rowImages.Length || _nameTexts.Length != _rowImages.Length
-                || _scoreTexts.Length != _rowImages.Length)
-            {
-                throw new InvalidOperationException($"{name}: assign the retry button and matching leaderboard row arrays.");
-            }
-
-            for (int i = 0; i < _rowImages.Length; i++)
-            {
-                if (_rowImages[i] == null || _rankTexts[i] == null || _nameTexts[i] == null || _scoreTexts[i] == null)
-                {
-                    throw new InvalidOperationException($"{name}: leaderboard row {i} is incomplete.");
-                }
-            }
-
-            if (_config == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: YandexConfig is not assigned. Drag the YandexConfig asset into the _config field.");
+                throw new InvalidOperationException($"{name}: leaderboard window references are incomplete.");
             }
 
             if (_savesReadiness == null || _leaderboardService == null)
             {
-                throw new InvalidOperationException(
-                    $"{name}: dependencies were not injected. The window prefab must be shown through the DI container (UiSpawner.Spawn).");
+                throw new InvalidOperationException($"{name}: show the leaderboard through UiSpawner with injected dependencies.");
             }
 
-            _closeButton.onClick.AddListener(Close);
+            _closeButton.onClick.AddListener(OnCloseClicked);
             _authButton.onClick.AddListener(OnAuthClicked);
             _retryButton.onClick.AddListener(OnRetryClicked);
-            _leaderboardService.EntriesReceived += OnLeaderboardReceived;
-            _leaderboardService.EntriesFailed += OnLeaderboardFailed;
             _savesReadiness.Ready += OnSdkDataReceived;
-
             RefreshAuthView();
             RequestLeaderboard();
+        }
+
+        protected override void OnClosing()
+        {
+            base.OnClosing();
+            CancelLoading();
         }
 
         protected override void OnDisable()
         {
             base.OnDisable();
-            _closeButton?.onClick.RemoveListener(Close);
+            CancelLoading();
+            _closeButton?.onClick.RemoveListener(OnCloseClicked);
             _authButton?.onClick.RemoveListener(OnAuthClicked);
             _retryButton?.onClick.RemoveListener(OnRetryClicked);
-            if (_leaderboardService == null)
-            {
-                return;
-            }
 
-            _leaderboardService.EntriesReceived -= OnLeaderboardReceived;
-            _leaderboardService.EntriesFailed -= OnLeaderboardFailed;
-            _savesReadiness.Ready -= OnSdkDataReceived;
+            if (_savesReadiness != null)
+            {
+                _savesReadiness.Ready -= OnSdkDataReceived;
+            }
         }
 
         private void RequestLeaderboard()
         {
-            ClearRows();
-            _entriesText.enabled = true;
-            _retryButton.gameObject.SetActive(false);
-            _entriesText.text = Localization.Get("leaderboard_loading");
-
-            if (_savesReadiness.IsReady == false)
+            if (IsClosing == true)
             {
                 return;
             }
 
-            _leaderboardService.RequestEntries(_config.LeaderboardName, TopCount, AroundCount);
+            CancelLoading();
+            _loadSource = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
+            LoadAsync(_loadSource.Token).Forget();
         }
 
-        private void OnLeaderboardFailed()
+        private async UniTaskVoid LoadAsync(CancellationToken cancellationToken)
         {
-            ClearRows();
-            _entriesText.enabled = true;
-            _entriesText.text = Localization.Get("leaderboard_error");
-            _retryButton.gameObject.SetActive(true);
-        }
+            SetState(State.Loading);
+            _retryButton.interactable = false;
 
-        private void OnLeaderboardReceived(LeaderboardData snapshot)
-        {
-            if (snapshot.TechnoName != _config.LeaderboardName)
+            try
+            {
+                await UniTask.WaitUntil(IsSdkReady, cancellationToken: cancellationToken)
+                    .Timeout(TimeSpan.FromSeconds(SdkTimeoutSeconds), DelayType.Realtime);
+                cancellationToken.ThrowIfCancellationRequested();
+                RefreshAuthView();
+                LeaderboardData snapshot = await _leaderboardService.RequestEntriesAsync(
+                    _config.LeaderboardName, TopCount, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                Render(snapshot);
+                await ScrollToPlayerAsync(cancellationToken);
+            }
+            catch (OperationCanceledException)
             {
                 return;
             }
-
-            if (snapshot.Players.Length == 0)
+            catch (Exception)
             {
-                ClearRows();
-                _entriesText.enabled = true;
-                _entriesText.text = Localization.Get("leaderboard_empty");
-                _retryButton.gameObject.SetActive(true);
-                return;
-            }
-
-            ClearRows();
-            _entriesText.enabled = false;
-            _retryButton.gameObject.SetActive(false);
-            int rowIndex = 0;
-            bool ownRowInTop = false;
-
-            for (int entryIndex = 0; entryIndex < snapshot.Players.Length && rowIndex < _rowImages.Length; entryIndex++)
-            {
-                LeaderboardEntryData entry = snapshot.Players[entryIndex];
-                bool isOwn = _leaderboardService.IsAuthorized == true && entry.Id == _leaderboardService.PlayerId;
-                RenderRow(rowIndex, entry, isOwn);
-                ownRowInTop = ownRowInTop || isOwn;
-                rowIndex++;
-            }
-
-            if (ownRowInTop == false && _leaderboardService.IsAuthorized == true
-                && snapshot.CurrentPlayer.HasValue == true && rowIndex < _rowImages.Length)
-            {
-                LeaderboardEntryData entry = snapshot.CurrentPlayer.Value;
-                if (entry.Rank <= 0)
+                if (cancellationToken.IsCancellationRequested == false)
                 {
-                    return;
+                    SetState(State.Error);
                 }
+            }
+        }
 
-                entry.Name = _leaderboardService.PlayerName;
-                RenderRow(rowIndex, entry, true);
+        private bool IsSdkReady()
+        {
+            return _savesReadiness.IsReady;
+        }
+
+        private void Render(LeaderboardData snapshot)
+        {
+            ClearRows();
+
+            for (int i = 0; i < snapshot.Players.Length; i++)
+            {
+                LeaderboardEntryData entry = snapshot.Players[i];
+                bool isOwn = _leaderboardService.IsAuthorized == true && entry.Id == _leaderboardService.PlayerId;
+                AddRow(entry, isOwn);
+            }
+
+            if (_ownRow == null && snapshot.CurrentPlayer.HasValue == true)
+            {
+                AddRow(snapshot.CurrentPlayer.Value, true);
+            }
+
+            if (_rows.Count == 0)
+            {
+                SetState(State.Empty);
+            }
+            else
+            {
+                SetState(State.Ready);
+            }
+
+            if (snapshot.HasPlayerError == true)
+            {
+                SetState(State.Error);
+            }
+        }
+
+        private void AddRow(LeaderboardEntryData entry, bool isOwn)
+        {
+            LeaderboardRowView row = _rowFactory.Create(_scroll.content, entry, isOwn);
+            _rows.Add(row);
+
+            if (isOwn == true)
+            {
+                _ownRow = row;
+            }
+        }
+
+        private async UniTask ScrollToPlayerAsync(CancellationToken cancellationToken)
+        {
+            await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate, cancellationToken);
+            Canvas.ForceUpdateCanvases();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_scroll.content);
+            _scroll.StopMovement();
+            _scroll.verticalNormalizedPosition = 1f;
+
+            if (_ownRow == null)
+            {
+                return;
+            }
+
+            RectTransform content = _scroll.content;
+            RectTransform viewport = _scroll.viewport;
+            Vector3 viewportTop = content.InverseTransformPoint(
+                viewport.TransformPoint(new Vector3(0f, viewport.rect.yMax, 0f)));
+            Vector3 viewportBottom = content.InverseTransformPoint(
+                viewport.TransformPoint(new Vector3(0f, viewport.rect.yMin, 0f)));
+            float viewportHeight = viewportTop.y - viewportBottom.y;
+            float scrollableHeight = content.rect.height - viewportHeight;
+
+            if (scrollableHeight <= 0f)
+            {
+                return;
+            }
+
+            RectTransform row = _ownRow.RectTransform;
+            Vector3 rowBottom = content.InverseTransformPoint(
+                row.TransformPoint(new Vector3(row.rect.center.x, row.rect.yMin, 0f)));
+            float targetOffset = content.rect.yMax - rowBottom.y - viewportHeight;
+            float clampedOffset = Mathf.Clamp(targetOffset, 0f, scrollableHeight);
+            _scroll.verticalNormalizedPosition = 1f - clampedOffset / scrollableHeight;
+        }
+
+        private void SetState(State state)
+        {
+            _state = state;
+            _retryButton.gameObject.SetActive(state == State.Empty || state == State.Error);
+            _retryButton.interactable = state != State.Loading;
+
+            if (_statusText == null)
+            {
+                return;
+            }
+
+            _statusText.gameObject.SetActive(state != State.Ready);
+
+            switch (state)
+            {
+                case State.Loading:
+                    _statusText.text = Localization.Get("leaderboard_loading");
+                    break;
+                case State.Empty:
+                    _statusText.text = Localization.Get("leaderboard_empty");
+                    break;
+                case State.Error:
+                    _statusText.text = Localization.Get("leaderboard_error");
+                    break;
+                case State.Ready:
+                    _statusText.text = string.Empty;
+                    break;
             }
         }
 
         private void ClearRows()
         {
-            for (int i = 0; i < _rowImages.Length; i++)
+            for (int i = 0; i < _rows.Count; i++)
             {
-                _rowImages[i].gameObject.SetActive(false);
+                _rows[i].gameObject.SetActive(false);
+                Destroy(_rows[i].gameObject);
             }
+
+            _rows.Clear();
+            _ownRow = null;
         }
 
-        private void RenderRow(int index, LeaderboardEntryData entry, bool isOwn)
+        private void CancelLoading()
         {
-            _rankTexts[index].text = entry.Rank.ToString();
-            _nameTexts[index].richText = false;
-            _nameTexts[index].overflowMode = TextOverflowModes.Ellipsis;
-            _nameTexts[index].text = entry.Name;
-            _scoreTexts[index].text = entry.Score.ToString();
-            _rowImages[index].color = _rowColor;
-
-            if (isOwn == true)
+            if (_loadSource == null)
             {
-                _rowImages[index].color = _ownRowColor;
+                return;
             }
 
-            _rowImages[index].gameObject.SetActive(true);
+            _loadSource.Cancel();
+            _loadSource.Dispose();
+            _loadSource = null;
         }
 
         private void OnRetryClicked()
         {
+            if (_state == State.Loading)
+            {
+                return;
+            }
+
             RequestLeaderboard();
         }
 
         private void OnSdkDataReceived()
         {
             RefreshAuthView();
-
             RequestLeaderboard();
         }
 
         private void OnAuthClicked()
         {
             _leaderboardService.OpenAuthDialog();
-            RefreshAuthView();
         }
 
         private void RefreshAuthView()
@@ -228,7 +297,7 @@ namespace UI
             _authButton.gameObject.SetActive(_leaderboardService.IsAuthorized == false);
         }
 
-        private void Close()
+        private void OnCloseClicked()
         {
             RequestClose();
         }

@@ -62,9 +62,15 @@ namespace UI
         private void OnDisable()
         {
             FinishSession();
-            _sceneNavigator.UnregisterSession(RunSession);
-            _navigation.PlayRequested -= OnPlayRequested;
-            _sessionSource.Dispose();
+            if (_sceneNavigator != null)
+            {
+                _sceneNavigator.UnregisterSession(RunSession);
+            }
+            if (_navigation != null)
+            {
+                _navigation.PlayRequested -= OnPlayRequested;
+            }
+            _sessionSource?.Dispose();
             _sessionSource = null;
         }
 
@@ -98,7 +104,10 @@ namespace UI
 
             _state = SessionState.Finished;
             _sessionSource?.Cancel();
-            _navigation.Stop();
+            if (_navigation != null)
+            {
+                _navigation.Stop();
+            }
         }
 
         private void OnPlayRequested()
