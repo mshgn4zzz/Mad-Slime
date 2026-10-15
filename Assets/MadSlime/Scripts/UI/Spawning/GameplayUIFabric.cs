@@ -12,14 +12,14 @@ namespace UI
         [SerializeField] private PauseMenu _pauseMenuPrefab;
 
         private UiSpawner _uiSpawner;
-        private GameplaySessionHandler _sessionHandler;
+        private GameplayOrchestrator _orchestrator;
         private PauseMenu _activePauseMenu;
 
         [Inject]
-        public void Construct(UiSpawner uiSpawner, GameplaySessionHandler sessionHandler)
+        public void Construct(UiSpawner uiSpawner, GameplayOrchestrator orchestrator)
         {
             _uiSpawner = uiSpawner;
-            _sessionHandler = sessionHandler;
+            _orchestrator = orchestrator;
         }
 
         private void Awake()
@@ -30,10 +30,10 @@ namespace UI
                     $"{name}: UiSpawner was not injected. Check that GameLifetimeScope registers UiSpawner and GameplayUIFabric.");
             }
 
-            if (_sessionHandler == null)
+            if (_orchestrator == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: GameplaySessionHandler was not injected. Check that GameLifetimeScope registers GameplaySessionHandler and GameplayUIFabric.");
+                    $"{name}: GameplayOrchestrator was not injected. Check that GameLifetimeScope registers GameplayOrchestrator and GameplayUIFabric.");
             }
 
             if (_pauseButton == null)
@@ -73,7 +73,7 @@ namespace UI
                 return;
             }
 
-            _sessionHandler.PauseByRequest();
+            _orchestrator.PauseByRequest();
 
             _activePauseMenu = _uiSpawner.Spawn(_pauseMenuPrefab, UiLayer.Popup);
             _activePauseMenu.Initialize(true);
@@ -89,7 +89,7 @@ namespace UI
             _activePauseMenu.CloseButtonClicked -= OnPauseMenuCloseClicked;
             _activePauseMenu.MenuButtonClicked -= OnPauseMenuMenuClicked;
 
-            _sessionHandler.ResumeByRequest();
+            _orchestrator.ResumeByRequest();
             _activePauseMenu.BeginClose();
         }
 
@@ -105,10 +105,10 @@ namespace UI
             _activePauseMenu.CloseButtonClicked -= OnPauseMenuCloseClicked;
             _activePauseMenu.MenuButtonClicked -= OnPauseMenuMenuClicked;
 
-            _sessionHandler.ResumeByRequest();
+            _orchestrator.ResumeByRequest();
             _activePauseMenu.BeginClose();
 
-            _sessionHandler.ExitToMenu();
+            _orchestrator.ExitToMenu();
         }
     }
 }

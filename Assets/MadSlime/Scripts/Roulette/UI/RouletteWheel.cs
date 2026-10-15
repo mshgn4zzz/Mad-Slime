@@ -220,17 +220,6 @@ namespace Roulette
             sequence.OnComplete(OnSpinCompleted);
         }
 
-        public void ReleaseHold()
-        {
-            if (_isSpinning == false)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: RouletteWheel.ReleaseHold was called while the wheel holds no win.");
-            }
-
-            _isSpinning = false;
-        }
-
         private void Update()
         {
             if (_isBuilt == false || _isSpinning == true)

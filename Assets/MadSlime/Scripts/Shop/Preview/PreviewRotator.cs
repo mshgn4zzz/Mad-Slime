@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Shop
@@ -5,6 +6,8 @@ namespace Shop
     public class PreviewRotator : MonoBehaviour
     {
         [SerializeField] private float _rotationSpeed = 45f;
+
+        public event Action Rotated;
 
         private Transform _model;
         private Vector3 _anchor;
@@ -23,6 +26,7 @@ namespace Shop
             }
 
             _model.RotateAround(_anchor, Vector3.up, _rotationSpeed * Time.unscaledDeltaTime);
+            Rotated?.Invoke();
         }
     }
 }

@@ -11,7 +11,7 @@ using VContainer;
 
 namespace Game
 {
-    public class FillSessionHandler : MonoBehaviour
+    public class FillSceneOrchestrator : MonoBehaviour
     {
         [SerializeField] private Playlist _musicPlaylist;
 
@@ -92,25 +92,25 @@ namespace Game
             if (_adScheduler == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: AdScheduler was not injected. Check that FillLifetimeScope registers AdScheduler and FillSessionHandler.");
+                    $"{name}: AdScheduler was not injected. Check that FillLifetimeScope registers AdScheduler and FillSceneOrchestrator.");
             }
 
             if (_leaderboardReporter == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: LeaderboardReporter was not injected. Check that FillLifetimeScope registers LeaderboardReporter and FillSessionHandler.");
+                    $"{name}: LeaderboardReporter was not injected. Check that FillLifetimeScope registers LeaderboardReporter and FillSceneOrchestrator.");
             }
 
             if (_fillOrchestrator == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: ShapeFillOrchestrator was not injected. Check that FillLifetimeScope registers ShapeFillOrchestrator and FillSessionHandler.");
+                    $"{name}: ShapeFillOrchestrator was not injected. Check that FillLifetimeScope registers ShapeFillOrchestrator and FillSceneOrchestrator.");
             }
 
             if (_rewarder == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: Rewarder was not injected. Check that FillLifetimeScope registers Rewarder and FillSessionHandler.");
+                    $"{name}: Rewarder was not injected. Check that FillLifetimeScope registers Rewarder and FillSceneOrchestrator.");
             }
 
             if (_gameplayReporter == null)
@@ -122,13 +122,13 @@ namespace Game
             if (_sceneNavigator == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: SceneNavigator was not injected. Check that ProjectLifetimeScope registers SceneNavigator and FillLifetimeScope registers FillSessionHandler.");
+                    $"{name}: SceneNavigator was not injected. Check that ProjectLifetimeScope registers SceneNavigator and FillLifetimeScope registers FillSceneOrchestrator.");
             }
 
             if (_gridBuilder == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: GridBuilder was not injected. Check that FillLifetimeScope registers GridBuilder and FillSessionHandler.");
+                    $"{name}: GridBuilder was not injected. Check that FillLifetimeScope registers GridBuilder and FillSceneOrchestrator.");
             }
         }
 

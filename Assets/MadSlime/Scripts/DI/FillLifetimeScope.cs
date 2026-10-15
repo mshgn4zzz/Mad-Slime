@@ -13,7 +13,7 @@ namespace DI
     public class FillLifetimeScope : LifetimeScope
     {
         [SerializeField] private FillConfig _fillConfig;
-        [SerializeField] private FillSessionHandler _fillSessionHandler;
+        [SerializeField] private FillSceneOrchestrator _fillSceneOrchestrator;
         [SerializeField] private ShapeFillOrchestrator _fillOrchestrator;
         [SerializeField] private GridBuilder _gridBuilder;
         [SerializeField] private ShapeFiller _shapeFiller;
@@ -34,7 +34,7 @@ namespace DI
         protected override void Configure(IContainerBuilder builder)
         {
             ValidateAssigned(_fillConfig, nameof(_fillConfig));
-            ValidateAssigned(_fillSessionHandler, nameof(_fillSessionHandler));
+            ValidateAssigned(_fillSceneOrchestrator, nameof(_fillSceneOrchestrator));
             ValidateAssigned(_fillOrchestrator, nameof(_fillOrchestrator));
             ValidateAssigned(_gridBuilder, nameof(_gridBuilder));
             ValidateAssigned(_shapeFiller, nameof(_shapeFiller));
@@ -54,7 +54,7 @@ namespace DI
 
             builder.RegisterInstance(_fillConfig);
             builder.Register<UiSpawner>(Lifetime.Scoped);
-            builder.RegisterComponent(_fillSessionHandler);
+            builder.RegisterComponent(_fillSceneOrchestrator);
             builder.RegisterComponent(_fillOrchestrator);
             builder.RegisterComponent(_gridBuilder);
             builder.RegisterComponent(_shapeFiller);
