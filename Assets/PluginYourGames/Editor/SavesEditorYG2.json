@@ -1,37 +1,35 @@
 {
-    "CurrentLevel": 4,
-    "MaxLevel": 4,
-    "CollectedItemsCount": 12235,
+    "CurrentLevel": 1,
+    "MaxLevel": 1,
+    "CollectedItemsCount": 0,
     "Language": "",
-    "musicVolume": 0.18270185589790345,
-    "sfxVolume": 0.2706858217716217,
-    "Balance": 9983843,
-    "SelectedSkinId": "Mint",
+    "musicVolume": 0.5,
+    "sfxVolume": 0.3499999940395355,
+    "Balance": 10000099,
+    "SelectedSkinId": "Slime",
     "_openSkinIds": [
         "Slime",
-        "Mint",
-        "Pacman",
-        "Tung",
-        "Berry",
-        "Coral",
-        "Ocean"
+        "Ember",
+        "Cosmic",
+        "Glacier"
     ],
     "_showcaseSkinIds": [
-        "Lemon"
+        "Coral",
+        "Lemon",
+        "Berry",
+        "Tung"
     ],
-    "SpeedLevel": 1,
-    "AppetiteLevel": 1,
-    "TasteLevel": 1,
+    "SpeedLevel": 0,
+    "AppetiteLevel": 0,
+    "TasteLevel": 0,
     "MetabolismLevel": 0,
-    "PurchasedPerks": [
-        0,
-        1,
-        2
-    ],
-    "LastFreeSpinUnixTime": 1791979871,
+    "PurchasedPerks": [],
+    "LastFreeSpinUnixTime": 1792043134,
     "RouletteAdSpinTimes": [
-        1791977718
+        1792043145,
+        1792043155,
+        1792043166
     ],
-    "SkinSpinCount": 6,
-    "idSave": 52
+    "SkinSpinCount": 0,
+    "idSave": 5
 }

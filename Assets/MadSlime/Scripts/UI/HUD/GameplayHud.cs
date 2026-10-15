@@ -14,7 +14,7 @@ namespace UI
         [SerializeField] private AnimationScheduler _sceneScheduler;
         [SerializeField] private AnimationScheduler _gameplayScheduler;
 
-        private GameplaySessionHandler _session;
+        private GameplayOrchestrator _session;
         private List<ReactiveUIView> _views = new List<ReactiveUIView>();
         private List<Action> _sceneAnimations = new List<Action>();
         private List<Action> _gameplayAnimations = new List<Action>();
@@ -23,7 +23,7 @@ namespace UI
         private bool _isGameplayShown;
 
         [Inject]
-        public void Construct(GameplaySessionHandler session)
+        public void Construct(GameplayOrchestrator session)
         {
             _session = session;
         }

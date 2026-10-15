@@ -15,7 +15,7 @@ using VContainer;
 
 namespace Game
 {
-    public class GameplaySessionHandler : MonoBehaviour
+    public class GameplayOrchestrator : MonoBehaviour
     {
         private enum SessionState
         {
@@ -123,13 +123,13 @@ namespace Game
             if (_levelGenerator == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: LevelGenerator was not injected. Check that GameLifetimeScope registers LevelGenerator and GameplaySessionHandler.");
+                    $"{name}: LevelGenerator was not injected. Check that GameLifetimeScope registers LevelGenerator and GameplayOrchestrator.");
             }
 
             if (_itemCollector == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: ItemCollector was not injected. Check that GameLifetimeScope registers ItemCollector and GameplaySessionHandler.");
+                    $"{name}: ItemCollector was not injected. Check that GameLifetimeScope registers ItemCollector and GameplayOrchestrator.");
             }
 
             if (_sceneNavigator == null)
@@ -147,19 +147,19 @@ namespace Game
             if (_adrenalineBoost == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: AdrenalineBoost was not injected. Check that GameLifetimeScope registers AdrenalineBoost and GameplaySessionHandler.");
+                    $"{name}: AdrenalineBoost was not injected. Check that GameLifetimeScope registers AdrenalineBoost and GameplayOrchestrator.");
             }
 
             if (_finalCountdownVignette == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: FinalCountdownVignette was not injected. Check that GameLifetimeScope registers FinalCountdownVignette and GameplaySessionHandler.");
+                    $"{name}: FinalCountdownVignette was not injected. Check that GameLifetimeScope registers FinalCountdownVignette and GameplayOrchestrator.");
             }
 
             if (_timerTickSound == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: TimerTickSound was not injected. Check that GameLifetimeScope registers TimerTickSound and GameplaySessionHandler.");
+                    $"{name}: TimerTickSound was not injected. Check that GameLifetimeScope registers TimerTickSound and GameplayOrchestrator.");
             }
 
         }
@@ -170,7 +170,7 @@ namespace Game
             if (_quotaCounter == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: QuotaCounter was not injected. Check that ProjectLifetimeScope registers QuotaCounter and GameplaySessionHandler.");
+                    $"{name}: QuotaCounter was not injected. Check that ProjectLifetimeScope registers QuotaCounter and GameplayOrchestrator.");
             }
 
             _inputReader.MovementKeyPressed += OnMovementKeyPressed;

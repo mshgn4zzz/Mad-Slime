@@ -1916,7 +1916,7 @@ MonoBehaviour:
   _adrenalineBoost: {fileID: 7992803093969525696}
   _adrenalineSound: {fileID: 292377145}
   _finalCountdownVignette: {fileID: 812539637}
-  _sessionHandler: {fileID: 292377134}
+  _gameplayOrchestrator: {fileID: 292377134}
   _quotaUI: {fileID: 1306941302}
   _cameraPullAnimator: {fileID: 1809261854}
   _cameraShakeAnimator: {fileID: 1809261853}

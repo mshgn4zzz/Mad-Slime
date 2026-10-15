@@ -9,6 +9,7 @@ namespace UI
     public class UiSpawner
     {
         private IObjectResolver _resolver;
+        private Transform _parent;
 
         public UiSpawner(IObjectResolver resolver)
         {
@@ -21,6 +22,16 @@ namespace UI
             _resolver = resolver;
         }
 
+        public void SetParent(Transform parent)
+        {
+            if (parent == null)
+            {
+                throw new ArgumentNullException(nameof(parent));
+            }
+
+            _parent = parent;
+        }
+
         public T Spawn<T>(T prefab, UiLayer layer) where T : Component, IShowable
         {
             if (prefab == null)
@@ -29,7 +40,16 @@ namespace UI
                     "UiSpawner: the spawned prefab is null. Drag a prefab into the caller's serialized field.");
             }
 
-            T instance = _resolver.Instantiate(prefab);
+            T instance;
+
+            if (_parent == null)
+            {
+                instance = _resolver.Instantiate(prefab);
+            }
+            else
+            {
+                instance = _resolver.Instantiate(prefab, _parent, false);
+            }
 
             ApplyLayer(instance, layer);
 
@@ -44,6 +64,7 @@ namespace UI
                     "UiSpawner.Release: the released window is null.");
             }
 
+            window.gameObject.SetActive(false);
             Destroy(window.gameObject);
         }
 
