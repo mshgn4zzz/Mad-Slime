@@ -28,7 +28,96 @@ MonoBehaviour:
   Leaderboards:
     enable: 1
     saveScoreAnonymousPlayers: 1
-    listLBSim: []
+    listLBSim:
+    - technoName: CollectedItems
+      entries: 
+      isDefault: 1
+      isInvertSortOrder: 0
+      decimalOffset: 0
+      type: numeric
+      players:
+      - rank: 1
+        name: Player 1
+        score: 1300
+        photo: 
+        uniqueID: editor-player-1
+        extraData: 
+      - rank: 2
+        name: Player 2
+        score: 1200
+        photo: 
+        uniqueID: editor-player-2
+        extraData: 
+      - rank: 3
+        name: Player 3
+        score: 1100
+        photo: 
+        uniqueID: editor-player-3
+        extraData: 
+      - rank: 4
+        name: Player 4
+        score: 1000
+        photo: 
+        uniqueID: editor-player-4
+        extraData: 
+      - rank: 5
+        name: Player 5
+        score: 900
+        photo: 
+        uniqueID: editor-player-5
+        extraData: 
+      - rank: 6
+        name: Player 6
+        score: 800
+        photo: 
+        uniqueID: editor-player-6
+        extraData: 
+      - rank: 7
+        name: Player 7
+        score: 700
+        photo: 
+        uniqueID: editor-player-7
+        extraData: 
+      - rank: 8
+        name: Player 8
+        score: 600
+        photo: 
+        uniqueID: editor-player-8
+        extraData: 
+      - rank: 9
+        name: Player 9
+        score: 500
+        photo: 
+        uniqueID: editor-player-9
+        extraData: 
+      - rank: 10
+        name: Player 10
+        score: 400
+        photo: 
+        uniqueID: editor-player-10
+        extraData: 
+      - rank: 11
+        name: Player 11
+        score: 300
+        photo: 
+        uniqueID: editor-player-11
+        extraData: 
+      - rank: 12
+        name: Player 12
+        score: 200
+        photo: 
+        uniqueID: editor-player-12
+        extraData: 
+      - rank: 13
+        name: Player current
+        score: 100
+        photo: 
+        uniqueID: 000
+        extraData: 
+      currentPlayer:
+        rank: 13
+        score: 100
+        extraData: 
   Localization:
     setLanguageMod: 1
   RewardedAdv:

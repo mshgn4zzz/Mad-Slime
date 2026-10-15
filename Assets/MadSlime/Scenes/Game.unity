@@ -2182,10 +2182,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _target: {fileID: 831138685125926996}
-  _positionSmoothTime: 0.3
-  _maxPositionSpeed: 150
-  _shakeFrequency: 40
-  _shakeAxes: {x: 1, y: 1}
+  _config: {fileID: 11400000, guid: ea791a0300514b3abe9110a4dca815d6, type: 2}
   _pullAnimator: {fileID: 1809261854}
   _shakeAnimator: {fileID: 1809261853}
   _fovKickAnimator: {fileID: 1809261852}
@@ -2201,7 +2198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e98f0da8fced88de94e4f3812f7f08a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _config: {fileID: 11400000, guid: d27da7a7c2faebb409a7c05e8959f085, type: 2}
+  _config: {fileID: 11400000, guid: ea791a0300514b3abe9110a4dca815d6, type: 2}
 --- !u!114 &1809261853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2214,7 +2211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c686854be33fb5061b334c621e2216f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _config: {fileID: 11400000, guid: d27da7a7c2faebb409a7c05e8959f085, type: 2}
+  _config: {fileID: 11400000, guid: ea791a0300514b3abe9110a4dca815d6, type: 2}
 --- !u!114 &1809261854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2227,7 +2224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46b8e99738243cec19d953ae18100193, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _config: {fileID: 11400000, guid: d27da7a7c2faebb409a7c05e8959f085, type: 2}
+  _config: {fileID: 11400000, guid: ea791a0300514b3abe9110a4dca815d6, type: 2}
 --- !u!1 &1862886156
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,6 +9,9 @@ namespace UI
     {
         [SerializeField] private Button _closeButton;
         [SerializeField] private Button _menuButton;
+        [SerializeField] private RectTransform _languageButton;
+        [SerializeField] private Vector2 _languagePositionWithMenuButton;
+        [SerializeField] private Vector2 _languagePositionWithoutMenuButton;
         [SerializeField] private AudioSettingsPanel _settingsPanel;
 
         private bool _isActionRequested;
@@ -38,6 +41,11 @@ namespace UI
                 throw new InvalidOperationException(
                     $"{name}: SettingsPanel is not assigned. Drag an AudioSettingsPanel into the _settingsPanel field.");
             }
+
+            if (_languageButton == null)
+            {
+                throw new InvalidOperationException($"{name}: assign the language button RectTransform.");
+            }
         }
 
         public void Initialize(bool isMenuButtonNeeded)
@@ -48,6 +56,9 @@ namespace UI
             _settingsPanel.Initialize();
 
             _menuButton.gameObject.SetActive(isMenuButtonNeeded);
+            _languageButton.anchoredPosition = isMenuButtonNeeded
+                ? _languagePositionWithMenuButton
+                : _languagePositionWithoutMenuButton;
         }
 
         private void OnEnable()
