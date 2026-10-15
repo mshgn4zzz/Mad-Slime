@@ -45,8 +45,6 @@ namespace Roulette
                 throw new InvalidOperationException("Legendary skins are daily exclusives and cannot appear in paid roulette.");
             }
 
-            config.NormalizeDailyChances();
-
             float sectorWeight = 0f;
             int hiddenSectors = 0;
 
@@ -77,9 +75,14 @@ namespace Roulette
                 }
             }
 
-            if (hiddenSectors != 1 || Math.Abs(sectorWeight - FullChance) > ChanceTolerance)
+            if (Math.Abs(sectorWeight - FullChance) > ChanceTolerance)
             {
-                throw new InvalidOperationException("Daily roulette requires exactly one hidden sector and a total chance of 100%.");
+                throw new InvalidOperationException($"{config.name}: daily sector chances must total 100%, got {sectorWeight}%.");
+            }
+
+            if (hiddenSectors != 1)
+            {
+                throw new InvalidOperationException("Daily roulette requires exactly one hidden sector.");
             }
 
             RouletteProbabilityRules probabilityRules = new RouletteProbabilityRules(config);
@@ -103,9 +106,14 @@ namespace Roulette
                 skinWeight += weight;
             }
 
-            if (showcaseSize <= 0 || showcaseSize > skinSlotCount || Math.Abs(skinWeight - FullChance) > ChanceTolerance)
+            if (Math.Abs(skinWeight - FullChance) > ChanceTolerance)
             {
-                throw new InvalidOperationException("Skin showcase must fit the wheel; rarity chances must total 100%.");
+                throw new InvalidOperationException($"{config.name}: skin rarity chances must total 100%, got {skinWeight}%.");
+            }
+
+            if (showcaseSize <= 0 || showcaseSize > skinSlotCount)
+            {
+                throw new InvalidOperationException("Skin showcase must fit the wheel.");
             }
 
             if (catalog == null || catalog.Count == 0)

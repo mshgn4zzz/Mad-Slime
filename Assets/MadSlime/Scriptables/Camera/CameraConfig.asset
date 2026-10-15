@@ -9,9 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0eed3857e7002e24dac89a0fda8b8fc4, type: 3}
-  m_Name: CameraImpulseConfig
+  m_Script: {fileID: 11500000, guid: aefd73765f024ca9bb1801e155e788b9, type: 3}
+  m_Name: CameraConfig
   m_EditorClassIdentifier: 
+  _positionSmoothTime: 0.3
+  _maxPositionSpeed: 300
+  _minDistance: 1
+  _baseFov: 75
   _massToPullStrength:
     serializedVersion: 2
     m_Curve:
@@ -40,6 +44,8 @@ MonoBehaviour:
   _tierPushStrength: 4
   _maxPush: 8
   _recoverSpeed: 4
+  _shakeFrequency: 40
+  _shakeAxes: {x: 1, y: 1}
   _shakeMassThreshold: 1000
   _shakeStrength: 0.15
   _maxShake: 0.35

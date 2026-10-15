@@ -12,7 +12,7 @@ namespace CameraSystem
 {
     public class CameraPullAnimator : MonoBehaviour
     {
-        [SerializeField] private CameraImpulseConfig _config;
+        [SerializeField] private CameraConfig _config;
 
         private ItemCollector _itemCollector;
         private PlayerTier _playerTier;
@@ -35,7 +35,7 @@ namespace CameraSystem
             if (_config == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: CameraImpulseConfig is not assigned. Drag the CameraImpulseConfig asset into the _config field.");
+                    $"{name}: CameraConfig is not assigned. Drag the CameraConfig asset into the _config field.");
             }
 
             if (_tierLookup == null)

@@ -2,9 +2,23 @@ using UnityEngine;
 
 namespace Scriptables
 {
-    [CreateAssetMenu(menuName = "Mad Slime/Camera Impulse Config", fileName = "NewCameraImpulseConfig")]
-    public class CameraImpulseConfig : ScriptableObject
+    [CreateAssetMenu(menuName = "Mad Slime/Camera Config", fileName = "NewCameraConfig")]
+    public class CameraConfig : ScriptableObject
     {
+        [Header("Follow")]
+        [Tooltip("Время сглаживания движения камеры (с). Меньше = быстрее догоняет игрока.")]
+        [SerializeField, Min(0.01f)] private float _positionSmoothTime = 0.3f;
+
+        [Tooltip("Максимальная скорость движения камеры (юнитов/с).")]
+        [SerializeField, Min(0.01f)] private float _maxPositionSpeed = 150f;
+
+        [Tooltip("Минимальная дистанция до игрока при подтяжке камеры (юнитов).")]
+        [SerializeField, Min(0.01f)] private float _minDistance = 1f;
+
+        [Header("Lens")]
+        [Tooltip("Базовое поле зрения камеры (градусы), до добавления эффектов.")]
+        [SerializeField, Range(1f, 179f)] private float _baseFov = 60f;
+
         [Header("Pull")]
         [Tooltip(
             "Кривая: масса съеденного предмета → сила подтяжки камеры к игроку. Ключи перестраивать под реальные массы TierTable.")]
@@ -24,6 +38,12 @@ namespace Scriptables
         private float _recoverSpeed = 4f;
 
         [Header("Shake")]
+        [Tooltip("Частота шума тряски. Больше = быстрее дрожит камера.")]
+        [SerializeField, Min(0.1f)] private float _shakeFrequency = 40f;
+
+        [Tooltip("Сила тряски по локальным осям камеры: X — горизонталь, Y — вертикаль. 0 = ось выключена.")]
+        [SerializeField, Range(0f, 1f)] private Vector2 _shakeAxes = Vector2.one;
+
         [Tooltip(
             "Минимальная масса предмета, включающая шейк. Сравнивается с массами TierTable: при Small=1/Medium=1000 порог 1000 = трясёт только с крупного тира.")]
         [SerializeField, Min(0f)]
@@ -39,7 +59,7 @@ namespace Scriptables
         [Tooltip("Скорость затухания тряски. 3 = долго гудит, 10 = короткий клайк.")] [SerializeField, Min(0.1f)]
         private float _shakeRecoverSpeed = 7f;
 
-        [Header("Fov")]
+        [Header("FOV Kick")]
         [Tooltip("Тычок поля зрения камеры на тир-апе (градусы). 0 = выключен.")]
         [SerializeField, Min(0f)]
         private float _tierFovKick = 7f;
@@ -47,11 +67,17 @@ namespace Scriptables
         [Tooltip("Скорость возврата поля зрения к обычному. Больше = быстрее щелчок.")] [SerializeField, Min(0.1f)]
         private float _fovRecoverSpeed = 5f;
 
+        public float PositionSmoothTime => _positionSmoothTime;
+        public float MaxPositionSpeed => _maxPositionSpeed;
+        public float MinDistance => _minDistance;
+        public float BaseFov => _baseFov;
         public AnimationCurve MassToPullStrength => _massToPullStrength;
         public float MaxPull => _maxPull;
         public float TierPushStrength => _tierPushStrength;
         public float MaxPush => _maxPush;
         public float RecoverSpeed => _recoverSpeed;
+        public float ShakeFrequency => _shakeFrequency;
+        public Vector2 ShakeAxes => _shakeAxes;
         public float ShakeMassThreshold => _shakeMassThreshold;
         public float ShakeStrength => _shakeStrength;
         public float MaxShake => _maxShake;

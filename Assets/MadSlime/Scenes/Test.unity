@@ -602,10 +602,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _target: {fileID: 0}
-  _positionSmoothTime: 0.25
-  _maxPositionSpeed: 50
-  _shakeFrequency: 25
-  _shakeAxes: {x: 1, y: 1}
+  _config: {fileID: 11400000, guid: ea791a0300514b3abe9110a4dca815d6, type: 2}
 --- !u!114 &1809261852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -618,7 +615,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e6904e0313b66945accf93755fa6c4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _config: {fileID: 11400000, guid: d27da7a7c2faebb409a7c05e8959f085, type: 2}
+  _config: {fileID: 11400000, guid: ea791a0300514b3abe9110a4dca815d6, type: 2}
 --- !u!1 &1862886156
 GameObject:
   m_ObjectHideFlags: 0

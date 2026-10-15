@@ -568,6 +568,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 666189401}
+  - component: {fileID: 870000001}
+  - component: {fileID: 1560748444112562554}
   - component: {fileID: 870000002}
   - component: {fileID: 666189400}
   - component: {fileID: 666189399}
@@ -1064,8 +1066,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6286811584108114462}
-  - component: {fileID: 870000001}
-  - component: {fileID: 1560748444112562554}
   m_Layer: 0
   m_Name: RouletteView
   m_TagString: Untagged
@@ -1099,7 +1099,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7471733373252188899}
+  m_GameObject: {fileID: 666189397}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 07b907bbcd894d91bf84af4a70dab7ba, type: 3}
@@ -1112,7 +1112,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7471733373252188899}
+  m_GameObject: {fileID: 666189397}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b931e60fddfeb184cab4b988d23c2a13, type: 3}

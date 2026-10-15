@@ -10,7 +10,7 @@ namespace Roulette
     public class RouletteConfig : ScriptableObject
     {
         [Header("Daily Roulette")]
-        [Tooltip("Секторы ежедневной рулетки: монеты и эксклюзивные скины. Один элемент на один сектор колеса, ровно один сектор Skin. Сумма шансов автоматически выравнивается до 100: избыток вычитается из наибольшего шанса, недостаток добавляется к наибольшему.")]
+        [Tooltip("Один элемент на сектор колеса, ровно один сектор Skin. Сумма шансов должна быть 100%.")]
         [SerializeField] private List<RouletteSector> _sectors = new List<RouletteSector>();
 
         [Tooltip("Легендарные эксклюзивные скины: достаются только из ежедневной рулетки. При выпадении сектора Skin выбирается случайный скин из этого списка.")]
@@ -140,62 +140,6 @@ namespace Roulette
         public SfxClip SpinStartClip => _spinStartClip;
         public SfxClip WinClip => _winClip;
 
-        private void OnValidate()
-        {
-            NormalizeDailyChances();
-        }
-
-        public void NormalizeDailyChances()
-        {
-            if (_sectors == null)
-            {
-                return;
-            }
-
-            double totalChance = 0;
-
-            for (int i = 0; i < _sectors.Count; i++)
-            {
-                RouletteSector sector = _sectors[i];
-
-                if (sector == null)
-                {
-                    continue;
-                }
-
-                float chance = sector.DropChance;
-                chance = float.IsNaN(chance) || float.IsInfinity(chance)
-                    ? 0f : Math.Max(0f, Math.Min(100f, chance));
-                sector.SetDropChance(chance);
-                totalChance += chance;
-            }
-
-            double adjustment = 100.0 - totalChance;
-
-            while (adjustment != 0)
-            {
-                RouletteSector largestSector = null;
-
-                for (int i = 0; i < _sectors.Count; i++)
-                {
-                    RouletteSector sector = _sectors[i];
-
-                    if (sector != null && (largestSector == null || sector.DropChance > largestSector.DropChance))
-                    {
-                        largestSector = sector;
-                    }
-                }
-
-                if (largestSector == null)
-                {
-                    return;
-                }
-
-                double correctedChance = largestSector.DropChance + adjustment;
-                largestSector.SetDropChance((float)Math.Max(0.0, correctedChance));
-                adjustment = Math.Min(0.0, correctedChance);
-            }
-        }
     }
 
     [Serializable]
@@ -213,17 +157,12 @@ namespace Roulette
         [Tooltip("Количество монет (для типа Coins).")]
         [SerializeField, Min(0)] private int _coins = 100;
 
-        [Tooltip("Шанс сектора в процентах. Сумма автоматически выравнивается до 100 за счёт наибольших шансов. 0 — сектор не выпадает.")]
+        [Tooltip("Шанс именно этого сектора в процентах. Сумма всех секторов должна быть 100. Значения не перераспределяются автоматически. 0 — сектор не выпадает.")]
 
         [SerializeField, Range(0f, 100f)] private float _dropChance = 25f;
 
         public RewardKind RewardType => _rewardKind;
         public int Coins => _coins;
         public float DropChance => _dropChance;
-
-        internal void SetDropChance(float chance)
-        {
-            _dropChance = chance;
-        }
     }
 }

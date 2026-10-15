@@ -10,7 +10,7 @@ namespace CameraSystem
 {
     public class CameraFovKickAnimator : MonoBehaviour
     {
-        [SerializeField] private CameraImpulseConfig _config;
+        [SerializeField] private CameraConfig _config;
 
         private PlayerTier _playerTier;
         private float _fovKick;
@@ -29,7 +29,7 @@ namespace CameraSystem
             if (_config == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: CameraImpulseConfig is not assigned. Drag the CameraImpulseConfig asset into the _config field.");
+                    $"{name}: CameraConfig is not assigned. Drag the CameraConfig asset into the _config field.");
             }
         }
 

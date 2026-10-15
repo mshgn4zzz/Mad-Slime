@@ -1,3 +1,3 @@
-﻿Build path: /home/otecglinomes/Repos/Unity/Build/MadSlime/MadSlime
-Build number: 7
+﻿Build path: G:/Code/unity/Builds/MadSlime
+Build number: 8
 PluginYG version: 2.0092

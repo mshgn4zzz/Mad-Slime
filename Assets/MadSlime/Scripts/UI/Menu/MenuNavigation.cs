@@ -3,6 +3,7 @@ using Game;
 using Roulette;
 using Shop;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using VContainer;
 
@@ -15,12 +16,7 @@ namespace UI
             Stopped,
             Main,
             Skins,
-            Upgrades,
-            Settings,
-            Leaderboard,
-            DailyRoulette,
-            SkinRoulette,
-            Prize
+            Upgrades
         }
 
         [SerializeField] private GameObject _uiRoot;
@@ -28,8 +24,6 @@ namespace UI
         [SerializeField] private GameObject _mainWindow;
         [SerializeField] private GameObject _skinsWindow;
         [SerializeField] private GameObject _upgradesWindow;
-        [SerializeField] private GameObject _dailyWindow;
-        [SerializeField] private GameObject _skinRouletteWindow;
         [SerializeField] private Camera _previewCamera;
         [SerializeField] private Button _playButton;
         [SerializeField] private Button _skinsButton;
@@ -42,12 +36,13 @@ namespace UI
         [SerializeField] private Button _openSkinButton;
         [SerializeField] private PauseMenu _settingsMenuPrefab;
         [SerializeField] private LeaderboardMenu _leaderboardMenuPrefab;
-        [SerializeField] private RoulettePresenter _dailyRoulette;
-        [SerializeField] private RoulettePresenter _skinRoulette;
+        [SerializeField] private RoulettePreparation _roulettePreparation;
         [SerializeField] private MenuContent _content;
 
         private WindowState _state;
-        private WindowState _prizeReturnWindow;
+        private MenuPopupStack _popups;
+        private RoulettePresenter _dailyRoulette;
+        private RoulettePresenter _skinRoulette;
         private UiSpawner _spawner;
         private SceneNavigator _sceneNavigator;
         private PauseMenu _settings;
@@ -68,12 +63,11 @@ namespace UI
         private void Awake()
         {
             if (_uiRoot == null || _backgroundRoot == null || _mainWindow == null || _skinsWindow == null
-                || _upgradesWindow == null || _dailyWindow == null || _skinRouletteWindow == null
+                || _upgradesWindow == null
                 || _previewCamera == null || _playButton == null || _skinsButton == null || _upgradesButton == null
                 || _leaderboardButton == null || _settingsButton == null || _dailyButton == null
                 || _skinsCloseButton == null || _upgradesCloseButton == null || _openSkinButton == null
-                || _settingsMenuPrefab == null || _leaderboardMenuPrefab == null || _dailyRoulette == null
-                || _skinRoulette == null || _content == null)
+                || _settingsMenuPrefab == null || _leaderboardMenuPrefab == null || _roulettePreparation == null || _content == null)
             {
                 throw new InvalidOperationException($"{name}: assign all menu navigation references.");
             }
@@ -82,6 +76,8 @@ namespace UI
             {
                 throw new InvalidOperationException($"{name}: menu navigation dependencies were not injected.");
             }
+
+            _popups = new MenuPopupStack(_mainWindow, _skinsWindow, _upgradesWindow);
         }
 
         private void OnDisable()
@@ -118,6 +114,9 @@ namespace UI
             ReleaseSettings();
             ReleaseLeaderboard();
             ReleasePrize();
+            ReleaseDailyRoulette();
+            ReleaseSkinRoulette();
+            _popups?.Clear();
         }
 
         private void Subscribe()
@@ -136,8 +135,6 @@ namespace UI
             _skinsCloseButton.onClick.AddListener(OnCollectionCloseClicked);
             _upgradesCloseButton.onClick.AddListener(OnCollectionCloseClicked);
             _openSkinButton.onClick.AddListener(OnOpenSkinClicked);
-            _dailyRoulette.CloseRequested += OnDailyCloseRequested;
-            _dailyRoulette.Closed += OnDailyClosed;
             _isSubscribed = true;
         }
 
@@ -148,23 +145,34 @@ namespace UI
                 return;
             }
 
-            _playButton.onClick.RemoveListener(OnPlayClicked);
-            _skinsButton.onClick.RemoveListener(OnSkinsClicked);
-            _upgradesButton.onClick.RemoveListener(OnUpgradesClicked);
-            _leaderboardButton.onClick.RemoveListener(OnLeaderboardClicked);
-            _settingsButton.onClick.RemoveListener(OnSettingsClicked);
-            _dailyButton.onClick.RemoveListener(OnDailyClicked);
-            _skinsCloseButton.onClick.RemoveListener(OnCollectionCloseClicked);
-            _upgradesCloseButton.onClick.RemoveListener(OnCollectionCloseClicked);
-            _openSkinButton.onClick.RemoveListener(OnOpenSkinClicked);
-            _dailyRoulette.CloseRequested -= OnDailyCloseRequested;
-            _dailyRoulette.Closed -= OnDailyClosed;
+            RemoveListener(_playButton, OnPlayClicked);
+            RemoveListener(_skinsButton, OnSkinsClicked);
+            RemoveListener(_upgradesButton, OnUpgradesClicked);
+            RemoveListener(_leaderboardButton, OnLeaderboardClicked);
+            RemoveListener(_settingsButton, OnSettingsClicked);
+            RemoveListener(_dailyButton, OnDailyClicked);
+            RemoveListener(_skinsCloseButton, OnCollectionCloseClicked);
+            RemoveListener(_upgradesCloseButton, OnCollectionCloseClicked);
+            RemoveListener(_openSkinButton, OnOpenSkinClicked);
             _isSubscribed = false;
+        }
+
+        private static void RemoveListener(Button button, UnityAction listener)
+        {
+            if (button != null)
+            {
+                button.onClick.RemoveListener(listener);
+            }
         }
 
         private bool CanOpenFromMain()
         {
-            return _state == WindowState.Main && _sceneNavigator.IsTransitioning == false;
+            return _state == WindowState.Main && CanInteractWithScreen();
+        }
+
+        private bool CanInteractWithScreen()
+        {
+            return _popups.IsOpen == false && _sceneNavigator.IsTransitioning == false;
         }
 
         private void OnPlayClicked()
@@ -196,7 +204,7 @@ namespace UI
 
         private void OnCollectionCloseClicked()
         {
-            if (_state == WindowState.Skins || _state == WindowState.Upgrades)
+            if (CanInteractWithScreen() && (_state == WindowState.Skins || _state == WindowState.Upgrades))
             {
                 SetWindow(WindowState.Main);
             }
@@ -212,9 +220,9 @@ namespace UI
             _leaderboard = _spawner.Spawn(_leaderboardMenuPrefab, UiLayer.Popup);
             _leaderboard.CloseRequested += OnLeaderboardCloseRequested;
             _leaderboard.Closed += OnLeaderboardClosed;
-            SetWindow(WindowState.Leaderboard);
             _leaderboard.Initialize();
             _spawner.Show(_leaderboard);
+            _popups.Push(_leaderboard);
         }
 
         private void OnLeaderboardCloseRequested()
@@ -224,8 +232,8 @@ namespace UI
 
         private void OnLeaderboardClosed()
         {
+            _popups.Pop(_leaderboard);
             ReleaseLeaderboard();
-            SetWindow(WindowState.Main);
         }
 
         private void OnSettingsClicked()
@@ -238,9 +246,9 @@ namespace UI
             _settings = _spawner.Spawn(_settingsMenuPrefab, UiLayer.Popup);
             _settings.CloseButtonClicked += OnSettingsCloseRequested;
             _settings.Closed += OnSettingsClosed;
-            SetWindow(WindowState.Settings);
             _settings.Initialize(false);
             _spawner.Show(_settings);
+            _popups.Push(_settings);
         }
 
         private void OnSettingsCloseRequested()
@@ -250,8 +258,8 @@ namespace UI
 
         private void OnSettingsClosed()
         {
+            _popups.Pop(_settings);
             ReleaseSettings();
-            SetWindow(WindowState.Main);
         }
 
         private void OnDailyClicked()
@@ -264,13 +272,16 @@ namespace UI
 
         private void OpenDailyRoulette()
         {
-            SetWindow(WindowState.DailyRoulette);
+            _dailyRoulette = _roulettePreparation.SpawnDaily();
+            _dailyRoulette.CloseRequested += OnDailyCloseRequested;
+            _dailyRoulette.Closed += OnDailyClosed;
             _dailyRoulette.Show(OnDailySpinCompleted);
+            _popups.Push(_dailyRoulette);
         }
 
         private void OnDailyCloseRequested()
         {
-            if (_state == WindowState.DailyRoulette)
+            if (_popups.IsTop(_dailyRoulette))
             {
                 _dailyRoulette.Hide();
             }
@@ -278,39 +289,51 @@ namespace UI
 
         private void OnDailyClosed()
         {
-            if (_state == WindowState.DailyRoulette)
-            {
-                SetWindow(WindowState.Main);
-            }
+            _popups.Pop(_dailyRoulette);
+            ReleaseDailyRoulette();
         }
 
         private void OnOpenSkinClicked()
         {
-            if (_state != WindowState.Skins || _skinRoulette.CanSpin() == false)
+            if (_state != WindowState.Skins || CanInteractWithScreen() == false)
+            {
+                return;
+            }
+
+            _roulettePreparation.SkinModel.RefreshSlots();
+            if (_roulettePreparation.SkinModel.CanSpin(false) == false)
             {
                 return;
             }
 
             _rewardSkinId = null;
-            SetWindow(WindowState.SkinRoulette);
-
-            if (_skinRoulette.ShowAndSpin(OnSkinSpinCompleted) == false)
+            _skinRoulette = _roulettePreparation.SpawnSkins();
+            _skinRoulette.Closed += OnSkinRouletteClosed;
+            if (_skinRoulette.ShowAndSpin(OnSkinSpinCompleted))
             {
-                SetWindow(WindowState.Skins);
+                _popups.Push(_skinRoulette);
+            }
+            else
+            {
+                ReleaseSkinRoulette();
                 _content.RefreshSkins(null);
             }
         }
 
+        private void OnSkinRouletteClosed()
+        {
+            _popups.Pop(_skinRoulette);
+            ReleaseSkinRoulette();
+            _content.RefreshSkins(_rewardSkinId);
+        }
+
         private void OnDailySpinCompleted(RoulettePrize prize)
         {
-            _prizeReturnWindow = WindowState.DailyRoulette;
             ShowPrize(_dailyRoulette.View, prize);
         }
 
         private void OnSkinSpinCompleted(RoulettePrize prize)
         {
-            _prizeReturnWindow = WindowState.Skins;
-
             if (prize.Skin != null)
             {
                 _rewardSkinId = prize.Skin.Id;
@@ -327,13 +350,13 @@ namespace UI
 
             _prize.CloseRequested += OnPrizeCloseRequested;
             _prize.Closed += OnPrizeClosed;
-            SetWindow(WindowState.Prize);
             _spawner.Show(_prize);
+            _popups.Push(_prize);
         }
 
         private void OnPrizeCloseRequested()
         {
-            if (_state == WindowState.Prize)
+            if (_popups.IsTop(_prize))
             {
                 _prize.BeginClose();
             }
@@ -341,95 +364,64 @@ namespace UI
 
         private void OnPrizeClosed()
         {
+            _popups.Pop(_prize);
             ReleasePrize();
-            SetWindow(_prizeReturnWindow);
 
-            if (_prizeReturnWindow == WindowState.DailyRoulette)
+            if (_dailyRoulette != null)
             {
                 _dailyRoulette.ResumeAfterPrize();
             }
-
-            if (_prizeReturnWindow == WindowState.Skins)
+            else if (_skinRoulette != null)
             {
-                _content.RefreshSkins(_rewardSkinId);
+                _skinRoulette.Hide();
             }
         }
 
         private void SetWindow(WindowState state)
         {
             _state = state;
-            DeactivateWindow(_mainWindow);
-            DeactivateWindow(_skinsWindow);
-            DeactivateWindow(_upgradesWindow);
-            if (state != WindowState.DailyRoulette
-                && (state != WindowState.Prize || _prizeReturnWindow != WindowState.DailyRoulette))
-            {
-                DeactivateWindow(_dailyWindow);
-            }
-            DeactivateWindow(_skinRouletteWindow);
+            // Scene objects can already be destroyed when either OnDisable calls Stop.
+            SetActiveIfAlive(_mainWindow, state == WindowState.Main);
+            SetActiveIfAlive(_skinsWindow, state == WindowState.Skins);
+            SetActiveIfAlive(_upgradesWindow, state == WindowState.Upgrades);
             if (_previewCamera != null)
             {
-                DeactivateWindow(_previewCamera.gameObject);
+                SetActiveIfAlive(_previewCamera.gameObject, state == WindowState.Skins);
             }
+            SetActiveIfAlive(_backgroundRoot, state != WindowState.Stopped);
+        }
 
-            if (_settings != null)
+        private static void SetActiveIfAlive(GameObject target, bool active)
+        {
+            if (target != null)
             {
-                _settings.gameObject.SetActive(false);
-            }
-
-            if (_leaderboard != null)
-            {
-                _leaderboard.gameObject.SetActive(false);
-            }
-
-            if (_prize != null)
-            {
-                _prize.gameObject.SetActive(false);
-            }
-
-            if (_backgroundRoot != null)
-            {
-                _backgroundRoot.SetActive(state != WindowState.Stopped);
-            }
-
-            switch (state)
-            {
-                case WindowState.Main:
-                    _mainWindow.SetActive(true);
-                    break;
-                case WindowState.Skins:
-                    _previewCamera.gameObject.SetActive(true);
-                    _skinsWindow.SetActive(true);
-                    break;
-                case WindowState.Upgrades:
-                    _upgradesWindow.SetActive(true);
-                    break;
-                case WindowState.Settings:
-                    _settings.gameObject.SetActive(true);
-                    break;
-                case WindowState.Leaderboard:
-                    _leaderboard.gameObject.SetActive(true);
-                    break;
-                case WindowState.DailyRoulette:
-                    _dailyWindow.SetActive(true);
-                    break;
-                case WindowState.SkinRoulette:
-                    _skinRouletteWindow.SetActive(true);
-                    break;
-                case WindowState.Prize:
-                    _prize.gameObject.SetActive(true);
-                    break;
-                case WindowState.Stopped:
-                    break;
+                target.SetActive(active);
             }
         }
 
-        private void DeactivateWindow(GameObject window)
+        private void ReleaseDailyRoulette()
         {
-            if (window != null)
+            if (_dailyRoulette == null)
             {
-                window.SetActive(false);
+                return;
             }
+
+            _dailyRoulette.CloseRequested -= OnDailyCloseRequested;
+            _dailyRoulette.Closed -= OnDailyClosed;
+            _spawner.Release(_dailyRoulette);
+            _dailyRoulette = null;
+        }
+
+        private void ReleaseSkinRoulette()
+        {
+            if (_skinRoulette == null)
+            {
+                return;
+            }
+
+            _skinRoulette.Closed -= OnSkinRouletteClosed;
+            _spawner.Release(_skinRoulette);
+            _skinRoulette = null;
         }
 
         private void ReleaseSettings()
