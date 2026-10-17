@@ -1,0 +1,251 @@
+[
+  {
+    "name": "Slime",
+    "triangles": 1214,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "center": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_faces": 0,
+    "blend": "/home/otecglinomes/Repos/Unity/Mad-Slime/output/skin-build/Blender/Slime.blend",
+    "fbx": "/home/otecglinomes/Repos/Unity/Mad-Slime/Assets/MadSlime/Resources/PlayerModel/FBX/Slime.fbx"
+  },
+  {
+    "name": "Pacman",
+    "triangles": 1924,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "center": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_faces": 0,
+    "blend": "/home/otecglinomes/Repos/Unity/Mad-Slime/output/skin-build/Blender/Pacman.blend",
+    "fbx": "/home/otecglinomes/Repos/Unity/Mad-Slime/Assets/MadSlime/Resources/PlayerModel/FBX/Pacman.fbx"
+  },
+  {
+    "name": "CubeSlime",
+    "triangles": 256,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "center": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_faces": 0,
+    "blend": "/home/otecglinomes/Repos/Unity/Mad-Slime/output/skin-build/Blender/CubeSlime.blend",
+    "fbx": "/home/otecglinomes/Repos/Unity/Mad-Slime/Assets/MadSlime/Resources/PlayerModel/FBX/CubeSlime.fbx"
+  },
+  {
+    "name": "Cat",
+    "triangles": 2850,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "center": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_faces": 0,
+    "blend": "/home/otecglinomes/Repos/Unity/Mad-Slime/output/skin-build/Blender/Cat.blend",
+    "fbx": "/home/otecglinomes/Repos/Unity/Mad-Slime/Assets/MadSlime/Resources/PlayerModel/FBX/Cat.fbx"
+  },
+  {
+    "name": "Dog",
+    "triangles": 3240,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "center": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_faces": 0,
+    "blend": "/home/otecglinomes/Repos/Unity/Mad-Slime/output/skin-build/Blender/Dog.blend",
+    "fbx": "/home/otecglinomes/Repos/Unity/Mad-Slime/Assets/MadSlime/Resources/PlayerModel/FBX/Dog.fbx"
+  },
+  {
+    "name": "Ufo",
+    "triangles": 2114,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "center": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_faces": 0,
+    "blend": "/home/otecglinomes/Repos/Unity/Mad-Slime/output/skin-build/Blender/Ufo.blend",
+    "fbx": "/home/otecglinomes/Repos/Unity/Mad-Slime/Assets/MadSlime/Resources/PlayerModel/FBX/Ufo.fbx"
+  },
+  {
+    "name": "Car",
+    "triangles": 3268,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "center": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_faces": 0,
+    "blend": "/home/otecglinomes/Repos/Unity/Mad-Slime/output/skin-build/Blender/Car.blend",
+    "fbx": "/home/otecglinomes/Repos/Unity/Mad-Slime/Assets/MadSlime/Resources/PlayerModel/FBX/Car.fbx"
+  },
+  {
+    "name": "Snail",
+    "triangles": 3638,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "center": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_faces": 0,
+    "blend": "/home/otecglinomes/Repos/Unity/Mad-Slime/output/skin-build/Blender/Snail.blend",
+    "fbx": "/home/otecglinomes/Repos/Unity/Mad-Slime/Assets/MadSlime/Resources/PlayerModel/FBX/Snail.fbx"
+  },
+  {
+    "name": "Ghost",
+    "triangles": 2340,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "center": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_faces": 0,
+    "blend": "/home/otecglinomes/Repos/Unity/Mad-Slime/output/skin-build/Blender/Ghost.blend",
+    "fbx": "/home/otecglinomes/Repos/Unity/Mad-Slime/Assets/MadSlime/Resources/PlayerModel/FBX/Ghost.fbx"
+  },
+  {
+    "name": "Shark",
+    "triangles": 2604,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "center": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_faces": 0,
+    "blend": "/home/otecglinomes/Repos/Unity/Mad-Slime/output/skin-build/Blender/Shark.blend",
+    "fbx": "/home/otecglinomes/Repos/Unity/Mad-Slime/Assets/MadSlime/Resources/PlayerModel/FBX/Shark.fbx"
+  },
+  {
+    "name": "Vacuum",
+    "triangles": 2562,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "center": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_faces": 0,
+    "blend": "/home/otecglinomes/Repos/Unity/Mad-Slime/output/skin-build/Blender/Vacuum.blend",
+    "fbx": "/home/otecglinomes/Repos/Unity/Mad-Slime/Assets/MadSlime/Resources/PlayerModel/FBX/Vacuum.fbx"
+  },
+  {
+    "name": "Mimic",
+    "triangles": 2212,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "center": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_faces": 0,
+    "blend": "/home/otecglinomes/Repos/Unity/Mad-Slime/output/skin-build/Blender/Mimic.blend",
+    "fbx": "/home/otecglinomes/Repos/Unity/Mad-Slime/Assets/MadSlime/Resources/PlayerModel/FBX/Mimic.fbx"
+  },
+  {
+    "name": "LegacySlime",
+    "triangles": 956,
+    "dimensions": [
+      0.9999997019767761,
+      0.9999999403953552,
+      0.609554648399353
+    ],
+    "center": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "degenerate_faces": 0,
+    "source_commit": "a7307d55",
+    "preserves_original_proportions": true,
+    "blend": "/home/otecglinomes/Repos/Unity/Mad-Slime/output/skin-build/Blender/LegacySlime.blend",
+    "fbx": "/home/otecglinomes/Repos/Unity/Mad-Slime/Assets/MadSlime/Resources/PlayerModel/FBX/LegacySlime.fbx"
+  }
+]

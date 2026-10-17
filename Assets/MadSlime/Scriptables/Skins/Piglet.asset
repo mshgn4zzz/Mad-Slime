@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e79f510ee66e4552921654b4409ab2d9, type: 3}
+  m_Name: Piglet
+  m_EditorClassIdentifier: 
+  _model: {fileID: 4165649294327393688, guid: 9f7daf21bc95f7a1585db4bf7a155afe, type: 3}
+  _icon: {fileID: 21300000, guid: 9db311715b2194eff920f7fd0c50a7b9, type: 3}
+  _rarity: 0
+  _id: Piglet

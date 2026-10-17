@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Items;
 using Scriptables;
 using Skills;
@@ -15,7 +16,7 @@ namespace EditorTools
         private const float NormalizedModelSize = 0.15f;
         private const int IconSize = 256;
         private const float IconCameraDistance = 10f;
-        private const float IconOrthographicPadding = 1.8f;
+        private const float IconOrthographicPadding = 1.15f;
         private const float IconLightIntensity = 1.2f;
 
         private DefaultAsset _modelsFolder;
@@ -28,6 +29,26 @@ namespace EditorTools
         private GhostFadeConfig _ghostFadeConfig;
         private bool _forceIcons;
         private int _iconLayer;
+
+        public static void GeneratePreparedSet(string modelsPath, string prefabsPath, string definitionsPath,
+            string iconsPath, PropSet propSet, TierTable tiers, Material ghost, GhostFadeConfig fade)
+        {
+            ItemPropFactory factory = CreateInstance<ItemPropFactory>();
+            try
+            {
+                factory._modelsFolder = AssetDatabase.LoadAssetAtPath<DefaultAsset>(modelsPath);
+                factory._prefabsFolder = AssetDatabase.LoadAssetAtPath<DefaultAsset>(prefabsPath);
+                factory._definitionsFolder = AssetDatabase.LoadAssetAtPath<DefaultAsset>(definitionsPath);
+                factory._iconsFolder = AssetDatabase.LoadAssetAtPath<DefaultAsset>(iconsPath);
+                factory._propSet = propSet;
+                factory._tierTable = tiers;
+                factory._ghostMaterial = ghost;
+                factory._ghostFadeConfig = fade;
+                factory._forceIcons = true;
+                factory.Generate();
+            }
+            finally { DestroyImmediate(factory); }
+        }
 
         [MenuItem("Mad Slime/Prop Factory")]
         private static void Open()
@@ -285,6 +306,50 @@ namespace EditorTools
             }
 
             return rendered;
+        }
+
+        public static void RebuildPreparedIcons(PropSet propSet)
+        {
+            foreach (Item item in propSet.Props) RebuildPreparedIcon(item);
+        }
+
+        public static void RebuildPreparedIcon(Item item)
+        {
+            int layer = ResolveFreeLayer();
+            if (layer < 0) throw new InvalidOperationException("No free layer for item icons.");
+            ItemDefinition definition = item.Definition;
+            string path = AssetDatabase.GetAssetPath(definition.Icon);
+            Texture2D texture = RenderModelToTexture(item.gameObject, layer);
+            try { File.WriteAllBytes(path, texture.EncodeToPNG()); }
+            finally { DestroyImmediate(texture); }
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
+            EnsureSpriteImport(path);
+            ValidateIcon(AssetDatabase.LoadAssetAtPath<Sprite>(path));
+            Debug.Log("ITEM_ICON_REBUILT " + item.name);
+        }
+
+        public static void ValidateIcon(Sprite icon)
+        {
+            if (icon == null) throw new InvalidOperationException("Item icon is missing.");
+            string path = AssetDatabase.GetAssetPath(icon);
+            Texture2D decoded = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            try
+            {
+                decoded.LoadImage(File.ReadAllBytes(path));
+                Color32[] pixels = decoded.GetPixels32();
+                int visible = 0;
+                HashSet<int> colors = new HashSet<int>();
+                foreach (Color32 pixel in pixels)
+                {
+                    if (pixel.a < 128) continue;
+                    visible++;
+                    colors.Add((pixel.r / 8) << 10 | (pixel.g / 8) << 5 | pixel.b / 8);
+                }
+                float coverage = (float)visible / pixels.Length;
+                if (coverage < 0.005f || coverage > 0.90f || colors.Count < 8)
+                    throw new InvalidOperationException($"Icon '{path}' is blank/placeholder or badly framed: coverage={coverage:F3}, colors={colors.Count}.");
+            }
+            finally { DestroyImmediate(decoded); }
         }
 
         private bool RenderIcon(ModelJob job)
@@ -605,6 +670,9 @@ namespace EditorTools
             cam.clearFlags = CameraClearFlags.SolidColor;
             cam.backgroundColor = new Color(0f, 0f, 0f, 0f);
             cam.orthographic = true;
+            cam.aspect = 1f;
+            cam.nearClipPlane = 0.01f;
+            cam.farClipPlane = 100f;
             cam.cullingMask = 1 << iconLayer;
 
             GameObject lightGO = new GameObject("IconLight");
@@ -619,6 +687,8 @@ namespace EditorTools
             light.shadows = LightShadows.None;
 
             FitCameraToBounds(cam, instance);
+            // Light the visible faces; the old -Z light leaves +Z furniture fronts black.
+            light.transform.rotation = cam.transform.rotation;
 
             RenderTexture rt = new RenderTexture(IconSize, IconSize, 24, RenderTextureFormat.ARGB32);
             rt.antiAliasing = 4;
@@ -659,11 +729,16 @@ namespace EditorTools
                 bounds.Encapsulate(renderers[i].bounds);
             }
 
-            Vector3 offset = new Vector3(-1f, 1f, -1f).normalized * IconCameraDistance;
+            Vector3 offset = new Vector3(1f, 0.85f, 1.6f).normalized * IconCameraDistance;
             cam.transform.position = bounds.center + offset;
             cam.transform.LookAt(bounds.center);
 
-            cam.orthographicSize = bounds.extents.magnitude * IconOrthographicPadding;
+            Vector3 right = cam.transform.right;
+            Vector3 up = cam.transform.up;
+            Vector3 extents = bounds.extents;
+            float halfWidth = Mathf.Abs(right.x) * extents.x + Mathf.Abs(right.y) * extents.y + Mathf.Abs(right.z) * extents.z;
+            float halfHeight = Mathf.Abs(up.x) * extents.x + Mathf.Abs(up.y) * extents.y + Mathf.Abs(up.z) * extents.z;
+            cam.orthographicSize = Mathf.Max(halfHeight, halfWidth / cam.aspect) * IconOrthographicPadding;
         }
 
         private static string GetFolderPath(DefaultAsset folder)

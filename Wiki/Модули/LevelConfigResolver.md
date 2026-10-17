@@ -1,13 +1,11 @@
 # LevelConfigResolver
 
-**Слой:** Gameplay · **Код:** `Assets/MadSlime/Scripts/Game/Level/LevelConfigResolver.cs` (plain-класс, синглтон [[ProjectLifetimeScope]])
+**Слой:** Gameplay · **Код:** `Assets/MadSlime/Scripts/Levels/Runtime/LevelConfigResolver.cs` (plain-класс, синглтон [[ProjectLifetimeScope]])
 
-Резолвит `LevelConfig` для `PlayerProgress.CurrentLevel` через [[Конфиги уровней | LevelsCatalog]] (список диапазонов «от уровня X до Y → конфиг»).
+Маппинг «номер уровня → LevelConfig» через [[Конфиги уровней | LevelsCatalog]].
 
-## Зачем
+## Логика
 
-Три потребителя на трёх сценах получают один и тот же конфиг: [[GameplaySessionHandler]] (длительность таймера), [[LevelGenerator]] (контент), [[FillSessionHandler]] (тема формы). Смена уровня — только через сейв, конфиг всегда согласован.
-
-## Слабые места
-
-- Уровень за пределами всех диапазонов каталога → исключение (fail-fast; новый контент = правка ассета LevelsCatalog, иначе игра падает на переходе).
+- Диапазон `LevelRange` (FromLevel..ToLevel) → конфиг; за последним диапазоном — конфиг последнего (эндгейм бесконечен)
+- Каталог пуст — исключение
+- **Playable-проверка:** конфиг существует, PropSet назначен и содержит запечённые варианты — иначе исключение с описанием проблемы и подсказкой «run Mad Slime → Prop Factory»

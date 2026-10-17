@@ -1,18 +1,14 @@
 # QuotaEntry
 
-**Слой:** Core · **Код:** `Assets/MadSlime/Scripts/Core/QuotaEntry.cs`
+**Слой:** Core · **Код:** `Assets/MadSlime/Scripts/Quota/Data/QuotaEntry.cs`
 
 Одна строка квоты уровня: какой предмет, сколько нужно, сколько собрано. `[Serializable]`, рантайм-счётчик `_collected` не сериализуется.
 
 ## Зачем
 
-Квота уровня = список QuotaEntry. Генерирует его [[QuotaGenerator]] из параметров [[Конфиги уровней | LevelConfig]], живёт список в [[LevelProgress]], прогресс тикает [[Player]] через `LevelProgress.RegisterCollected()`, а `QuotaCompleted` завершает сессию ([[GameplaySessionHandler]]).
+Квота уровня = список QuotaEntry. Генерирует его [[Квота | QuotaGenerator]] из параметров [[Конфиги уровней | LevelConfig]], живёт список в `QuotaBoard`, счёт тикает через `TryRegisterCollected`, а `QuotaCompleted` завершает сессию ([[GameplayOrchestrator]]).
 
 ## Связи
 
-- Создаётся: [[QuotaGenerator]]
-- Читается: [[LevelProgress]], HUD ([[HUD]] — тарелки QuotaUI), [[Детекция и сбор | ItemGhostToggler]] / подсветка
-
-## Слабые места
-
-- Конструктор валидирует (`definition != null`, `targetCount >= 0`) — это хорошо; но сам список квот никто не проверяет на пустоту до старта сессии.
+- Создаётся: [[Квота | QuotaGenerator]]
+- Читается: `QuotaBoard`/`QuotaCounter`, HUD ([[HUD | QuotaUI]]), подсветка/призраки ([[Детекция и сбор | QuotaItemHighlighter, ItemGhostToggler]])

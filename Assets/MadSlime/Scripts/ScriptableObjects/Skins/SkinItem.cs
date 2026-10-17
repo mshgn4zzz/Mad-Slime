@@ -11,7 +11,7 @@ namespace Skins
         [Tooltip("Иконка скина в магазине.")]
         [SerializeField] private Sprite _icon;
 
-        [Tooltip("Редкость скина. Цвет задаётся в SkinRarityTable, общий шанс этой редкости — в RouletteConfig. Legendary доступен только в ежедневной рулетке и должен входить в Exclusive Skins.")]
+        [Tooltip("Редкость скина. Цвет задаётся в SkinRarityTable, общий шанс этой редкости — в RouletteConfig. Участие только в ежедневной рулетке определяется списком Exclusive Skins независимо от редкости.")]
         [SerializeField] private SkinRarity _rarity;
 
         [Tooltip("Уникальный id скина: ключ сейвов. Менять после релиза нельзя.")]

@@ -1,0 +1,2 @@
+Cookie1 -> ChocolateChipCookie; Cookie2 -> GingerbreadMan; Cookie3 -> Lollipop.
+All 18 tier definitions, original GUIDs, masses and tier values retained; 3 icons regenerated; colliders fitted; bottom at floor; lollipop horizontal.

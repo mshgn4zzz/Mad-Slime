@@ -1,0 +1,366 @@
+{
+  "models": [
+    {
+      "name": "BicycleCity",
+      "category": "Bicycle",
+      "triangles": 1680,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        0.6800000071525574,
+        2.119999885559082,
+        1.3179999589920044
+      ]
+    },
+    {
+      "name": "BicycleMountain",
+      "category": "Bicycle",
+      "triangles": 1584,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        0.6800000071525574,
+        2.119999885559082,
+        1.3179999589920044
+      ]
+    },
+    {
+      "name": "BicycleBMX",
+      "category": "Bicycle",
+      "triangles": 1584,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        0.6800000071525574,
+        1.7400000095367432,
+        1.0679999589920044
+      ]
+    },
+    {
+      "name": "CarHatchback",
+      "category": "Car",
+      "triangles": 932,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.2950000762939453,
+        2.0974998474121094,
+        1.1399999856948853
+      ]
+    },
+    {
+      "name": "CarCoupe",
+      "category": "Car",
+      "triangles": 932,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.3350000381469727,
+        2.377500057220459,
+        1.0
+      ]
+    },
+    {
+      "name": "CarSUV",
+      "category": "Car",
+      "triangles": 1140,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.3950001001358032,
+        2.4025001525878906,
+        1.5125000476837158
+      ]
+    },
+    {
+      "name": "BusCity",
+      "category": "Bus",
+      "triangles": 928,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.4500000476837158,
+        3.010499954223633,
+        1.6500000953674316
+      ]
+    },
+    {
+      "name": "BusRetro",
+      "category": "Bus",
+      "triangles": 1024,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.350000023841858,
+        2.4105000495910645,
+        1.3849999904632568
+      ]
+    },
+    {
+      "name": "BusCoach",
+      "category": "Bus",
+      "triangles": 1096,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.5,
+        3.7105000019073486,
+        1.8299999237060547
+      ]
+    },
+    {
+      "name": "TruckBox",
+      "category": "Truck",
+      "triangles": 2236,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.4700000286102295,
+        5.607500076293945,
+        1.8849999904632568
+      ]
+    },
+    {
+      "name": "TruckTanker",
+      "category": "Truck",
+      "triangles": 3024,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.4700000286102295,
+        5.607500076293945,
+        1.90500009059906
+      ]
+    },
+    {
+      "name": "TruckFlatbed",
+      "category": "Truck",
+      "triangles": 2560,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.4700000286102295,
+        5.607500076293945,
+        1.6999999284744263
+      ]
+    },
+    {
+      "name": "FireHydrant",
+      "category": "Prop",
+      "triangles": 468,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        0.9649999737739563,
+        0.612500011920929,
+        1.2149999141693115
+      ]
+    },
+    {
+      "name": "Motorcycle",
+      "category": "Motorcycle",
+      "triangles": 1664,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        0.699999988079071,
+        2.0199999809265137,
+        1.3849999904632568
+      ]
+    },
+    {
+      "name": "Tank",
+      "category": "Tank",
+      "triangles": 2276,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.559999942779541,
+        2.371500015258789,
+        1.5199999809265137
+      ]
+    },
+    {
+      "name": "TrashBin",
+      "category": "Prop",
+      "triangles": 296,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        0.75,
+        0.76500004529953,
+        1.2049999237060547
+      ]
+    },
+    {
+      "name": "TrafficCone",
+      "category": "Prop",
+      "triangles": 176,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        0.6600000262260437,
+        0.6600000262260437,
+        0.9899999499320984
+      ]
+    },
+    {
+      "name": "RoadBarrier",
+      "category": "Prop",
+      "triangles": 360,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.4000000953674316,
+        0.6600000262260437,
+        1.033726692199707
+      ]
+    },
+    {
+      "name": "KickScooter",
+      "category": "Prop",
+      "triangles": 328,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        0.7200000286102295,
+        1.1699999570846558,
+        1.2149999141693115
+      ]
+    },
+    {
+      "name": "ShoppingCart",
+      "category": "Prop",
+      "triangles": 1156,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        0.7440000772476196,
+        1.0269999504089355,
+        1.1205952167510986
+      ]
+    },
+    {
+      "name": "ParkingMeter",
+      "category": "Prop",
+      "triangles": 184,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        0.4300000071525574,
+        0.3199999928474426,
+        1.625
+      ]
+    },
+    {
+      "name": "TireStack",
+      "category": "Prop",
+      "triangles": 2496,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.2417662143707275,
+        0.8999965190887451,
+        0.8286069631576538
+      ]
+    }
+  ],
+  "palette": [
+    {
+      "name": "Red",
+      "r": 0.9,
+      "g": 0.055,
+      "b": 0.08
+    },
+    {
+      "name": "Blue",
+      "r": 0.06,
+      "g": 0.38,
+      "b": 0.82
+    },
+    {
+      "name": "Orange",
+      "r": 1,
+      "g": 0.39,
+      "b": 0.045
+    },
+    {
+      "name": "Green",
+      "r": 0.13,
+      "g": 0.6,
+      "b": 0.23
+    },
+    {
+      "name": "Mint",
+      "r": 0.08,
+      "g": 0.68,
+      "b": 0.63
+    },
+    {
+      "name": "Purple",
+      "r": 0.54,
+      "g": 0.18,
+      "b": 0.85
+    },
+    {
+      "name": "Yellow",
+      "r": 1,
+      "g": 0.75,
+      "b": 0.06
+    },
+    {
+      "name": "Cream",
+      "r": 0.94,
+      "g": 0.91,
+      "b": 0.78
+    },
+    {
+      "name": "White",
+      "r": 0.88,
+      "g": 0.91,
+      "b": 0.92
+    },
+    {
+      "name": "Rubber",
+      "r": 0.045,
+      "g": 0.055,
+      "b": 0.07
+    },
+    {
+      "name": "Metal",
+      "r": 0.42,
+      "g": 0.5,
+      "b": 0.56
+    },
+    {
+      "name": "DarkMetal",
+      "r": 0.15,
+      "g": 0.19,
+      "b": 0.24
+    },
+    {
+      "name": "Glass",
+      "r": 0.1,
+      "g": 0.25,
+      "b": 0.36
+    },
+    {
+      "name": "Olive",
+      "r": 0.32,
+      "g": 0.43,
+      "b": 0.12
+    },
+    {
+      "name": "Wood",
+      "r": 0.52,
+      "g": 0.3,
+      "b": 0.13
+    },
+    {
+      "name": "Lights",
+      "r": 0.98,
+      "g": 0.88,
+      "b": 0.34
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+Orbit / universe gameplay checks
+Level 74: generated Item_AsteroidIce captured.
+Level 74: generated Item_AsteroidMetal captured.
+Level 74: generated Item_AsteroidRock captured.
+Level 74: generated Item_BoosterRocket captured.
+Level 74: generated Item_CargoCapsule captured.
+Level 74: generated Item_ContainerFreighter captured.
+Level 74: generated Item_CrewCapsule captured.
+Level 74: generated Item_CrystalAsteroid captured.
+Level 74: generated Item_CubeSatellite captured.
+Level 74: generated Item_DebrisAntenna captured.
+Level 74: generated Item_DebrisHull captured.
+Level 74: generated Item_DebrisPanel captured.
+Level 74: generated Item_DeepSpaceProbe captured.
+Level 74: generated Item_DishSatellite captured.
+Level 74: generated Item_OrbitalStation captured.
+Level 74: generated Item_ResearchShip captured.
+Level 74: generated Item_RingStation captured.
+Level 74: generated Item_SpaceShuttle captured.
+Level 74: generated Item_SpaceTelescope captured.
+Level 74: generated Item_SpentStage captured.
+Level 74: generated Item_SputnikSatellite captured.
+Level 74: generated Item_StubbyRocket captured.
+Level 74: space size roles and mass progression through all 6 tiers are reachable.
+Level 74: all 23 space prefabs instantiate through ItemFactory; 22 types naturally spawned; 3 fill shapes build valid grids.
+Level 74: SpaceLevelConfig; material=SpaceGround; 3907 valid items; 4 reachable quota types; collection and growth OK.
+Level 74: 4 visible HUD icons, image pixels validated; portrait HUD captured.
+Level 75: generated Item_BarredGalaxy captured.
+Level 75: generated Item_BinaryStar captured.
+Level 75: generated Item_BlackHole captured.
+Level 75: generated Item_BlueStar captured.
+Level 75: generated Item_Comet captured.
+Level 75: generated Item_DwarfCeres captured.
+Level 75: generated Item_DwarfPluto captured.
+Level 75: generated Item_EarthPlanet captured.
+Level 75: generated Item_EllipticalGalaxy captured.
+Level 75: generated Item_GlobularCluster captured.
+Level 75: generated Item_JupiterPlanet captured.
+Level 75: generated Item_MarsPlanet captured.
+Level 75: generated Item_MercuryPlanet captured.
+Level 75: generated Item_MoonCratered captured.
+Level 75: generated Item_NeptunePlanet captured.
+Level 75: generated Item_PlanetaryNebula captured.
+Level 75: generated Item_RedGiant captured.
+Level 75: generated Item_SaturnPlanet captured.
+Level 75: generated Item_SpiralGalaxy captured.
+Level 75: generated Item_SunStar captured.
+Level 75: generated Item_UranusPlanet captured.
+Level 75: generated Item_VenusPlanet captured.
+Level 75: universe size roles and mass progression through all 6 tiers are reachable.
+Level 75: all 22 universe prefabs instantiate through ItemFactory; 22 types naturally spawned; 3 fill shapes build valid grids.
+Level 75: UniverseLevelConfig; material=UniverseGround; 2911 valid items; 3 reachable quota types; collection and growth OK.
+Level 75: 3 visible HUD icons, image pixels validated; portrait HUD captured.
+Level 80: generated Item_BarredGalaxy captured.
+Level 80: generated Item_BinaryStar captured.
+Level 80: generated Item_BlackHole captured.
+Level 80: generated Item_BlueStar captured.
+Level 80: generated Item_Comet captured.
+Level 80: generated Item_DwarfCeres captured.
+Level 80: generated Item_DwarfPluto captured.
+Level 80: generated Item_EarthPlanet captured.
+Level 80: generated Item_EllipticalGalaxy captured.
+Level 80: generated Item_GlobularCluster captured.
+Level 80: generated Item_JupiterPlanet captured.
+Level 80: generated Item_MarsPlanet captured.
+Level 80: generated Item_MercuryPlanet captured.
+Level 80: generated Item_MoonCratered captured.
+Level 80: generated Item_NeptunePlanet captured.
+Level 80: generated Item_PlanetaryNebula captured.
+Level 80: generated Item_RedGiant captured.
+Level 80: generated Item_SaturnPlanet captured.
+Level 80: generated Item_SpiralGalaxy captured.
+Level 80: generated Item_SunStar captured.
+Level 80: generated Item_UranusPlanet captured.
+Level 80: generated Item_VenusPlanet captured.
+Level 80: universe size roles and mass progression through all 6 tiers are reachable.
+Level 80: all 22 universe prefabs instantiate through ItemFactory; 22 types naturally spawned; 3 fill shapes build valid grids.
+Level 80: UniverseLevelConfig; material=UniverseGround; 3899 valid items; 3 reachable quota types; collection and growth OK.
+Level 80: 3 visible HUD icons, image pixels validated; portrait HUD captured.
+PASS: levels 74, 75, 80; original save restored.

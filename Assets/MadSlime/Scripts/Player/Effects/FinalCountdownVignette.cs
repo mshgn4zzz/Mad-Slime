@@ -57,6 +57,12 @@ namespace Player
                 _pulseTween = null;
             }
 
+            // The HUD can be destroyed before the gameplay session stops on scene unload.
+            if (_vignetteImage == null)
+            {
+                return;
+            }
+
             _vignetteImage.enabled = false;
             ApplyIntensity(0f);
         }

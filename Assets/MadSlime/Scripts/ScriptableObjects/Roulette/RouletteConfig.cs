@@ -13,13 +13,13 @@ namespace Roulette
         [Tooltip("Один элемент на сектор колеса, ровно один сектор Skin. Сумма шансов должна быть 100%.")]
         [SerializeField] private List<RouletteSector> _sectors = new List<RouletteSector>();
 
-        [Tooltip("Легендарные эксклюзивные скины: достаются только из ежедневной рулетки. При выпадении сектора Skin выбирается случайный скин из этого списка.")]
+        [Tooltip("Эксклюзивные скины любой редкости: достаются только из ежедневной рулетки. При выпадении сектора Skin выбирается случайный скин из этого списка.")]
         [SerializeField] private List<SkinItem> _exclusiveSkins = new List<SkinItem>();
 
         [Header("Skin Roulette")]
-        [Tooltip("Шанс обычных скинов в процентах (если доступных скинов редкости нет, её доля распределяется пропорционально между оставшимися): сумма трёх значений должна быть 100. 0 — редкость не выпадает.")]
+        [Tooltip("Шанс обычных скинов в процентах (если доступных скинов редкости нет, её доля распределяется пропорционально между оставшимися): сумма четырёх значений должна быть 100. 0 — редкость не выпадает.")]
 
-        [SerializeField, Range(0f, 100f)] private float _commonDropChance = 80f;
+        [SerializeField, Range(0f, 100f)] private float _commonDropChance = 78f;
 
         [Tooltip("Шанс редких скинов в процентах.")]
 
@@ -31,7 +31,7 @@ namespace Roulette
 
         [Tooltip("Шанс легендарных скинов в процентах.")]
 
-        [SerializeField, HideInInspector] private float _legendaryDropChance;
+        [SerializeField, Range(0f, 100f)] private float _legendaryDropChance = 2f;
 
         [Tooltip("Минимальный порог цены крутки скин-рулетки: с неё цена стартует и ниже не опускается.")]
 
@@ -48,7 +48,7 @@ namespace Roulette
 
         [Header("Skin Showcase")]
         [Tooltip("Сколько легендарных скинов держит витрина скин-рулетки. Витрина формируется один раз и обновляется только после выбивания скина.")]
-        [SerializeField, HideInInspector] private int _showcaseLegendaryCount;
+        [SerializeField, Min(0)] private int _showcaseLegendaryCount = 1;
 
         [Tooltip("Сколько эпических скинов держит витрина скин-рулетки.")]
         [SerializeField, Min(0)] private int _showcaseEpicCount = 2;

@@ -1,0 +1,85 @@
+City / space gameplay checks
+Level 49: generated Item_Bakery captured.
+Level 49: generated Item_BrickApartment captured.
+Level 49: generated Item_BusStop captured.
+Level 49: generated Item_CarCoupe captured.
+Level 49: generated Item_CarHatchback captured.
+Level 49: generated Item_CarSUV captured.
+Level 49: generated Item_CoffeeKiosk captured.
+Level 49: generated Item_ConstructionSite captured.
+Level 49: generated Item_FireHydrant captured.
+Level 49: generated Item_FoodTruck captured.
+Level 49: generated Item_GasStation captured.
+Level 49: generated Item_IceCreamKiosk captured.
+Level 49: generated Item_MiniMarket captured.
+Level 49: generated Item_Newsstand captured.
+Level 49: generated Item_OfficeTower captured.
+Level 49: generated Item_PanelApartment captured.
+Level 49: generated Item_ParkBench captured.
+Level 49: generated Item_PlanterTree captured.
+Level 49: generated Item_ProduceStall captured.
+Level 49: generated Item_SmallHouse captured.
+Level 49: generated Item_SteppedSkyscraper captured.
+Level 49: generated Item_StreetLamp captured.
+Level 49: generated Item_Townhouse captured.
+Level 49: generated Item_TrafficLightFourWay captured.
+Level 49: generated Item_TrashBin captured.
+Level 49: city size roles and mass progression through all 6 tiers are reachable.
+Level 49: all 26 city prefabs instantiate through ItemFactory; 25 types naturally spawned; 3 fill shapes build valid grids.
+Level 49: CityLevelConfig; material=CityGround; 3253 valid items; 4 reachable quota types; collection and growth OK.
+Level 49: 4 visible HUD icons, image pixels validated; portrait HUD captured.
+Level 50: generated Item_AsteroidIce captured.
+Level 50: generated Item_AsteroidMetal captured.
+Level 50: generated Item_AsteroidRock captured.
+Level 50: generated Item_BoosterRocket captured.
+Level 50: generated Item_CargoCapsule captured.
+Level 50: generated Item_ContainerFreighter captured.
+Level 50: generated Item_CrewCapsule captured.
+Level 50: generated Item_CrystalAsteroid captured.
+Level 50: generated Item_CubeSatellite captured.
+Level 50: generated Item_DebrisAntenna captured.
+Level 50: generated Item_DebrisHull captured.
+Level 50: generated Item_DebrisPanel captured.
+Level 50: generated Item_DeepSpaceProbe captured.
+Level 50: generated Item_DishSatellite captured.
+Level 50: generated Item_LunarLander captured.
+Level 50: generated Item_OrbitalStation captured.
+Level 50: generated Item_ResearchShip captured.
+Level 50: generated Item_RingStation captured.
+Level 50: generated Item_SpaceShuttle captured.
+Level 50: generated Item_SpaceTelescope captured.
+Level 50: generated Item_SpentStage captured.
+Level 50: generated Item_SputnikSatellite captured.
+Level 50: generated Item_StubbyRocket captured.
+Level 50: space size roles and mass progression through all 6 tiers are reachable.
+Level 50: all 23 space prefabs instantiate through ItemFactory; 23 types naturally spawned; 3 fill shapes build valid grids.
+Level 50: SpaceLevelConfig; material=SpaceGround; 3139 valid items; 4 reachable quota types; collection and growth OK.
+Level 50: 4 visible HUD icons, image pixels validated; portrait HUD captured.
+Level 55: generated Item_AsteroidIce captured.
+Level 55: generated Item_AsteroidMetal captured.
+Level 55: generated Item_AsteroidRock captured.
+Level 55: generated Item_BoosterRocket captured.
+Level 55: generated Item_CargoCapsule captured.
+Level 55: generated Item_ContainerFreighter captured.
+Level 55: generated Item_CrewCapsule captured.
+Level 55: generated Item_CrystalAsteroid captured.
+Level 55: generated Item_CubeSatellite captured.
+Level 55: generated Item_DebrisAntenna captured.
+Level 55: generated Item_DebrisHull captured.
+Level 55: generated Item_DebrisPanel captured.
+Level 55: generated Item_DeepSpaceProbe captured.
+Level 55: generated Item_DishSatellite captured.
+Level 55: generated Item_LunarLander captured.
+Level 55: generated Item_OrbitalStation captured.
+Level 55: generated Item_ResearchShip captured.
+Level 55: generated Item_RingStation captured.
+Level 55: generated Item_SpaceShuttle captured.
+Level 55: generated Item_SpaceTelescope captured.
+Level 55: generated Item_SpentStage captured.
+Level 55: generated Item_SputnikSatellite captured.
+Level 55: generated Item_StubbyRocket captured.
+Level 55: space size roles and mass progression through all 6 tiers are reachable.
+Level 55: all 23 space prefabs instantiate through ItemFactory; 23 types naturally spawned; 3 fill shapes build valid grids.
+Level 55: SpaceLevelConfig; material=SpaceGround; 4886 valid items; 5 reachable quota types; collection and growth OK.
+Level 55: 5 visible HUD icons, image pixels validated; portrait HUD captured.
+PASS: levels 49, 50, 55; original save restored.

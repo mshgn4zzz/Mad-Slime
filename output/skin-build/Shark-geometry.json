@@ -1,0 +1,16 @@
+{
+  "name": "Shark",
+  "triangles": 2244,
+  "dimensions": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "center": [
+    0,
+    0,
+    0
+  ],
+  "separate_blend": "/home/otecglinomes/Repos/Unity/Mad-Slime/output/skin-build/Blender/Shark.blend",
+  "separate_fbx": "/home/otecglinomes/Repos/Unity/Mad-Slime/Assets/MadSlime/Resources/PlayerModel/FBX/Shark.fbx"
+}

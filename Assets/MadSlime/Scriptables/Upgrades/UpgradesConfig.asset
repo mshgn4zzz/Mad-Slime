@@ -15,8 +15,8 @@ MonoBehaviour:
   _upgrades:
   - _type: 0
     _icon: {fileID: 21300000, guid: 0b8bec87f05ff374c98c140306c522b5, type: 3}
-    _baseCost: 200
-    _costMultiplier: 2
+    _baseCost: 500
+    _costMultiplier: 3
     _stepValues:
     - 0.1
     - 0.1
@@ -26,8 +26,8 @@ MonoBehaviour:
     _maxSteps: 5
   - _type: 1
     _icon: {fileID: 21300000, guid: b1530aa44b0ae8266813324700bb0fd1, type: 3}
-    _baseCost: 250
-    _costMultiplier: 2
+    _baseCost: 625
+    _costMultiplier: 3
     _stepValues:
     - 0.15
     - 0.15
@@ -37,8 +37,8 @@ MonoBehaviour:
     _maxSteps: 5
   - _type: 2
     _icon: {fileID: 21300000, guid: c8464265ac47b0eefb44030d583c8b99, type: 3}
-    _baseCost: 400
-    _costMultiplier: 2
+    _baseCost: 1000
+    _costMultiplier: 3
     _stepValues:
     - 0.2
     - 0.2
@@ -48,8 +48,8 @@ MonoBehaviour:
     _maxSteps: 5
   - _type: 3
     _icon: {fileID: 21300000, guid: 84d53b65a2cdf21488c7bec2e6aeb54b, type: 3}
-    _baseCost: 350
-    _costMultiplier: 2
+    _baseCost: 875
+    _costMultiplier: 3
     _stepValues:
     - 0.15
     - 0.15
@@ -60,15 +60,15 @@ MonoBehaviour:
   _perks:
   - _type: 0
     _icon: {fileID: 21300000, guid: 6174cfeceef930048a9513df49fc87bd, type: 3}
-    _cost: 3000
+    _cost: 7500
     _value: 0
   - _type: 1
     _icon: {fileID: 21300000, guid: 1f111e30427fc8d7a8c62d976968fd59, type: 3}
-    _cost: 4000
+    _cost: 10000
     _value: 2
   - _type: 2
     _icon: {fileID: 21300000, guid: 5436abe91629594858e0fce6cfedd470, type: 3}
-    _cost: 5000
+    _cost: 12500
     _value: 1
   _highlightColor: {r: 1, g: 0.85, b: 0.2, a: 1}
   _outlineWidth: 10

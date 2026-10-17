@@ -1,0 +1,366 @@
+{
+  "models": [
+    {
+      "name": "MoonCratered",
+      "category": "Moon",
+      "triangles": 2388,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        2.0407633781433105,
+        2.015780448913574,
+        2.034879207611084
+      ]
+    },
+    {
+      "name": "DwarfPluto",
+      "category": "Dwarf",
+      "triangles": 728,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.9999994039535522,
+        1.9957988262176514,
+        1.995798945426941
+      ]
+    },
+    {
+      "name": "DwarfCeres",
+      "category": "Dwarf",
+      "triangles": 1924,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.9999994039535522,
+        1.959999680519104,
+        1.92033052444458
+      ]
+    },
+    {
+      "name": "Comet",
+      "category": "Comet",
+      "triangles": 268,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.3724316358566284,
+        3.298175096511841,
+        0.7569679021835327
+      ]
+    },
+    {
+      "name": "MercuryPlanet",
+      "category": "Planet",
+      "triangles": 2552,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.9999992847442627,
+        1.9999995231628418,
+        2.0
+      ]
+    },
+    {
+      "name": "VenusPlanet",
+      "category": "Planet",
+      "triangles": 1224,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.9999992847442627,
+        1.9999995231628418,
+        2.0
+      ]
+    },
+    {
+      "name": "MarsPlanet",
+      "category": "Planet",
+      "triangles": 1556,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.9999992847442627,
+        1.9999995231628418,
+        2.0
+      ]
+    },
+    {
+      "name": "EarthPlanet",
+      "category": "Planet",
+      "triangles": 1224,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.9972046613693237,
+        1.9968605041503906,
+        1.9951280355453491
+      ]
+    },
+    {
+      "name": "JupiterPlanet",
+      "category": "GiantPlanet",
+      "triangles": 1504,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.9999992847442627,
+        2.0310304164886475,
+        2.0
+      ]
+    },
+    {
+      "name": "SaturnPlanet",
+      "category": "GiantPlanet",
+      "triangles": 2760,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        3.9000000953674316,
+        3.6992170810699463,
+        2.0
+      ]
+    },
+    {
+      "name": "UranusPlanet",
+      "category": "GiantPlanet",
+      "triangles": 1736,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        2.848569393157959,
+        2.0696029663085938,
+        2.0692648887634277
+      ]
+    },
+    {
+      "name": "NeptunePlanet",
+      "category": "GiantPlanet",
+      "triangles": 1448,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.9999992847442627,
+        1.9999995231628418,
+        2.0
+      ]
+    },
+    {
+      "name": "SunStar",
+      "category": "Star",
+      "triangles": 1056,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        2.7783477306365967,
+        2.7783477306365967,
+        2.030550479888916
+      ]
+    },
+    {
+      "name": "BlueStar",
+      "category": "Star",
+      "triangles": 380,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        3.1500000953674316,
+        2.727979898452759,
+        2.030550479888916
+      ]
+    },
+    {
+      "name": "RedGiant",
+      "category": "Star",
+      "triangles": 824,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        2.842635154724121,
+        2.061068534851074,
+        2.030550479888916
+      ]
+    },
+    {
+      "name": "BinaryStar",
+      "category": "Star",
+      "triangles": 716,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        2.8635714054107666,
+        1.7559736967086792,
+        1.7645708322525024
+      ]
+    },
+    {
+      "name": "BlackHole",
+      "category": "BlackHole",
+      "triangles": 3020,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        2.6800003051757812,
+        2.616959571838379,
+        1.274999976158142
+      ]
+    },
+    {
+      "name": "PlanetaryNebula",
+      "category": "Nebula",
+      "triangles": 1808,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        2.7663493156433105,
+        2.760343074798584,
+        0.79075026512146
+      ]
+    },
+    {
+      "name": "GlobularCluster",
+      "category": "Cluster",
+      "triangles": 3432,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        2.132908344268799,
+        1.9643172025680542,
+        2.1763064861297607
+      ]
+    },
+    {
+      "name": "SpiralGalaxy",
+      "category": "Galaxy",
+      "triangles": 6168,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        3.6001834869384766,
+        3.6001834869384766,
+        0.6499999761581421
+      ]
+    },
+    {
+      "name": "BarredGalaxy",
+      "category": "Galaxy",
+      "triangles": 3896,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        3.748096466064453,
+        3.0825326442718506,
+        0.47999995946884155
+      ]
+    },
+    {
+      "name": "EllipticalGalaxy",
+      "category": "Galaxy",
+      "triangles": 4352,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        3.225771427154541,
+        1.8072216510772705,
+        0.9386328458786011
+      ]
+    }
+  ],
+  "palette": [
+    {
+      "name": "Navy",
+      "r": 0.07,
+      "g": 0.095,
+      "b": 0.2
+    },
+    {
+      "name": "Ocean",
+      "r": 0.12,
+      "g": 0.4,
+      "b": 0.86
+    },
+    {
+      "name": "Aqua",
+      "r": 0.22,
+      "g": 0.73,
+      "b": 0.85
+    },
+    {
+      "name": "Land",
+      "r": 0.34,
+      "g": 0.7,
+      "b": 0.35
+    },
+    {
+      "name": "Ice",
+      "r": 0.91,
+      "g": 0.95,
+      "b": 1
+    },
+    {
+      "name": "Sand",
+      "r": 0.87,
+      "g": 0.69,
+      "b": 0.43
+    },
+    {
+      "name": "Orange",
+      "r": 0.98,
+      "g": 0.4,
+      "b": 0.16
+    },
+    {
+      "name": "Red",
+      "r": 0.77,
+      "g": 0.21,
+      "b": 0.17
+    },
+    {
+      "name": "Stone",
+      "r": 0.5,
+      "g": 0.52,
+      "b": 0.6
+    },
+    {
+      "name": "DarkRock",
+      "r": 0.31,
+      "g": 0.33,
+      "b": 0.41
+    },
+    {
+      "name": "Yellow",
+      "r": 1,
+      "g": 0.78,
+      "b": 0.2
+    },
+    {
+      "name": "PaleGold",
+      "r": 1,
+      "g": 0.89,
+      "b": 0.59
+    },
+    {
+      "name": "Rose",
+      "r": 0.89,
+      "g": 0.46,
+      "b": 0.65
+    },
+    {
+      "name": "Violet",
+      "r": 0.54,
+      "g": 0.37,
+      "b": 0.83
+    },
+    {
+      "name": "Lavender",
+      "r": 0.72,
+      "g": 0.66,
+      "b": 0.95
+    },
+    {
+      "name": "Black",
+      "r": 0.018,
+      "g": 0.022,
+      "b": 0.05
+    }
+  ]
+}

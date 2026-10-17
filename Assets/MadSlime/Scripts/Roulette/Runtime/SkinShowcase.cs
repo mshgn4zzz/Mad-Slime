@@ -267,11 +267,6 @@ namespace Roulette
 
         private bool IsExclusive(SkinItem skin)
         {
-            if (skin.Rarity == SkinRarity.Legendary)
-            {
-                return true;
-            }
-
             for (int i = 0; i < _config.ExclusiveSkins.Count; i++)
             {
                 if (_config.ExclusiveSkins[i].Id == skin.Id)

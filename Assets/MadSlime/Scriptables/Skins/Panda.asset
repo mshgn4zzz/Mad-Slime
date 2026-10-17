@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e79f510ee66e4552921654b4409ab2d9, type: 3}
+  m_Name: Panda
+  m_EditorClassIdentifier: 
+  _model: {fileID: 7448162621708091760, guid: fa0d4e653736af9c8bbfcfe0c7da50b3, type: 3}
+  _icon: {fileID: 21300000, guid: fb06b13b9baafb166adc8d6476b0986c, type: 3}
+  _rarity: 1
+  _id: Panda
