@@ -1,23 +1,19 @@
 # TierTable
 
-**Слой:** Core · **Код:** `Assets/MadSlime/Scripts/Core/Scriptables/Tiers/TierTable.cs`
+**Слой:** Core · **Код:** `Assets/MadSlime/Scripts/ScriptableObjects/Items/Tiers/TierTable.cs` (+ `Items/Tiers/TierLookup.cs`, `SizeTier.cs`)
 
-Таблица `ItemTier → (scale, mass)`: визуальный масштаб предмета при спавне и масса, которую игрок получает за поглощение.
-
-## Зачем
-
-Единый источник «веса» тиров для [[LevelGenerator]] (масштаб), [[PlayerTier]] (набор массы) и баланса порогов в [[PlayerConfig]].
+Таблица `SizeTier → TierEntry (scale, mass)`: визуальный масштаб предмета при спавне и масса, которую игрок получает за поглощение. Тиры: `Small, Medium, Large, Huge, Giant, Boss`.
 
 ## Особенности
 
-- `Get(ItemTier)` — линейный поиск; записи нет → `InvalidOperationException` (fail-fast по канону проекта)
-- Геттеры клампят: `scale >= 0.01`, `mass >= 1`
+- `TierLookup` — рантайм-обёртка над таблицей (строится один раз потребителем: [[LevelGenerator | LevelPlacementPlanner]], [[Рост игрока | MassGainer]])
+- Записи нет → `InvalidOperationException` (fail-fast по канону проекта); геттеры клампят: `scale >= 0.01`, `mass >= 1`
 
 ## Связи
 
-- Потребители: [[LevelGenerator]], [[PlayerTier]], [[Player]], [[Камера]] (шейк по массе пикапа)
+- Потребители: [[LevelGenerator]], [[Рост игрока]], [[Камера | CameraPullAnimator]] (сила пулла по массе)
 - Регистрация: `RegisterInstance` в [[ProjectLifetimeScope]]
 
-## Слабые места
+## Нюансы
 
-- Линейный поиск + throw на каждом обращении — таблица крошечная, но вызовы частые (каждый пикап); исключение как «ветка отсутствия записи» — тяжёлый фолбэк.
+- Баланс порогов игрока ([[PlayerConfig]]) и масс предметов здесь — две таблицы, рассинхрон не ловится автоматически

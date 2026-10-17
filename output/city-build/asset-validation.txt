@@ -1,0 +1,1 @@
+PASS: 26 props, 21 new Blender models + 5 reused parking props, 156 definitions, 26 selected semantic tiers, valid icons/materials/colliders, Parking 1-24 preserved, City 25+.

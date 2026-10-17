@@ -1,5 +1,6 @@
 using System;
 using Core;
+using Game;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,7 +17,19 @@ namespace UI
         [SerializeField] private Color _rowColor = new Color(0f, 0f, 0f, 0.12f);
         [SerializeField] private Color _ownRowColor = new Color(0.12f, 0.5f, 0.8f, 0.6f);
 
+        private LeaderboardEntryData _entry;
+
         public RectTransform RectTransform => _rectTransform;
+
+        private void OnEnable()
+        {
+            Localization.LanguageChanged += RefreshName;
+        }
+
+        private void OnDisable()
+        {
+            Localization.LanguageChanged -= RefreshName;
+        }
 
         public void Initialize(LeaderboardEntryData entry, bool isOwn)
         {
@@ -25,10 +38,11 @@ namespace UI
                 throw new InvalidOperationException($"{name}: leaderboard row references are incomplete.");
             }
 
+            _entry = entry;
             _rankText.text = entry.Rank.ToString();
             _nameText.richText = false;
             _nameText.overflowMode = TextOverflowModes.Ellipsis;
-            _nameText.text = entry.Name;
+            RefreshName();
             _scoreText.text = entry.Score.ToString();
             _background.color = _rowColor;
 
@@ -36,6 +50,18 @@ namespace UI
             {
                 _background.color = _ownRowColor;
             }
+        }
+
+        private void RefreshName()
+        {
+            if (string.IsNullOrEmpty(_entry.Name) == true || _entry.Name == "anonymous")
+            {
+                string anonymousName = Localization.Get("leaderboard_anonymous");
+                _nameText.text = $"{anonymousName} #{_entry.Id}";
+                return;
+            }
+
+            _nameText.text = _entry.Name;
         }
     }
 }

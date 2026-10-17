@@ -1,21 +1,16 @@
 # AdrenalineBoost
 
-**Слой:** Gameplay · **Код:** `Assets/MadSlime/Scripts/Player/AdrenalineBoost.cs`
+**Слой:** Gameplay · **Код:** `Assets/MadSlime/Scripts/Upgrades/Runtime/AdrenalineBoost.cs`
 
-Перк **Adrenaline**: ускорение в конце таймера.
+Перк **Adrenaline**: ускорение в финальном отсчёте таймера.
 
 ## Механика
 
-- Подписка `Timer.Ticked`; перк не куплен → сброс множителя
-- `threshold = Timer.Duration × AdrenalineThresholdFraction` (0.25 из [[UpgradesConfig]])
-- `0 < remaining <= threshold` → `Mover.SetSpeedMultiplier(AdrenalineSpeedMultiplier)` (×1.4), иначе → 1
-- `Timer.Finished` / `OnDisable` — сброс в 1
+- `Enable()` / `Disable()` — зовёт [[GameplayOrchestrator]] на пороге `_finalCountdownSeconds` и на финише/выходе; сам Timer не слушает
+- `Enable`: перк не куплен (`PlayerUpgrades.HasAdrenaline`) → no-op; иначе `Movement.SetBoostMultiplier(GetPerk(PerkType.Adrenaline).Value)` — множитель из [[UpgradesConfig]]
+- `Disable`: `SetBoostMultiplier(1f)`
+- События `BoostStarted`/`BoostEnded` — презентация ([[Эффекты игрока | виньетка, AdrenalineSound]])
 
 ## Связи
 
-- [[Timer]], [[Mover]], [[PlayerUpgrades]] (есть ли перк + параметры)
-
-## Слабые места
-
-- Дергает `SetSpeedMultiplier` **каждый кадр** с одинаковым значением (нет guard на смену) — безвредно, но шумно.
-- Взаимодействие с будущими источниками множителей скорости (бафы/дебафы) не продумано: множитель один, аддитивной модели нет.
+- [[PlayerUpgrades]], [[Движение | Movement]] (единственный канал множителя скорости)

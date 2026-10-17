@@ -1,0 +1,16 @@
+{
+  "name": "Dog",
+  "triangles": 3240,
+  "dimensions": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "center": [
+    0,
+    0,
+    0
+  ],
+  "separate_blend": "/home/otecglinomes/Repos/Unity/Mad-Slime/output/skin-build/Blender/Dog.blend",
+  "separate_fbx": "/home/otecglinomes/Repos/Unity/Mad-Slime/Assets/MadSlime/Resources/PlayerModel/FBX/Dog.fbx"
+}

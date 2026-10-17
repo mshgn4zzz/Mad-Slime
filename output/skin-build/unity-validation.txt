@@ -1,0 +1,13 @@
+Slime: 1214 triangles; bounds=(1.0000, 1.0000, 1.0000); center=(0.0000, 0.0000, 0.0000); Common; icon OK
+Pacman: 1924 triangles; bounds=(1.0000, 1.0000, 1.0000); center=(0.0000, 0.0000, 0.0000); Legendary; icon OK
+CubeSlime: 256 triangles; bounds=(1.0000, 1.0000, 1.0000); center=(0.0000, 0.0000, 0.0000); Common; icon OK
+Cat: 2850 triangles; bounds=(1.0000, 1.0000, 1.0000); center=(0.0000, 0.0000, 0.0000); Rare; icon OK
+Dog: 3240 triangles; bounds=(1.0000, 1.0000, 1.0000); center=(0.0000, 0.0000, 0.0000); Rare; icon OK
+Ufo: 2114 triangles; bounds=(1.0000, 1.0000, 1.0000); center=(0.0000, 0.0000, 0.0000); Common; icon OK
+Car: 3268 triangles; bounds=(1.0000, 1.0000, 1.0000); center=(0.0000, 0.0000, 0.0000); Common; icon OK
+Snail: 3638 triangles; bounds=(1.0000, 1.0000, 1.0000); center=(0.0000, 0.0000, 0.0000); Legendary; icon OK
+Ghost: 2340 triangles; bounds=(1.0000, 1.0000, 1.0000); center=(0.0000, 0.0000, 0.0000); Epic; icon OK
+Shark: 2604 triangles; bounds=(1.0000, 1.0000, 1.0000); center=(0.0000, 0.0000, 0.0000); Epic; icon OK
+Vacuum: 2562 triangles; bounds=(1.0000, 1.0000, 1.0000); center=(0.0000, 0.0000, 0.0000); Legendary; icon OK
+Mimic: 2212 triangles; bounds=(1.0000, 1.0000, 1.0000); center=(0.0000, 0.0000, 0.0000); Epic; icon OK
+LegacySlime: 956 triangles; bounds=(1.0000, 0.6096, 1.0000); center=(0.0000, 0.0000, 0.0000); Rare; icon OK

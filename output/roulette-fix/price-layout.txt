@@ -1,0 +1,9 @@
+99999: width at 40pt = 120.0; fit font size = 40.0; available width 176.634
+70.9k: width at 40pt = 107.6; fit font size = 40.0; available width 176.634
+50.6k: width at 40pt = 107.6; fit font size = 40.0; available width 176.634
+81k: width at 40pt = 72.2; fit font size = 40.0; available width 176.634
+12.5k: width at 40pt = 107.6; fit font size = 40.0; available width 176.634
+2147.5m: width at 40pt = 168.1; fit font size = 40.0; available width 176.634
+Куплено: width at 40pt = 178.3; fit font size = 39.6; available width 176.634
+Bought: width at 40pt = 145.8; fit font size = 40.0; available width 176.634
+Font glyph advances only; no full UI screenshot in this check. Existing coin/text rectangles retain a gap of 46.8 units.

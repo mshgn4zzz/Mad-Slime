@@ -1,0 +1,202 @@
+[
+  {
+    "name": "Slime",
+    "triangles": 716,
+    "vertices": 364,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "pivot": "bounds center",
+    "materials": [
+      "Green",
+      "Ink"
+    ]
+  },
+  {
+    "name": "Pacman",
+    "triangles": 906,
+    "vertices": 459,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "pivot": "bounds center",
+    "materials": [
+      "Ink",
+      "Yellow"
+    ]
+  },
+  {
+    "name": "CubeSlime",
+    "triangles": 320,
+    "vertices": 176,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "pivot": "bounds center",
+    "materials": [
+      "Core",
+      "FaceGreen",
+      "Green"
+    ]
+  },
+  {
+    "name": "Cat",
+    "triangles": 2296,
+    "vertices": 1184,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "pivot": "bounds center",
+    "materials": [
+      "Cream",
+      "Ink",
+      "Orange",
+      "Pink",
+      "Stripe"
+    ]
+  },
+  {
+    "name": "Dog",
+    "triangles": 2536,
+    "vertices": 1298,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "pivot": "bounds center",
+    "materials": [
+      "Chocolate",
+      "Cream",
+      "Ink",
+      "Pink"
+    ]
+  },
+  {
+    "name": "Ufo",
+    "triangles": 1496,
+    "vertices": 764,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "pivot": "bounds center",
+    "materials": [
+      "Ink",
+      "Lilac",
+      "Sky",
+      "Yellow"
+    ]
+  },
+  {
+    "name": "Car",
+    "triangles": 2360,
+    "vertices": 1220,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "pivot": "bounds center",
+    "materials": [
+      "Coral",
+      "Cream",
+      "Ink"
+    ]
+  },
+  {
+    "name": "Snail",
+    "triangles": 2504,
+    "vertices": 1276,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "pivot": "bounds center",
+    "materials": [
+      "Chocolate",
+      "Cream",
+      "Ink",
+      "Peach",
+      "Purple"
+    ]
+  },
+  {
+    "name": "Ghost",
+    "triangles": 1288,
+    "vertices": 656,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "pivot": "bounds center",
+    "materials": [
+      "Ink",
+      "Lavender",
+      "White"
+    ]
+  },
+  {
+    "name": "Shark",
+    "triangles": 2238,
+    "vertices": 1143,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "pivot": "bounds center",
+    "materials": [
+      "Blue",
+      "Cream",
+      "Ink"
+    ]
+  },
+  {
+    "name": "Vacuum",
+    "triangles": 1304,
+    "vertices": 666,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "pivot": "bounds center",
+    "materials": [
+      "Coral",
+      "Ink",
+      "Sky",
+      "Yellow"
+    ]
+  },
+  {
+    "name": "Mimic",
+    "triangles": 2216,
+    "vertices": 1148,
+    "dimensions": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "pivot": "bounds center",
+    "materials": [
+      "Cream",
+      "Gold",
+      "Ink",
+      "Mouth",
+      "Pink",
+      "Wood"
+    ]
+  }
+]

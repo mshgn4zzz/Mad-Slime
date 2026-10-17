@@ -1,0 +1,1 @@
+PASS: 20 new skins; 33 total; unit-cube bounds and centered pivots; readable meshes and valid icons; 5 legendary exclusives.

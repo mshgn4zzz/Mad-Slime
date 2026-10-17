@@ -6,6 +6,7 @@ namespace Shop
 {
     public class ModelPlacer : MonoBehaviour
     {
+        private const string PreviewLayerName = "SkinsRender";
         private const float FaceTurnDegrees = 45f;
         private const float ClipMargin = 0.05f;
         private const float HalfFactor = 0.5f;
@@ -76,6 +77,7 @@ namespace Shop
                     $"{name}: Model '{model.name}' has no SkinModel component. Add a SkinModel component to the model prefab root.");
             }
 
+            SetPreviewLayer(_currentModel);
             FaceCamera(_currentModel.transform.rotation);
             FitToCamera(skinModel);
         }
@@ -89,6 +91,23 @@ namespace Shop
             {
                 Destroy(_currentModel);
                 _currentModel = null;
+            }
+        }
+
+        private void SetPreviewLayer(GameObject model)
+        {
+            int layer = LayerMask.NameToLayer(PreviewLayerName);
+
+            if (layer < 0)
+            {
+                throw new InvalidOperationException($"{name}: layer '{PreviewLayerName}' is required for skin previews.");
+            }
+
+            Transform[] transforms = model.GetComponentsInChildren<Transform>(true);
+
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                transforms[i].gameObject.layer = layer;
             }
         }
 

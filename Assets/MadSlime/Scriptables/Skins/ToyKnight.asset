@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e79f510ee66e4552921654b4409ab2d9, type: 3}
+  m_Name: ToyKnight
+  m_EditorClassIdentifier: 
+  _model: {fileID: 2847525316160875973, guid: 66ed9c59fbf3c77e284aaddb79a23b6d, type: 3}
+  _icon: {fileID: 21300000, guid: 981b5815ce80e8a58b725c10dada76f6, type: 3}
+  _rarity: 2
+  _id: ToyKnight

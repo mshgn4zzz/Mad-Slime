@@ -40,11 +40,6 @@ namespace Roulette
                 throw new InvalidOperationException("Roulette motion configuration is invalid.");
             }
 
-            if (config.LegendaryDropChance != 0f || config.ShowcaseLegendaryCount != 0)
-            {
-                throw new InvalidOperationException("Legendary skins are daily exclusives and cannot appear in paid roulette.");
-            }
-
             float sectorWeight = 0f;
             int hiddenSectors = 0;
 
@@ -140,24 +135,12 @@ namespace Roulette
                 SkinItem skin = config.ExclusiveSkins[i];
                 ValidateSkin(skin);
 
-                if (skin.Rarity != SkinRarity.Legendary)
-                {
-                    throw new InvalidOperationException("Daily exclusive skins must be Legendary.");
-                }
-
                 if (ids.Contains(skin.Id) == false || exclusiveIds.Add(skin.Id) == false)
                 {
                     throw new InvalidOperationException("Exclusive skins must be unique entries from the skin catalog.");
                 }
             }
 
-            for (int i = 0; i < catalog.Count; i++)
-            {
-                if (catalog[i].Rarity == SkinRarity.Legendary && exclusiveIds.Contains(catalog[i].Id) == false)
-                {
-                    throw new InvalidOperationException("Every Legendary skin must belong to the daily exclusive pool.");
-                }
-            }
         }
 
         private bool IsWeightValid(float weight)

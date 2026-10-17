@@ -1,23 +1,26 @@
 # Pauser
 
-**Слой:** Gameplay · **Код:** `Assets/MadSlime/Scripts/Game/Pauser.cs`
+**Слой:** Gameplay · **Код:** `Assets/MadSlime/Scripts/Game/Pause/Pauser.cs`
 
-Счётчиковая пауза на `Time.timeScale`. Регистрируется **в каждой сцене свой** (счётчик обнуляется сменой сцены).
+Единственный писатель `Time.timeScale`. Регистрируется **в каждой сцене свой** (счётчик обнуляется сменой сцены, в Menu ещё и `ResetToPlay` в `RegisterBuildCallback`).
 
 ## Как работает
 
-- `RequestPause()` → `_pauseRequestCount++`, `timeScale = 0`
-- `RequestResume()` → декремент (не ниже 0); `timeScale = 1` **только если счётчик обнулился И `IAdsService.IsPauseGame == false`**
+- `RequestPause()` → счётчик++, `RequestResume()` → декремент (не ниже 0). `IsPaused = счётчик > 0 || платформенная пауза`
+- **Платформенная пауза:** `Update` поллит `IAdsService.IsPauseGame` — пока Яндекс показывает рекламу, игра заморожена независимо от окон
+- **Пауза видимости:** `IGameVisibility.Hidden/Shown` (сворачивание вкладки) → пауза + `AudioListener.pause = true` + `ICollectedItemsStorage.CommitCollectedItems()` (прогресс фиксируется до потери фокуса); при возврате — обратная
+- `ResetToPlay()` — обнуляет счётчик (сохраняя visibility-паузу) — его зовут оркестраторы перед переходами и Menu-скоуп на старте
+- `StateChanged` — на каждое применение; по нему [[GameplayOrchestrator]] включает/выключает детекторы и управление
 
-Вторая половина условия — единственная точка сопряжения геймплея и рекламы по времени: пока Яндекс показывает рекламу (плагин сам ставит `isPauseGame`), игра не разморозится, сколько бы окон ни закрылось.
+Игровая пауза окон звук НЕ глушит — `AudioListener.pause` включается только на платформенных паузах.
 
 ## Кто ставит/снимает
 
-- [[GameplaySessionHandler]]: пауза на старте раунда (до первого ввода), resume в `Begin`
-- [[Окна | BaseWindow]]: **любое окно** — pause на `Initialize`, resume на `OnDisable`
-- [[FillSessionHandler]] — через окна
+- [[GameplayOrchestrator]]: пауза до первого ввода и после конца раунда, resume на старте, `PauseByRequest`/`ResumeByRequest` из PauseMenu
+- [[Окна]]: любое окно — pause на открытии, resume на закрытии
+- [[FillSceneOrchestrator]]: `PauseByRequest`/`ResumeByRequest` + переходы через `ResetToPlay`
 
-## Слабые места
+## Нюансы
 
-- Гашение/восстановление timeScale размазано по трём местам (Pauser, GameDirector-гард, Startup) — рассинхрон даёт «вечную паузу» (см. [[GameDirector]]).
-- Пауза только через timeScale: анимации на `SetUpdate(true)` и Realtime-задержки продолжают жить под паузой — осознанный приём, но каждый новый tween надо не забыть про unscaled time.
+- Пауза только через timeScale: анимации на unscaled time и Realtime-задержки продолжают жить — каждый новый tween надо не забыть про unscaled time
+- Плагинная автопауза на Yandex-платформе выпилена — рассчитывать только на свою подписку `IGameVisibility` (см. [[AI_RULES | правила Яндекс Игр]])

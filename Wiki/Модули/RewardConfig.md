@@ -1,20 +1,15 @@
 # RewardConfig
 
-**Слой:** Core · **Код:** `Assets/MadSlime/Scripts/Core/Scriptables/Rewards/RewardConfig.cs`
+**Слой:** Core · **Код:** `Assets/MadSlime/Scripts/ScriptableObjects/Economy/RewardConfig.cs`
 
-Экономика исхода уровня: сколько монет даёт победа и за что платят при провале.
+Параметры награды за заливку. Потребитель — [[Rewarder]].
 
-## Параметры
+## Поля
 
-- `_baseReward` = 50 — базовая награда за победу
-- `_loseMultiplierThreshold` = 0.25 — минимальная доля заливки при провале, за которую ещё платят; ниже — ноль
-- `_loseRewardDivisor` = 4 — при провале базовая награда делится на это
+- `BaseReward` (50) — награда за победу на 1-м уровне
+- `RewardMultiplier` (1.27) — геометрический рост награды: `round(BaseReward × Multiplier^(level−1))`
+- `MaxReward` (5000) — потолок награды
+- `LoseMultiplierThreshold` (0.25) — с какой заливки платится утешение
+- `LoseRewardDivisor` (4) — утешение = `GetReward(level) / делитель`
 
-## Связи
-
-- **Единственный потребитель:** [[Rewarder]] (сцена Fill, после [[ShapeFillOrchestrator | FillCounter]])
-- Удвоение награды — отдельный rewarded-блок (`YandexConfig._doubleRewardId = "DoubleReward"`, см. [[Мелкие конфиги Core]] и [[AdScheduler]])
-
-## Слабые места
-
-- Формула победы (`baseReward` без множителей за уровень/переполнение) — прогрессия монет линейная; см. [[Техдолг и баги]].
+Валидация при расчёте: `base ≥ 0`, `max ≥ base`, `multiplier ≥ 1` — иначе исключение. Пример: 50 → 64 → 81 → 103 → … на 20-м уровне ≈ 2800, потолок на ~25-м.

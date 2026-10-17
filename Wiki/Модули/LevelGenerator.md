@@ -1,30 +1,30 @@
 # LevelGenerator
 
-**Слой:** Gameplay · **Код:** `Assets/MadSlime/Scripts/Game/Level/LevelGenerator.cs` (+ `ZoneLayoutPlanner.cs`, `ItemSize.cs`, `LayoutPreviewDrawer.cs`)
+**Слой:** Gameplay · **Код:** `Assets/MadSlime/Scripts/Levels/Runtime/` — `LevelGenerator.cs`, `LevelPlacementPlanner.cs`, `ZoneLayoutPlanner.cs`, `LevelItemsSpawner.cs`, `PropVariantsAssigner.cs`, `LevelPlacement.cs` (+ Editor: `Levels/Editor/LayoutPreview*`, гизмо раскладок)
 
-Строит весь уровень в `Awake`: тема пола → раскладка → тиры предметов → спавн из пула → квота → подсветка «нюхом».
+Строит уровень под loading screen: тема пола → выбор раскладки → назначение вариантов пропов → план плейсментов по тирам → спавн → квота. Отдельных ItemPool больше нет — предметы живут и умирают через `LevelItemsSpawner` + `ItemFactory` ([[Детекция и сбор]]).
 
-## Пайплайн Generate()
+## Пайплайн GenerateAsync(progress, token)
 
 1. `LevelConfigResolver.GetConfigFor(CurrentLevel)`
-2. **PickLayout**: из LayoutsLibrary выбрасывает пустые (warning), случайный из годных; ничего годного → исключение
-3. `FloorBounds` → `Mover.SetBounds` — игрок получает границы пола именно здесь
-4. Тема: `sharedMaterial` пола из LevelTheme
-5. **AssignTiers**: варианты PropSet в диапазоне тиров уровня группируются по префабу; шаффл; первые N префабам гарантированно по одному определению каждого тира (каждый тир представлен на поле), остальным — случайный вариант
-6. **SpawnItems**: случайное зеркалирование X/Z раскладки; для каждой SpawnZone — пул префабов чьё назначение тир попадает в зону; spacing = радиус крупнейшего (`ItemSize.GetRadiusXZ` × TierTable scale) × factor (или ручной, минимум 0.5); `ZoneLayoutPlanner.Collect` генерит позиции (Grid / CircleGrid с кольцами / Circle / Scatter rejection sampling с лимитом попыток ×10 — **может молча разместить меньше count**); предметы из [[ItemPool]], `SetDefinition` + `Initialize`, кламп позиции внутрь пола
-7. `Physics.SyncTransforms()` — оверлап-детекторы сразу видят предметы
-8. [[QuotaGenerator]] → [[LevelProgress]].Reset
-9. Перк Smell: все квотовые предметы `SetHighlighted(true, HighlightColor)`
+2. **PickLayout** ([[LevelGenerator | LevelPlacementPlanner]]): случайный `LayoutSet` из LayoutsLibrary; пустая раскладка — исключение
+3. **PropVariantsAssigner.Assign(config)** — каждому пропу PropSet назначается `ItemDefinition` (вариант определяет тир/иконку)
+4. **Plan** — плейсменты: проход по тирам от `MaxTier` вниз; на каждый тир собирается пул пропов этого тира, зоны с подходящим тир-диапазоном раскладываются через `ZoneLayoutPlanner.CollectPlacements` (зеркалирование X/Z независимо, `SingleType`-зоны — один предмет на зону). Предметы `Large` и выше становятся препятствиями: последующие плейсменты проверяют `IsSpaceFree` против них. Позиции клампятся внутрь пола
+5. `Clamper.SetBounds(floorBounds)` — игрок получает границы пола здесь
+6. Тема: `sharedMaterial` пола из LevelTheme
+7. **SpawnAsync** ([[LevelGenerator | LevelItemsSpawner]]): фабрика создаёт предметы, `Attach(ItemCollector)` — собранное возвращается спавнеру; прогресс уходит в полосу загрузки [[SceneNavigator]]
+8. `Physics.SyncTransforms()` — оверлап-детекторы сразу видят предметы
+9. [[Квота | QuotaGenerator.Generate]] по факту спавна → `QuotaBoard.Reset`
 
-`LayoutPreviewDrawer` — редакторский gizmo-просмотрщик раскладок (детерминированный seed).
+## ZoneLayoutPlanner — формы зон
+
+`SpawnShape`: Grid, Circle, Scatter, CircleGrid (кольца), SquareRing (периметр), SquareScatter. Spacing: авто (шаг = радиус крупнейшего в зоне × `AutoSpacingFactor` 2.2) или ручной. Fit-culling: в Grid предмет с радиусом больше полу-шага не размещается; Scatter отбрасывает пропы крупнее радиуса зоны. Тот же класс используют редакторские гизмо раскладок (`CollectPlacements` общий для рантайма и превью).
 
 ## Связи
 
-- [[Конфиги уровней]], [[TierTable]], [[LevelConfigResolver]], [[ItemPool]], [[QuotaGenerator]], [[LevelProgress]], [[PlayerUpgrades]], [[Mover]], [[Детекция и сбор | Collector]] (возврат в пул через `ItemCollected`)
+- [[Конфиги уровней]], [[TierTable]], [[LevelConfigResolver]], [[Движение | Clamper]], [[Квота]], [[Детекция и сбор | ItemCollector, ItemFactory]]
 
-## Слабые места
+## Нюансы
 
-- `_spawnedItems.Remove(item)` — O(n) на каждый собранный предмет, O(n²) за уровень (`LevelGenerator.cs:115`).
-- `OnDisable` отписывается без null-проверки полей (`:108-111`).
-- Scatter-зона молча недосчитывает предметы — квота это компенсирует (кламп к заспавненному), но раскладка «на глаз» может быть реже задуманной.
-- `Awake` генерирует уровень сразу — любой кривой ассет роняет сцену на старте (fail-fast по канону, но без retry).
+- Генерация идёт в `PrepareSessionAsync` [[GameplayOrchestrator]] — не в Awake: кривой ассет роняет сессию под loading screen, прогресс виден
+- `LevelPlayModeCheck`/`*LevelSetup` в `Levels/Editor` — editor-проверки раскладок

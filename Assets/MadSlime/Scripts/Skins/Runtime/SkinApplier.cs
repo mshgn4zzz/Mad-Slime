@@ -91,7 +91,8 @@ namespace Player
 
                 if (matchingItem == null || matchingItem.Model == null)
                 {
-                    throw new InvalidOperationException($"{name}: the initial Slime skin and its model must exist in ShopContent.");
+                    throw new InvalidOperationException(
+                        $"{name}: the initial skin '{SkinInventory.InitialSkinId}' and its model must exist in ShopContent.");
                 }
 
                 _inventory.Select(matchingItem.Id);

@@ -22,6 +22,7 @@ namespace UI
         private enum State
         {
             Loading,
+            AuthRequired,
             Ready,
             Empty,
             Error
@@ -69,7 +70,7 @@ namespace UI
             _authButton.onClick.AddListener(OnAuthClicked);
             _retryButton.onClick.AddListener(OnRetryClicked);
             _savesReadiness.Ready += OnSdkDataReceived;
-            RefreshAuthView();
+            Localization.LanguageChanged += RefreshStatusText;
             RequestLeaderboard();
         }
 
@@ -86,6 +87,7 @@ namespace UI
             _closeButton?.onClick.RemoveListener(OnCloseClicked);
             _authButton?.onClick.RemoveListener(OnAuthClicked);
             _retryButton?.onClick.RemoveListener(OnRetryClicked);
+            Localization.LanguageChanged -= RefreshStatusText;
 
             if (_savesReadiness != null)
             {
@@ -115,7 +117,14 @@ namespace UI
                 await UniTask.WaitUntil(IsSdkReady, cancellationToken: cancellationToken)
                     .Timeout(TimeSpan.FromSeconds(SdkTimeoutSeconds), DelayType.Realtime);
                 cancellationToken.ThrowIfCancellationRequested();
-                RefreshAuthView();
+
+                if (_leaderboardService.IsAuthorized == false)
+                {
+                    ClearRows();
+                    SetState(State.AuthRequired);
+                    return;
+                }
+
                 LeaderboardData snapshot = await _leaderboardService.RequestEntriesAsync(
                     _config.LeaderboardName, TopCount, cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
@@ -220,18 +229,27 @@ namespace UI
         private void SetState(State state)
         {
             _state = state;
+            _authButton.gameObject.SetActive(state == State.AuthRequired);
+            _scroll.gameObject.SetActive(state != State.AuthRequired && _rows.Count > 0);
             _retryButton.gameObject.SetActive(state == State.Empty || state == State.Error);
             _retryButton.interactable = state != State.Loading;
+            RefreshStatusText();
+        }
 
+        private void RefreshStatusText()
+        {
             if (_statusText == null)
             {
                 return;
             }
 
-            _statusText.gameObject.SetActive(state != State.Ready);
+            _statusText.gameObject.SetActive(_state != State.Ready);
 
-            switch (state)
+            switch (_state)
             {
+                case State.AuthRequired:
+                    _statusText.text = Localization.Get("leaderboard_login_hint");
+                    break;
                 case State.Loading:
                     _statusText.text = Localization.Get("leaderboard_loading");
                     break;
@@ -283,18 +301,17 @@ namespace UI
 
         private void OnSdkDataReceived()
         {
-            RefreshAuthView();
             RequestLeaderboard();
         }
 
         private void OnAuthClicked()
         {
-            _leaderboardService.OpenAuthDialog();
-        }
+            if (_state != State.AuthRequired || _leaderboardService.IsAuthorized == true)
+            {
+                return;
+            }
 
-        private void RefreshAuthView()
-        {
-            _authButton.gameObject.SetActive(_leaderboardService.IsAuthorized == false);
+            _leaderboardService.OpenAuthDialog();
         }
 
         private void OnCloseClicked()

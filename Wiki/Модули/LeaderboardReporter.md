@@ -1,21 +1,14 @@
 # LeaderboardReporter
 
-**Слой:** Gameplay · **Код:** `Assets/MadSlime/Scripts/Game/LeaderboardReporter.cs` · сцена Fill
+**Слой:** Gameplay · **Код:** `Assets/MadSlime/Scripts/Leaderboards/Runtime/LeaderboardReporter.cs` · сцена Fill
 
-Запись очков в Яндекс-лидерборд.
+Запись очков в Яндекс-лидерборд. Система целиком — [[Лидерборды]].
 
 ## Механика
 
-- `Report(score)`: не авторизован → только Debug.Log, игроку ничего; авторизован → `ILeaderboardService.SetScore(YandexConfig.LeaderboardName = "CollectedItems", score)`
-- Вызывается **только** из [[FillSessionHandler]]: `LoadNextLevel` и `ExitToMenuAfterWin`, со значением `_progress.MaxLevel`
-
-Таблица топ-10 рендерит [[Окна | LeaderboardMenu]] (через `RequestEntries` + `EntriesReceived`).
+- `Report()`: не авторизован → тихий early-return; авторизован → `ILeaderboardService.SetScore(YandexConfig.LeaderboardName, CollectedItemsCount)` — очки = **сколько предметов съедено за всё время** ([[SavesYG | CollectedItemsCount]])
+- Вызывается из [[FillSceneOrchestrator]]: при победе в подготовке сцены и при спасении — всегда после сейв-транзакции и `ConfirmSavedAsync`
 
 ## Связи
 
-- [[Интерфейсы Core (шов YG2) | ILeaderboardService]] → [[YG2-адаптеры | Yg2LeaderboardService]], [[PlayerProgress]], [[Мелкие конфиги Core | YandexConfig]]
-
-## Слабые места
-
-- Неавторизованный игрок молча не попадает в таблицу — UI не предлагает авторизацию в момент первого результата (диалог есть только в LeaderboardMenu).
-- Репорт только на победных выходах: победил → сразу вышел из приложения до интерстишла? — точек записи две, обе после Save, приемлемо.
+- [[Лидерборды | CollectedItemsCounter, Yg2LeaderboardService]], [[Интерфейсы Core (шов YG2) | ILeaderboardService]], [[Мелкие конфиги Core | YandexConfig]]

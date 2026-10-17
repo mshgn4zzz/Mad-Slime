@@ -38,20 +38,20 @@ MonoBehaviour:
     _coins: 0
     _dropChance: 1
   _exclusiveSkins:
-  - {fileID: 11400000, guid: 1f6233159a9e97cf79427226bfc28d31, type: 2}
-  - {fileID: 11400000, guid: a16873fd4e416564cb6438502a43e5a9, type: 2}
-  - {fileID: 11400000, guid: 4b7adadddae61f55cb1a1298f3572925, type: 2}
-  - {fileID: 11400000, guid: 45dc0180ba729fffbbff0e329f491ba6, type: 2}
-  - {fileID: 11400000, guid: d4ecaa06b56bf23ed903c441c03f1642, type: 2}
-  _commonDropChance: 80
-  _rareDropChance: 17
-  _epicDropChance: 3
-  _legendaryDropChance: 0
+  - {fileID: 11400000, guid: 82671d3ec500bdb07894301d5ce80736, type: 2}
+  - {fileID: 11400000, guid: 3e381ab6fe2dd0d3fbdbb3eedd543d26, type: 2}
+  - {fileID: 11400000, guid: 6e1bd2df4e6c06e03ac529c0efdb4dc6, type: 2}
+  - {fileID: 11400000, guid: a4527d649286ebb00aeef427c59cb45e, type: 2}
+  - {fileID: 11400000, guid: 2f66f1394367f0159abb20cdf50e78dc, type: 2}
+  _commonDropChance: 63
+  _rareDropChance: 25
+  _epicDropChance: 10
+  _legendaryDropChance: 2
   _skinSpinMinCost: 300
   _skinSpinMaxCost: 3000
   _skinSpinCostStep: 150
   _duplicateCoinsCompensation: 100
-  _showcaseLegendaryCount: 0
+  _showcaseLegendaryCount: 1
   _showcaseEpicCount: 2
   _showcaseRareCount: 2
   _rarityTable: {fileID: 11400000, guid: 8d1c7cb302a74805e9f7c0823ae73ed6, type: 2}

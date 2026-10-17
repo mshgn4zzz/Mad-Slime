@@ -1,0 +1,3 @@
+Actual Menu scene checks
+Mascot and text share GameTitle; unscaled float range=20.000; no horizontal drift.
+PASS: real menu startup, transparent mascot, full-label motion, paused animation, repeated enable/disable, collection/upgrades navigation, baseline restoration.

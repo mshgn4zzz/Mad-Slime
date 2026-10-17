@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc32da18b1947f542878feedb0db89af, type: 3}
   m_Name: RoomLevelConfig
   m_EditorClassIdentifier: 
-  _theme: {fileID: 11400000, guid: 49822d7c5f452ed46b3f8bbdaf7ac2c9, type: 2}
+  _theme: {fileID: 11400000, guid: 25b632245614f514fa905cb59bd7af0b, type: 2}
   _propSet: {fileID: 11400000, guid: 9e7c1a3d5f8b42c6a0d4e8f2b6c9a17d, type: 2}
   _minTier: 0
   _maxTier: 5
   _timerDuration: 120
-  _quotaTypesMin: 2
-  _quotaTypesMax: 4
-  _quotaTargetMin: 1
-  _quotaTargetMax: 20
+  _quotaTypesMin: 3
+  _quotaTypesMax: 5
+  _quotaTargetMin: 8
+  _quotaTargetMax: 18
+  _quotaMaxSameTier: 2

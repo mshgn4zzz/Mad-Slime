@@ -1,0 +1,18 @@
+Daily roulette: 2000 spins, awarded every configured exclusive: Vacuum, Pacman, Snail
+Skin roulette: eight slots, 65/25/10 rarity weights; granted all 9 ordinary rewards; all-owned state OK.
+Real Game scene loaded, generated its level and entered Running in Play Mode.
+Car: applied on real player; Common; materials/texture OK; single model; ground error=0.00001; squash OK; 2x growth OK
+Cat: applied on real player; Rare; materials/texture OK; single model; ground error=0.00001; squash OK; 2x growth OK
+CubeSlime: applied on real player; Common; materials/texture OK; single model; ground error=0.00001; squash OK; 2x growth OK
+Dog: applied on real player; Rare; materials/texture OK; single model; ground error=0.00001; squash OK; 2x growth OK
+Ghost: applied on real player; Epic; materials/texture OK; single model; ground error=0.00001; squash OK; 2x growth OK
+Mimic: applied on real player; Epic; materials/texture OK; single model; ground error=0.00001; squash OK; 2x growth OK
+Pacman: applied on real player; Legendary; materials/texture OK; single model; ground error=0.00001; squash OK; 2x growth OK
+Shark: applied on real player; Epic; materials/texture OK; single model; ground error=0.00001; squash OK; 2x growth OK
+Slime: applied on real player; Common; materials/texture OK; single model; ground error=0.00001; squash OK; 2x growth OK
+Snail: applied on real player; Legendary; materials/texture OK; single model; ground error=0.00001; squash OK; 2x growth OK
+Ufo: applied on real player; Common; materials/texture OK; single model; ground error=0.00001; squash OK; 2x growth OK
+Vacuum: applied on real player; Legendary; materials/texture OK; single model; ground error=0.00001; squash OK; 2x growth OK
+LegacySlime: applied on real player; Rare; materials/texture OK; single model; ground error=0.00001; squash OK; 2x growth OK
+Scene teardown: stopping vignette after its HUD image was destroyed is safe.
+PASS: all thirteen skins verified on the player in Game Play Mode.

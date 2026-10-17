@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c47ef906deb27a94fa1033fe633fe3cd, type: 3}
+  m_Name: CityTheme
+  m_EditorClassIdentifier: 
+  _floorMaterial: {fileID: 2100000, guid: 8aa4beb47c34a7d63818577fe60f4014, type: 2}
+  _fillShapeTexture: {fileID: 2800000, guid: e7a1d65e9acaf2e1c9382863562e8716, type: 3}
+  _fillShapeTextures:
+  - {fileID: 2800000, guid: e7a1d65e9acaf2e1c9382863562e8716, type: 3}
+  - {fileID: 2800000, guid: fa7d0685004cc0ce29847649650ab79a, type: 3}
+  - {fileID: 2800000, guid: 80ecdf9b8292355e5b8081377557f280, type: 3}

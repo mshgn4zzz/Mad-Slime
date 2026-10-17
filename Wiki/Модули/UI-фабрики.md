@@ -1,26 +1,25 @@
-# UI-фабрики
+# UI-фабрики и карточки
 
-**Слой:** UI · **Код:** `Assets/MadSlime/Scripts/UI/Spawners/`
+**Слой:** UI · **Код:** `Assets/MadSlime/Scripts/UI/Spawning/GameplayUIFabric.cs`, `ShapeFill/UI/FillUIFabric.cs`, карточки — `Upgrades/UI/`, `Shop/UI/`
 
-Спавн окон идёт через [[UiSpawner]]. Фабрики остались точками привязки кнопок и ad-флоу сцены — инстанцирование сами они больше не делают.
+Спавн окон идёт через [[UiSpawner]]; фабрики — точки привязки кнопок и ad-флоу сцены.
 
 ## GameplayUIFabric (сцена Game)
 
-- Инжект: [[UiSpawner]], [[GameplaySessionHandler]]
-- `_pauseButton` → `_uiSpawner.Spawn(_pauseMenuPrefab, UiLayer.Popup)` + `Initialize(true, menuAction: _sessionHandler.ExitToMenu)`
+- Кнопка паузы → `Spawn(_pauseMenuPrefab, Popup)` + `Initialize(true, menuAction: orchestrator.ExitToMenu)`
 
 ## FillUIFabric (сцена Fill) — фабрика исходов
 
-- Инжект: [[UiSpawner]], [[FillSessionHandler]], [[Wallet]], [[AdScheduler]]
-- `OnEnable` подписки: `_sessionHandler.Win` / `Failed` (`Action<int>` — сумма награды)
-- **Победа** → Spawn WinMenu(reward, LoadNextLevel, `RequestDoubleReward`, ExitToMenuAfterWin). Двойная награда: `AdScheduler.ShowDoubleReward` → по granted `Wallet.Add(lastReward)`
-- **Провал** → Spawn FailMenu(..., onClosed: `OnFailMenuClosed` → `_activeFailMenu = null`). Спасение: rewarded с `YandexConfig.FillRescueRewardId` → granted: `FailMenu.Dismiss()` + `FillSessionHandler.RescueFill()`; rejected: кнопка возвращается
+- Подписки: `FillSceneOrchestrator.Win` / `Failed` (`Action<int>` — сумма награды)
+- **Победа** → WinMenu(reward, LoadNextLevel, `RequestDoubleReward`, ExitToMenuAfterWin). Двойная награда: `AdScheduler.ShowDoubleReward` → по granted `Wallet.Add`
+- **Провал** → FailMenu(..., rescue: rewarded → granted: `FailMenu.Dismiss()` + `FillSceneOrchestrator.RescueFill()`; rejected: кнопка возвращается)
 - Плюс pause-кнопка как в Game
 
-## Shop-фабрики
+## Карточные фабрики и MVP страниц
 
-- **ShopItemViewFactory** / **UpgradeItemViewFactory** (`UI/Shop/`): карточные фабрики, остались на `IObjectResolver.Instantiate(prefab, parent)` + `Initialize(...)` — это элементы грида под управлением [[ShopPanel]], не слойный UI; у апгрейд-фабрики два перегруза (UpgradeType / PerkType)
+- **ShopItemViewFactory** (`Shop/UI`) — карточки скинов для [[Магазин | SkinsPagePresenter]]; **SkinRarityGroupView** — группы редкостей
+- **UpgradeItemViewFactory + UpgradeItemView** (`Upgrades/UI`) — карточки апгрейдов/перков; **UpgradesPagePresenter + UpgradePurchaseModel** — MVP окна улучшений: `CanPurchase`/`Purchase` через [[PlayerUpgrades]] + [[Wallet]] внутри сейв-транзакции
 
 ## Связи
 
-- [[UiSpawner]], [[Окна]], [[GameplaySessionHandler]], [[FillSessionHandler]], [[Wallet]], [[AdScheduler]], [[ShopPanel]]
+- [[UiSpawner]], [[Окна]], [[GameplayOrchestrator]], [[FillSceneOrchestrator]], [[Wallet]], [[AdScheduler]], [[Магазин]]

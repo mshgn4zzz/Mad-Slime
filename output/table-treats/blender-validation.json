@@ -1,0 +1,35 @@
+[
+  {
+    "name": "ChocolateChipCookie",
+    "dimensions": [
+      0.9899146556854248,
+      0.9837014675140381,
+      0.19450408220291138
+    ],
+    "triangles": 864,
+    "non_manifold_edges": 0,
+    "degenerate_faces": 0
+  },
+  {
+    "name": "GingerbreadMan",
+    "dimensions": [
+      0.9136066436767578,
+      0.9473375082015991,
+      0.14800000190734863
+    ],
+    "triangles": 1716,
+    "non_manifold_edges": 0,
+    "degenerate_faces": 0
+  },
+  {
+    "name": "Lollipop",
+    "dimensions": [
+      1.3899999856948853,
+      0.7200000286102295,
+      0.15000000596046448
+    ],
+    "triangles": 1114,
+    "non_manifold_edges": 0,
+    "degenerate_faces": 0
+  }
+]

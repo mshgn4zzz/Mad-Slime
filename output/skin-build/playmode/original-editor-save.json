@@ -1,0 +1,36 @@
+{
+    "CurrentLevel": 9,
+    "MaxLevel": 9,
+    "CollectedItemsCount": 24608,
+    "Language": "en",
+    "musicVolume": 0.5,
+    "sfxVolume": 1.0,
+    "Balance": 10003281,
+    "SelectedSkinId": "Dog",
+    "_openSkinIds": [
+        "Slime",
+        "Car",
+        "Cat",
+        "CubeSlime",
+        "Dog",
+        "Ghost",
+        "Mimic",
+        "Pacman",
+        "Shark",
+        "Snail",
+        "Ufo",
+        "Vacuum"
+    ],
+    "_showcaseSkinIds": [],
+    "SpeedLevel": 0,
+    "AppetiteLevel": 1,
+    "TasteLevel": 0,
+    "MetabolismLevel": 0,
+    "PurchasedPerks": [],
+    "LastFreeSpinUnixTime": 1792106630,
+    "RouletteAdSpinTimes": [
+        1792089139
+    ],
+    "SkinSpinCount": 3,
+    "idSave": 79
+}
