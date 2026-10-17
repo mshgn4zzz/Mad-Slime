@@ -1,0 +1,12 @@
+{
+  "model": "Strawberry",
+  "dimensions": [
+    0.8500000238418579,
+    0.8500000238418579,
+    0.9300000071525574
+  ],
+  "triangles": 1200,
+  "non_manifold_edges": 0,
+  "degenerate_faces": 0,
+  "construction": "Direct Blender MCP; custom body, crown, stem and seed geometry"
+}

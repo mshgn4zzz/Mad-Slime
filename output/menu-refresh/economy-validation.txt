@@ -1,0 +1,8 @@
+Rewards 1–100: half the original curve, rounding tolerance <= 0.5 coin; cap 2500. Actual win/loss/rescue wallet transfers passed.
+Speed: 500 → 1500 → 4500 → 13500 → 40500
+Appetite: 625 → 1875 → 5625 → 16875 → 50625
+Taste: 1000 → 3000 → 9000 → 27000 → 81000
+Metabolism: 875 → 2625 → 7875 → 23625 → 70875
+Smell: 7500
+Adrenaline: 10000
+Ambitions: 12500

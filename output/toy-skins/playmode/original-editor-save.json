@@ -1,0 +1,41 @@
+{
+    "CurrentLevel": 15,
+    "MaxLevel": 15,
+    "CollectedItemsCount": 47875,
+    "Language": "en",
+    "musicVolume": 0.0,
+    "sfxVolume": 1.0,
+    "Balance": 9968586,
+    "SelectedSkinId": "Vacuum",
+    "_openSkinIds": [
+        "Slime",
+        "Car",
+        "Cat",
+        "CubeSlime",
+        "Dog",
+        "Ghost",
+        "Mimic",
+        "Pacman",
+        "Shark",
+        "Snail",
+        "Ufo",
+        "Vacuum",
+        "LegacySlime"
+    ],
+    "_showcaseSkinIds": [],
+    "SpeedLevel": 5,
+    "AppetiteLevel": 5,
+    "TasteLevel": 5,
+    "MetabolismLevel": 0,
+    "PurchasedPerks": [
+        0,
+        1,
+        2
+    ],
+    "LastFreeSpinUnixTime": 1792153754,
+    "RouletteAdSpinTimes": [
+        1792089139
+    ],
+    "SkinSpinCount": 4,
+    "idSave": 150
+}

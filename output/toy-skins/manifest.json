@@ -1,0 +1,422 @@
+{
+  "models": [
+    {
+      "name": "Bunny",
+      "triangles": 1724,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Panda",
+      "triangles": 1524,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Fox",
+      "triangles": 1556,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Frog",
+      "triangles": 1524,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Penguin",
+      "triangles": 1028,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Chick",
+      "triangles": 1328,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Piglet",
+      "triangles": 1728,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "BearCub",
+      "triangles": 1724,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Axolotl",
+      "triangles": 1896,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "RedPanda",
+      "triangles": 2156,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Bee",
+      "triangles": 1664,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Mushroom",
+      "triangles": 1524,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Cupcake",
+      "triangles": 1628,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Dumpling",
+      "triangles": 1516,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Cactus",
+      "triangles": 2344,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "BabyDragon",
+      "triangles": 1416,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Unicorn",
+      "triangles": 2152,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Astronaut",
+      "triangles": 1756,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "ToyKnight",
+      "triangles": 1764,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Jellyfish",
+      "triangles": 1740,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1,
+        1,
+        1
+      ],
+      "center": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "palette": [
+    {
+      "name": "Ink",
+      "r": 0.13,
+      "g": 0.17,
+      "b": 0.22
+    },
+    {
+      "name": "White",
+      "r": 1,
+      "g": 0.96,
+      "b": 0.88
+    },
+    {
+      "name": "Cream",
+      "r": 0.96,
+      "g": 0.86,
+      "b": 0.66
+    },
+    {
+      "name": "Peach",
+      "r": 0.96,
+      "g": 0.73,
+      "b": 0.55
+    },
+    {
+      "name": "Coral",
+      "r": 0.93,
+      "g": 0.54,
+      "b": 0.61
+    },
+    {
+      "name": "Pink",
+      "r": 0.96,
+      "g": 0.72,
+      "b": 0.81
+    },
+    {
+      "name": "Lavender",
+      "r": 0.73,
+      "g": 0.65,
+      "b": 0.89
+    },
+    {
+      "name": "Mint",
+      "r": 0.65,
+      "g": 0.85,
+      "b": 0.72
+    },
+    {
+      "name": "Green",
+      "r": 0.55,
+      "g": 0.74,
+      "b": 0.38
+    },
+    {
+      "name": "Blue",
+      "r": 0.58,
+      "g": 0.79,
+      "b": 0.9
+    },
+    {
+      "name": "Yellow",
+      "r": 0.96,
+      "g": 0.8,
+      "b": 0.4
+    },
+    {
+      "name": "Orange",
+      "r": 0.85,
+      "g": 0.56,
+      "b": 0.31
+    },
+    {
+      "name": "Brown",
+      "r": 0.64,
+      "g": 0.42,
+      "b": 0.29
+    },
+    {
+      "name": "DarkBrown",
+      "r": 0.43,
+      "g": 0.32,
+      "b": 0.28
+    },
+    {
+      "name": "Steel",
+      "r": 0.62,
+      "g": 0.7,
+      "b": 0.78
+    },
+    {
+      "name": "Charcoal",
+      "r": 0.25,
+      "g": 0.27,
+      "b": 0.32
+    }
+  ]
+}

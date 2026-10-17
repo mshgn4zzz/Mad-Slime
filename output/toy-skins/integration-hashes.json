@@ -1,0 +1,907 @@
+{
+  "assets": [
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/BunnySkin.prefab",
+      "sha256": "5e6280dbf40b9799099988e70aef3fda8cdcc50e3d86fb5fbad7abdf58fba5a4",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/BunnySkin.prefab.meta",
+      "sha256": "99eadc72586306fc3e675022febde7d88f3bee96d3ee56aace91443410eb449a",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Bunny.asset",
+      "sha256": "5f479bbffcf0f8023804b33ef64aa701b724b3897ab8283c1961f9bf3a5490e9",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Bunny.asset.meta",
+      "sha256": "dc99400305e932330bc232d39b2e036f1a0b97452be9c0accee70b5b3aeeabee",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Bunny.png",
+      "sha256": "5d2b48a79e4b3e325998568bde07d37c858f31270a15edc0ba13c11f631c807a",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Bunny.png.meta",
+      "sha256": "d50f8113a7fae60d335f01df96b9213180be5b026309abd38afa00197f5c5316",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/Bunny.fbx.meta",
+      "sha256": "af0da5fb78f80bfaef43fe76ae8c92e5896c609a98637fd73d3980663ac04551",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/PandaSkin.prefab",
+      "sha256": "e75324bbb0c4b205c86f767e34366bbd6dc3627b604428dcc925a06efcc1edf7",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/PandaSkin.prefab.meta",
+      "sha256": "c31805064431a551bf8284d252fcb518c6f8558685c2879f6242e650112b176d",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Panda.asset",
+      "sha256": "7bdec658c4885a5cc934dbf2e458602205f9b830bdc60c1ceaa5c6cc1564cef5",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Panda.asset.meta",
+      "sha256": "0ed61c84d151ced3fdc0fdc185b09bf8977024619db2071f66da44b061ba21f5",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Panda.png",
+      "sha256": "b54c2bb1b041116a770a9c03c5e5a85bab1f4afca94f9918130f4e4a26de251a",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Panda.png.meta",
+      "sha256": "fa99333997eaf2254eb0dbe2e0e4508287ea69ab992e6456a3ea767c42e08315",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/Panda.fbx.meta",
+      "sha256": "3b11879816f493451e86e79755087ab72815589a56f452378d3b274d7a77b62c",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/FoxSkin.prefab",
+      "sha256": "e999f74293aa823aa079428e27443a184439815970750c816215eaccefc13495",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/FoxSkin.prefab.meta",
+      "sha256": "9747234e795c8ecd788042e37cc8658aaf7fe1f7af52ede41083146d94535f96",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Fox.asset",
+      "sha256": "9a810058d81f6f57e76401e0feeb6091192e118bbda093fa5e201b9d411ea34f",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Fox.asset.meta",
+      "sha256": "c68778c51c14eeedb862cd131542e8294de8ee8202d745bcea5f0c794b1c5df9",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Fox.png",
+      "sha256": "45ff894b6faa235ff94d5884bd74f2aaab23270c6ed2d402d933262328000904",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Fox.png.meta",
+      "sha256": "6f4021411dab361a209a5c4f4f3073394b046c63d09aaecbb5cef5dc73b65d74",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/Fox.fbx.meta",
+      "sha256": "d52d9c9890c3b46655ed461d0c8cca141a8491f3a2da49c863e62e48f5c1c220",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/FrogSkin.prefab",
+      "sha256": "d616a37011cfbe960f49339ae8e95fe18e2e15ac431af578f58f316f4f6c2da5",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/FrogSkin.prefab.meta",
+      "sha256": "85204189d3639171c2a051323af8b8fe037de94b43a9568827341d18051923e3",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Frog.asset",
+      "sha256": "e414fd5b949f0045d4290ed594243a2ccb09e97a8a1a0b0f8da5b090d28036ee",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Frog.asset.meta",
+      "sha256": "921e71ad12128e5bb01c36938bf778444922ede4f793034d22fbe275a3e39f87",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Frog.png",
+      "sha256": "68c43301e80b724bb798f634357b676da2ee75367ea19269c47d2307c4a3b2ad",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Frog.png.meta",
+      "sha256": "b776208ce679e8e2acabda41f1bfc34b9c71bf46c84b61157ab37724adf10cd3",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/Frog.fbx.meta",
+      "sha256": "ee8009f69362bc684b2e9ec2f387db5972266b14cc24708b8ff77d99eeb6b502",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/PenguinSkin.prefab",
+      "sha256": "ffa5f65f82ad01ffb92d421664e3cff93744b8417174e523cc4b87e78d36f39c",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/PenguinSkin.prefab.meta",
+      "sha256": "f5fe7c3294268bdb0eb8bc470a3cdd25e2070e1247396cd0749c06a0fd57822b",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Penguin.asset",
+      "sha256": "0e48040d6cf3692bb6e4e40a9f000965edeff7d36c370f2d241a3cab586e8b92",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Penguin.asset.meta",
+      "sha256": "821bbb1306628962e8020b40e2db6192df27b500f3b9fe32b8dc90928d15b124",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Penguin.png",
+      "sha256": "fb76b089742a5dcacfd33ce966c294a3b04e3ecf31a2a1d689fc2d7a562bb1dd",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Penguin.png.meta",
+      "sha256": "71ecd658955c4b8bb4286ec9ae22278bfc32ae1bc037805ad72ce2cd7ded7898",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/Penguin.fbx.meta",
+      "sha256": "91f82b2a9a1f50e6fd6ff4f5fdc42a8d7f47636fa256b7de11d6075617f84824",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/ChickSkin.prefab",
+      "sha256": "68c2ccf4e794fb1d7d43825b33404cba3ad71792f2ac1f12c9ba0ea55b799b1f",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/ChickSkin.prefab.meta",
+      "sha256": "b5b491646d5ed29557011a78cbeeaab20a0b03970eed6b6b86543aa16fd6be5e",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Chick.asset",
+      "sha256": "10e6793bef5346629fa074aa7af050de644f88f0538d1c59f92b5af091b33e7f",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Chick.asset.meta",
+      "sha256": "7ba4bec31973e7ca06bc0d94d4f9fe2d7b15d396ba444b02d420e61e370ceb71",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Chick.png",
+      "sha256": "859e82c74d75080d8aa3ef73f2f7445377f6a20ecf2d36ff2c19447888ad10ff",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Chick.png.meta",
+      "sha256": "69917ecd7baeb7efb24e04d9ca80ff4a1f4a050fc7c37229c0bd74b5461a2e8e",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/Chick.fbx.meta",
+      "sha256": "d0145ce61e6255975fd88939c3fcd49a1debe2dcee36c5eb7241336fdb1dc121",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/PigletSkin.prefab",
+      "sha256": "310c10cf8da5b3617585493c8a50bea11d5bfcc7f3d276b486f8691ace5021db",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/PigletSkin.prefab.meta",
+      "sha256": "02aa2e70d0c92a44cbca4d52772e58b4bb3a08141f677dc5daecc283a2f3fdc1",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Piglet.asset",
+      "sha256": "e181ebead156ed394ba4d10a33f941a58cacaf1e4921d1e144b0afe90d701c78",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Piglet.asset.meta",
+      "sha256": "cad646a5d53ebf76fbb60e86911be42369addd7bb3af6233521f39b39107dfdc",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Piglet.png",
+      "sha256": "acbd349d89191a5037b83c075da7e0c8220cbf0230ff6a614ee686e5d381501b",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Piglet.png.meta",
+      "sha256": "6d838e02a8a3dec2a023e3cdb9bbae1ac190f9ff796aa3f091a9461da680e9c8",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/Piglet.fbx.meta",
+      "sha256": "32f16428a0d62c18b7abb16ae222e2d900cf6ef27e23423798ad2431f692ddb7",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/BearCubSkin.prefab",
+      "sha256": "454cb308e22650381b179f39974a1bc801a010e4f2ee543881f23f384d4d940c",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/BearCubSkin.prefab.meta",
+      "sha256": "23e00cc212b7fc441bb0989970f7bbb41ed64981bacfdbf22e335f8c56a9245e",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/BearCub.asset",
+      "sha256": "0d02e1dba830431a524a5b63444a4c4497ca8a9ac7fc6fbbbf7184810eef0571",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/BearCub.asset.meta",
+      "sha256": "236cb2fe6a7d8c1cbb00b4946c4915ddb3dde75944e90cb05e5868c63b209511",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/BearCub.png",
+      "sha256": "5b74cc3018f4d129825f3d2653a7cb0dd4a6742e2e8ad83414057e4a7e4f268f",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/BearCub.png.meta",
+      "sha256": "51af184c30a24a71f009ab330c7c79abc6b6ebbc7b6de76771a3355def5f135a",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/BearCub.fbx.meta",
+      "sha256": "3b054a58a43aa31b9092459a8edcc733b6eb9f4da4d5610cf46d165e7b9e8575",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/AxolotlSkin.prefab",
+      "sha256": "91f2952d44a43927480beaa1bd9b357390f27b10a07c5481a7a6e19a8fb5810d",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/AxolotlSkin.prefab.meta",
+      "sha256": "c67ee3455eb3216b1c6735cd317a41ce78daa202fcca5a914a7f71e4598fea38",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Axolotl.asset",
+      "sha256": "3fd613dc0d8f585f61c0ed5b48d097c87a098953b12053da0ae753dba96b4b1d",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Axolotl.asset.meta",
+      "sha256": "fb59285f9dec3888fafb16b0b08b3973c57d0b5df3497f83b160553dedcb18a4",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Axolotl.png",
+      "sha256": "f9860fb2e27e38335bed5b7e7265c2fd2674a44a6e52125aca93dc3470ee844c",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Axolotl.png.meta",
+      "sha256": "fb2b3faa014720a65039dd43bbef94e0e5f0b0f1aba939ae35e5f6598caa462d",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/Axolotl.fbx.meta",
+      "sha256": "67f577e806e3294eaf9e0ef02794cfa74e66678fff6961dd0f879eddc2a4ad46",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/RedPandaSkin.prefab",
+      "sha256": "724f664620e2dbf141740f073153600c9d03944be14671cbed73da6f980f7d5f",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/RedPandaSkin.prefab.meta",
+      "sha256": "27abeaf2061fa93ca6befc0c0a1b22497fc5bbebe855eb26d2e46edffec4952b",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/RedPanda.asset",
+      "sha256": "0372e0aedf83a61f003a672bdf2f9747860a26588b720a23941086126d3309f7",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/RedPanda.asset.meta",
+      "sha256": "c760ffff855cdd8f8cb00d82fa43fb1eb64296440a32950dea7bca613a6d2c99",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/RedPanda.png",
+      "sha256": "6f630c0e73a271cddb17abc988f784f64988e21e75143c10721c70684146b6db",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/RedPanda.png.meta",
+      "sha256": "b9e66b6f50c39eec19964eb41904fc29eea1bc00f8a23ffd4967668052b26789",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/RedPanda.fbx.meta",
+      "sha256": "224ea47f7dd733c4835ce923610dc0130bb06cfbab1bcc1d06d14ce6ba981c53",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/BeeSkin.prefab",
+      "sha256": "bf47b8ab8a97456bc8d22e970cc0c339ab7602cba140c790c06c281eed1dbc3d",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/BeeSkin.prefab.meta",
+      "sha256": "bcb3b09a5f47d4bcee175e9cac9eef62938d943c69d52186eb100d82f26ec4fd",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Bee.asset",
+      "sha256": "e81ea5d6f76144158010006ef56638136e7612ee7e1714e1ff8cc00a9e22e9f8",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Bee.asset.meta",
+      "sha256": "ef5189f31d07a01065f5eb471e4d5ffe22de52289597792feb1a4cd95eb23759",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Bee.png",
+      "sha256": "7b1c5379df98734247ac5484ce5af7a793ba4821d0bb0bcf9fdd7ba1f76e026e",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Bee.png.meta",
+      "sha256": "23b26be9eacffb2cbe6574934ab1bf97b361ad093731ebb81792201fbd770b35",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/Bee.fbx.meta",
+      "sha256": "fb2bd0c28c78bc37d8166b45b5be5e5452e35667f3180004f02daae5ab43b460",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/MushroomSkin.prefab",
+      "sha256": "78e1e4fe6583b1fd9c88fac3ba55f85f46b86e1e28a33e806d656a4acde0bf45",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/MushroomSkin.prefab.meta",
+      "sha256": "5abe2534ad6e8e9ae0ef0e560facac4c4e57193c43e54876915c047f5112294e",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Mushroom.asset",
+      "sha256": "3c89bd6e97956f0e5ec500279d89df0580d2dc770f8e90d7393aaba56b3df828",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Mushroom.asset.meta",
+      "sha256": "f991925add19af311ed29408b099b37b6ef5527102e7be279b051e40d06d274a",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Mushroom.png",
+      "sha256": "d31e9b2ee6c050357abeac5d721a6f004cf2102a6409e70006a9331a51d1ea73",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Mushroom.png.meta",
+      "sha256": "f399a36a8b293bbc6474200fdd8f1ce13849fbd9faacf84985d71d3b2cb62084",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/Mushroom.fbx.meta",
+      "sha256": "1d29b0bd87b6c7eec4ad6fb807a88e397d3ebdc4903b8d354e54d7264d046142",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/CupcakeSkin.prefab",
+      "sha256": "f5e5f841d342925d85def58ce9d1dce56f5405e0f9a8fede180ff792f75d5e91",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/CupcakeSkin.prefab.meta",
+      "sha256": "a50c833e5fe9374075c819f956c5b6610bdb4d7b20758548facddc8d5d3b1cfd",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Cupcake.asset",
+      "sha256": "f17867108b915704a2f50619069050e03035c79c832adcda54745ef8369ae9c2",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Cupcake.asset.meta",
+      "sha256": "865d4e37db4f76e9cb419d84eab4f640a13a9be7b2e658b254cd6754f8f13ef4",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Cupcake.png",
+      "sha256": "5fe8579025ee082d96580ff908689a5e3cae23716fe80b2b8a3d7e91e3abba49",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Cupcake.png.meta",
+      "sha256": "c5395ced013aed593f80fd53abbbc84c8f7cf82e81b7e43f7ce0259a06047618",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/Cupcake.fbx.meta",
+      "sha256": "f09e1c8a413dad87b736151c2f03301ce49f62ce2b194d64b48498537270e82f",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/DumplingSkin.prefab",
+      "sha256": "922c347a1640dfef25c8afffb2644b97343924273073d3b85e89a906feffd6a4",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/DumplingSkin.prefab.meta",
+      "sha256": "c19689df82512e36698b555c33bfb68ec3f5944f52276ab69bfd00b425d4a46a",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Dumpling.asset",
+      "sha256": "28306ae3453a69bdf20a794945abfe22540858b632088e508d7edd11ae4757d8",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Dumpling.asset.meta",
+      "sha256": "15c51afb30b1d3709fa619bd5d85c9beb724add5fd5721dcebcc1daa241378d7",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Dumpling.png",
+      "sha256": "02e7163e77e15c67699b0e39aebb664b9f3cdc7654b2272c3c6948fed7b31df6",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Dumpling.png.meta",
+      "sha256": "8bd04639aceafc239c44c7e1dbb2b108fb20085e18160b5c55959f59081105f2",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/Dumpling.fbx.meta",
+      "sha256": "c144c9fbc8ae2bb467c3954b472b3098653ced3e3b79719b5075a07cfcdbee22",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/CactusSkin.prefab",
+      "sha256": "a7006e42a1dff44aad17f240c7a2b952b0b29e47efc8861de6958e04b1439053",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/CactusSkin.prefab.meta",
+      "sha256": "9644227479cd54ced970ed982465ff4b81566f242709d35d5846f970dbddc779",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Cactus.asset",
+      "sha256": "703f7059b5e0fe0f3f788685f487dcc6931c14235de6a4cbd1c75c4a9c47235f",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Cactus.asset.meta",
+      "sha256": "91168018df249d6629e9c4b896f2d51ed4ce3595d0ae36b69537b269dd05b4f6",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Cactus.png",
+      "sha256": "0affd10092bbe58db48d87bf05c4808b5ac63ebf6a78b3279da34af418084463",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Cactus.png.meta",
+      "sha256": "423430a0a134e41ca98a13dc9a4aac1bbbd8b441d2597469af5c7bb392dc632e",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/Cactus.fbx.meta",
+      "sha256": "28e29fcc7135a18e5133d3ac9dec61add12f4afb9576cad467e7811edb0913bc",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/BabyDragonSkin.prefab",
+      "sha256": "7e534f73d350ea2f16e119ddbf8c4868d8c017de8b19b1abe0b511cc01d42303",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/BabyDragonSkin.prefab.meta",
+      "sha256": "cc1be338cbbc368cb4ad9b22b638babf03490edc47747cfc27f8b9f4f7626216",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/BabyDragon.asset",
+      "sha256": "a8ab8c250f88d4b10e7f075b0d6bde4440412b4c66714e538ffebcc5e6317e24",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/BabyDragon.asset.meta",
+      "sha256": "b27efbe5aae9b5b1ce1e58436cc3df7d58ec7048cf2c9e776180a99d8d853ae3",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/BabyDragon.png",
+      "sha256": "3c46618ebdafb6442416d0ac492aa6ef26748bc9fc8b0837915b5c5bb810448d",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/BabyDragon.png.meta",
+      "sha256": "078d62c2886bf1dcc4fd0880d97ade237b1eb3b15aa9126778bec789e891c39f",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/BabyDragon.fbx.meta",
+      "sha256": "2557dbde2bdd0c6ca6d4829d67febbc12b182183929979694059d5cd9d38f101",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/UnicornSkin.prefab",
+      "sha256": "6d5a4de381089c21a5532d218149d3896f7d126d361a37b0aa302c3cfdf2057b",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/UnicornSkin.prefab.meta",
+      "sha256": "a87db8a2fef9b29e66caf17a6ecb197d18b031888dac861d1d82f77f1d989af4",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Unicorn.asset",
+      "sha256": "8f1c5596df2021973ad6c96acd1480a724df4087561dd244c416bd2151fa20cb",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Unicorn.asset.meta",
+      "sha256": "515a5eed84a73017a34a4fe625546789360ac231d2082963f99a1afae9d7743f",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Unicorn.png",
+      "sha256": "dd51d85728e252a880b7d18eb9be459415d18a7030cc16095958680eaec14670",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Unicorn.png.meta",
+      "sha256": "d0dc8347606ecbd2ff933b648bfa0a76785ea2a40f4ab28e9f7715100d7eb4f0",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/Unicorn.fbx.meta",
+      "sha256": "306f11e0345a05eb317bb4d6f80b4b27ed1f680a73e8ec9fbc4be8fabf068f4c",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/AstronautSkin.prefab",
+      "sha256": "64a0519b1b686b74505e715b7d3e2abdc4ff6838e219d8df53cf275f5afe08a0",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/AstronautSkin.prefab.meta",
+      "sha256": "63868d066f2d97c108a38231b45d1151bfaf7d17b6d4cf1100e7ade967f1ae54",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Astronaut.asset",
+      "sha256": "064145d75d69e7ae3b1f12cea5536d5da18019407e63a907ec89a8657a7d9685",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Astronaut.asset.meta",
+      "sha256": "439b8b22cfaf51440999ca6c8dc90ee15e84e8f5eef3fbd52e927b459e7961bd",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Astronaut.png",
+      "sha256": "d3b81ffb41d47cc6bb8555a513bbea97f552f4d0ce32371b105f21d0f75445cd",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Astronaut.png.meta",
+      "sha256": "82c9e16cbff135bed2167b2fad2bda127f8e423abceda6dbd60b784eb745412c",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/Astronaut.fbx.meta",
+      "sha256": "a1b3ec20e7c53f00732d2e3a251c893e404e88897a6039c75d648cf2068d26e7",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/ToyKnightSkin.prefab",
+      "sha256": "2c550849513b02ab1c121a81d2b1b04f72e895183917fca96803f7d78c776b52",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/ToyKnightSkin.prefab.meta",
+      "sha256": "104a125b2b2d23ed81e16ae510c97c5f9dc559422a6b265df351f97666e8f5a0",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/ToyKnight.asset",
+      "sha256": "0fb5774ae32245ddf854a2b7dd639b38f53239c237f694d3bd3ba5f40f00ce67",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/ToyKnight.asset.meta",
+      "sha256": "6ce15e72ba9312f3b05a98c4442b003dc83077534d5bc4c375bc5302f11beb96",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/ToyKnight.png",
+      "sha256": "8d1e3a3ada8d2ebb53174f2fe79b597cfb3a51c1145248845f8b8c2c4c85d8ea",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/ToyKnight.png.meta",
+      "sha256": "edfbb8fed6292160900c863dda1eed62b37352154c5e4e6a39593843ad21b014",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/ToyKnight.fbx.meta",
+      "sha256": "19bebb88df6c81d53c25b7ea14f3907c6b4cc49c605d52d8afabae592e4af60a",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/JellyfishSkin.prefab",
+      "sha256": "f2776f5f1b31c65868d874505c8c07a9516bee44a0d4ea208682cfb81dc0eb98",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Prefabs/JellyfishSkin.prefab.meta",
+      "sha256": "d3dbdeacdc7e00a46af819bc65431fd53491e45d92049c8ee8a7460f854adb80",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Jellyfish.asset",
+      "sha256": "af989c8fa74328324242c05dd85c4f0dbc06b6a8257c2e1a7a8e75b1957a3907",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Skins/Jellyfish.asset.meta",
+      "sha256": "20a6c6454d6923d2f2e67c873ebee402e477e2c89867c343013accb235aefafb",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Jellyfish.png",
+      "sha256": "988d25e51372d14f4b0167e01db831259f6af3468b08d1330a410ca02f0874ac",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/Icons/Skins/Jellyfish.png.meta",
+      "sha256": "4be30bd1257fe63bf567db34e4016b48c135492b4a54f5117be837c0597cd88d",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/FBX/Jellyfish.fbx.meta",
+      "sha256": "99f6f4593af21dd7658a51da7123028dc0e717918a963dc127e6bddbace25255",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Materials/ToyPalette.mat",
+      "sha256": "a5ff0684bcfedffdd5f8d28adc8aca2588abc9f6399d0cafc7e0fc953a155a7d",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Materials/ToyPalette.mat.meta",
+      "sha256": "15d48c2fab55c11c7802acedd33d05c6198057838d72ff09cf409bec2ae7f0f0",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Textures/ToyPalette.png",
+      "sha256": "4721694916d313e7ef017a486a1fe87358be53596b38e8387abddbff561e2953",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/Textures/ToyPalette.png.meta",
+      "sha256": "366134cf606173a6eec485e6eacf3342d5aea2e717e96eea44e5c6a0757ba1f4",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Resources/PlayerModel/ToySkins.json.meta",
+      "sha256": "72c91c7f0fa8610c5e10cddca116982b3f0fc62e032534b28d6a622c4e16477a",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Art/UI.meta",
+      "sha256": "88dd1b189363e2aa4b4a73ab3ca6a101fd42d2d1abd855186baa99855ca04de6",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Art/UI/SlimeMascot.png.meta",
+      "sha256": "e546484736d32188eb4484427593d4a200b4a9b5df5239c17523d05d62ac6c15",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scripts/UI/Menu/MenuLabelFloat.cs.meta",
+      "sha256": "e635f31274fc1a180fcdf67e0cb69437f8da067dfacf5eee4c9addbb38297c6c",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scripts/Skins/Editor/ToySkinBuilder.cs.meta",
+      "sha256": "06f5b0d4ceada830b746c5bd02f20caaa06aab36d3a17ef2d3e17aa1591ee436",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scripts/Skins/Editor/MenuRefreshSetup.cs.meta",
+      "sha256": "c4dc6de6e046ca1dc6263bb2e71d7ffa5f0330ae3f6f04b2667bf2301bfe1f54",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scripts/Skins/Editor/MenuRefreshPlayModeCheck.cs.meta",
+      "sha256": "3e5427aa053a40b8a00abe3991b8a5c990c6de14ff317827d58291cf79962bbf",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scenes/Menu.unity",
+      "sha256": "6b4871e670d02e636be8ffff67b6d54ae3affbacc33cd5680c6917c5c1df1ec9",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Shop/ShopContent.asset",
+      "sha256": "4ea3f8ff83213aa37361bf3d66c6cbaee5a8f679955a6c17342b6cf8f24c12f2",
+      "matchesVerified": true
+    },
+    {
+      "path": "Assets/MadSlime/Scriptables/Roulette/RouletteConfig.asset",
+      "sha256": "9b87ccbdff2d15ac5d8d8a96ff3c8cdf522cbc8b0f734b23a3b7603f76a3f715",
+      "matchesVerified": true
+    }
+  ],
+  "outlineReadWriteOnly": [
+    "Assets/MadSlime/Art/City/FBX/Bakery.fbx",
+    "Assets/MadSlime/Art/City/FBX/BrickApartment.fbx",
+    "Assets/MadSlime/Art/City/FBX/BusStop.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/CarCoupe.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/CarHatchback.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/CarSUV.fbx",
+    "Assets/MadSlime/Art/City/FBX/CoffeeKiosk.fbx",
+    "Assets/MadSlime/Art/City/FBX/ConstructionSite.fbx",
+    "Assets/MadSlime/Art/City/FBX/CornerDiner.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/FireHydrant.fbx",
+    "Assets/MadSlime/Art/City/FBX/FoodTruck.fbx",
+    "Assets/MadSlime/Art/City/FBX/GasStation.fbx",
+    "Assets/MadSlime/Art/City/FBX/IceCreamKiosk.fbx",
+    "Assets/MadSlime/Art/City/FBX/MiniMarket.fbx",
+    "Assets/MadSlime/Art/City/FBX/Newsstand.fbx",
+    "Assets/MadSlime/Art/City/FBX/OfficeTower.fbx",
+    "Assets/MadSlime/Art/City/FBX/PanelApartment.fbx",
+    "Assets/MadSlime/Art/City/FBX/ParkBench.fbx",
+    "Assets/MadSlime/Art/City/FBX/PlanterTree.fbx",
+    "Assets/MadSlime/Art/City/FBX/ProduceStall.fbx",
+    "Assets/MadSlime/Art/City/FBX/SmallHouse.fbx",
+    "Assets/MadSlime/Art/City/FBX/SteppedSkyscraper.fbx",
+    "Assets/MadSlime/Art/City/FBX/StreetLamp.fbx",
+    "Assets/MadSlime/Art/City/FBX/Townhouse.fbx",
+    "Assets/MadSlime/Art/City/FBX/TrafficLightFourWay.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/TrashBin.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/BicycleBMX.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/BicycleCity.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/BicycleMountain.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/BusCity.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/BusCoach.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/BusRetro.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/KickScooter.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/Motorcycle.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/ParkingMeter.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/RoadBarrier.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/ShoppingCart.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/Tank.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/TireStack.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/TrafficCone.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/TruckBox.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/TruckFlatbed.fbx",
+    "Assets/MadSlime/Art/Parking/FBX/TruckTanker.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Furniture/Armchair_02.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Furniture/Bed_07.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Furniture/Bed_02.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Furniture/Bed_02_Door_02.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Furniture/Bed_02_Door_01.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Furniture/Bed_02_Door_03.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Decorations/Book_08.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Furniture/Chair_17.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Furniture/Chair_PC_04.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Decorations/Clock_03.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Furniture/Closet_02.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Furniture/Closet_02_Door_02.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Furniture/Closet_02_Door_01.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Furniture/Couch_11.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Furniture/Couch_08.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Kitchen/Fridge_01.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Kitchen/Fridge_01_Door_02.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Kitchen/Fridge_01_Door_01.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Decorations/GameConsole_01.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Decorations/Guitar_01.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Decorations/Keyboard_01.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Kitchen/Kitchen_D_01.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Kitchen/Kitchen_D_01_Door_01.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Kitchen/Kitchen_D_01_Door_02.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Kitchen/Kitchen_D_06.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Kitchen/Kitchen_D_09.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Kitchen/Kitchen_D_09_Door.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Furniture/Kitchen_Table_09.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Kitchen/Microwave_01.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Kitchen/Microwave_01_Door.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Decorations/Mouse_01.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Furniture/Nightstand_02.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Furniture/Nightstand_02_Door.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Bathroom/Toilet_03.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Bathroom/Toilet_03_Cover.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Bathroom/Toothbrush_01.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Bathroom/Toothpaste_01.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Decorations/Toy_03.fbx",
+    "Assets/ithappy/Cute_Furniture_Free/Meshes/Decorations/Toy_02.fbx",
+    "Assets/MadSlime/Art/Space/FBX/AsteroidIce.fbx",
+    "Assets/MadSlime/Art/Space/FBX/AsteroidMetal.fbx",
+    "Assets/MadSlime/Art/Space/FBX/AsteroidRock.fbx",
+    "Assets/MadSlime/Art/Space/FBX/BoosterRocket.fbx",
+    "Assets/MadSlime/Art/Space/FBX/CargoCapsule.fbx",
+    "Assets/MadSlime/Art/Space/FBX/ContainerFreighter.fbx",
+    "Assets/MadSlime/Art/Space/FBX/CrewCapsule.fbx",
+    "Assets/MadSlime/Art/Space/FBX/CrystalAsteroid.fbx",
+    "Assets/MadSlime/Art/Space/FBX/CubeSatellite.fbx",
+    "Assets/MadSlime/Art/Space/FBX/DebrisAntenna.fbx",
+    "Assets/MadSlime/Art/Space/FBX/DebrisHull.fbx",
+    "Assets/MadSlime/Art/Space/FBX/DebrisPanel.fbx",
+    "Assets/MadSlime/Art/Space/FBX/DeepSpaceProbe.fbx",
+    "Assets/MadSlime/Art/Space/FBX/DishSatellite.fbx",
+    "Assets/MadSlime/Art/Space/FBX/LunarLander.fbx",
+    "Assets/MadSlime/Art/Space/FBX/OrbitalStation.fbx",
+    "Assets/MadSlime/Art/Space/FBX/ResearchShip.fbx",
+    "Assets/MadSlime/Art/Space/FBX/RingStation.fbx",
+    "Assets/MadSlime/Art/Space/FBX/SpaceShuttle.fbx",
+    "Assets/MadSlime/Art/Space/FBX/SpaceTelescope.fbx",
+    "Assets/MadSlime/Art/Space/FBX/SpentStage.fbx",
+    "Assets/MadSlime/Art/Space/FBX/SputnikSatellite.fbx",
+    "Assets/MadSlime/Art/Space/FBX/StubbyRocket.fbx",
+    "Assets/MadSlime/Art/TableTreats/ChocolateChipCookie.fbx",
+    "Assets/MadSlime/Art/TableTreats/GingerbreadMan.fbx",
+    "Assets/MadSlime/Art/TableTreats/Lollipop.fbx",
+    "Assets/MadSlime/Art/TableRefresh/Strawberry.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/BarredGalaxy.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/BinaryStar.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/BlackHole.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/BlueStar.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/Comet.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/DwarfCeres.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/DwarfPluto.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/EarthPlanet.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/EllipticalGalaxy.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/GlobularCluster.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/JupiterPlanet.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/MarsPlanet.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/MercuryPlanet.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/MoonCratered.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/NeptunePlanet.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/PlanetaryNebula.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/RedGiant.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/SaturnPlanet.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/SpiralGalaxy.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/SunStar.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/UranusPlanet.fbx",
+    "Assets/MadSlime/Art/Universe/FBX/VenusPlanet.fbx"
+  ]
+}

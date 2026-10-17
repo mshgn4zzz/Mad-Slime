@@ -1,20 +1,15 @@
 # Wallet
 
-**Слой:** Gameplay · **Код:** `Assets/MadSlime/Scripts/Game/Wallet.cs`
+**Слой:** Gameplay · **Код:** `Assets/MadSlime/Scripts/Economy/Runtime/Wallet.cs`
 
-Кошелёк — обёртка над `PlayerProgress.Balance` с событием.
+Кошелёк — обёртка над `IBalanceStorage.Balance` с событием. Сам сейв не пишет: коммит баланса — дело транзакций вызывающих ([[FillSceneOrchestrator]], фабрика рулеток).
 
 ## Механика
 
-- `Add(amount)` / `Spend(amount)`: валидация (amount > 0; при Spend — достаточность баланса, иначе исключение) → изменение `_progress.Balance` → **немедленный `_progress.Save()`** → `BalanceChanged(previous, current)`
-- Баланс читают напрямую: [[RouletteService]] (CanSpinForCoins), [[ShopPanel]] (показ)
+- `Add(amount)` / `Spend(amount)`: валидация (amount > 0; при Spend — достаточность, иначе исключение) → `_balanceStorage.SetBalance` → `BalanceChanged(previous, current)`
+- Баланс читают напрямую: [[Рулетки | RouletteAccess]] (платные крутки), [[Магазин | ShopBalanceView]] (показ)
 
 ## Кто двигает монеты
 
-- **Add:** [[Rewarder]] (итог заливки), FillUIFabric (rewarded ×2), [[RouletteService]] (выигрыши рулетки, компенсации)
-- **Spend:** [[RouletteService]] (обе крутки), [[ShopPanel]] (апгрейды/перки)
-
-## Слабые места
-
-- Save на каждую операцию: крутка скина даёт **две записи подряд** (Spend сохранил, SkinSpinCount++ сохранил ещё раз — `RouletteService.cs:165-178`) — двойная запись localStorage.
-- Исключение при нехватке монет как ветка логики — вызывающие обязаны проверять `CanSpin*`/стоимость заранее.
+- **Add:** [[Rewarder]] (итог заливки, спасение), rewarded ×2 ([[UI-фабрики | FillUIFabric]]), выигрыши и компенсации рулеток
+- **Spend:** крутки рулеток, апгрейды/перки ([[Магазин]])

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c47ef906deb27a94fa1033fe633fe3cd, type: 3}
+  m_Name: SpaceTheme
+  m_EditorClassIdentifier: 
+  _floorMaterial: {fileID: 2100000, guid: 141d74004e1396e9aafc21c1821d7480, type: 2}
+  _extendFloorBackground: 1
+  _fillShapeTexture: {fileID: 2800000, guid: 5e72e36b136aa83669ef0f947a548d52, type: 3}
+  _fillShapeTextures:
+  - {fileID: 2800000, guid: 5e72e36b136aa83669ef0f947a548d52, type: 3}
+  - {fileID: 2800000, guid: 01acf0b4d533e462db713616ff04f48c, type: 3}
+  - {fileID: 2800000, guid: 0e7d0661fda7dae0c8be3200e8b35625, type: 3}

@@ -112,29 +112,29 @@ MonoBehaviour:
     _requiredMass: 0
     _scaleMultiplier: 2
     _speed: 6
-    _cameraOffsetMultiplier: 1
+    _cameraOffsetMultiplier: 0.6
   - _tier: 1
-    _requiredMass: 50
-    _scaleMultiplier: 10
-    _speed: 15
-    _cameraOffsetMultiplier: 1.5
-  - _tier: 2
-    _requiredMass: 4000
-    _scaleMultiplier: 15
-    _speed: 30
+    _requiredMass: 100
+    _scaleMultiplier: 8
+    _speed: 12
     _cameraOffsetMultiplier: 2
+  - _tier: 2
+    _requiredMass: 13000
+    _scaleMultiplier: 15
+    _speed: 20
+    _cameraOffsetMultiplier: 3.5
   - _tier: 3
-    _requiredMass: 15000
+    _requiredMass: 45000
     _scaleMultiplier: 25
-    _speed: 55
-    _cameraOffsetMultiplier: 2.5
+    _speed: 40
+    _cameraOffsetMultiplier: 5
   - _tier: 4
-    _requiredMass: 40000
+    _requiredMass: 140000
     _scaleMultiplier: 60
-    _speed: 70
-    _cameraOffsetMultiplier: 4
-  - _tier: 5
-    _requiredMass: 70000
-    _scaleMultiplier: 150
-    _speed: 125
+    _speed: 60
     _cameraOffsetMultiplier: 8
+  - _tier: 5
+    _requiredMass: 250000
+    _scaleMultiplier: 150
+    _speed: 100
+    _cameraOffsetMultiplier: 16

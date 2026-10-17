@@ -1,0 +1,1 @@
+PASS: 23 new Blender models, 138 definitions, 23 selected semantic tiers, valid icons/materials/colliders, Parking 1-24 and City 25-49 preserved, Space 50+.

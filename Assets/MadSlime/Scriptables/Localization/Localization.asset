@@ -26,10 +26,13 @@ MonoBehaviour:
     _en: 'Earned:'
     _tr: "Kazanılan:"
   - _key: leaderboard_login_hint
-    _ru: "Войди, чтобы попасть
-      в рейтинг"
-    _en: Log in to enter the leaderboard
-    _tr: "Liderlik tablosuna girmek için giriş yap"
+    _ru: "Войди, чтобы увидеть рейтинг и добавить свой результат"
+    _en: Log in to view the leaderboard and submit your score
+    _tr: "Liderlik tablosunu görmek ve puanını eklemek için giriş yap"
+  - _key: leaderboard_anonymous
+    _ru: "Аноним"
+    _en: Anonymous
+    _tr: Anonim
   - _key: leaderboard_loading
     _ru: "Загрузка рейтинга..."
     _en: Loading leaderboard...

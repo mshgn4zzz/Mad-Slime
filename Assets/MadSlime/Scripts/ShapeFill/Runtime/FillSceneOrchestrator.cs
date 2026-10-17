@@ -14,6 +14,7 @@ namespace Game
     public class FillSceneOrchestrator : MonoBehaviour
     {
         [SerializeField] private Playlist _musicPlaylist;
+        [SerializeField] private MeshRenderer _floorRenderer;
 
         [Tooltip("Пауза перед показом окна победы после финала заливки: игрок видит конфетти и пунш формы (с).")]
         [SerializeField, Min(0f)] private float _winWindowDelay = 1f;
@@ -77,6 +78,12 @@ namespace Game
 
         private void Awake()
         {
+            if (_floorRenderer == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: FloorRenderer is not assigned. Drag the floor MeshRenderer into the _floorRenderer field.");
+            }
+
             if (_config == null)
             {
                 throw new InvalidOperationException(
@@ -417,6 +424,11 @@ namespace Game
             if (config.Theme == null)
             {
                 return;
+            }
+
+            if (config.Theme.FloorMaterial != null)
+            {
+                _floorRenderer.sharedMaterial = config.Theme.FloorMaterial;
             }
 
             Texture2D shapeTexture = config.Theme.PickFillShapeTexture();

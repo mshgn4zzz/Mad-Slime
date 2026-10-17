@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c47ef906deb27a94fa1033fe633fe3cd, type: 3}
+  m_Name: ParkingTheme
+  m_EditorClassIdentifier: 
+  _floorMaterial: {fileID: 2100000, guid: 09ba655a05669047c951a0597d10a0b1, type: 2}
+  _fillShapeTexture: {fileID: 2800000, guid: 4f42f9bc76183b58783d85a2359fe0e5, type: 3}
+  _fillShapeTextures:
+  - {fileID: 2800000, guid: 4f42f9bc76183b58783d85a2359fe0e5, type: 3}
+  - {fileID: 2800000, guid: 1c77ce1049610a9b8ba867572731de84, type: 3}
+  - {fileID: 2800000, guid: 8db6d22ef8b33d764b0d524b3073b207, type: 3}

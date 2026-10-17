@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c47ef906deb27a94fa1033fe633fe3cd, type: 3}
+  m_Name: UniverseTheme
+  m_EditorClassIdentifier: 
+  _floorMaterial: {fileID: 2100000, guid: d55ba7e466d28c853ae7caa08029b8c6, type: 2}
+  _extendFloorBackground: 1
+  _fillShapeTexture: {fileID: 2800000, guid: e20d047b569876968bf40a5411ddad29, type: 3}
+  _fillShapeTextures:
+  - {fileID: 2800000, guid: e20d047b569876968bf40a5411ddad29, type: 3}
+  - {fileID: 2800000, guid: 14b978a7cf8fd4179ade8a1e066fb10c, type: 3}
+  - {fileID: 2800000, guid: 224a0961d2102dfed9dd9a3cc1c1fe24, type: 3}

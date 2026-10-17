@@ -1,30 +1,29 @@
 # PlayerUpgrades
 
-**Слой:** Gameplay · **Код:** `Assets/MadSlime/Scripts/Upgrades/PlayerUpgrades.cs` (MonoBehaviour, префаб [[ProjectLifetimeScope]])
+**Слой:** Gameplay · **Код:** `Assets/MadSlime/Scripts/Upgrades/Runtime/PlayerUpgrades.cs` (MonoBehaviour, префаб [[ProjectLifetimeScope]])
 
-Фасад прогрессии: переводит уровни апгрейдов из сейва + [[UpgradesConfig]] в числовые множители, которые читает геймплей.
+Фасад прогрессии: переводит уровни апгрейдов из сейва (`IUpgradesStorage`) + [[UpgradesConfig]] в числовые значения, которые читают геймплей и магазин.
 
 ## Производные значения
 
-| Свойство | Формула | Кто читает |
+| Метод | Формула | Кто читает |
 |---|---|---|
-| `SpeedMultiplier` | 1 + 0.1 × уровень Speed | [[Mover]]/[[LevelScaler]] |
-| `MassMultiplier` | по Appetite | [[Player]] (масса за любой предмет) |
-| `QuotaMassMultiplier` | Appetite × Taste вместе | [[Player]] (масса за квотный предмет) |
-| `ForeignFillMultiplier` | по Metabolism | [[Player]] (вес «заливки» не-квотой) |
-| `HasSmell` / `HasAdrenaline` / `HasAmbitions` | PurchasedPerks.Contains | подсветка квоты, [[AdrenalineBoost]], |
-| `AmbitionTierOffset` | HasAmbitions ? 1 : 0 | порог «не по зубам» ([[Детекция и сбор]]) |
-| `AdrenalineSpeedMultiplier/ThresholdFraction`, `HighlightColor` | из конфига | AdrenalineBoost, подсветка |
+| `GetSpeedMultiplier()` | по Speed | [[Движение | Movement]] |
+| `GetMassMultiplier()` | по Appetite | [[Рост игрока | MassGainer]] (масса за любой предмет) |
+| `GetQuotaMassMultiplier()` | Appetite × Taste вместе | MassGainer (масса за квотный предмет) |
+| `GetForeignFillMultiplier()` | по Metabolism | [[Квота | QuotaCounter]] (вес «заливки» не-квотой) |
+| `HasSmell` / `HasAdrenaline` / `HasAmbitions` | `IsPerkPurchased` | подсветка квоты, [[AdrenalineBoost]], [[Рост игрока | CollectAvailability]] |
+| `GetPerk(PerkType)` | запись перка (Value и т.п.) | AdrenalineBoost (множитель) |
 
 ## Магазин
 
-`GetLevel`, `IsMaxed`, `GetNextCost` (base + step × level), `PurchaseStepped` (уровень+1 ⇒ Save), `GetPerkCost`, `PurchasePerk` (Add ⇒ Save). `Awake` прогоняет все записи конфига через геттеры — проверка, что сейв согласован.
+`GetLevel`, `IsMaxed`, `GetNextCost` (base + step × level), `GetMaxSteps`, `GetNextStepValue`, `GetTotalValue`, `PurchaseStepped` (уровень+1 ⇒ сейв-транзакция), `GetPerkCost`, `PurchasePerk`. Для UI: `Config`, `UpgradeEntries`, `PerkEntries` (грид вкладки улучшений — [[Магазин | ShopPanel]]/[[Меню | MenuNavigation]]).
 
 ## Связи
 
-- [[UpgradesConfig]], [[PlayerProgress]], потребители из таблицы + [[ShopPanel]] (грид вкладки «Улучшения»)
+- [[UpgradesConfig]], сейв-шов `IUpgradesStorage` ([[Интерфейсы Core (шов YG2)]])
 
-## Слабые места
+## Нюансы
 
-- Семантика «valuePerStep» у каждого типа своя (доля/множитель) — интерпретация живёт в этом классе, контракт неявный.
-- Двойная роль: и рантайм-множители, и логика магазина — смешение ответственности в одном классе.
+- Семантика «valuePerStep» у каждого типа своя (доля/множитель) — интерпретация живёт в этом классе
+- Двойная роль: рантайм-множители + логика покупки — осознанная связка вокруг одного сейв-поля уровней

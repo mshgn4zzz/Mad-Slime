@@ -1,0 +1,1 @@
+PASS: 22 models, 132 variants, 22 valid icons, palette materials, floor pivots, Table through 24, Parking from 25.

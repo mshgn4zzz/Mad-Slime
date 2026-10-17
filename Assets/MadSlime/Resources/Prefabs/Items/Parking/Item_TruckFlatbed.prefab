@@ -1,0 +1,161 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8933606435400139550
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3201317586641816809}
+  - component: {fileID: 1438873165594850646}
+  - component: {fileID: 1071776974348970508}
+  - component: {fileID: 7378153027345193801}
+  - component: {fileID: 2807170801109294880}
+  m_Layer: 3
+  m_Name: Item_TruckFlatbed
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3201317586641816809
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8933606435400139550}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.026749888, y: 0.026749888, z: 0.026749888}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7284703026670087032}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1438873165594850646
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8933606435400139550}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.47, y: 1.6999999, z: 5.6075}
+  m_Center: {x: 0, y: 0.84999996, z: 0}
+--- !u!114 &1071776974348970508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8933606435400139550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f42675b1a0c0800ceb4a2e5cb8ce0ff2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _ghostMaterial: {fileID: 2100000, guid: 2566cc4f8c7914449b603a2474de69ba, type: 2}
+  _ghostFadeConfig: {fileID: 11400000, guid: ee25c91a9b0da4b94b8654ae2cfe4341, type: 2}
+--- !u!114 &7378153027345193801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8933606435400139550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa669f528708ba027a628953ef1ce0c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _collider: {fileID: 1438873165594850646}
+--- !u!114 &2807170801109294880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8933606435400139550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a77683e9bb44744928d3066b37ee7a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _definition: {fileID: 11400000, guid: 330cbb83a12c975e1a6e67350f2c0f8c, type: 2}
+--- !u!1001 &314876521617526819
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3201317586641816809}
+    m_Modifications:
+    - target: {fileID: 7009532079192783707, guid: 7f0e30c1de1bb813da0ae0513329b1d3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7009532079192783707, guid: 7f0e30c1de1bb813da0ae0513329b1d3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7009532079192783707, guid: 7f0e30c1de1bb813da0ae0513329b1d3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7009532079192783707, guid: 7f0e30c1de1bb813da0ae0513329b1d3, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7009532079192783707, guid: 7f0e30c1de1bb813da0ae0513329b1d3, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7009532079192783707, guid: 7f0e30c1de1bb813da0ae0513329b1d3, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7009532079192783707, guid: 7f0e30c1de1bb813da0ae0513329b1d3, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7009532079192783707, guid: 7f0e30c1de1bb813da0ae0513329b1d3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7009532079192783707, guid: 7f0e30c1de1bb813da0ae0513329b1d3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7009532079192783707, guid: 7f0e30c1de1bb813da0ae0513329b1d3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7338395731563248136, guid: 7f0e30c1de1bb813da0ae0513329b1d3, type: 3}
+      propertyPath: m_Name
+      value: TruckFlatbed
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7f0e30c1de1bb813da0ae0513329b1d3, type: 3}
+--- !u!4 &7284703026670087032 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7009532079192783707, guid: 7f0e30c1de1bb813da0ae0513329b1d3, type: 3}
+  m_PrefabInstance: {fileID: 314876521617526819}
+  m_PrefabAsset: {fileID: 0}

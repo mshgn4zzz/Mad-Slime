@@ -1,22 +1,16 @@
 # UiAnimations
 
-**Слой:** UI · **Код:** `Assets/MadSlime/Scripts/UI/Animations/`
+**Слой:** UI · **Код:** `Assets/MadSlime/Scripts/UI/Animations/` (AnimationScheduler, ReactiveUIView, TweenAnimatorBase, UiFadeAnimator, UiMoveAnimator, UiScaleAnimator, UiEnableTarget)
 
 Мини-фреймворк появления/исчезновения UI на DOTween.
 
 ## Состав
 
-- **UiAnimations** (static): `ScaleIn` (0.6× → база, OutBack, 0.25 с, unscaled time) и `ScaleOut` (в ноль, InBack, 0.2 с + callback) — база всех окон ([[Окна]]) и экрана рулетки
-- **UiEnableAnimation**: авто-анимация появления при `OnEnable` — scale-in или слайд из края (`UiAppearMode`: None/Scale/FromLeft/…), 0.3 с, офсет 140; `PlayOutro()` — обратная и `SetActive(false)`; запоминает «включённое» состояние в Awake
-- **UiEnableScheduler**: режиссёр каскадов — два массива `UiEnableTarget {target, delay}`: включение при старте сцены и при первом движении (`PlayerInputReader.MovementKeyPressed` — до старта сессии HUD скрыт), выключение/Outro при `Timer.Finished` или `QuotaCompleted`
-- **UiEnableTarget** — сериализуемая пара
+- **ReactiveUIView** — сердце окна ([[Окна | BaseWindow]]): `Enable()`/`Disable()` запускают каскад аниматоров (fade/move/scale), событие `DisableCompleted` — окно уничтожается только после него
+- **UiFadeAnimator / UiMoveAnimator / UiScaleAnimator** (общая база `TweenAnimatorBase`) — шаги каскада, unscaled time
+- **AnimationScheduler** — режиссёр каскадов: `Play(animations, delays)` / `Cancel`; два инстанса в HUD Game — «старт сцены» и «старт геймплея» ([[HUD | GameplayHud]] регистрирует `UiEnableTarget`-цели: при подготовке сцены HUD скрыт, при первом вводе ([[GameplayOrchestrator]] `GameplayStarted`) — каскад появления)
+- **UiEnableTarget** — сериализуемая пара «цель + задержка»
 
 ## Связи
 
-- [[HUD]], [[Окна]], [[RouletteView]], [[Timer]], [[LevelProgress]], [[PlayerInputReader]]
-- Сцена Game настраивается тулзой «Run Mad Slime → Setup Game FX» (упоминание в тексте исключений `UiEnableScheduler.cs:156`)
-
-## Слабые места
-
-- Отписки UiEnableScheduler только в `OnDestroy` (`UiEnableScheduler.cs:62-79`): при `OnDisable` подписки живы — FinishTargets может дёрнуться на выключенном компоненте.
-- Тексты исключений ссылаются на имя тулзы, которого нет в меню SetupAll (запускается отдельно) — лёгкий рассинхрон доков.
+- [[HUD]], [[Окна]], [[GameplayOrchestrator]]

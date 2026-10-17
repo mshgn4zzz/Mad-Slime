@@ -1,0 +1,161 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3319915029175127996
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1956463442396840269}
+  - component: {fileID: 3430077508248740914}
+  - component: {fileID: 3079294630990165589}
+  - component: {fileID: 1270048489890816237}
+  - component: {fileID: 3127798112364948969}
+  m_Layer: 3
+  m_Name: Item_MarsPlanet
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1956463442396840269
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3319915029175127996}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.033750005, y: 0.033750005, z: 0.033750005}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1641010135638711080}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &3430077508248740914
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3319915029175127996}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.999999, y: 1.9999999, z: 1.9999995}
+  m_Center: {x: 0, y: 0.99999994, z: 0}
+--- !u!114 &3079294630990165589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3319915029175127996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f42675b1a0c0800ceb4a2e5cb8ce0ff2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _ghostMaterial: {fileID: 2100000, guid: 2566cc4f8c7914449b603a2474de69ba, type: 2}
+  _ghostFadeConfig: {fileID: 11400000, guid: ee25c91a9b0da4b94b8654ae2cfe4341, type: 2}
+--- !u!114 &1270048489890816237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3319915029175127996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa669f528708ba027a628953ef1ce0c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _collider: {fileID: 3430077508248740914}
+--- !u!114 &3127798112364948969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3319915029175127996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a77683e9bb44744928d3066b37ee7a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _definition: {fileID: 11400000, guid: 15c126d750c2b808fa21ae6e65df31bf, type: 2}
+--- !u!1001 &4618576890585720684
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1956463442396840269}
+    m_Modifications:
+    - target: {fileID: 3469653857270206683, guid: 6217653d6cf1a08a2aca7b2c4051ed15, type: 3}
+      propertyPath: m_Name
+      value: MarsPlanet
+      objectReference: {fileID: 0}
+    - target: {fileID: 6259564983814667332, guid: 6217653d6cf1a08a2aca7b2c4051ed15, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6259564983814667332, guid: 6217653d6cf1a08a2aca7b2c4051ed15, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6259564983814667332, guid: 6217653d6cf1a08a2aca7b2c4051ed15, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6259564983814667332, guid: 6217653d6cf1a08a2aca7b2c4051ed15, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6259564983814667332, guid: 6217653d6cf1a08a2aca7b2c4051ed15, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6259564983814667332, guid: 6217653d6cf1a08a2aca7b2c4051ed15, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6259564983814667332, guid: 6217653d6cf1a08a2aca7b2c4051ed15, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6259564983814667332, guid: 6217653d6cf1a08a2aca7b2c4051ed15, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6259564983814667332, guid: 6217653d6cf1a08a2aca7b2c4051ed15, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6259564983814667332, guid: 6217653d6cf1a08a2aca7b2c4051ed15, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6217653d6cf1a08a2aca7b2c4051ed15, type: 3}
+--- !u!4 &1641010135638711080 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6259564983814667332, guid: 6217653d6cf1a08a2aca7b2c4051ed15, type: 3}
+  m_PrefabInstance: {fileID: 4618576890585720684}
+  m_PrefabAsset: {fileID: 0}

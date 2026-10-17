@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e79f510ee66e4552921654b4409ab2d9, type: 3}
+  m_Name: Cupcake
+  m_EditorClassIdentifier: 
+  _model: {fileID: 1152122081081846789, guid: 95f1913889d72db8cb5823a6c596ed33, type: 3}
+  _icon: {fileID: 21300000, guid: 0eb7c340b731fbbd0af71ab5be462282, type: 3}
+  _rarity: 3
+  _id: Cupcake

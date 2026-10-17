@@ -1,0 +1,378 @@
+{
+  "models": [
+    {
+      "name": "RingStation",
+      "category": "Station",
+      "triangles": 1604,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        5.089999675750732,
+        2.9800000190734863,
+        1.4971286058425903
+      ]
+    },
+    {
+      "name": "DebrisPanel",
+      "category": "Debris",
+      "triangles": 152,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.450603723526001,
+        1.3836954832077026,
+        0.2133702039718628
+      ]
+    },
+    {
+      "name": "DebrisHull",
+      "category": "Debris",
+      "triangles": 52,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.309999942779541,
+        1.0,
+        0.3199999928474426
+      ]
+    },
+    {
+      "name": "AsteroidRock",
+      "category": "Asteroid",
+      "triangles": 400,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.7430932521820068,
+        1.4549598693847656,
+        1.2334799766540527
+      ]
+    },
+    {
+      "name": "AsteroidIce",
+      "category": "Asteroid",
+      "triangles": 140,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.5649933815002441,
+        1.2002331018447876,
+        1.6664361953735352
+      ]
+    },
+    {
+      "name": "AsteroidMetal",
+      "category": "Asteroid",
+      "triangles": 120,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.7749836444854736,
+        1.305051326751709,
+        1.0668392181396484
+      ]
+    },
+    {
+      "name": "CrystalAsteroid",
+      "category": "Asteroid",
+      "triangles": 152,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.8090205192565918,
+        1.652679681777954,
+        2.0542047023773193
+      ]
+    },
+    {
+      "name": "CubeSatellite",
+      "category": "Satellite",
+      "triangles": 456,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        2.5900001525878906,
+        1.059999942779541,
+        1.182131052017212
+      ]
+    },
+    {
+      "name": "SputnikSatellite",
+      "category": "Satellite",
+      "triangles": 496,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        2.565445899963379,
+        2.5619115829467773,
+        1.223070502281189
+      ]
+    },
+    {
+      "name": "DishSatellite",
+      "category": "Satellite",
+      "triangles": 576,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        2.759999990463257,
+        1.4500000476837158,
+        1.3149999380111694
+      ]
+    },
+    {
+      "name": "DeepSpaceProbe",
+      "category": "Probe",
+      "triangles": 608,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        2.6500000953674316,
+        1.9922311305999756,
+        1.3070759773254395
+      ]
+    },
+    {
+      "name": "LunarLander",
+      "category": "Lander",
+      "triangles": 780,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        2.259999990463257,
+        2.0799999237060547,
+        1.9269503355026245
+      ]
+    },
+    {
+      "name": "SpentStage",
+      "category": "Rocket",
+      "triangles": 724,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.0299999713897705,
+        3.0429999828338623,
+        1.0
+      ]
+    },
+    {
+      "name": "CargoCapsule",
+      "category": "Capsule",
+      "triangles": 796,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        2.7200000286102295,
+        1.9780001640319824,
+        0.9800001382827759
+      ]
+    },
+    {
+      "name": "DebrisAntenna",
+      "category": "Debris",
+      "triangles": 100,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        0.8399999737739563,
+        1.549112319946289,
+        0.6372519731521606
+      ]
+    },
+    {
+      "name": "ContainerFreighter",
+      "category": "Ship",
+      "triangles": 1116,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.6699999570846558,
+        3.8554999828338623,
+        1.0150814056396484
+      ]
+    },
+    {
+      "name": "OrbitalStation",
+      "category": "Station",
+      "triangles": 2032,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        3.3499999046325684,
+        3.25,
+        1.331866979598999
+      ]
+    },
+    {
+      "name": "ResearchShip",
+      "category": "Ship",
+      "triangles": 1428,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        2.869999885559082,
+        3.950500011444092,
+        1.7126998901367188
+      ]
+    },
+    {
+      "name": "StubbyRocket",
+      "category": "Rocket",
+      "triangles": 376,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.880000114440918,
+        2.430000066757202,
+        0.9999999403953552
+      ]
+    },
+    {
+      "name": "BoosterRocket",
+      "category": "Rocket",
+      "triangles": 864,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        2.4600000381469727,
+        3.4050002098083496,
+        0.9000000953674316
+      ]
+    },
+    {
+      "name": "CrewCapsule",
+      "category": "Capsule",
+      "triangles": 396,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        1.2400001287460327,
+        1.382500171661377,
+        1.2400000095367432
+      ]
+    },
+    {
+      "name": "SpaceTelescope",
+      "category": "Probe",
+      "triangles": 848,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        2.7400002479553223,
+        1.7800002098083496,
+        1.222819447517395
+      ]
+    },
+    {
+      "name": "SpaceShuttle",
+      "category": "Ship",
+      "triangles": 636,
+      "nonManifold": 0,
+      "degenerate": 0,
+      "size": [
+        2.759999990463257,
+        3.05049991607666,
+        1.3899999856948853
+      ]
+    }
+  ],
+  "palette": [
+    {
+      "name": "Ivory",
+      "r": 0.91,
+      "g": 0.93,
+      "b": 0.96
+    },
+    {
+      "name": "Navy",
+      "r": 0.075,
+      "g": 0.12,
+      "b": 0.23
+    },
+    {
+      "name": "Blue",
+      "r": 0.12,
+      "g": 0.36,
+      "b": 0.85
+    },
+    {
+      "name": "Cyan",
+      "r": 0.24,
+      "g": 0.79,
+      "b": 0.9
+    },
+    {
+      "name": "Orange",
+      "r": 1,
+      "g": 0.35,
+      "b": 0.08
+    },
+    {
+      "name": "Gold",
+      "r": 0.93,
+      "g": 0.66,
+      "b": 0.18
+    },
+    {
+      "name": "Steel",
+      "r": 0.43,
+      "g": 0.51,
+      "b": 0.63
+    },
+    {
+      "name": "Dark",
+      "r": 0.13,
+      "g": 0.16,
+      "b": 0.22
+    },
+    {
+      "name": "Rock",
+      "r": 0.47,
+      "g": 0.4,
+      "b": 0.35
+    },
+    {
+      "name": "RockLight",
+      "r": 0.64,
+      "g": 0.56,
+      "b": 0.46
+    },
+    {
+      "name": "Ice",
+      "r": 0.55,
+      "g": 0.85,
+      "b": 0.94
+    },
+    {
+      "name": "Purple",
+      "r": 0.58,
+      "g": 0.35,
+      "b": 0.83
+    },
+    {
+      "name": "Red",
+      "r": 0.91,
+      "g": 0.17,
+      "b": 0.22
+    },
+    {
+      "name": "Green",
+      "r": 0.24,
+      "g": 0.72,
+      "b": 0.5
+    },
+    {
+      "name": "Black",
+      "r": 0.025,
+      "g": 0.04,
+      "b": 0.065
+    },
+    {
+      "name": "PaleGold",
+      "r": 0.98,
+      "g": 0.86,
+      "b": 0.48
+    }
+  ]
+}

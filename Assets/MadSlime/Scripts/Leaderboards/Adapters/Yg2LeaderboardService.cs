@@ -174,7 +174,7 @@ namespace Adapters
                 entries.Add(new LeaderboardEntryData
                 {
                     Id = player.id,
-                    Name = LBMethods.AnonymousName(player.name),
+                    Name = player.name,
                     Rank = player.rank,
                     Score = player.score
                 });

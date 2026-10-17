@@ -15,7 +15,7 @@ namespace EditorTools
         private const float IconOrthographicPadding = 1f;
         private const float IconLightIntensity = 1.2f;
         private const string DefaultSkinsPath = "Assets/MadSlime/Scriptables/Skins";
-        private const string DefaultPrefabsPath = "Assets/MadSlime/Resources/Models/Player";
+        private const string DefaultPrefabsPath = "Assets/MadSlime/Resources/PlayerModel/Prefabs";
         private const string DefaultIconsPath = "Assets/MadSlime/Resources/Icons/Skins";
         private const string DefaultShopContentPath = "Assets/MadSlime/Scriptables/Shop/ShopContent.asset";
 
@@ -25,8 +25,59 @@ namespace EditorTools
         private DefaultAsset _prefabsFolder;
         private DefaultAsset _iconsFolder;
         private string _skinId = "";
-        private SkinRarity _rarity = SkinRarity.Rare;
+        private SkinRarity _rarity = SkinRarity.Common;
         private bool _forceIcon;
+        private bool _replaceExisting;
+
+        // Batch entry point for the same factory used by the editor window.
+        public static void CreateFromCommandLine()
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            string Argument(string key)
+            {
+                int index = Array.IndexOf(args, key);
+                if (index < 0 || index + 1 >= args.Length || args[index + 1].StartsWith("-"))
+                    throw new ArgumentException($"Skin Factory requires {key}.");
+                return args[index + 1];
+            }
+
+            string path = Argument("-skinSource");
+            string id = Argument("-skinId");
+            if (!Enum.TryParse(Argument("-skinRarity"), true, out SkinRarity rarity)
+                || !Enum.IsDefined(typeof(SkinRarity), rarity))
+                throw new ArgumentException("Unknown skin rarity.");
+            GameObject source = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (source == null)
+                throw new ArgumentException($"Skin model does not exist: {path}");
+            RebuildSkin(source, id, rarity);
+        }
+
+        // Used by the reference-model importer. Existing SkinItems keep their GUID and save id.
+        public static SkinItem RebuildSkin(GameObject sourceModel, string skinId, SkinRarity rarity)
+        {
+            EnsureFolder(DefaultPrefabsPath);
+            EnsureFolder(DefaultSkinsPath);
+            EnsureFolder(DefaultIconsPath);
+            SkinItemFactory factory = CreateInstance<SkinItemFactory>();
+            try
+            {
+                factory._sourceModel = sourceModel;
+                factory._skinId = skinId;
+                factory._rarity = rarity;
+                factory._shopContent = AssetDatabase.LoadAssetAtPath<ShopContent>(DefaultShopContentPath);
+                factory._skinsFolder = AssetDatabase.LoadAssetAtPath<DefaultAsset>(DefaultSkinsPath);
+                factory._prefabsFolder = AssetDatabase.LoadAssetAtPath<DefaultAsset>(DefaultPrefabsPath);
+                factory._iconsFolder = AssetDatabase.LoadAssetAtPath<DefaultAsset>(DefaultIconsPath);
+                factory._forceIcon = true;
+                factory._replaceExisting = true;
+                factory.CreateSkin();
+                return AssetDatabase.LoadAssetAtPath<SkinItem>($"{DefaultSkinsPath}/{skinId}.asset");
+            }
+            finally
+            {
+                DestroyImmediate(factory);
+            }
+        }
 
         [MenuItem("Mad Slime/Skin Factory")]
         private static void Open()
@@ -86,13 +137,13 @@ namespace EditorTools
             string iconsPath = GetFolderPath(_iconsFolder);
             string assetPath = $"{skinsPath}/{_skinId}.asset";
 
-            if (IsIdUsed(_skinId) == true)
+            if (IsIdUsed(_skinId) == true && _replaceExisting == false)
             {
                 Debug.LogError($"[SkinFactory] Skin id '{_skinId}' is already used in ShopContent '{_shopContent.name}'.");
                 return;
             }
 
-            if (File.Exists(assetPath) == true)
+            if (File.Exists(assetPath) == true && _replaceExisting == false)
             {
                 Debug.LogError($"[SkinFactory] SkinItem asset already exists: {assetPath}");
                 return;
@@ -105,13 +156,19 @@ namespace EditorTools
                 return;
             }
 
+            EnsurePreviewModel(prefab);
             EnsureFolder(skinsPath);
 
             string iconPath = $"{iconsPath}/{_skinId}.png";
 
             RenderIconIfNeeded(prefab, iconPath);
 
-            SkinItem skin = ScriptableObject.CreateInstance<SkinItem>();
+            SkinItem skin = AssetDatabase.LoadAssetAtPath<SkinItem>(assetPath);
+            bool isNew = skin == null;
+            if (isNew)
+            {
+                skin = ScriptableObject.CreateInstance<SkinItem>();
+            }
 
             SerializedObject serialized = new SerializedObject(skin);
             serialized.FindProperty("_model").objectReferenceValue = prefab;
@@ -120,8 +177,18 @@ namespace EditorTools
             serialized.FindProperty("_id").stringValue = _skinId;
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
-            AssetDatabase.CreateAsset(skin, assetPath);
-            AppendToShopContent(skin);
+            if (isNew)
+            {
+                AssetDatabase.CreateAsset(skin, assetPath);
+            }
+            else
+            {
+                AssetDatabase.SaveAssetIfDirty(skin);
+            }
+            if (IsIdUsed(_skinId) == false)
+            {
+                AppendToShopContent(skin);
+            }
 
             AssetDatabase.SaveAssetIfDirty(_shopContent);
             AssetDatabase.Refresh();
@@ -195,7 +262,7 @@ namespace EditorTools
 
             GameObject existing = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
 
-            if (existing != null)
+            if (existing != null && _replaceExisting == false)
             {
                 return existing;
             }
@@ -211,10 +278,37 @@ namespace EditorTools
                 instance = (GameObject)PrefabUtility.InstantiatePrefab(_sourceModel);
             }
 
+            if (_replaceExisting && PrefabUtility.IsPartOfPrefabInstance(instance))
+            {
+                PrefabUtility.UnpackPrefabInstance(instance, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            }
+            instance.name = $"{_sourceModel.name}Skin";
+
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(instance, prefabPath);
             DestroyImmediate(instance);
 
             return prefab;
+        }
+
+        private void EnsurePreviewModel(GameObject prefab)
+        {
+            if (prefab.TryGetComponent(out SkinModel skinModel) == true)
+            {
+                return;
+            }
+
+            string prefabPath = AssetDatabase.GetAssetPath(prefab);
+            GameObject contents = PrefabUtility.LoadPrefabContents(prefabPath);
+
+            try
+            {
+                contents.AddComponent<SkinModel>();
+                PrefabUtility.SaveAsPrefabAsset(contents, prefabPath);
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(contents);
+            }
         }
 
         private void RenderIconIfNeeded(GameObject prefab, string iconPath)
