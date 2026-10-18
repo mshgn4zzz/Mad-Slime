@@ -13,12 +13,16 @@ namespace UI
         [SerializeField] private Vector2 _languagePositionWithMenuButton;
         [SerializeField] private Vector2 _languagePositionWithoutMenuButton;
         [SerializeField] private AudioSettingsPanel _settingsPanel;
+        [SerializeField] private Button _resetButton;
+        [SerializeField] private ResetProgressConfirmation _resetConfirmation;
+        [SerializeField] private CanvasGroup _settingsInput;
 
         private bool _isActionRequested;
 
         public event Action CloseButtonClicked;
 
         public event Action MenuButtonClicked;
+        public event Action ResetConfirmed;
 
         protected override void Awake()
         {
@@ -46,25 +50,41 @@ namespace UI
             {
                 throw new InvalidOperationException($"{name}: assign the language button RectTransform.");
             }
+
+            if (_resetButton == null || _resetConfirmation == null || _settingsInput == null)
+            {
+                throw new InvalidOperationException($"{name}: assign the reset button, confirmation and settings input group.");
+            }
         }
 
-        public void Initialize(bool isMenuButtonNeeded)
+        public void Initialize(bool isMenuButtonNeeded, bool isResetAvailable = false)
         {
             _isActionRequested = false;
             _closeButton.interactable = true;
             _menuButton.interactable = true;
             _settingsPanel.Initialize();
+            _resetButton.gameObject.SetActive(isResetAvailable);
+            _resetButton.interactable = true;
+            OnResetCanceled();
 
             _menuButton.gameObject.SetActive(isMenuButtonNeeded);
-            _languageButton.anchoredPosition = isMenuButtonNeeded
-                ? _languagePositionWithMenuButton
-                : _languagePositionWithoutMenuButton;
+            if (isMenuButtonNeeded == true)
+            {
+                _languageButton.anchoredPosition = _languagePositionWithMenuButton;
+            }
+            else
+            {
+                _languageButton.anchoredPosition = _languagePositionWithoutMenuButton;
+            }
         }
 
         private void OnEnable()
         {
             _closeButton.onClick.AddListener(OnCloseClicked);
             _menuButton.onClick.AddListener(OnMenuClicked);
+            _resetButton.onClick.AddListener(OnResetClicked);
+            _resetConfirmation.Confirmed += OnResetConfirmed;
+            _resetConfirmation.Canceled += OnResetCanceled;
         }
 
         protected override void OnDisable()
@@ -72,12 +92,52 @@ namespace UI
             base.OnDisable();
             _closeButton.onClick.RemoveListener(OnCloseClicked);
             _menuButton.onClick.RemoveListener(OnMenuClicked);
+            _resetButton.onClick.RemoveListener(OnResetClicked);
+            _resetConfirmation.Confirmed -= OnResetConfirmed;
+            _resetConfirmation.Canceled -= OnResetCanceled;
         }
 
         protected override void OnClosing()
         {
             _closeButton.interactable = false;
             _menuButton.interactable = false;
+            _resetButton.interactable = false;
+        }
+
+        private void OnResetClicked()
+        {
+            if (_isActionRequested == true || IsClosing == true)
+            {
+                return;
+            }
+
+            _settingsInput.interactable = false;
+            _settingsInput.blocksRaycasts = false;
+            _resetConfirmation.Show();
+        }
+
+        private void OnResetCanceled()
+        {
+            _resetConfirmation.Hide();
+            _settingsInput.interactable = true;
+            _settingsInput.blocksRaycasts = true;
+
+            if (_resetButton.gameObject.activeInHierarchy == true)
+            {
+                _resetButton.Select();
+            }
+        }
+
+        private void OnResetConfirmed()
+        {
+            if (_isActionRequested == true || IsClosing == true)
+            {
+                return;
+            }
+
+            _isActionRequested = true;
+            _resetConfirmation.Hide();
+            ResetConfirmed?.Invoke();
         }
 
         private void OnCloseClicked()

@@ -14,6 +14,7 @@ namespace YG
         public float sfxVolume = 0.35f;
 
         public int Balance = 250;
+        public bool TestFundsGranted;
 
         public string SelectedSkinId = "Slime";
         public List<string> _openSkinIds = new List<string> { "Slime" };

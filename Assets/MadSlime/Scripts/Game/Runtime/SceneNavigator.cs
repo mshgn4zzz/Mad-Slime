@@ -37,12 +37,17 @@ namespace Game
 
         private ISavesReadiness _readiness;
         private SkinInventory _skinInventory;
+        private IPlayerProgressStorage _progressStorage;
+        private ISaveConfirmation _saveConfirmation;
 
         [Inject]
-        public void Construct(ISavesReadiness readiness, SkinInventory skinInventory)
+        public void Construct(ISavesReadiness readiness, SkinInventory skinInventory,
+            IPlayerProgressStorage progressStorage, ISaveConfirmation saveConfirmation)
         {
             _readiness = readiness;
             _skinInventory = skinInventory;
+            _progressStorage = progressStorage;
+            _saveConfirmation = saveConfirmation;
         }
 
         public bool IsTransitioning => _isTransitioning;
@@ -118,6 +123,7 @@ namespace Game
             {
                 ShowLoadingScreen();
                 await UniTask.WaitUntil(IsSaveReady, cancellationToken: sessionToken);
+                _progressStorage.GrantTestFunds();
                 _skinInventory.Initialize();
                 _loadingView.SetSkin(_skinInventory.SelectedSkinId);
                 await UniTask.NextFrame(cancellationToken: sessionToken);
@@ -159,6 +165,43 @@ namespace Game
         public UniTask LoadMenuAsync()
         {
             return LoadAsync(SceneId.Menu);
+        }
+
+        public async UniTask ResetProgressAndLoadMenuAsync()
+        {
+            if (_isTransitioning == true)
+            {
+                return;
+            }
+
+            _isTransitioning = true;
+
+            try
+            {
+                ShowLoadingScreen();
+                _currentSessionFinish?.Invoke();
+                _progressStorage.ResetProgress();
+                _skinInventory.Initialize();
+                CancellationToken cancellationToken = this.GetCancellationTokenOnDestroy();
+
+                try
+                {
+                    await _saveConfirmation.ConfirmSavedAsync(cancellationToken);
+                }
+                finally
+                {
+                    if (cancellationToken.IsCancellationRequested == false)
+                    {
+                        await TransitionAsync(SceneId.Menu);
+                    }
+                }
+            }
+            finally
+            {
+                ClearPendingSession();
+                HideLoadingScreen();
+                _isTransitioning = false;
+            }
         }
 
         public UniTask LoadGameAsync()

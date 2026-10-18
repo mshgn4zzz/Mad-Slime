@@ -1,4 +1,5 @@
 using Game;
+using Cysharp.Threading.Tasks;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,12 +15,14 @@ namespace UI
         private UiSpawner _uiSpawner;
         private GameplayOrchestrator _orchestrator;
         private PauseMenu _activePauseMenu;
+        private SceneNavigator _sceneNavigator;
 
         [Inject]
-        public void Construct(UiSpawner uiSpawner, GameplayOrchestrator orchestrator)
+        public void Construct(UiSpawner uiSpawner, GameplayOrchestrator orchestrator, SceneNavigator sceneNavigator)
         {
             _uiSpawner = uiSpawner;
             _orchestrator = orchestrator;
+            _sceneNavigator = sceneNavigator;
         }
 
         private void Awake()
@@ -62,6 +65,8 @@ namespace UI
             {
                 _activePauseMenu.CloseButtonClicked -= OnPauseMenuCloseClicked;
                 _activePauseMenu.MenuButtonClicked -= OnPauseMenuMenuClicked;
+                _activePauseMenu.ResetConfirmed -= OnResetConfirmed;
+                _activePauseMenu.Closed -= OnPauseMenuClosed;
                 _activePauseMenu = null;
             }
         }
@@ -76,12 +81,18 @@ namespace UI
             _orchestrator.PauseByRequest();
 
             _activePauseMenu = _uiSpawner.Spawn(_pauseMenuPrefab, UiLayer.Popup);
-            _activePauseMenu.Initialize(true);
+            _activePauseMenu.Initialize(true, true);
             _activePauseMenu.Closed += OnPauseMenuClosed;
             _uiSpawner.Show(_activePauseMenu);
 
             _activePauseMenu.CloseButtonClicked += OnPauseMenuCloseClicked;
             _activePauseMenu.MenuButtonClicked += OnPauseMenuMenuClicked;
+            _activePauseMenu.ResetConfirmed += OnResetConfirmed;
+        }
+
+        private void OnResetConfirmed()
+        {
+            _sceneNavigator.ResetProgressAndLoadMenuAsync().Forget();
         }
 
         private void OnPauseMenuCloseClicked()
@@ -96,6 +107,7 @@ namespace UI
         private void OnPauseMenuClosed()
         {
             _activePauseMenu.Closed -= OnPauseMenuClosed;
+            _activePauseMenu.ResetConfirmed -= OnResetConfirmed;
             _uiSpawner.Release(_activePauseMenu);
             _activePauseMenu = null;
         }
