@@ -325,3 +325,19 @@ MonoBehaviour:
     _ru: "НЕ УДАЛОСЬ СОХРАНИТЬ"
     _en: "COULD NOT SAVE"
     _tr: "KAYDEDİLEMEDİ"
+  - _key: reset_title
+    _ru: "Вы уверены?"
+    _en: "Are you sure?"
+    _tr: "Emin misin?"
+  - _key: reset_warning
+    _ru: "Будет сброшено АБСОЛЮТНО ВСЁ!\n\nУровни, деньги, все открытые скины, улучшения, покупки, рулетка и статистика.\n\nВосстановить прогресс нельзя."
+    _en: "ABSOLUTELY ALL progress will be reset!\n\nLevels, money, all unlocked skins, upgrades, purchases, roulette and statistics.\n\nThis cannot be undone."
+    _tr: "TÜM ilerleme sıfırlanacak!\n\nSeviyeler, para, açılan tüm görünümler, geliştirmeler, satın alımlar, çark ve istatistikler.\n\nBu işlem geri alınamaz."
+  - _key: reset_cancel
+    _ru: "Нет, оставить"
+    _en: "No, keep it"
+    _tr: "Hayır, koru"
+  - _key: reset_confirm
+    _ru: "Да, сбросить"
+    _en: "Yes, reset"
+    _tr: "Evet, sıfırla"

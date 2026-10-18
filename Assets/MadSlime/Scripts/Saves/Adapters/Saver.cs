@@ -10,10 +10,11 @@ using YG;
 namespace Saves
 {
     public class Saver : ISavesReadiness, IBalanceStorage, ILevelStorage, IAudioStorage, IUpgradesStorage,
-        ISkinStorage, IRouletteStorage, ILanguageStorage, ICollectedItemsStorage, ISaveConfirmation
+        ISkinStorage, IRouletteStorage, ILanguageStorage, ICollectedItemsStorage, ISaveConfirmation, IPlayerProgressStorage
     {
         private const float MinVolume = 0f;
         private const float MaxVolume = 1f;
+        private const int TestBalance = 9999999;
 
         private Yg2SavesAccess _access;
 
@@ -45,6 +46,44 @@ namespace Saves
         public UniTask ConfirmSavedAsync(CancellationToken cancellationToken)
         {
             return _access.ConfirmSavedAsync(cancellationToken);
+        }
+
+        public void GrantTestFunds()
+        {
+            SavesYG data = LoadData();
+
+            if (data.TestFundsGranted == true)
+            {
+                return;
+            }
+
+            ExecuteTransaction(ApplyTestFunds);
+        }
+
+        private void ApplyTestFunds()
+        {
+            SavesYG data = LoadData();
+            data.Balance = Mathf.Max(data.Balance, TestBalance);
+            data.TestFundsGranted = true;
+        }
+
+        public void ResetProgress()
+        {
+            ExecuteTransaction(ApplyProgressReset);
+            _isCollectedCountDirty = false;
+        }
+
+        private void ApplyProgressReset()
+        {
+            SavesYG data = LoadData();
+            SavesYG initialData = new SavesYG();
+            initialData.idSave = data.idSave;
+            initialData.Language = data.Language;
+            initialData.musicVolume = data.musicVolume;
+            initialData.sfxVolume = data.sfxVolume;
+            initialData.Balance = 0;
+            initialData.TestFundsGranted = true;
+            JsonUtility.FromJsonOverwrite(JsonUtility.ToJson(initialData), data);
         }
 
         public int CollectedItemsCount => LoadData().CollectedItemsCount;

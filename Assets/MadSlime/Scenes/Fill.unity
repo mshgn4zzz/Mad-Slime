@@ -1036,7 +1036,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5e03b3a0d859664aa94145eb2e55ef4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shapeTexture: {fileID: 2800000, guid: 3b231483b4881ac40bf16d5f097cbe3d, type: 3}
+  _shapeTexture: {fileID: 2800000, guid: 70756e1e6ddc47a18483436f068b5d39, type: 3}
   _cellSize: 2
   _gridResolution: 32
 --- !u!4 &1948289413
