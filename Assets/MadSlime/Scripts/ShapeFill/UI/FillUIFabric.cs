@@ -32,6 +32,7 @@ namespace UI
         private Wallet _wallet;
         private AdScheduler _adScheduler;
         private ISaveConfirmation _saveConfirmation;
+        private SceneNavigator _sceneNavigator;
         private WinMenu _activeWinMenu;
         private FailMenu _activeFailMenu;
         private PauseMenu _activePauseMenu;
@@ -49,13 +50,14 @@ namespace UI
 
         [Inject]
         public void Construct(UiSpawner uiSpawner, FillSceneOrchestrator orchestrator, Wallet wallet,
-            AdScheduler adScheduler, ISaveConfirmation saveConfirmation)
+            AdScheduler adScheduler, ISaveConfirmation saveConfirmation, SceneNavigator sceneNavigator)
         {
             _uiSpawner = uiSpawner;
             _orchestrator = orchestrator;
             _wallet = wallet;
             _adScheduler = adScheduler;
             _saveConfirmation = saveConfirmation;
+            _sceneNavigator = sceneNavigator;
         }
 
         private void Awake()
@@ -355,7 +357,8 @@ namespace UI
             _hasPauseRequest = true;
             _orchestrator.PauseByRequest();
             _activePauseMenu = _uiSpawner.Spawn(_pauseMenuPrefab, UiLayer.Popup);
-            _activePauseMenu.Initialize(false);
+            _activePauseMenu.Initialize(false, true);
+            _activePauseMenu.ResetConfirmed += OnResetConfirmed;
             _activePauseMenu.CloseButtonClicked += OnPauseMenuCloseClicked;
             _activePauseMenu.MenuButtonClicked += OnPauseMenuMenuClicked;
             _activePauseMenu.Closed += OnPauseMenuClosed;
@@ -365,6 +368,11 @@ namespace UI
         private void OnPauseMenuCloseClicked()
         {
             ClosePauseMenu(WindowAction.None);
+        }
+
+        private void OnResetConfirmed()
+        {
+            _sceneNavigator.ResetProgressAndLoadMenuAsync().Forget();
         }
 
         private void OnPauseMenuMenuClicked()
@@ -449,6 +457,7 @@ namespace UI
         {
             _activePauseMenu.CloseButtonClicked -= OnPauseMenuCloseClicked;
             _activePauseMenu.MenuButtonClicked -= OnPauseMenuMenuClicked;
+            _activePauseMenu.ResetConfirmed -= OnResetConfirmed;
         }
 
         private void ReleaseWinMenu()

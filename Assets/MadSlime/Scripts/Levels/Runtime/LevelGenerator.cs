@@ -30,7 +30,7 @@ namespace Game
         private LayoutsLibrary _layoutsLibrary;
         private Movement.Clamper _clamper;
         private ItemCollector _itemCollector;
-        private GameObject _floorBackground;
+        private LevelSurface _surface;
 
         public IReadOnlyList<Item> SpawnedItems => _itemsSpawner.ActiveItems;
 
@@ -88,6 +88,13 @@ namespace Game
             }
 
             _itemsSpawner = new LevelItemsSpawner(new ItemFactory(), _itemsRoot);
+
+            if (_floorRenderer.TryGetComponent(out MeshFilter floorMesh) == false || floorMesh.sharedMesh == null)
+            {
+                throw new InvalidOperationException($"{name}: the floor must have a mesh.");
+            }
+
+            _surface = new LevelSurface(floorMesh.sharedMesh, transform);
         }
 
         private void OnEnable()
@@ -103,7 +110,6 @@ namespace Game
         private void OnDestroy()
         {
             _itemsSpawner?.Clear();
-            if (_floorBackground != null) Destroy(_floorBackground);
         }
 
         public Bounds GetFloorBounds()
@@ -144,37 +150,7 @@ namespace Game
             }
 
             _floorRenderer.sharedMaterial = config.Theme.FloorMaterial;
-            ApplyFloorBackground(config.Theme);
-        }
-
-        private void ApplyFloorBackground(LevelTheme theme)
-        {
-            if (!theme.ExtendFloorBackground)
-            {
-                if (_floorBackground != null) _floorBackground.SetActive(false);
-                return;
-            }
-
-            if (_floorBackground == null)
-            {
-                MeshFilter source = _floorRenderer.GetComponent<MeshFilter>();
-                if (source == null || source.sharedMesh == null)
-                    throw new InvalidOperationException("Extended level background requires a floor mesh.");
-
-                _floorBackground = new GameObject("ThemeFloorBackground");
-                _floorBackground.layer = _floorRenderer.gameObject.layer;
-                _floorBackground.transform.SetParent(_floorRenderer.transform, false);
-                _floorBackground.transform.localScale = new Vector3(16f, 1f, 16f);
-                _floorBackground.transform.position = _floorRenderer.transform.position - Vector3.up * 0.05f;
-                _floorBackground.AddComponent<MeshFilter>().sharedMesh = source.sharedMesh;
-                MeshRenderer renderer = _floorBackground.AddComponent<MeshRenderer>();
-                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                renderer.receiveShadows = false;
-            }
-
-            // The original floor renderer remains the sole source of map bounds.
-            _floorBackground.SetActive(true);
-            _floorBackground.GetComponent<MeshRenderer>().sharedMaterial = theme.FloorMaterial;
+            _surface.Apply(config.Theme, GetFloorBounds());
         }
     }
 }

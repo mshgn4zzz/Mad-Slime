@@ -40,9 +40,17 @@ namespace Game
 
         private LevelConfig FindRangeConfig(int levelNumber)
         {
+            if (levelNumber <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(levelNumber));
+            }
+
+            int cycleLength = _catalog.Ranges[_catalog.Ranges.Count - 1].ToLevel;
+            int cycleLevel = (levelNumber - 1) % cycleLength + 1;
+
             for (int i = 0; i < _catalog.Ranges.Count; i++)
             {
-                if (levelNumber >= _catalog.Ranges[i].FromLevel && levelNumber <= _catalog.Ranges[i].ToLevel)
+                if (cycleLevel >= _catalog.Ranges[i].FromLevel && cycleLevel <= _catalog.Ranges[i].ToLevel)
                 {
                     return _catalog.Ranges[i].Config;
                 }

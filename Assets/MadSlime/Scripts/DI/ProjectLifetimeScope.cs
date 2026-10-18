@@ -88,6 +88,7 @@ namespace DI
             builder.RegisterInstance(savesAccess);
             builder.RegisterInstance(saver);
             builder.RegisterInstance<ISaveConfirmation>(saver);
+            builder.RegisterInstance<IPlayerProgressStorage>(saver);
             builder.RegisterInstance<Action<Action>>(saver.ExecuteTransaction);
             builder.Register<SkinInventory>(Lifetime.Singleton);
             builder.RegisterInstance<Saves.ISavesReadiness>(saver);

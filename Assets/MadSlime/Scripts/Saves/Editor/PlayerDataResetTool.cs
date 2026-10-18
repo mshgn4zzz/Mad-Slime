@@ -101,6 +101,7 @@ namespace EditorTools
         {
             SavesYG data = new SavesYG();
             data.Balance = balance;
+            data.TestFundsGranted = balance == EmptyBalance;
 
             if (openSkinIds != null)
             {

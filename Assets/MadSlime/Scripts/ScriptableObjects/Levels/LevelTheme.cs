@@ -9,8 +9,9 @@ namespace Scriptables
         [Tooltip("Материал пола уровня.")]
         [SerializeField] private Material _floorMaterial;
 
-        [Tooltip("Продлить фон за игровую площадку без расширения границ движения и спавна.")]
-        [SerializeField] private bool _extendFloorBackground;
+        [SerializeField] private Material _backgroundMaterial;
+        [SerializeField] private Material _edgeMaterial;
+        [SerializeField, Min(1f)] private float _platformDepth = 12f;
 
         [Tooltip("Текстура формы для сцены заливки: альфа задаёт силуэт, цвета проступают в призраке и конфетти.")]
         [SerializeField] private Texture2D _fillShapeTexture;
@@ -19,7 +20,9 @@ namespace Scriptables
         [SerializeField] private List<Texture2D> _fillShapeTextures = new List<Texture2D>();
 
         public Material FloorMaterial => _floorMaterial;
-        public bool ExtendFloorBackground => _extendFloorBackground;
+        public Material BackgroundMaterial => _backgroundMaterial;
+        public Material EdgeMaterial => _edgeMaterial;
+        public float PlatformDepth => _platformDepth;
         public Texture2D FillShapeTexture => _fillShapeTexture;
 
         public Texture2D PickFillShapeTexture()
