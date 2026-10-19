@@ -11,6 +11,7 @@ namespace Game
     public class LevelPlacementPlanner
     {
         private const SizeTier ObstacleMinimumTier = SizeTier.Large;
+        private const int MaximumBossCount = 10;
 
         private List<Vector3> _obstaclePositions = new List<Vector3>();
         private List<float> _obstacleRadii = new List<float>();
@@ -19,6 +20,7 @@ namespace Game
         private List<Item> _zonePool = new List<Item>(16);
         private List<float> _zoneRadii = new List<float>(16);
         private List<LevelPlacement> _placements = new List<LevelPlacement>(256);
+        private int _bossCount;
 
         public LayoutSet PickLayout(LayoutsLibrary library)
         {
@@ -48,6 +50,7 @@ namespace Game
             _placements.Clear();
             _obstaclePositions.Clear();
             _obstacleRadii.Clear();
+            _bossCount = 0;
             bool mirrorX = layout.AllowMirroring == true && Random.value > 0.5f;
             bool mirrorZ = layout.AllowMirroring == true && Random.value > 0.5f;
 
@@ -131,6 +134,12 @@ namespace Game
                 ZoneLayoutPlanner.Placement placement = placements[i];
                 Item prefab = _zonePool[placement.PoolIndex];
                 ItemDefinition definition = assignedVariants[prefab];
+
+                if (definition.Tier == SizeTier.Boss && _bossCount >= MaximumBossCount)
+                {
+                    continue;
+                }
+
                 float scale = _tierLookup.Get(definition.Tier).Scale;
                 float radius = _zoneRadii[placement.PoolIndex];
                 Vector3 position = ClampToMap(origin.TransformPoint(placement.Position), floorBounds, radius);
@@ -141,6 +150,11 @@ namespace Game
                 }
 
                 _placements.Add(new LevelPlacement(prefab, definition, position, scale));
+
+                if (definition.Tier == SizeTier.Boss)
+                {
+                    _bossCount++;
+                }
 
                 if (definition.Tier >= ObstacleMinimumTier)
                 {

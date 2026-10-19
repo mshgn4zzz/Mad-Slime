@@ -7,7 +7,7 @@ namespace Game
 {
     public class LevelSurface
     {
-        private const float BackgroundSizeMultiplier = 32f;
+        private const float BackgroundSizeMultiplier = 64f;
         private const float BackgroundThickness = 1f;
 
         private MeshRenderer _background;

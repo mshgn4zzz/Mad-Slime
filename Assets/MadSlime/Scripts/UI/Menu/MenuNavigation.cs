@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using Game;
 using Roulette;
 using Shop;
@@ -245,8 +246,9 @@ namespace UI
 
             _settings = _spawner.Spawn(_settingsMenuPrefab, UiLayer.Popup);
             _settings.CloseButtonClicked += OnSettingsCloseRequested;
+            _settings.ResetConfirmed += OnResetConfirmed;
             _settings.Closed += OnSettingsClosed;
-            _settings.Initialize(false);
+            _settings.Initialize(false, true);
             _spawner.Show(_settings);
             _popups.Push(_settings);
         }
@@ -254,6 +256,11 @@ namespace UI
         private void OnSettingsCloseRequested()
         {
             _settings.BeginClose();
+        }
+
+        private void OnResetConfirmed()
+        {
+            _sceneNavigator.ResetProgressAndLoadMenuAsync().Forget();
         }
 
         private void OnSettingsClosed()
@@ -432,6 +439,7 @@ namespace UI
             }
 
             _settings.CloseButtonClicked -= OnSettingsCloseRequested;
+            _settings.ResetConfirmed -= OnResetConfirmed;
             _settings.Closed -= OnSettingsClosed;
             _spawner.Release(_settings);
             _settings = null;

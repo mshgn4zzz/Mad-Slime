@@ -14,1034 +14,1259 @@ MonoBehaviour:
   m_EditorClassIdentifier:
   _zones:
   - _shape: 1
-    _center: {x: 0, y: 0}
-    _radius: 6
-    _count: 16
-    _autoSpacing: 0
-    _spacing: 2
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 1
-    _center: {x: 0, y: 0}
-    _radius: 8
-    _count: 20
-    _autoSpacing: 0
-    _spacing: 2
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 1
-    _center: {x: 0, y: 0}
-    _radius: 10
-    _count: 24
-    _autoSpacing: 0
-    _spacing: 2
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -214.000, y: -214.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -184.000, y: -210.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -200.000, y: -183.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -214.000, y: -134.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -184.000, y: -130.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -200.000, y: -103.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -214.000, y: -54.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -184.000, y: -50.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -200.000, y: -23.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -214.000, y: 26.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -184.000, y: 30.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -200.000, y: 57.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -214.000, y: 106.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -184.000, y: 110.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -200.000, y: 137.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -214.000, y: 186.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -184.000, y: 190.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -200.000, y: 217.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -134.000, y: -214.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -104.000, y: -210.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -120.000, y: -183.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -134.000, y: -134.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -104.000, y: -130.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -120.000, y: -103.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -134.000, y: -54.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -104.000, y: -50.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -120.000, y: -23.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -134.000, y: 26.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -104.000, y: 30.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -120.000, y: 57.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -134.000, y: 106.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -104.000, y: 110.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -120.000, y: 137.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -134.000, y: 186.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -104.000, y: 190.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -120.000, y: 217.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -54.000, y: -214.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -24.000, y: -210.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -40.000, y: -183.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -54.000, y: -134.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -24.000, y: -130.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -40.000, y: -103.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -54.000, y: -54.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -24.000, y: -50.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -40.000, y: -23.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -54.000, y: 26.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -24.000, y: 30.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -40.000, y: 57.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -54.000, y: 106.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -24.000, y: 110.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 3
-    _center: {x: -40.000, y: 137.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -54.000, y: 186.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -24.000, y: 190.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 0
-    _center: {x: -40.000, y: 217.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 26.000, y: -214.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 56.000, y: -210.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 40.000, y: -183.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 26.000, y: -134.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 56.000, y: -130.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 40.000, y: -103.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 26.000, y: -54.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 56.000, y: -50.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 40.000, y: -23.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 26.000, y: 26.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 56.000, y: 30.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 40.000, y: 57.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 26.000, y: 106.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 56.000, y: 110.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 40.000, y: 137.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 26.000, y: 186.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 56.000, y: 190.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 40.000, y: 217.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 106.000, y: -214.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 136.000, y: -210.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 120.000, y: -183.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 106.000, y: -134.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 136.000, y: -130.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 120.000, y: -103.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 106.000, y: -54.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 136.000, y: -50.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 120.000, y: -23.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 106.000, y: 26.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 136.000, y: 30.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 120.000, y: 57.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 106.000, y: 106.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 136.000, y: 110.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 120.000, y: 137.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 106.000, y: 186.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 136.000, y: 190.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 120.000, y: 217.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 186.000, y: -214.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 216.000, y: -210.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 200.000, y: -183.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 186.000, y: -134.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 216.000, y: -130.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 200.000, y: -103.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 186.000, y: -54.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 216.000, y: -50.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 200.000, y: -23.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 186.000, y: 26.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 216.000, y: 30.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 200.000, y: 57.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 186.000, y: 106.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 216.000, y: 110.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 0
-    _center: {x: 200.000, y: 137.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 186.000, y: 186.000}
-    _radius: 23.000
-    _count: 93
-    _autoSpacing: 0
-    _spacing: 3.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 216.000, y: 190.000}
-    _radius: 25.000
-    _count: 72
-    _autoSpacing: 0
-    _spacing: 7.000
-    _minTier: 1
-    _maxTier: 1
-    _singleType: 0
-  - _shape: 3
-    _center: {x: 200.000, y: 217.000}
-    _radius: 22.000
-    _count: 30
-    _autoSpacing: 0
-    _spacing: 14.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 1
-    _center: {x: 0.000, y: 0.000}
-    _radius: 150.000
-    _count: 90
+    _center: {x: 4.658, y: 223.952}
+    _radius: 0.000
+    _count: 1
     _autoSpacing: 1
     _spacing: 0.000
-    _minTier: 3
-    _maxTier: 3
+    _minTier: 5
+    _maxTier: 5
     _singleType: 0
   - _shape: 1
+    _center: {x: -4.658, y: -223.952}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 5
+    _maxTier: 5
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -190.000, y: -190.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -95.000, y: -190.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 0.000, y: -190.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 95.000, y: -190.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 190.000, y: -190.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -190.000, y: -95.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -95.000, y: -95.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 0.000, y: -95.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 95.000, y: -95.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 190.000, y: -95.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -190.000, y: 0.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -95.000, y: 0.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
     _center: {x: 0.000, y: 0.000}
-    _radius: 185.000
-    _count: 28
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 95.000, y: 0.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 190.000, y: 0.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -190.000, y: 95.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -95.000, y: 95.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 0.000, y: 95.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 95.000, y: 95.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 190.000, y: 95.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -190.000, y: 190.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -95.000, y: 190.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 0.000, y: 190.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 95.000, y: 190.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 190.000, y: 190.000}
+    _radius: 44.000
+    _count: 225
+    _autoSpacing: 0
+    _spacing: 3.400
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -190.000, y: -190.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -95.000, y: -190.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 0.000, y: -190.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 95.000, y: -190.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 190.000, y: -190.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -190.000, y: -95.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -95.000, y: -95.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 0.000, y: -95.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 95.000, y: -95.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 190.000, y: -95.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -190.000, y: 0.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -95.000, y: 0.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 0.000, y: 0.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 95.000, y: 0.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 190.000, y: 0.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -190.000, y: 95.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -95.000, y: 95.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 0.000, y: 95.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 95.000, y: 95.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 190.000, y: 95.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -190.000, y: 190.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -95.000, y: 190.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 0.000, y: 190.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 95.000, y: 190.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 190.000, y: 190.000}
+    _radius: 44.000
+    _count: 64
+    _autoSpacing: 0
+    _spacing: 8.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -190.000, y: -190.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -95.000, y: -190.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 0.000, y: -190.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 95.000, y: -190.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 190.000, y: -190.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -190.000, y: -95.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -95.000, y: -95.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 0.000, y: -95.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 95.000, y: -95.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 190.000, y: -95.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -190.000, y: 0.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -95.000, y: 0.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 0.000, y: 0.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 95.000, y: 0.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 190.000, y: 0.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -190.000, y: 95.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -95.000, y: 95.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 0.000, y: 95.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 95.000, y: 95.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 190.000, y: 95.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 0
+    _center: {x: -190.000, y: 190.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: -95.000, y: 190.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 0.000, y: 190.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 3
+    _center: {x: 95.000, y: 190.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 0
+    _center: {x: 190.000, y: 190.000}
+    _radius: 44.000
+    _count: 12
+    _autoSpacing: 0
+    _spacing: 25.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 91.000, y: -196.928}
+    _radius: 0.000
+    _count: 1
     _autoSpacing: 1
     _spacing: 0.000
     _minTier: 4
     _maxTier: 4
     _singleType: 0
   - _shape: 1
-    _center: {x: 0.000, y: 0.000}
-    _radius: 250.000
-    _count: 12
+    _center: {x: -187.991, y: 126.937}
+    _radius: 0.000
+    _count: 1
     _autoSpacing: 1
     _spacing: 0.000
-    _minTier: 5
-    _maxTier: 5
+    _minTier: 4
+    _maxTier: 4
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -218.000, y: 210.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 4
+    _maxTier: 4
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -218.000, y: -194.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 4
+    _maxTier: 4
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 202.000, y: -218.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 4
+    _maxTier: 4
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -123.000, y: -123.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 4
+    _maxTier: 4
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 185.832, y: 71.365}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 4
+    _maxTier: 4
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -194.000, y: -20.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 4
+    _maxTier: 4
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 81.144, y: 198.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 4
+    _maxTier: 4
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 185.832, y: -71.365}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 4
+    _maxTier: 4
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -83.000, y: 115.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 4
+    _maxTier: 4
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 218.000, y: 186.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 4
+    _maxTier: 4
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -4.000, y: 170.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 4
+    _maxTier: 4
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 4.000, y: -202.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 4
+    _maxTier: 4
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -190.000, y: -95.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -4.000, y: -186.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 210.000, y: -162.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 125.995, y: -7.958}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -208.385, y: 110.427}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -99.000, y: 115.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -186.000, y: 162.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 99.000, y: -196.928}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -66.958, y: 174.584}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 75.000, y: 123.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 178.000, y: -28.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 218.000, y: 194.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 107.000, y: -75.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 125.995, y: 197.958}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -124.753, y: 11.780}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -186.000, y: 28.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 208.385, y: 110.427}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -20.000, y: 210.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 4.168, y: 71.365}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -91.000, y: -67.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 4.000, y: 162.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 194.000, y: -101.928}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -202.000, y: -202.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 23.327, y: -116.906}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -72.447, y: -198.208}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 162.000, y: 28.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 123.000, y: 99.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -123.000, y: -115.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -29.753, y: -106.780}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 162.000, y: -202.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -135.000, y: -190.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 76.615, y: 15.427}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -162.000, y: 210.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 218.000, y: 28.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -186.000, y: -28.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 162.000, y: 162.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -67.000, y: 67.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -92.991, y: 221.937}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 69.111, y: 208.809}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -158.000, y: 95.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -218.000, y: 202.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 83.000, y: -123.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -72.447, y: -8.208}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 9.889, y: -64.566}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 210.000, y: -218.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -120.889, y: 171.191}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: 75.000, y: 67.000}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 1
+    _center: {x: -25.889, y: 113.809}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
     _singleType: 0
   _allowMirroring: 1
   _autoSpacingFactor: 2.3
-  _scatterDistanceFactor: 0.8
-  _smallItemStartClearRadius: 2
+  _scatterDistanceFactor: 0.9
   _startClearRadius: 10
+  _smallItemStartClearRadius: 2
   _largeItemGap: 0.75
