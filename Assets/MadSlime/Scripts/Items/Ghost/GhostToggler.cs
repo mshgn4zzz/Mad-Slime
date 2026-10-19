@@ -5,13 +5,13 @@ using VContainer;
 
 namespace Collectables
 {
-    public class ItemGhostToggler : MonoBehaviour
+    public class GhostToggler : MonoBehaviour
     {
-        private CloseItemDetector _detector;
+        private CameraObstacleDetector _detector;
         private CollectAvailability _availability;
 
         [Inject]
-        public void Construct(CloseItemDetector detector, CollectAvailability availability)
+        public void Construct(CameraObstacleDetector detector, CollectAvailability availability)
         {
             _detector = detector;
             _availability = availability;
@@ -29,20 +29,20 @@ namespace Collectables
             _detector.Exited -= OnExited;
         }
 
-        private void OnDetected(Item item)
+        private void OnDetected(GhostAnimator animator)
         {
-            if (item != null && item.TryGetComponent(out ItemVisual visual))
+            if (animator.TryGetComponent(out Item item) == true)
             {
-                visual.SetGhost(_availability.CanCollect(item.Definition.Tier) == false);
+                animator.SetGhost(_availability.CanCollect(item.Definition.Tier) == false);
+                return;
             }
+
+            animator.SetGhost(true);
         }
 
-        private void OnExited(Item item)
+        private void OnExited(GhostAnimator animator)
         {
-            if (item != null && item.TryGetComponent(out ItemVisual visual))
-            {
-                visual.SetGhost(false);
-            }
+            animator.SetGhost(false);
         }
     }
 }

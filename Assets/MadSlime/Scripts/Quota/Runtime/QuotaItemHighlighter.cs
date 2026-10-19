@@ -93,9 +93,9 @@ namespace Game
 
         private void SetHighlighted(Item item, bool isHighlighted)
         {
-            if (item != null && item.TryGetComponent(out ItemVisual visual))
+            if (item != null && item.TryGetComponent(out GhostAnimator animator))
             {
-                visual.SetHighlighted(isHighlighted, _highlightColor, _outlineWidth);
+                animator.SetHighlighted(isHighlighted, _highlightColor, _outlineWidth);
             }
         }
     }

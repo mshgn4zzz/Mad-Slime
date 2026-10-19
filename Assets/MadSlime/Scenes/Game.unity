@@ -1935,10 +1935,10 @@ MonoBehaviour:
   _itemDetector: {fileID: 3196850747484158986}
   _attractableDetector: {fileID: 4219722846896299918}
   _itemAttractor: {fileID: 7643889918465946663}
-  _itemGhostToggler: {fileID: 566941591}
+  _ghostToggler: {fileID: 566941591}
   _quotaItemHighlighter: {fileID: 394430649}
   _quotaItemDetector: {fileID: 394430652}
-  _closeItemDetector: {fileID: 566941592}
+  _obstacleDetector: {fileID: 566941592}
   _smellAbilityActivator: {fileID: 394430651}
   _pauser: {fileID: 809963750}
   _timer: {fileID: 292377136}

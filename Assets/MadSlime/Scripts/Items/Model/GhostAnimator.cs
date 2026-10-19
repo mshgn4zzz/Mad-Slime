@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Items
 {
-    public class ItemVisual : MonoBehaviour
+    public class GhostAnimator : MonoBehaviour
     {
         private const float SolidOpacity = 1f;
 

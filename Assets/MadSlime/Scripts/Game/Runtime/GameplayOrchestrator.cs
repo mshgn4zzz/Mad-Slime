@@ -56,7 +56,7 @@ namespace Game
 
         private ItemDetector _itemDetector;
         private AttractableDetector _attractableDetector;
-        private CloseItemDetector _closeDetector;
+        private CameraObstacleDetector _obstacleDetector;
         private CrawlAnimator _crawlAnimator;
         private GrowthAnimator _growthAnimator;
         private CameraFollow _cameraFollow;
@@ -80,7 +80,7 @@ namespace Game
             Pauser pauser, IGameplayReporter gameplayReporter, AdrenalineBoost adrenalineBoost,
             FinalCountdownVignette finalCountdownVignette, TimerTickSound timerTickSound,
             Movement.Movement movement, PlayerTier playerTier, PlayerScaler playerScaler, SmellAbilityActivator smellAbility,
-            ItemDetector itemDetector, AttractableDetector attractableDetector, CloseItemDetector closeDetector,
+            ItemDetector itemDetector, AttractableDetector attractableDetector, CameraObstacleDetector obstacleDetector,
             CrawlAnimator crawlAnimator, GrowthAnimator growthAnimator, CameraFollow cameraFollow)
         {
             _configResolver = configResolver;
@@ -103,7 +103,7 @@ namespace Game
             _smellAbility = smellAbility;
             _itemDetector = itemDetector;
             _attractableDetector = attractableDetector;
-            _closeDetector = closeDetector;
+            _obstacleDetector = obstacleDetector;
             _crawlAnimator = crawlAnimator;
             _growthAnimator = growthAnimator;
             _cameraFollow = cameraFollow;
@@ -257,7 +257,7 @@ namespace Game
         private void ApplyPause()
         {
             if (_state == SessionState.Finished && (_itemDetector == null || _attractableDetector == null
-                || _closeDetector == null || _crawlAnimator == null || _smellAbility == null
+                || _obstacleDetector == null || _crawlAnimator == null || _smellAbility == null
                 || _movement == null || _itemCollector == null))
             {
                 return;
@@ -266,7 +266,7 @@ namespace Game
             bool isRunning = _state == SessionState.Running && _pauser.IsPaused == false;
             _itemDetector.enabled = isRunning;
             _attractableDetector.enabled = isRunning;
-            _closeDetector.enabled = isRunning;
+            _obstacleDetector.enabled = isRunning;
             _crawlAnimator.enabled = isRunning;
             _smellAbility.SetPaused(isRunning == false);
 
