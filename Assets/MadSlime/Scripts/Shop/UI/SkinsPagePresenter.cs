@@ -15,7 +15,6 @@ namespace Shop
         private SkinRarityLookup _rarityLookup;
         private ModelPlacer _preview;
         private List<SkinItem> _skins = new List<SkinItem>();
-        private List<SkinItem> _exclusiveSkins = new List<SkinItem>();
         private List<ShopItemView> _views = new List<ShopItemView>();
         private List<SkinRarityGroupView> _groups = new List<SkinRarityGroupView>();
         private bool _isSetup;
@@ -28,9 +27,8 @@ namespace Shop
             _rarityLookup = new SkinRarityLookup(rarityTable);
             _preview = preview;
             _skins.Clear();
-            _exclusiveSkins.Clear();
-            AddSkins(skins, false);
-            AddSkins(exclusiveSkins, true);
+            AddSkins(skins);
+            AddSkins(exclusiveSkins);
             _skins.Sort(CompareRarity);
             _isSetup = true;
 
@@ -45,7 +43,7 @@ namespace Shop
             return left.Rarity.CompareTo(right.Rarity);
         }
 
-        private void AddSkins(IEnumerable<SkinItem> skins, bool isExclusive)
+        private void AddSkins(IEnumerable<SkinItem> skins)
         {
             foreach (SkinItem skin in skins)
             {
@@ -55,11 +53,6 @@ namespace Shop
                 }
 
                 _skins.Add(skin);
-
-                if (isExclusive == true)
-                {
-                    _exclusiveSkins.Add(skin);
-                }
             }
         }
 
@@ -129,7 +122,7 @@ namespace Shop
 
                 ShopItemView view = _factory.Get(parent);
                 view.Initialize(skin.Id, skin.Icon, _rarityLookup.Get(skin.Rarity).PlateColor,
-                    _exclusiveSkins.Contains(skin), isOpen, _inventory.SelectedSkinId == skin.Id);
+                    isOpen, _inventory.SelectedSkinId == skin.Id);
                 view.Click += OnClicked;
                 _views.Add(view);
             }

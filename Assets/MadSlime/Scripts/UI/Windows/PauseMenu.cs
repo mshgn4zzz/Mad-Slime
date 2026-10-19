@@ -18,6 +18,7 @@ namespace UI
         [SerializeField] private CanvasGroup _settingsInput;
 
         private bool _isActionRequested;
+        private bool _isResetAvailable;
 
         public event Action CloseButtonClicked;
 
@@ -59,6 +60,7 @@ namespace UI
 
         public void Initialize(bool isMenuButtonNeeded, bool isResetAvailable = false)
         {
+            _isResetAvailable = isResetAvailable;
             _isActionRequested = false;
             _closeButton.interactable = true;
             _menuButton.interactable = true;
@@ -106,7 +108,7 @@ namespace UI
 
         private void OnResetClicked()
         {
-            if (_isActionRequested == true || IsClosing == true)
+            if (_isResetAvailable == false || _isActionRequested == true || IsClosing == true)
             {
                 return;
             }
@@ -130,7 +132,7 @@ namespace UI
 
         private void OnResetConfirmed()
         {
-            if (_isActionRequested == true || IsClosing == true)
+            if (_isResetAvailable == false || _isActionRequested == true || IsClosing == true)
             {
                 return;
             }
