@@ -80,26 +80,57 @@ public class Outline : MonoBehaviour {
 
   private bool needsUpdate;
 
+  private class SharedMaterials
+  {
+    private Material _mask;
+    private Material _fill;
+    private int _users;
+
+    public Material Mask => _mask;
+    public Material Fill => _fill;
+
+    public SharedMaterials(Material mask, Material fill)
+    {
+      _mask = mask;
+      _fill = fill;
+    }
+
+    public void Retain()
+    {
+      _users++;
+    }
+
+    public bool Release()
+    {
+      _users--;
+      return _users == 0;
+    }
+  }
+
+  private static Dictionary<(Mode, Color, float), SharedMaterials> s_sharedMaterials =
+    new Dictionary<(Mode, Color, float), SharedMaterials>();
+
+  private (Mode, Color, float) _materialKey;
+  private SharedMaterials _sharedMaterials;
+
   void Awake() {
 
     // Cache renderers
     renderers = GetComponentsInChildren<Renderer>();
 
-    // Instantiate outline materials
-    outlineMaskMaterial = Instantiate(Resources.Load<Material>(@"Materials/OutlineMask"));
-    outlineFillMaterial = Instantiate(Resources.Load<Material>(@"Materials/OutlineFill"));
-
-    outlineMaskMaterial.name = "OutlineMask (Instance)";
-    outlineFillMaterial.name = "OutlineFill (Instance)";
-
     // Retrieve or generate smooth normals
     LoadSmoothNormals();
+    AcquireMaterials();
 
     // Apply material properties immediately
     needsUpdate = true;
   }
 
   void OnEnable() {
+    AttachMaterials();
+  }
+
+  private void AttachMaterials() {
     foreach (var renderer in renderers) {
 
       // Append outline shaders
@@ -133,11 +164,15 @@ public class Outline : MonoBehaviour {
     if (needsUpdate) {
       needsUpdate = false;
 
-      UpdateMaterialProperties();
+      RefreshMaterials();
     }
   }
 
   void OnDisable() {
+    DetachMaterials();
+  }
+
+  private void DetachMaterials() {
     foreach (var renderer in renderers) {
 
       // Remove outline shaders
@@ -152,9 +187,59 @@ public class Outline : MonoBehaviour {
 
   void OnDestroy() {
 
-    // Destroy material instances
-    Destroy(outlineMaskMaterial);
-    Destroy(outlineFillMaterial);
+    ReleaseMaterials();
+  }
+
+  private void AcquireMaterials()
+  {
+    _materialKey = (outlineMode, outlineColor, outlineWidth);
+
+    if (s_sharedMaterials.TryGetValue(_materialKey, out _sharedMaterials) == false)
+    {
+      outlineMaskMaterial = Instantiate(Resources.Load<Material>(@"Materials/OutlineMask"));
+      outlineFillMaterial = Instantiate(Resources.Load<Material>(@"Materials/OutlineFill"));
+      outlineMaskMaterial.name = "OutlineMask (Shared)";
+      outlineFillMaterial.name = "OutlineFill (Shared)";
+      outlineMaskMaterial.enableInstancing = true;
+      outlineFillMaterial.enableInstancing = true;
+      UpdateMaterialProperties();
+      _sharedMaterials = new SharedMaterials(outlineMaskMaterial, outlineFillMaterial);
+      s_sharedMaterials.Add(_materialKey, _sharedMaterials);
+    }
+
+    outlineMaskMaterial = _sharedMaterials.Mask;
+    outlineFillMaterial = _sharedMaterials.Fill;
+    _sharedMaterials.Retain();
+  }
+
+  private void ReleaseMaterials()
+  {
+    if (_sharedMaterials == null)
+    {
+      return;
+    }
+
+    if (_sharedMaterials.Release() == true)
+    {
+      s_sharedMaterials.Remove(_materialKey);
+      Destroy(_sharedMaterials.Mask);
+      Destroy(_sharedMaterials.Fill);
+    }
+
+    _sharedMaterials = null;
+  }
+
+  private void RefreshMaterials()
+  {
+    if (_materialKey.Equals((outlineMode, outlineColor, outlineWidth)) == true)
+    {
+      return;
+    }
+
+    DetachMaterials();
+    ReleaseMaterials();
+    AcquireMaterials();
+    AttachMaterials();
   }
 
   void Bake() {

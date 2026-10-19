@@ -14,36 +14,36 @@ MonoBehaviour:
   m_EditorClassIdentifier:
   _zones:
   - _shape: 1
-    _center: {x: 0, y: 0}
-    _radius: 6
-    _count: 16
-    _autoSpacing: 0
-    _spacing: 2
-    _minTier: 0
-    _maxTier: 0
+    _center: {x: -215.980, y: -59.404}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 5
+    _maxTier: 5
     _singleType: 0
   - _shape: 1
-    _center: {x: 0, y: 0}
-    _radius: 8
-    _count: 20
-    _autoSpacing: 0
-    _spacing: 2
-    _minTier: 0
-    _maxTier: 0
+    _center: {x: 215.980, y: 59.404}
+    _radius: 0.000
+    _count: 1
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 5
+    _maxTier: 5
     _singleType: 0
-  - _shape: 1
-    _center: {x: 0, y: 0}
-    _radius: 10
-    _count: 24
-    _autoSpacing: 0
-    _spacing: 2
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 7.000
+    _count: 11
+    _autoSpacing: 1
+    _spacing: 0.000
     _minTier: 0
     _maxTier: 0
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
     _radius: 15.000
-    _count: 39
+    _count: 24
     _autoSpacing: 1
     _spacing: 0.000
     _minTier: 0
@@ -51,8 +51,8 @@ MonoBehaviour:
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
-    _radius: 18.000
-    _count: 47
+    _radius: 23.000
+    _count: 36
     _autoSpacing: 1
     _spacing: 0.000
     _minTier: 0
@@ -60,53 +60,8 @@ MonoBehaviour:
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
-    _radius: 21.000
-    _count: 54
-    _autoSpacing: 1
-    _spacing: 0.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 4
-    _center: {x: 0.000, y: 0.000}
-    _radius: 24.000
-    _count: 63
-    _autoSpacing: 1
-    _spacing: 0.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 4
-    _center: {x: 0.000, y: 0.000}
-    _radius: 27.000
-    _count: 71
-    _autoSpacing: 1
-    _spacing: 0.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 4
-    _center: {x: 0.000, y: 0.000}
-    _radius: 30.000
-    _count: 78
-    _autoSpacing: 1
-    _spacing: 0.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 4
-    _center: {x: 0.000, y: 0.000}
-    _radius: 33.000
-    _count: 86
-    _autoSpacing: 1
-    _spacing: 0.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 4
-    _center: {x: 0.000, y: 0.000}
-    _radius: 36.000
-    _count: 93
+    _radius: 31.000
+    _count: 49
     _autoSpacing: 1
     _spacing: 0.000
     _minTier: 0
@@ -115,7 +70,7 @@ MonoBehaviour:
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
     _radius: 39.000
-    _count: 102
+    _count: 62
     _autoSpacing: 1
     _spacing: 0.000
     _minTier: 0
@@ -123,8 +78,8 @@ MonoBehaviour:
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
-    _radius: 42.000
-    _count: 110
+    _radius: 47.000
+    _count: 75
     _autoSpacing: 1
     _spacing: 0.000
     _minTier: 0
@@ -132,53 +87,8 @@ MonoBehaviour:
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
-    _radius: 45.000
-    _count: 117
-    _autoSpacing: 1
-    _spacing: 0.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 4
-    _center: {x: 0.000, y: 0.000}
-    _radius: 48.000
-    _count: 125
-    _autoSpacing: 1
-    _spacing: 0.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 4
-    _center: {x: 0.000, y: 0.000}
-    _radius: 51.000
-    _count: 132
-    _autoSpacing: 1
-    _spacing: 0.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 4
-    _center: {x: 0.000, y: 0.000}
-    _radius: 54.000
-    _count: 141
-    _autoSpacing: 1
-    _spacing: 0.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 4
-    _center: {x: 0.000, y: 0.000}
-    _radius: 57.000
-    _count: 149
-    _autoSpacing: 1
-    _spacing: 0.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 4
-    _center: {x: 0.000, y: 0.000}
-    _radius: 60.000
-    _count: 156
+    _radius: 55.000
+    _count: 88
     _autoSpacing: 1
     _spacing: 0.000
     _minTier: 0
@@ -187,7 +97,7 @@ MonoBehaviour:
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
     _radius: 63.000
-    _count: 164
+    _count: 100
     _autoSpacing: 1
     _spacing: 0.000
     _minTier: 0
@@ -195,8 +105,8 @@ MonoBehaviour:
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
-    _radius: 66.000
-    _count: 171
+    _radius: 71.000
+    _count: 113
     _autoSpacing: 1
     _spacing: 0.000
     _minTier: 0
@@ -204,53 +114,8 @@ MonoBehaviour:
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
-    _radius: 69.000
-    _count: 180
-    _autoSpacing: 1
-    _spacing: 0.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 4
-    _center: {x: 0.000, y: 0.000}
-    _radius: 72.000
-    _count: 188
-    _autoSpacing: 1
-    _spacing: 0.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 4
-    _center: {x: 0.000, y: 0.000}
-    _radius: 75.000
-    _count: 195
-    _autoSpacing: 1
-    _spacing: 0.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 4
-    _center: {x: 0.000, y: 0.000}
-    _radius: 78.000
-    _count: 203
-    _autoSpacing: 1
-    _spacing: 0.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 4
-    _center: {x: 0.000, y: 0.000}
-    _radius: 81.000
-    _count: 210
-    _autoSpacing: 1
-    _spacing: 0.000
-    _minTier: 0
-    _maxTier: 0
-    _singleType: 0
-  - _shape: 4
-    _center: {x: 0.000, y: 0.000}
-    _radius: 84.000
-    _count: 219
+    _radius: 79.000
+    _count: 126
     _autoSpacing: 1
     _spacing: 0.000
     _minTier: 0
@@ -259,7 +124,7 @@ MonoBehaviour:
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
     _radius: 87.000
-    _count: 227
+    _count: 139
     _autoSpacing: 1
     _spacing: 0.000
     _minTier: 0
@@ -267,8 +132,8 @@ MonoBehaviour:
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
-    _radius: 90.000
-    _count: 234
+    _radius: 95.000
+    _count: 152
     _autoSpacing: 1
     _spacing: 0.000
     _minTier: 0
@@ -276,8 +141,8 @@ MonoBehaviour:
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
-    _radius: 93.000
-    _count: 242
+    _radius: 103.000
+    _count: 164
     _autoSpacing: 1
     _spacing: 0.000
     _minTier: 0
@@ -285,80 +150,260 @@ MonoBehaviour:
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
-    _radius: 101.000
-    _count: 346
+    _radius: 111.000
+    _count: 177
     _autoSpacing: 1
     _spacing: 0.000
-    _minTier: 1
-    _maxTier: 1
+    _minTier: 0
+    _maxTier: 0
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
-    _radius: 108.000
-    _count: 370
+    _radius: 119.000
+    _count: 190
     _autoSpacing: 1
     _spacing: 0.000
-    _minTier: 1
-    _maxTier: 1
+    _minTier: 0
+    _maxTier: 0
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
-    _radius: 115.000
-    _count: 394
+    _radius: 127.000
+    _count: 203
     _autoSpacing: 1
     _spacing: 0.000
-    _minTier: 1
-    _maxTier: 1
+    _minTier: 0
+    _maxTier: 0
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
-    _radius: 122.000
-    _count: 418
+    _radius: 135.000
+    _count: 216
     _autoSpacing: 1
     _spacing: 0.000
-    _minTier: 1
-    _maxTier: 1
+    _minTier: 0
+    _maxTier: 0
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
-    _radius: 129.000
-    _count: 442
+    _radius: 143.000
+    _count: 228
     _autoSpacing: 1
     _spacing: 0.000
-    _minTier: 1
-    _maxTier: 1
+    _minTier: 0
+    _maxTier: 0
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
-    _radius: 136.000
-    _count: 466
+    _radius: 151.000
+    _count: 241
     _autoSpacing: 1
     _spacing: 0.000
-    _minTier: 1
-    _maxTier: 1
+    _minTier: 0
+    _maxTier: 0
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
-    _radius: 139.000
-    _count: 298
+    _radius: 159.000
+    _count: 254
     _autoSpacing: 1
     _spacing: 0.000
-    _minTier: 2
-    _maxTier: 2
-    _singleType: 0
-  - _shape: 4
-    _center: {x: 0.000, y: 0.000}
-    _radius: 153.000
-    _count: 328
-    _autoSpacing: 1
-    _spacing: 0.000
-    _minTier: 2
-    _maxTier: 2
+    _minTier: 0
+    _maxTier: 0
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
     _radius: 167.000
-    _count: 358
+    _count: 267
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 175.000
+    _count: 280
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 183.000
+    _count: 292
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 191.000
+    _count: 305
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 199.000
+    _count: 318
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 207.000
+    _count: 331
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 215.000
+    _count: 344
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 223.000
+    _count: 356
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 0
+    _maxTier: 0
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 25.000
+    _count: 22
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 41.000
+    _count: 36
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 57.000
+    _count: 50
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 73.000
+    _count: 64
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 89.000
+    _count: 79
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 105.000
+    _count: 93
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 121.000
+    _count: 107
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 137.000
+    _count: 121
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 153.000
+    _count: 136
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 169.000
+    _count: 150
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 185.000
+    _count: 164
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 201.000
+    _count: 178
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 217.000
+    _count: 192
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 1
+    _maxTier: 1
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 40.000
+    _count: 12
     _autoSpacing: 1
     _spacing: 0.000
     _minTier: 2
@@ -366,17 +411,53 @@ MonoBehaviour:
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
-    _radius: 177.000
-    _count: 153
+    _radius: 72.000
+    _count: 23
     _autoSpacing: 1
     _spacing: 0.000
-    _minTier: 3
-    _maxTier: 3
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 104.000
+    _count: 33
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 136.000
+    _count: 43
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 168.000
+    _count: 53
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 2
+    _maxTier: 2
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
     _radius: 200.000
-    _count: 173
+    _count: 64
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 2
+    _maxTier: 2
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 70.000
+    _count: 11
     _autoSpacing: 1
     _spacing: 0.000
     _minTier: 3
@@ -384,8 +465,26 @@ MonoBehaviour:
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
-    _radius: 220.000
-    _count: 24
+    _radius: 126.000
+    _count: 21
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 182.000
+    _count: 30
+    _autoSpacing: 1
+    _spacing: 0.000
+    _minTier: 3
+    _maxTier: 3
+    _singleType: 0
+  - _shape: 4
+    _center: {x: 0.000, y: 0.000}
+    _radius: 105.000
+    _count: 9
     _autoSpacing: 1
     _spacing: 0.000
     _minTier: 4
@@ -393,16 +492,16 @@ MonoBehaviour:
     _singleType: 0
   - _shape: 4
     _center: {x: 0.000, y: 0.000}
-    _radius: 250.000
-    _count: 8
+    _radius: 195.000
+    _count: 18
     _autoSpacing: 1
     _spacing: 0.000
-    _minTier: 5
-    _maxTier: 5
+    _minTier: 4
+    _maxTier: 4
     _singleType: 0
   _allowMirroring: 1
   _autoSpacingFactor: 2.3
-  _scatterDistanceFactor: 0.8
-  _smallItemStartClearRadius: 2
+  _scatterDistanceFactor: 0.9
   _startClearRadius: 10
+  _smallItemStartClearRadius: 2
   _largeItemGap: 0.75

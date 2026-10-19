@@ -68,7 +68,7 @@ namespace UI
             OnResetCanceled();
 
             _menuButton.gameObject.SetActive(isMenuButtonNeeded);
-            if (isMenuButtonNeeded == true)
+            if (isMenuButtonNeeded == true || isResetAvailable == true)
             {
                 _languageButton.anchoredPosition = _languagePositionWithMenuButton;
             }

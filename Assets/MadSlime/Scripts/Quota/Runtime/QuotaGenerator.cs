@@ -74,7 +74,7 @@ namespace Game
 
             foreach (KeyValuePair<ItemDefinition, int> pair in spawnedCounts)
             {
-                if (pair.Key != null && pair.Value > 0)
+                if (pair.Key != null && pair.Value > 0 && pair.Key.Tier <= SizeTier.Giant)
                 {
                     _candidates.Add(pair.Key);
                 }
