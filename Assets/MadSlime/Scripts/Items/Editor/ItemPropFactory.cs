@@ -532,12 +532,12 @@ namespace EditorTools
             serializedBody.FindProperty("_collider").objectReferenceValue = collider;
             serializedBody.ApplyModifiedPropertiesWithoutUndo();
 
-            if (item.TryGetComponent(out ItemVisual visual) == false)
+            if (item.TryGetComponent(out GhostAnimator animator) == false)
             {
-                visual = item.gameObject.AddComponent<ItemVisual>();
+                animator = item.gameObject.AddComponent<GhostAnimator>();
             }
 
-            SerializedObject serializedVisual = new SerializedObject(visual);
+            SerializedObject serializedVisual = new SerializedObject(animator);
             serializedVisual.FindProperty("_ghostMaterial").objectReferenceValue = _ghostMaterial;
             serializedVisual.FindProperty("_ghostFadeConfig").objectReferenceValue = _ghostFadeConfig;
             serializedVisual.ApplyModifiedPropertiesWithoutUndo();
