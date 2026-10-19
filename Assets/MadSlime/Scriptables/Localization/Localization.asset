@@ -145,10 +145,6 @@ MonoBehaviour:
     _ru: "МАКС"
     _en: MAX
     _tr: MAKS
-  - _key: shop_exclusive
-    _ru: "РУЛЕТКА"
-    _en: ROULETTE
-    _tr: RULET
   - _key: upgrade_speed
     _ru: "Скорость"
     _en: Speed

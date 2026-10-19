@@ -122,6 +122,8 @@ namespace Player
 
         public float RelativeScale => _relativeScale;
 
+        public Vector3 WorldCenter => _playerCollider.bounds.center;
+
         private void ApplyMultiplier()
         {
             _modelTransform.localScale = Vector3.one * _currentMultiplier;

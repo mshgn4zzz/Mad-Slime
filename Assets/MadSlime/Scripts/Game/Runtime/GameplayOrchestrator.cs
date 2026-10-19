@@ -1,4 +1,5 @@
 using Audio;
+using CameraSystem;
 using Collectables;
 using Core;
 using Cysharp.Threading.Tasks;
@@ -58,6 +59,7 @@ namespace Game
         private CloseItemDetector _closeDetector;
         private CrawlAnimator _crawlAnimator;
         private GrowthAnimator _growthAnimator;
+        private CameraFollow _cameraFollow;
         private CancellationTokenSource _sessionSource;
         private CancellationTokenSource _finishDelaySource;
         private SessionState _state = SessionState.Preparing;
@@ -79,7 +81,7 @@ namespace Game
             FinalCountdownVignette finalCountdownVignette, TimerTickSound timerTickSound,
             Movement.Movement movement, PlayerTier playerTier, PlayerScaler playerScaler, SmellAbilityActivator smellAbility,
             ItemDetector itemDetector, AttractableDetector attractableDetector, CloseItemDetector closeDetector,
-            CrawlAnimator crawlAnimator, GrowthAnimator growthAnimator)
+            CrawlAnimator crawlAnimator, GrowthAnimator growthAnimator, CameraFollow cameraFollow)
         {
             _configResolver = configResolver;
             _levelGenerator = levelGenerator;
@@ -104,6 +106,7 @@ namespace Game
             _closeDetector = closeDetector;
             _crawlAnimator = crawlAnimator;
             _growthAnimator = growthAnimator;
+            _cameraFollow = cameraFollow;
         }
 
         private void Awake()
@@ -287,6 +290,7 @@ namespace Game
 
             bool wasRunning = _state == SessionState.Running;
             _state = SessionState.Finished;
+            _cameraFollow.StopMotion();
             _sessionSource?.Cancel();
             _finishDelaySource?.Cancel();
             _finishDelaySource?.Dispose();
@@ -392,6 +396,7 @@ namespace Game
 
         private void FinishGame()
         {
+            _cameraFollow.StopMotion();
             _itemCollector.StopCollecting();
             _timer.Stop();
             _growthAnimator.Stop();
