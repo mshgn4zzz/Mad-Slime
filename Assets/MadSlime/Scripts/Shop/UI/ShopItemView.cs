@@ -10,7 +10,6 @@ namespace Shop
         [SerializeField] private Image _backgroundImage;
         [SerializeField] private Image _contentImage;
         [SerializeField] private Image _lockImage;
-        [SerializeField] private GameObject _rouletteBadge;
         [SerializeField] private Image _selectedMark;
 
         [SerializeField] private Color _highlightColor = new Color(1f, 0.85f, 0.2f, 1f);
@@ -42,13 +41,12 @@ namespace Shop
             _button.onClick.RemoveListener(OnClick);
         }
 
-        public void Initialize(string skinId, Sprite icon, Color rarityColor, bool isExclusive, bool isUnlocked, bool isSelected)
+        public void Initialize(string skinId, Sprite icon, Color rarityColor, bool isUnlocked, bool isSelected)
         {
             _skinId = skinId;
             _rarityColor = rarityColor;
             _contentImage.sprite = icon;
             _backgroundImage.color = rarityColor;
-            _rouletteBadge.SetActive(isExclusive);
             SetUnlocked(isUnlocked);
             SetSelected(isSelected);
         }

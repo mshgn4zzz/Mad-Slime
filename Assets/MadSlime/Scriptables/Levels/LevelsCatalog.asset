@@ -14,20 +14,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ranges:
   - _fromLevel: 1
-    _toLevel: 10
+    _toLevel: 3
     _config: {fileID: 11400000, guid: bc5effaf033203d4f93a47ab45f7ebe4, type: 2}
-  - _fromLevel: 11
-    _toLevel: 20
+  - _fromLevel: 4
+    _toLevel: 6
     _config: {fileID: 11400000, guid: 44bcfa6c2543cba479d828e5bd89eabf, type: 2}
-  - _fromLevel: 21
-    _toLevel: 30
+  - _fromLevel: 7
+    _toLevel: 9
     _config: {fileID: 11400000, guid: 913fd75a7d23c173b93072b0286b665c, type: 2}
-  - _fromLevel: 31
-    _toLevel: 40
+  - _fromLevel: 10
+    _toLevel: 12
     _config: {fileID: 11400000, guid: 0d8cdab93df4bad3e82a3a1bca0e1a41, type: 2}
-  - _fromLevel: 41
-    _toLevel: 50
+  - _fromLevel: 13
+    _toLevel: 15
     _config: {fileID: 11400000, guid: 7f7fb19b63b8058b1af31b83b617746b, type: 2}
-  - _fromLevel: 51
-    _toLevel: 60
+  - _fromLevel: 16
+    _toLevel: 18
     _config: {fileID: 11400000, guid: f079b8058128ce922b95c6105d555895, type: 2}

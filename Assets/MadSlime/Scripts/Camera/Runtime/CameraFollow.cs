@@ -16,6 +16,7 @@ namespace CameraSystem
         private Vector3 _currentOffset;
         private Vector3 _startOffset;
         private Camera _camera;
+        private bool _isStopped;
 
         private void Awake()
         {
@@ -57,6 +58,11 @@ namespace CameraSystem
 
         private void LateUpdate()
         {
+            if (_isStopped == true || Time.deltaTime <= 0f)
+            {
+                return;
+            }
+
             float offsetLength = Mathf.Max(_config.MinDistance, _currentOffset.magnitude - _pullAnimator.Pull);
             Vector3 desiredPosition = _target.position + _currentOffset.normalized * offsetLength;
 
@@ -68,6 +74,15 @@ namespace CameraSystem
                 _config.MaxPositionSpeed) + GetShakeOffset();
 
             _camera.fieldOfView = _config.BaseFov + _fovKickAnimator.FovKick;
+        }
+
+        public void StopMotion()
+        {
+            _isStopped = true;
+            _positionVelocity = Vector3.zero;
+            _pullAnimator.enabled = false;
+            _shakeAnimator.enabled = false;
+            _fovKickAnimator.enabled = false;
         }
 
         private Vector3 GetShakeOffset()

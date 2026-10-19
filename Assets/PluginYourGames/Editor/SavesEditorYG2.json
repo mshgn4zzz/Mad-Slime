@@ -1,44 +1,30 @@
 {
-    "CurrentLevel": 52,
-    "MaxLevel": 52,
-    "CollectedItemsCount": 141513,
+    "CurrentLevel": 4,
+    "MaxLevel": 4,
+    "CollectedItemsCount": 6058,
     "Language": "",
-    "musicVolume": 0.35777056217193606,
-    "sfxVolume": 1.0,
-    "Balance": 9864019,
+    "musicVolume": 0.5,
+    "sfxVolume": 0.3499999940395355,
+    "Balance": 349,
     "TestFundsGranted": true,
-    "SelectedSkinId": "Sahur",
+    "SelectedSkinId": "Slime",
     "_openSkinIds": [
-        "Slime",
-        "Car",
-        "Ufo",
-        "Vacuum",
-        "Bunny",
-        "RedPanda",
-        "Sahur"
+        "Slime"
     ],
     "_showcaseSkinIds": [
-        "CubeSlime",
+        "Chick",
+        "Sahur",
         "Jellyfish",
-        "BabyDragon",
-        "Snail",
-        "Cat"
+        "Cat",
+        "RedPanda"
     ],
-    "SpeedLevel": 5,
-    "AppetiteLevel": 5,
-    "TasteLevel": 5,
-    "MetabolismLevel": 5,
-    "PurchasedPerks": [
-        0,
-        1,
-        2
-    ],
-    "LastFreeSpinUnixTime": 1792351243,
-    "RouletteAdSpinTimes": [
-        1792175275,
-        1792175283,
-        1792175292
-    ],
-    "SkinSpinCount": 6,
-    "idSave": 161
+    "SpeedLevel": 0,
+    "AppetiteLevel": 0,
+    "TasteLevel": 0,
+    "MetabolismLevel": 0,
+    "PurchasedPerks": [],
+    "LastFreeSpinUnixTime": 0,
+    "RouletteAdSpinTimes": [],
+    "SkinSpinCount": 0,
+    "idSave": 79
 }
