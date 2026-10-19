@@ -8,9 +8,8 @@ using VContainer;
 
 namespace Collectables
 {
-    // Preserves scene references and the growth-driven radius for camera obstruction detection.
     [DefaultExecutionOrder(100)]
-    public class CloseItemDetector : MonoBehaviour, IRadiusRecipient
+    public class CameraObstacleDetector : MonoBehaviour, IRadiusRecipient
     {
         private const int BufferSize = 256;
 
@@ -21,12 +20,12 @@ namespace Collectables
         private CameraFollow _cameraFollow;
         private PlayerScaler _playerScaler;
         private RaycastHit[] _buffer = new RaycastHit[BufferSize];
-        private HashSet<Item> _previousTargets = new HashSet<Item>();
-        private HashSet<Item> _currentTargets = new HashSet<Item>();
+        private HashSet<GhostAnimator> _previousTargets = new HashSet<GhostAnimator>();
+        private HashSet<GhostAnimator> _currentTargets = new HashSet<GhostAnimator>();
 
-        public event Action<Item> Detected;
+        public event Action<GhostAnimator> Detected;
 
-        public event Action<Item> Exited;
+        public event Action<GhostAnimator> Exited;
 
         public float Radius => _radius;
 
@@ -50,24 +49,24 @@ namespace Collectables
 
                 for (int i = 0; i < hitsCount; i++)
                 {
-                    Item item = _buffer[i].collider.GetComponentInParent<Item>();
+                    GhostAnimator animator = _buffer[i].collider.GetComponentInParent<GhostAnimator>();
 
-                    if (item != null && _currentTargets.Add(item) == true)
+                    if (animator != null && _currentTargets.Add(animator) == true)
                     {
-                        Detected?.Invoke(item);
+                        Detected?.Invoke(animator);
                     }
                 }
             }
 
-            foreach (Item item in _previousTargets)
+            foreach (GhostAnimator animator in _previousTargets)
             {
-                if (_currentTargets.Contains(item) == false)
+                if (_currentTargets.Contains(animator) == false)
                 {
-                    Exited?.Invoke(item);
+                    Exited?.Invoke(animator);
                 }
             }
 
-            HashSet<Item> reusableTargets = _previousTargets;
+            HashSet<GhostAnimator> reusableTargets = _previousTargets;
             _previousTargets = _currentTargets;
             _currentTargets = reusableTargets;
         }
@@ -87,9 +86,9 @@ namespace Collectables
 
         private void OnDisable()
         {
-            foreach (Item item in _previousTargets)
+            foreach (GhostAnimator animator in _previousTargets)
             {
-                Exited?.Invoke(item);
+                Exited?.Invoke(animator);
             }
 
             _previousTargets.Clear();
