@@ -7,6 +7,8 @@ namespace Shop
 {
     public class SkinsPagePresenter : MonoBehaviour
     {
+        private const int ScrollLayoutFrameCount = 3;
+
         [SerializeField] private Transform _itemsParent;
         [SerializeField] private ScrollRect _scroll;
         [SerializeField] private ShopItemViewFactory _factory;
@@ -78,8 +80,13 @@ namespace Shop
 
         private void LateUpdate()
         {
-            if (_scrollLayoutFrames <= 0) return;
+            if (_scrollLayoutFrames <= 0)
+            {
+                return;
+            }
+
             _scrollLayoutFrames--;
+
             if (_scrollLayoutFrames == 0)
             {
                 Canvas.ForceUpdateCanvases();
@@ -124,7 +131,7 @@ namespace Shop
             Canvas.ForceUpdateCanvases();
             _scroll.verticalNormalizedPosition = 1f;
             _pendingScrollPosition = new Vector2(0f, 1f);
-            _scrollLayoutFrames = 3;
+            _scrollLayoutFrames = ScrollLayoutFrameCount;
         }
 
         private void SpawnGroup(Transform parent, int start, int end, bool isOpen)
@@ -148,7 +155,17 @@ namespace Shop
 
         public void Refresh(string rewardSkinId)
         {
-            Vector2 position = rewardSkinId == null ? new Vector2(0f, 1f) : _scroll.normalizedPosition;
+            Vector2 position;
+
+            if (rewardSkinId == null)
+            {
+                position = new Vector2(0f, 1f);
+            }
+            else
+            {
+                position = _scroll.normalizedPosition;
+            }
+
             Clear();
             Show();
 
@@ -160,7 +177,7 @@ namespace Shop
             Canvas.ForceUpdateCanvases();
             _scroll.normalizedPosition = position;
             _pendingScrollPosition = position;
-            _scrollLayoutFrames = 3;
+            _scrollLayoutFrames = ScrollLayoutFrameCount;
         }
 
         private void OnClicked(ShopItemView view)

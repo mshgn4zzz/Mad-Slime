@@ -147,6 +147,7 @@ namespace Game
 
             List<QuotaEntry> quota = _quotaGenerator.Generate(_itemsSpawner.SpawnedCounts, config);
             _quotaBoard.Reset(quota);
+            _itemsSpawner.AssignQuotaLayers(quota);
         }
 
         private void ApplyTheme(LevelConfig config)

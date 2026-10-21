@@ -12,9 +12,9 @@ namespace Game
 {
     public class QuotaItemHighlighter : MonoBehaviour
     {
-        private static readonly ProfilerMarker s_refreshMarker = new ProfilerMarker("QuotaItemHighlighter.Refresh");
-        private static readonly ProfilerMarker s_evaluateTypesMarker = new ProfilerMarker("QuotaItemHighlighter.EvaluateTypes");
-        private static readonly ProfilerMarker s_applyChangesMarker = new ProfilerMarker("QuotaItemHighlighter.ApplyChanges");
+        private ProfilerMarker _refreshMarker = new ProfilerMarker("QuotaItemHighlighter.Refresh");
+        private ProfilerMarker _evaluateTypesMarker = new ProfilerMarker("QuotaItemHighlighter.EvaluateTypes");
+        private ProfilerMarker _applyChangesMarker = new ProfilerMarker("QuotaItemHighlighter.ApplyChanges");
 
         [SerializeField] private Color _highlightColor = new Color(1f, 0.85f, 0.2f, 1f);
         [SerializeField, Min(0f)] private float _outlineWidth = 4f;
@@ -23,39 +23,11 @@ namespace Game
         private QuotaBoard _board;
         private CollectAvailability _collectAvailability;
         private PlayerTier _playerTier;
-        private readonly Dictionary<ItemDefinition, QuotaTypeState> _quotaTypes =
+        private Dictionary<ItemDefinition, QuotaTypeState> _quotaTypes =
             new Dictionary<ItemDefinition, QuotaTypeState>();
-        private readonly Dictionary<Item, TrackedItem> _items = new Dictionary<Item, TrackedItem>();
-        private readonly HashSet<Item> _pendingItems = new HashSet<Item>();
+        private Dictionary<Item, QuotaTrackedItem> _items = new Dictionary<Item, QuotaTrackedItem>();
+        private HashSet<Item> _pendingItems = new HashSet<Item>();
         private bool _hasDirtyTypes;
-
-        private sealed class QuotaTypeState
-        {
-            public readonly QuotaEntry Entry;
-            public bool IsHighlighted;
-            public bool IsDirty;
-            public bool HasChanged;
-
-            public QuotaTypeState(QuotaEntry entry, bool isHighlighted)
-            {
-                Entry = entry;
-                IsHighlighted = isHighlighted;
-            }
-        }
-
-        private readonly struct TrackedItem
-        {
-            public readonly GhostAnimator Animator;
-            public readonly Collider Collider;
-            public readonly QuotaTypeState Type;
-
-            public TrackedItem(GhostAnimator animator, Collider collider, QuotaTypeState type)
-            {
-                Animator = animator;
-                Collider = collider;
-                Type = type;
-            }
-        }
 
         public Color HighlightColor => _highlightColor;
         public float OutlineWidth => _outlineWidth;
@@ -90,7 +62,7 @@ namespace Game
             _board.QuotaChanged -= OnQuotaChanged;
             _playerTier.TierChanged -= OnTierChanged;
 
-            foreach (TrackedItem item in _items.Values)
+            foreach (QuotaTrackedItem item in _items.Values)
             {
                 if (item.Animator != null)
                 {
@@ -118,14 +90,13 @@ namespace Game
                 return;
             }
 
-            _items.Add(item, new TrackedItem(animator, body.Collider, type));
+            _items.Add(item, new QuotaTrackedItem(animator, body.Collider, type));
             _pendingItems.Add(item);
         }
 
         private void OnExited(Item item)
         {
-            // Destroyed Unity objects can still be keys until the detector reports their exit.
-            if (ReferenceEquals(item, null) || _items.TryGetValue(item, out TrackedItem tracked) == false)
+            if (ReferenceEquals(item, null) || _items.TryGetValue(item, out QuotaTrackedItem tracked) == false)
             {
                 return;
             }
@@ -146,7 +117,7 @@ namespace Game
                 return;
             }
 
-            type.IsDirty = true;
+            type.MarkDirty();
             _hasDirtyTypes = true;
         }
 
@@ -154,7 +125,7 @@ namespace Game
         {
             foreach (QuotaTypeState type in _quotaTypes.Values)
             {
-                type.IsDirty = true;
+                type.MarkDirty();
             }
 
             _hasDirtyTypes = true;
@@ -167,55 +138,62 @@ namespace Game
                 return;
             }
 
-            using (s_refreshMarker.Auto())
+            using ProfilerMarker.AutoScope refreshScope = _refreshMarker.Auto();
+
+            EvaluateTypes();
+            ApplyChanges();
+            ClearChanges();
+        }
+
+        private void EvaluateTypes()
+        {
+            using ProfilerMarker.AutoScope evaluateTypesScope = _evaluateTypesMarker.Auto();
+
+            foreach (QuotaTypeState type in _quotaTypes.Values)
             {
-                using (s_evaluateTypesMarker.Auto())
+                if (type.IsDirty == false)
                 {
-                    foreach (QuotaTypeState type in _quotaTypes.Values)
-                    {
-                        if (type.IsDirty == false)
-                        {
-                            continue;
-                        }
-
-                        bool isHighlighted = IsHighlightable(type.Entry);
-                        type.HasChanged = type.IsHighlighted != isHighlighted;
-                        type.IsHighlighted = isHighlighted;
-                        type.IsDirty = false;
-                    }
+                    continue;
                 }
 
-                using (s_applyChangesMarker.Auto())
-                {
-                    foreach (KeyValuePair<Item, TrackedItem> pair in _items)
-                    {
-                        TrackedItem item = pair.Value;
-
-                        if (item.Type.HasChanged == false && _pendingItems.Contains(pair.Key) == false)
-                        {
-                            continue;
-                        }
-
-                        if (item.Animator == null)
-                        {
-                            continue;
-                        }
-
-                        // Capture disables the collider before quota/tier events are raised.
-                        bool isHighlighted = item.Type.IsHighlighted && item.Collider != null
-                            && item.Collider.enabled && item.Animator.isActiveAndEnabled;
-                        item.Animator.SetHighlighted(isHighlighted);
-                    }
-                }
-
-                foreach (QuotaTypeState type in _quotaTypes.Values)
-                {
-                    type.HasChanged = false;
-                }
-
-                _pendingItems.Clear();
-                _hasDirtyTypes = false;
+                bool isHighlighted = IsHighlightable(type.Entry);
+                type.UpdateHighlight(isHighlighted);
             }
+        }
+
+        private void ApplyChanges()
+        {
+            using ProfilerMarker.AutoScope applyChangesScope = _applyChangesMarker.Auto();
+
+            foreach (KeyValuePair<Item, QuotaTrackedItem> pair in _items)
+            {
+                QuotaTrackedItem item = pair.Value;
+
+                if (item.Type.HasChanged == false && _pendingItems.Contains(pair.Key) == false)
+                {
+                    continue;
+                }
+
+                if (item.Animator == null)
+                {
+                    continue;
+                }
+
+                bool isHighlighted = item.Type.IsHighlighted && item.Collider != null
+                    && item.Collider.enabled && item.Animator.isActiveAndEnabled;
+                item.Animator.SetHighlighted(isHighlighted);
+            }
+        }
+
+        private void ClearChanges()
+        {
+            foreach (QuotaTypeState type in _quotaTypes.Values)
+            {
+                type.ClearChanges();
+            }
+
+            _pendingItems.Clear();
+            _hasDirtyTypes = false;
         }
 
         private bool IsHighlightable(QuotaEntry entry)

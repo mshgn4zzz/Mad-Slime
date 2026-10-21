@@ -152,7 +152,10 @@ namespace Roulette
             bool canWatchAd, bool showClose, bool canClose)
         {
             _title.text = title;
-            if (_layout != null) _layout.SetControlsVisible(showSpin, showAd);
+            if (_layout != null)
+            {
+                _layout.SetControlsVisible(showSpin, showAd);
+            }
             _spinButton.gameObject.SetActive(showSpin);
             _spinPriceText.text = spinText;
             _spinButton.interactable = canSpin;

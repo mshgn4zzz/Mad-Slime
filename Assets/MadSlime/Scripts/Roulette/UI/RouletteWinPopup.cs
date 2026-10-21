@@ -147,14 +147,18 @@ namespace Roulette
             _plateText.text = label;
         }
 
-        private static Color GetFrameColor(SkinRarity rarity)
+        private Color GetFrameColor(SkinRarity rarity)
         {
             switch (rarity)
             {
-                case SkinRarity.Rare: return new Color32(167, 228, 90, 255);
-                case SkinRarity.Epic: return new Color32(197, 165, 232, 255);
-                case SkinRarity.Legendary: return new Color32(246, 198, 75, 255);
-                default: return new Color32(113, 198, 221, 255);
+                case SkinRarity.Rare:
+                    return new Color32(167, 228, 90, 255);
+                case SkinRarity.Epic:
+                    return new Color32(197, 165, 232, 255);
+                case SkinRarity.Legendary:
+                    return new Color32(246, 198, 75, 255);
+                default:
+                    return new Color32(113, 198, 221, 255);
             }
         }
 

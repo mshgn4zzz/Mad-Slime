@@ -126,8 +126,8 @@ public class Outline : MonoBehaviour {
     needsUpdate = true;
   }
 
-  // Called during level loading, before gameplay can activate this outline.
-  public void Prepare(Color color, float width) {
+  public void Prepare(Color color, float width)
+  {
     enabled = false;
     outlineColor = color;
     outlineWidth = width;
@@ -246,12 +246,17 @@ public class Outline : MonoBehaviour {
     }
 
     bool attachMaterials = isActiveAndEnabled;
-    if (attachMaterials) {
+
+    if (attachMaterials)
+    {
       DetachMaterials();
     }
+
     ReleaseMaterials();
     AcquireMaterials();
-    if (attachMaterials) {
+
+    if (attachMaterials)
+    {
       AttachMaterials();
     }
   }

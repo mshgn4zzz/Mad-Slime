@@ -386,7 +386,6 @@ namespace UI
         private void SetWindow(WindowState state)
         {
             _state = state;
-            // Scene objects can already be destroyed when either OnDisable calls Stop.
             SetActiveIfAlive(_mainWindow, state == WindowState.Main);
             SetActiveIfAlive(_skinsWindow, state == WindowState.Skins);
             SetActiveIfAlive(_upgradesWindow, state == WindowState.Upgrades);
