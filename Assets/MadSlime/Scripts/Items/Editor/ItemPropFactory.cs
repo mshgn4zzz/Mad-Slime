@@ -47,7 +47,10 @@ namespace EditorTools
                 factory._forceIcons = true;
                 factory.Generate();
             }
-            finally { DestroyImmediate(factory); }
+            finally
+            {
+                DestroyImmediate(factory);
+            }
         }
 
         [MenuItem("Mad Slime/Prop Factory")]
@@ -310,18 +313,31 @@ namespace EditorTools
 
         public static void RebuildPreparedIcons(PropSet propSet)
         {
-            foreach (Item item in propSet.Props) RebuildPreparedIcon(item);
+            foreach (Item item in propSet.Props)
+            {
+                RebuildPreparedIcon(item);
+            }
         }
 
         public static void RebuildPreparedIcon(Item item)
         {
             int layer = ResolveFreeLayer();
-            if (layer < 0) throw new InvalidOperationException("No free layer for item icons.");
+            if (layer < 0)
+            {
+                throw new InvalidOperationException("No free layer for item icons.");
+            }
+
             ItemDefinition definition = item.Definition;
             string path = AssetDatabase.GetAssetPath(definition.Icon);
             Texture2D texture = RenderModelToTexture(item.gameObject, layer);
-            try { File.WriteAllBytes(path, texture.EncodeToPNG()); }
-            finally { DestroyImmediate(texture); }
+            try
+            {
+                File.WriteAllBytes(path, texture.EncodeToPNG());
+            }
+            finally
+            {
+                DestroyImmediate(texture);
+            }
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
             EnsureSpriteImport(path);
             ValidateIcon(AssetDatabase.LoadAssetAtPath<Sprite>(path));
@@ -330,7 +346,11 @@ namespace EditorTools
 
         public static void ValidateIcon(Sprite icon)
         {
-            if (icon == null) throw new InvalidOperationException("Item icon is missing.");
+            if (icon == null)
+            {
+                throw new InvalidOperationException("Item icon is missing.");
+            }
+
             string path = AssetDatabase.GetAssetPath(icon);
             Texture2D decoded = new Texture2D(2, 2, TextureFormat.RGBA32, false);
             try
@@ -341,15 +361,25 @@ namespace EditorTools
                 HashSet<int> colors = new HashSet<int>();
                 foreach (Color32 pixel in pixels)
                 {
-                    if (pixel.a < 128) continue;
+                    if (pixel.a < 128)
+                    {
+                        continue;
+                    }
+
                     visible++;
                     colors.Add((pixel.r / 8) << 10 | (pixel.g / 8) << 5 | pixel.b / 8);
                 }
                 float coverage = (float)visible / pixels.Length;
                 if (coverage < 0.005f || coverage > 0.90f || colors.Count < 8)
-                    throw new InvalidOperationException($"Icon '{path}' is blank/placeholder or badly framed: coverage={coverage:F3}, colors={colors.Count}.");
+                {
+                    throw new InvalidOperationException(
+                        $"Icon '{path}' is blank/placeholder or badly framed: coverage={coverage:F3}, colors={colors.Count}.");
+                }
             }
-            finally { DestroyImmediate(decoded); }
+            finally
+            {
+                DestroyImmediate(decoded);
+            }
         }
 
         private bool RenderIcon(ModelJob job)
@@ -687,7 +717,6 @@ namespace EditorTools
             light.shadows = LightShadows.None;
 
             FitCameraToBounds(cam, instance);
-            // Light the visible faces; the old -Z light leaves +Z furniture fronts black.
             light.transform.rotation = cam.transform.rotation;
 
             RenderTexture rt = new RenderTexture(IconSize, IconSize, 24, RenderTextureFormat.ARGB32);
