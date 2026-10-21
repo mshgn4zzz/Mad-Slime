@@ -1,11 +1,11 @@
 {
     "CurrentLevel": 4,
     "MaxLevel": 4,
-    "CollectedItemsCount": 6058,
+    "CollectedItemsCount": 5053,
     "Language": "",
     "musicVolume": 0.5,
     "sfxVolume": 0.3499999940395355,
-    "Balance": 349,
+    "Balance": 9608205,
     "TestFundsGranted": true,
     "SelectedSkinId": "Slime",
     "_openSkinIds": [
@@ -13,18 +13,22 @@
     ],
     "_showcaseSkinIds": [
         "Chick",
+        "ToyKnight",
         "Sahur",
-        "Jellyfish",
-        "Cat",
-        "RedPanda"
+        "Snail",
+        "Cat"
     ],
-    "SpeedLevel": 0,
-    "AppetiteLevel": 0,
-    "TasteLevel": 0,
-    "MetabolismLevel": 0,
-    "PurchasedPerks": [],
-    "LastFreeSpinUnixTime": 0,
+    "SpeedLevel": 5,
+    "AppetiteLevel": 5,
+    "TasteLevel": 5,
+    "MetabolismLevel": 5,
+    "PurchasedPerks": [
+        0,
+        1,
+        2
+    ],
+    "LastFreeSpinUnixTime": 1792600673,
     "RouletteAdSpinTimes": [],
     "SkinSpinCount": 0,
-    "idSave": 79
+    "idSave": 43
 }

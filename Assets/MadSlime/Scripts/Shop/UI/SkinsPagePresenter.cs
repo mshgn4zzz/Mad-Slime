@@ -18,6 +18,8 @@ namespace Shop
         private List<ShopItemView> _views = new List<ShopItemView>();
         private List<SkinRarityGroupView> _groups = new List<SkinRarityGroupView>();
         private bool _isSetup;
+        private int _scrollLayoutFrames;
+        private Vector2 _pendingScrollPosition;
 
         public void Setup(SkinInventory inventory, IEnumerable<SkinItem> skins, IEnumerable<SkinItem> exclusiveSkins,
             SkinRarityTable rarityTable, ModelPlacer preview)
@@ -74,6 +76,17 @@ namespace Shop
             }
         }
 
+        private void LateUpdate()
+        {
+            if (_scrollLayoutFrames <= 0) return;
+            _scrollLayoutFrames--;
+            if (_scrollLayoutFrames == 0)
+            {
+                Canvas.ForceUpdateCanvases();
+                _scroll.normalizedPosition = _pendingScrollPosition;
+            }
+        }
+
         private void Show()
         {
             if (_views.Count > 0)
@@ -107,6 +120,11 @@ namespace Shop
             {
                 _preview.SetModel(equipped.Model);
             }
+
+            Canvas.ForceUpdateCanvases();
+            _scroll.verticalNormalizedPosition = 1f;
+            _pendingScrollPosition = new Vector2(0f, 1f);
+            _scrollLayoutFrames = 3;
         }
 
         private void SpawnGroup(Transform parent, int start, int end, bool isOpen)
@@ -130,7 +148,7 @@ namespace Shop
 
         public void Refresh(string rewardSkinId)
         {
-            Vector2 position = _scroll.normalizedPosition;
+            Vector2 position = rewardSkinId == null ? new Vector2(0f, 1f) : _scroll.normalizedPosition;
             Clear();
             Show();
 
@@ -141,6 +159,8 @@ namespace Shop
 
             Canvas.ForceUpdateCanvases();
             _scroll.normalizedPosition = position;
+            _pendingScrollPosition = position;
+            _scrollLayoutFrames = 3;
         }
 
         private void OnClicked(ShopItemView view)

@@ -1,6 +1,7 @@
 using Player;
 using System;
 using System.Collections.Generic;
+using Unity.Profiling;
 using UnityEngine;
 
 namespace Detection
@@ -17,38 +18,68 @@ namespace Detection
         private HashSet<T> _previousTargets = new HashSet<T>();
         private HashSet<T> _currentTargets = new HashSet<T>();
 
+        private ProfilerMarker _scanMarker;
+        private ProfilerMarker _collectHitsMarker;
+        private ProfilerMarker _processTargetsMarker;
+        private ProfilerMarker _processExitsMarker;
+
         public event Action<T> Detected;
 
         public event Action<T> Exited;
 
         public float Radius => _radius;
 
+        protected virtual void Awake()
+        {
+            string detectorName = GetType().Name;
+            _scanMarker = new ProfilerMarker($"{detectorName}.Scan");
+            _collectHitsMarker = new ProfilerMarker($"{detectorName}.CollectHits");
+            _processTargetsMarker = new ProfilerMarker($"{detectorName}.ProcessTargets");
+            _processExitsMarker = new ProfilerMarker($"{detectorName}.ProcessExits");
+        }
+
         protected virtual void Update()
         {
-            _currentTargets.Clear();
-            int hitsCount = CollectHits();
-
-            for (int i = 0; i < hitsCount; i++)
+            using (_scanMarker.Auto())
             {
-                if (_buffer[i].TryGetComponent(out T target) == false || _currentTargets.Add(target) == false)
+                _currentTargets.Clear();
+                int hitsCount;
+
+                using (_collectHitsMarker.Auto())
                 {
-                    continue;
+                    hitsCount = CollectHits();
                 }
 
-                Detected?.Invoke(target);
-            }
-
-            foreach (T target in _previousTargets)
-            {
-                if (_currentTargets.Contains(target) == false)
+                // Includes synchronous Detected subscribers, not only component lookups.
+                using (_processTargetsMarker.Auto())
                 {
-                    Exited?.Invoke(target);
-                }
-            }
+                    for (int i = 0; i < hitsCount; i++)
+                    {
+                        if (_buffer[i].TryGetComponent(out T target) == false || _currentTargets.Add(target) == false)
+                        {
+                            continue;
+                        }
 
-            HashSet<T> reusableTargets = _previousTargets;
-            _previousTargets = _currentTargets;
-            _currentTargets = reusableTargets;
+                        Detected?.Invoke(target);
+                    }
+                }
+
+                // Includes synchronous Exited subscribers.
+                using (_processExitsMarker.Auto())
+                {
+                    foreach (T target in _previousTargets)
+                    {
+                        if (_currentTargets.Contains(target) == false)
+                        {
+                            Exited?.Invoke(target);
+                        }
+                    }
+                }
+
+                HashSet<T> reusableTargets = _previousTargets;
+                _previousTargets = _currentTargets;
+                _currentTargets = reusableTargets;
+            }
         }
 
         private int CollectHits()

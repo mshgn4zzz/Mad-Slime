@@ -124,11 +124,15 @@ namespace ShapeFill
         public void BuildShape()
         {
             StopFill();
+            _fillIndex = 0;
+            _arrivedCount = 0;
+            _currentTarget = 0;
+            _quotaTarget = 0;
+            _hasResult = false;
 
             _gridShape.Build();
             PlaceGhost();
             SpawnBorder();
-            _fillIndex = 0;
         }
 
         public void ShowResult(FillResult result)
@@ -139,22 +143,21 @@ namespace ShapeFill
                     $"{name}: ShowResult requires a calculated fill result.");
             }
 
-            if (result.TargetCubes <= 0)
-            {
-                _hasResult = true;
-                FillCompleted?.Invoke(0f);
-                return;
-            }
-
             StopFill();
             _fillIndex = 0;
             _arrivedCount = 0;
             _quotaTarget = result.QuotaCubes;
             _currentTarget = result.TargetCubes;
             _boostStage = BoostStage.Normal;
-            _isFilling = true;
             _hasResult = true;
 
+            if (result.TargetCubes <= 0)
+            {
+                FillCompleted?.Invoke(0f);
+                return;
+            }
+
+            _isFilling = true;
             _fillCts = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
 
             FillAsync(_fillCts.Token, _currentTarget).Forget();

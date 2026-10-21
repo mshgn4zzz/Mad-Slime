@@ -1,5 +1,4 @@
 using DG.Tweening;
-using Scriptables;
 using System;
 using UnityEngine;
 
@@ -9,13 +8,13 @@ namespace Items
     {
         private const float SolidOpacity = 1f;
 
-        private static int OpacityId = Shader.PropertyToID("_Opacity");
+        private static int s_opacityId = Shader.PropertyToID("_Opacity");
 
         [SerializeField] private Material _ghostMaterial;
         [SerializeField] private GhostFadeConfig _ghostFadeConfig;
 
         private Renderer[] _renderers;
-        private Outline[] _outlines;
+        private Outline _outline;
 
         private Material[][] _originalMaterials;
         private Material[][] _ghostMaterials;
@@ -24,8 +23,6 @@ namespace Items
         private float _currentOpacity;
         private bool _isGhost;
         private bool _isHighlighted;
-        private Color _highlightColor;
-        private float _outlineWidth;
 
         private void Awake()
         {
@@ -35,7 +32,7 @@ namespace Items
                     $"{name}: GhostMaterial is not assigned. Drag a Material with the MadSlime/GhostDither shader into the _ghostMaterial field.");
             }
 
-            if (_ghostMaterial.HasProperty(OpacityId) == false)
+            if (_ghostMaterial.HasProperty(s_opacityId) == false)
             {
                 throw new InvalidOperationException(
                     $"{name}: GhostMaterial has no _Opacity property. Drag a Material with the MadSlime/GhostDither shader into the _ghostMaterial field.");
@@ -58,7 +55,7 @@ namespace Items
             if (_renderers.Length == 0)
             {
                 throw new InvalidOperationException(
-                    $"{name}: no Renderers found in children. The item prefab must contain its visual model.");
+                    $"{name}: no Renderers found in children. Assign a visual model to this object.");
             }
 
             _originalMaterials = new Material[_renderers.Length][];
@@ -72,16 +69,19 @@ namespace Items
                 _ghostMaterials[i] = BuildMaterialSet(_ghostMaterial, originalSet.Length);
             }
 
-            _outlines = new Outline[_renderers.Length];
-
             _propertyBlock = new MaterialPropertyBlock();
-            _ghostTargetOpacity = _ghostMaterial.GetFloat(OpacityId);
+            _ghostTargetOpacity = _ghostMaterial.GetFloat(s_opacityId);
             _currentOpacity = SolidOpacity;
         }
 
         private void OnDisable()
         {
-            DOTween.Kill(this);
+            if (_propertyBlock == null)
+            {
+                return;
+            }
+
+            ResetVisuals();
         }
 
         public void SetGhost(bool isGhost)
@@ -95,7 +95,7 @@ namespace Items
 
             float targetOpacity;
 
-            if (isGhost)
+            if (isGhost == true)
             {
                 SwapMaterials(_ghostMaterials);
                 DisableOutlines();
@@ -115,7 +115,18 @@ namespace Items
                 .OnComplete(OnFadeCompleted);
         }
 
-        public void SetHighlighted(bool isHighlighted, Color color, float width)
+        public void BindOutline(Outline outline)
+        {
+            if (outline == null || outline.gameObject != gameObject)
+            {
+                throw new ArgumentException("A prepared outline on this item's root is required.", nameof(outline));
+            }
+
+            _outline = outline;
+            ApplyOutline();
+        }
+
+        public void SetHighlighted(bool isHighlighted)
         {
             if (_isHighlighted == isHighlighted)
             {
@@ -123,8 +134,6 @@ namespace Items
             }
 
             _isHighlighted = isHighlighted;
-            _highlightColor = color;
-            _outlineWidth = width;
 
             if (_isGhost == true)
             {
@@ -143,11 +152,7 @@ namespace Items
             DOTween.Kill(this);
             DisableOutlines();
 
-            for (int i = 0; i < _renderers.Length; i++)
-            {
-                _renderers[i].SetPropertyBlock(null);
-                _renderers[i].sharedMaterials = _originalMaterials[i];
-            }
+            RestoreOriginalMaterials();
         }
 
         private float ReadOpacity()
@@ -168,43 +173,24 @@ namespace Items
 
         private void ApplyOutline()
         {
-            if (_isHighlighted == false)
+            if (_outline != null)
             {
-                DisableOutlines();
-                return;
-            }
-
-            for (int i = 0; i < _outlines.Length; i++)
-            {
-                if (_outlines[i] == null)
-                {
-                    if (_renderers[i].TryGetComponent(out _outlines[i]) == false)
-                    {
-                        _outlines[i] = _renderers[i].gameObject.AddComponent<Outline>();
-                    }
-                }
-
-                _outlines[i].OutlineColor = _highlightColor;
-                _outlines[i].OutlineWidth = _outlineWidth;
-                _outlines[i].enabled = _isHighlighted;
+                _outline.enabled = _isHighlighted && _isGhost == false;
             }
         }
 
         private void DisableOutlines()
         {
-            for (int i = 0; i < _outlines.Length; i++)
+            if (_outline != null)
             {
-                if (_outlines[i] != null)
-                {
-                    _outlines[i].enabled = false;
-                }
+                _outline.enabled = false;
             }
         }
 
         private void ApplyOpacity(float opacity)
         {
             _currentOpacity = opacity;
-            _propertyBlock.SetFloat(OpacityId, opacity);
+            _propertyBlock.SetFloat(s_opacityId, opacity);
 
             for (int i = 0; i < _renderers.Length; i++)
             {
@@ -236,6 +222,11 @@ namespace Items
         {
             for (int i = 0; i < _renderers.Length; i++)
             {
+                if (_renderers[i] == null)
+                {
+                    continue;
+                }
+
                 _renderers[i].SetPropertyBlock(null);
                 _renderers[i].sharedMaterials = _originalMaterials[i];
             }
