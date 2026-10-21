@@ -32,8 +32,9 @@ namespace Quota
 
             for (int i = 0; i < quota.Count; i++)
             {
-                _entries.Add(quota[i]);
-                _totalTarget += quota[i].TargetCount;
+                QuotaEntry entry = quota[i];
+                _entries.Add(new QuotaEntry(entry.Definition, entry.TargetCount));
+                _totalTarget += entry.TargetCount;
             }
 
             ResetCompleted?.Invoke();

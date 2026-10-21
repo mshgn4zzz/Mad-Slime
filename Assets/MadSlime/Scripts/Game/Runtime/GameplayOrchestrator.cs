@@ -227,13 +227,16 @@ namespace Game
             _playerTier.Initialize();
             _playerScaler.ApplyInitialScale();
             _movement.Initialize();
-            _smellAbility.Apply();
+            _smellAbility.SetPaused(true);
             DisableFinalCountdownEffects();
 
             LevelConfig config = _configResolver.GetConfigFor(_levelStorage.CurrentLevel);
 
             _timer.Setup(config.TimerDuration);
-            await _levelGenerator.GenerateAsync(_sceneNavigator.ReportPreparationProgress, cancellationToken);
+            await _levelGenerator.GenerateAsync(
+                progress => _sceneNavigator.ReportPreparationProgress(progress * 0.85f), cancellationToken);
+            await _smellAbility.PrepareAsync(_levelGenerator.SpawnedItems,
+                progress => _sceneNavigator.ReportPreparationProgress(0.85f + progress * 0.15f), cancellationToken);
             _quotaCounter.ResetSession();
             _isFinalCountdownStarted = false;
             _pauser.RequestPause();

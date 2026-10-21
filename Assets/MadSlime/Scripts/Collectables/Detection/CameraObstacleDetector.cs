@@ -51,7 +51,7 @@ namespace Collectables
                 {
                     GhostAnimator animator = _buffer[i].collider.GetComponentInParent<GhostAnimator>();
 
-                    if (animator != null && _currentTargets.Add(animator) == true)
+                    if (animator != null && animator.isActiveAndEnabled == true && _currentTargets.Add(animator) == true)
                     {
                         Detected?.Invoke(animator);
                     }
@@ -60,7 +60,7 @@ namespace Collectables
 
             foreach (GhostAnimator animator in _previousTargets)
             {
-                if (_currentTargets.Contains(animator) == false)
+                if (animator != null && _currentTargets.Contains(animator) == false)
                 {
                     Exited?.Invoke(animator);
                 }
@@ -88,7 +88,10 @@ namespace Collectables
         {
             foreach (GhostAnimator animator in _previousTargets)
             {
-                Exited?.Invoke(animator);
+                if (animator != null)
+                {
+                    Exited?.Invoke(animator);
+                }
             }
 
             _previousTargets.Clear();

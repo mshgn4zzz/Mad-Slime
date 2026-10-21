@@ -72,6 +72,7 @@ namespace DI
             builder.RegisterInstance(_playerConfig);
             builder.Register<CollectedItemsCounter>(Lifetime.Scoped);
             builder.Register<QuotaGenerator>(Lifetime.Scoped);
+            builder.Register<QuotaOutlineInitializer>(Lifetime.Scoped);
             builder.Register<UiSpawner>(Lifetime.Scoped);
 
             builder.RegisterComponent(_levelGenerator);
