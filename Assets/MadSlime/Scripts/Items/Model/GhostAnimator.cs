@@ -29,13 +29,15 @@ namespace Items
             if (_ghostMaterial == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: GhostMaterial is not assigned. Drag a Material with the MadSlime/GhostDither shader into the _ghostMaterial field.");
+                    $"{name}: GhostMaterial is not assigned. Drag a Material with the "
+                        + $"MadSlime/GhostDither shader into the _ghostMaterial field.");
             }
 
             if (_ghostMaterial.HasProperty(s_opacityId) == false)
             {
                 throw new InvalidOperationException(
-                    $"{name}: GhostMaterial has no _Opacity property. Drag a Material with the MadSlime/GhostDither shader into the _ghostMaterial field.");
+                    $"{name}: GhostMaterial has no _Opacity property. Drag a Material with the "
+                        + $"MadSlime/GhostDither shader into the _ghostMaterial field.");
             }
 
             if (_ghostFadeConfig == null)
@@ -47,7 +49,8 @@ namespace Items
             if (_ghostFadeConfig.FadeDuration <= 0f)
             {
                 throw new InvalidOperationException(
-                    $"{name}: GhostFadeConfig '{_ghostFadeConfig.name}' has FadeDuration <= 0. Set a positive duration in the config asset.");
+                    $"{name}: GhostFadeConfig '{_ghostFadeConfig.name}' has FadeDuration <= 0. Set a "
+                        + $"positive duration in the config asset.");
             }
 
             _renderers = GetComponentsInChildren<Renderer>(true);

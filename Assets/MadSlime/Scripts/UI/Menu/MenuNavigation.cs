@@ -172,7 +172,7 @@ namespace UI
 
         private bool CanInteractWithScreen()
         {
-            return _popups.IsOpen == false && _sceneNavigator.IsTransitioning == false;
+            return _popups.HasOpenPopups() == false && _sceneNavigator.IsTransitioning == false;
         }
 
         private void OnPlayClicked()

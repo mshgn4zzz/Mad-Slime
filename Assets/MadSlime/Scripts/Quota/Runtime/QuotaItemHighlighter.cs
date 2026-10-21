@@ -198,7 +198,7 @@ namespace Game
 
         private bool IsHighlightable(QuotaEntry entry)
         {
-            return entry.Remaining > 0 && _collectAvailability.CanCollect(entry.Definition.Tier);
+            return entry.GetRemaining() > 0 && _collectAvailability.CanCollect(entry.Definition.Tier);
         }
     }
 }

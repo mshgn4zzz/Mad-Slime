@@ -63,7 +63,8 @@ namespace Roulette
             if (_normalPlate == null || _rarePlate == null || _epicPlate == null || _legendaryPlate == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: a plate sprite is not assigned. Drag the GUI Kit grade label sprites (blue, green, purple, orange) into the fields.");
+                    $"{name}: a plate sprite is not assigned. Drag the GUI Kit grade label sprites "
+                        + $"(blue, green, purple, orange) into the fields.");
             }
 
         }

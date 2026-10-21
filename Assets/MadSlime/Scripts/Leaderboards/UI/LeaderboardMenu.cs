@@ -73,7 +73,7 @@ namespace UI
             _authButton.onClick.AddListener(OnAuthClicked);
             _retryButton.onClick.AddListener(OnRetryClicked);
             _savesReadiness.Ready += OnSdkDataReceived;
-            Localization.LanguageChanged += RefreshStatusText;
+            Localization.LanguageChanged += OnLanguageChanged;
             RememberPanelHeight();
             RequestLeaderboard();
         }
@@ -130,7 +130,7 @@ namespace UI
             _closeButton?.onClick.RemoveListener(OnCloseClicked);
             _authButton?.onClick.RemoveListener(OnAuthClicked);
             _retryButton?.onClick.RemoveListener(OnRetryClicked);
-            Localization.LanguageChanged -= RefreshStatusText;
+            Localization.LanguageChanged -= OnLanguageChanged;
 
             if (_savesReadiness != null)
             {
@@ -276,10 +276,10 @@ namespace UI
             _scroll.gameObject.SetActive(state != State.AuthRequired && _rows.Count > 0);
             _retryButton.gameObject.SetActive(state == State.Empty || state == State.Error);
             _retryButton.interactable = state != State.Loading;
-            RefreshStatusText();
+            OnLanguageChanged();
         }
 
-        private void RefreshStatusText()
+        private void OnLanguageChanged()
         {
             if (_statusText == null)
             {

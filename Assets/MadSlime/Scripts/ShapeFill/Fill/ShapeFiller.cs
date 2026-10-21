@@ -40,32 +40,29 @@ namespace ShapeFill
 
         public int RequiredFillCount => _gridShape.FillCells.Count;
 
-        public bool CanRescue => _hasResult == true && _isFilling == false && _currentTarget < RequiredFillCount;
-
-        public float FillFraction
+        public bool CanRescue()
         {
-            get
-            {
-                if (_currentTarget <= 0)
-                {
-                    return 0f;
-                }
-
-                return Mathf.Clamp01(_arrivedCount / (float)_currentTarget);
-            }
+            return _hasResult == true && _isFilling == false && _currentTarget < RequiredFillCount;
         }
 
-        public float FormFillFraction
+        public float GetFillFraction()
         {
-            get
+            if (_currentTarget <= 0)
             {
-                if (RequiredFillCount <= 0)
-                {
-                    return 0f;
-                }
-
-                return Mathf.Clamp01(_arrivedCount / (float)RequiredFillCount);
+                return 0f;
             }
+
+            return Mathf.Clamp01(_arrivedCount / (float)_currentTarget);
+        }
+
+        public float GetFormFillFraction()
+        {
+            if (RequiredFillCount <= 0)
+            {
+                return 0f;
+            }
+
+            return Mathf.Clamp01(_arrivedCount / (float)RequiredFillCount);
         }
 
         public event Action<float> FillCompleted;
@@ -165,7 +162,7 @@ namespace ShapeFill
 
         public void Rescue()
         {
-            if (CanRescue == false)
+            if (CanRescue() == false)
             {
                 throw new InvalidOperationException(
                     $"{name}: Rescue requires a finished fill below 100%. Check CanRescue before calling.");
