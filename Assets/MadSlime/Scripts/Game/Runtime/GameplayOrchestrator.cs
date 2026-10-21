@@ -129,13 +129,15 @@ namespace Game
             if (_levelGenerator == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: LevelGenerator was not injected. Check that GameLifetimeScope registers LevelGenerator and GameplayOrchestrator.");
+                    $"{name}: LevelGenerator was not injected. Check that GameLifetimeScope "
+                        + $"registers LevelGenerator and GameplayOrchestrator.");
             }
 
             if (_itemCollector == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: ItemCollector was not injected. Check that GameLifetimeScope registers ItemCollector and GameplayOrchestrator.");
+                    $"{name}: ItemCollector was not injected. Check that GameLifetimeScope registers "
+                        + $"ItemCollector and GameplayOrchestrator.");
             }
 
             if (_sceneNavigator == null)
@@ -153,19 +155,22 @@ namespace Game
             if (_adrenalineBoost == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: AdrenalineBoost was not injected. Check that GameLifetimeScope registers AdrenalineBoost and GameplayOrchestrator.");
+                    $"{name}: AdrenalineBoost was not injected. Check that GameLifetimeScope "
+                        + $"registers AdrenalineBoost and GameplayOrchestrator.");
             }
 
             if (_finalCountdownVignette == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: FinalCountdownVignette was not injected. Check that GameLifetimeScope registers FinalCountdownVignette and GameplayOrchestrator.");
+                    $"{name}: FinalCountdownVignette was not injected. Check that GameLifetimeScope "
+                        + $"registers FinalCountdownVignette and GameplayOrchestrator.");
             }
 
             if (_timerTickSound == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: TimerTickSound was not injected. Check that GameLifetimeScope registers TimerTickSound and GameplayOrchestrator.");
+                    $"{name}: TimerTickSound was not injected. Check that GameLifetimeScope "
+                        + $"registers TimerTickSound and GameplayOrchestrator.");
             }
 
         }
@@ -176,13 +181,14 @@ namespace Game
             if (_quotaCounter == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: QuotaCounter was not injected. Check that ProjectLifetimeScope registers QuotaCounter and GameplayOrchestrator.");
+                    $"{name}: QuotaCounter was not injected. Check that ProjectLifetimeScope "
+                        + $"registers QuotaCounter and GameplayOrchestrator.");
             }
 
             _inputReader.MovementKeyPressed += OnMovementKeyPressed;
             _timer.Ticked += OnTimerTicked;
             _timer.Finished += OnTimeOut;
-            _pauser.StateChanged += ApplyPause;
+            _pauser.StateChanged += OnPauseStateChanged;
             _quotaCounter.QuotaCompleted += OnQuotaCompleted;
 
         }
@@ -196,7 +202,7 @@ namespace Game
             _inputReader.MovementKeyPressed -= OnMovementKeyPressed;
             _timer.Ticked -= OnTimerTicked;
             _timer.Finished -= OnTimeOut;
-            _pauser.StateChanged -= ApplyPause;
+            _pauser.StateChanged -= OnPauseStateChanged;
 
             _quotaCounter.QuotaCompleted -= OnQuotaCompleted;
             _quotaCounter.Detach();
@@ -243,7 +249,7 @@ namespace Game
             _quotaCounter.ResetSession();
             _isFinalCountdownStarted = false;
             _pauser.RequestPause();
-            ApplyPause();
+            OnPauseStateChanged();
             SceneSessionPrepared?.Invoke();
         }
 
@@ -263,15 +269,14 @@ namespace Game
             _musicPlayer.Play(_musicPlaylist);
             _quotaCounter.Attach(_itemCollector);
             _state = SessionState.WaitingForStart;
-            ApplyPause();
+            OnPauseStateChanged();
             _inputReader.enabled = true;
 
             Action sceneSessionStarted = SceneSessionStarted;
             sceneSessionStarted?.Invoke();
         }
 
-
-        private void ApplyPause()
+        private void OnPauseStateChanged()
         {
             if (_state == SessionState.Finished && (_itemDetector == null || _attractableDetector == null
                 || _obstacleDetector == null || _crawlAnimator == null || _smellAbility == null
@@ -280,7 +285,7 @@ namespace Game
                 return;
             }
 
-            bool isRunning = _state == SessionState.Running && _pauser.IsPaused == false;
+            bool isRunning = _state == SessionState.Running && _pauser.IsPaused() == false;
             _itemDetector.enabled = isRunning;
             _attractableDetector.enabled = isRunning;
             _obstacleDetector.enabled = isRunning;
@@ -316,7 +321,7 @@ namespace Game
             _itemCollector.StopCollecting();
             _quotaCounter.Detach();
             _growthAnimator.Stop();
-            ApplyPause();
+            OnPauseStateChanged();
             DisableFinalCountdownEffects();
 
             if (wasRunning)
@@ -419,7 +424,7 @@ namespace Game
             _growthAnimator.Stop();
             _gameplayReporter.ReportStop();
             _pauser.RequestPause();
-            ApplyPause();
+            OnPauseStateChanged();
             DisableFinalCountdownEffects();
             SessionFinished?.Invoke();
             _finishDelaySource = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());

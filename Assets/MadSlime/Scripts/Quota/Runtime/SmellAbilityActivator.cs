@@ -40,7 +40,8 @@ namespace Game
             if (_upgrades == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: PlayerUpgrades was not injected. Check that ProjectLifetimeScope registers PlayerUpgrades and SmellAbilityActivator.");
+                    $"{name}: PlayerUpgrades was not injected. Check that ProjectLifetimeScope "
+                        + $"registers PlayerUpgrades and SmellAbilityActivator.");
             }
         }
 

@@ -331,7 +331,8 @@ namespace EditorTools
 
             if (iconLayer < 0)
             {
-                Debug.LogError("[SkinFactory] No unnamed layer left in 9-31 for icon rendering. Free one in Project Settings → Tags and Layers.");
+                Debug.LogError("[SkinFactory] No unnamed layer left in 9-31 for icon rendering. Free one in "
+                    + "Project Settings → Tags and Layers.");
                 return;
             }
 

@@ -61,7 +61,7 @@ namespace UI
 
         private void OnCubeArrived(CubeFlightAnimator cube)
         {
-            ApplyProgress(_shapeFiller.FormFillFraction);
+            ApplyProgress(_shapeFiller.GetFormFillFraction());
         }
 
         private void ApplyProgress(float fraction)
