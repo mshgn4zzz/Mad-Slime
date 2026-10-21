@@ -98,7 +98,7 @@ namespace Items
 
             float targetOpacity;
 
-            if (isGhost == true)
+            if (isGhost)
             {
                 SwapMaterials(_ghostMaterials);
                 DisableOutlines();
