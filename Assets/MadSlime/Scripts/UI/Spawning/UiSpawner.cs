@@ -30,6 +30,8 @@ namespace UI
             }
 
             _parent = parent;
+            // This container can be hidden while arranging the scene in the editor.
+            _parent.gameObject.SetActive(true);
         }
 
         public T Spawn<T>(T prefab, UiLayer layer) where T : Component, IShowable

@@ -80,9 +80,21 @@ namespace CameraSystem
         {
             _isStopped = true;
             _positionVelocity = Vector3.zero;
-            _pullAnimator.enabled = false;
-            _shakeAnimator.enabled = false;
-            _fovKickAnimator.enabled = false;
+
+            if (_pullAnimator != null)
+            {
+                _pullAnimator.enabled = false;
+            }
+
+            if (_shakeAnimator != null)
+            {
+                _shakeAnimator.enabled = false;
+            }
+
+            if (_fovKickAnimator != null)
+            {
+                _fovKickAnimator.enabled = false;
+            }
         }
 
         private Vector3 GetShakeOffset()

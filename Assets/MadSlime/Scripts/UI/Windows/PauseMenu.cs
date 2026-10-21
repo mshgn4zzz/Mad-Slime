@@ -70,6 +70,13 @@ namespace UI
             OnResetCanceled();
 
             _menuButton.gameObject.SetActive(isMenuButtonNeeded);
+            var profiles = GetComponent<ResponsiveCanvasLayout>();
+            if (profiles != null && profiles.Manages(_languageButton))
+            {
+                // The authored orientation profile owns this position.
+                return;
+            }
+
             if (isMenuButtonNeeded == true || isResetAvailable == true)
             {
                 _languageButton.anchoredPosition = _languagePositionWithMenuButton;

@@ -21,7 +21,6 @@ namespace UI
         }
 
         [SerializeField] private GameObject _uiRoot;
-        [SerializeField] private GameObject _backgroundRoot;
         [SerializeField] private GameObject _mainWindow;
         [SerializeField] private GameObject _skinsWindow;
         [SerializeField] private GameObject _upgradesWindow;
@@ -63,7 +62,7 @@ namespace UI
 
         private void Awake()
         {
-            if (_uiRoot == null || _backgroundRoot == null || _mainWindow == null || _skinsWindow == null
+            if (_uiRoot == null || _mainWindow == null || _skinsWindow == null
                 || _upgradesWindow == null
                 || _previewCamera == null || _playButton == null || _skinsButton == null || _upgradesButton == null
                 || _leaderboardButton == null || _settingsButton == null || _dailyButton == null
@@ -395,7 +394,6 @@ namespace UI
             {
                 SetActiveIfAlive(_previewCamera.gameObject, state == WindowState.Skins);
             }
-            SetActiveIfAlive(_backgroundRoot, state != WindowState.Stopped);
         }
 
         private static void SetActiveIfAlive(GameObject target, bool active)

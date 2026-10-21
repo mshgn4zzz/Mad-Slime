@@ -31,6 +31,11 @@ namespace Collectables
 
         private void OnDetected(GhostAnimator animator)
         {
+            if (animator == null || animator.isActiveAndEnabled == false)
+            {
+                return;
+            }
+
             if (animator.TryGetComponent(out Item item) == true)
             {
                 animator.SetGhost(_availability.CanCollect(item.Definition.Tier) == false);
@@ -42,6 +47,11 @@ namespace Collectables
 
         private void OnExited(GhostAnimator animator)
         {
+            if (animator == null)
+            {
+                return;
+            }
+
             animator.SetGhost(false);
         }
     }

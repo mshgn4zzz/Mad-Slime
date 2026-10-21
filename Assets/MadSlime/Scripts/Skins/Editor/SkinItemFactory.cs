@@ -10,7 +10,7 @@ namespace EditorTools
     public class SkinItemFactory : EditorWindow
     {
         private const string PrefsKey = "MadSlime.SkinItemFactory";
-        private const int IconSize = 256;
+        private const int IconSize = 512;
         private const float IconCameraDistance = 10f;
         private const float IconOrthographicPadding = 1f;
         private const float IconLightIntensity = 1.2f;
