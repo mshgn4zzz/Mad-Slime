@@ -125,11 +125,11 @@ namespace Game
         private void AppendPlacements(Dictionary<Item, ItemDefinition> assignedVariants,
             Transform origin, Bounds floorBounds, LayoutSet layout)
         {
-            IReadOnlyList<ZoneLayoutPlanner.Placement> placements = _layoutPlanner.Placements;
+            IReadOnlyList<ZonePlacement> placements = _layoutPlanner.Placements;
 
             for (int i = 0; i < placements.Count; i++)
             {
-                ZoneLayoutPlanner.Placement placement = placements[i];
+                ZonePlacement placement = placements[i];
                 Item prefab = _zonePool[placement.PoolIndex];
                 ItemDefinition definition = assignedVariants[prefab];
 

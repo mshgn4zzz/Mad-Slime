@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Items;
 using Scriptables;
 using Skills;
@@ -81,12 +80,14 @@ namespace EditorTools
 
             _modelsFolder = (DefaultAsset)EditorGUILayout.ObjectField("Models Folder", _modelsFolder, typeof(DefaultAsset), false);
             _prefabsFolder = (DefaultAsset)EditorGUILayout.ObjectField("Prefabs Folder", _prefabsFolder, typeof(DefaultAsset), false);
-            _definitionsFolder = (DefaultAsset)EditorGUILayout.ObjectField("Definitions Folder", _definitionsFolder, typeof(DefaultAsset), false);
+            _definitionsFolder = (DefaultAsset)EditorGUILayout.ObjectField(
+                "Definitions Folder", _definitionsFolder, typeof(DefaultAsset), false);
             _iconsFolder = (DefaultAsset)EditorGUILayout.ObjectField("Icons Folder", _iconsFolder, typeof(DefaultAsset), false);
             _propSet = (PropSet)EditorGUILayout.ObjectField("Prop Set", _propSet, typeof(PropSet), false);
             _tierTable = (TierTable)EditorGUILayout.ObjectField("Tier Table", _tierTable, typeof(TierTable), false);
             _ghostMaterial = (Material)EditorGUILayout.ObjectField("Ghost Material", _ghostMaterial, typeof(Material), false);
-            _ghostFadeConfig = (GhostFadeConfig)EditorGUILayout.ObjectField("Ghost Fade Config", _ghostFadeConfig, typeof(GhostFadeConfig), false);
+            _ghostFadeConfig = (GhostFadeConfig)EditorGUILayout.ObjectField(
+                "Ghost Fade Config", _ghostFadeConfig, typeof(GhostFadeConfig), false);
             _forceIcons = EditorGUILayout.Toggle("Force Icons", _forceIcons);
 
             EditorGUILayout.Space();
@@ -109,7 +110,7 @@ namespace EditorTools
             string definitionsPath = GetFolderPath(_definitionsFolder);
             string iconsPath = GetFolderPath(_iconsFolder);
 
-            List<ModelJob> jobs = CollectModelJobs(modelsPath, prefabsPath, iconsPath);
+            List<ItemPropJob> jobs = CollectModelJobs(modelsPath, prefabsPath, iconsPath);
 
             if (jobs == null)
             {
@@ -128,7 +129,8 @@ namespace EditorTools
 
             if (_iconLayer < 0)
             {
-                Debug.LogError("[PropFactory] No unnamed layer left in 9-31 for icon rendering. Free one in Project Settings → Tags and Layers.");
+                Debug.LogError("[PropFactory] No unnamed layer left in 9-31 for icon rendering. Free one in "
+                    + "Project Settings → Tags and Layers.");
                 return;
             }
 
@@ -230,7 +232,7 @@ namespace EditorTools
             return true;
         }
 
-        private List<ModelJob> CollectModelJobs(string modelsPath, string prefabsPath, string iconsPath)
+        private List<ItemPropJob> CollectModelJobs(string modelsPath, string prefabsPath, string iconsPath)
         {
             string[] modelGuids = AssetDatabase.FindAssets("t:Prefab", new[] { modelsPath });
 
@@ -240,7 +242,7 @@ namespace EditorTools
                 return null;
             }
 
-            List<ModelJob> jobs = new List<ModelJob>(modelGuids.Length);
+            List<ItemPropJob> jobs = new List<ItemPropJob>(modelGuids.Length);
             Dictionary<string, string> nameToPath = new Dictionary<string, string>();
 
             for (int i = 0; i < modelGuids.Length; i++)
@@ -275,11 +277,7 @@ namespace EditorTools
 
                 nameToPath.Add(model.name, modelPath);
 
-                ModelJob job = new ModelJob();
-                job.Model = model;
-                job.PrefabName = $"Item_{model.name}";
-                job.PrefabPath = $"{prefabsPath}/{job.PrefabName}.prefab";
-                job.IconPath = $"{iconsPath}/{job.PrefabName}.png";
+                ItemPropJob job = new ItemPropJob(model, prefabsPath, iconsPath);
                 jobs.Add(job);
             }
 
@@ -294,13 +292,14 @@ namespace EditorTools
             return jobs;
         }
 
-        private int RenderIcons(List<ModelJob> jobs)
+        private int RenderIcons(List<ItemPropJob> jobs)
         {
             int rendered = 0;
 
             for (int i = 0; i < jobs.Count; i++)
             {
-                EditorUtility.DisplayProgressBar("Prop Factory", $"Icon {jobs[i].PrefabName} ({i + 1}/{jobs.Count})", (float)i / jobs.Count);
+                EditorUtility.DisplayProgressBar("Prop Factory",
+                        $"Icon {jobs[i].PrefabName} ({i + 1}/{jobs.Count})", (float)i / jobs.Count);
 
                 if (RenderIcon(jobs[i]) == true)
                 {
@@ -382,7 +381,7 @@ namespace EditorTools
             }
         }
 
-        private bool RenderIcon(ModelJob job)
+        private bool RenderIcon(ItemPropJob job)
         {
             if (File.Exists(job.IconPath) == true && _forceIcons == false)
             {
@@ -416,18 +415,19 @@ namespace EditorTools
             importer.SaveAndReimport();
         }
 
-        private void BakeDefinitions(List<ModelJob> jobs, string definitionsPath)
+        private void BakeDefinitions(List<ItemPropJob> jobs, string definitionsPath)
         {
             IReadOnlyList<TierEntry> entries = _tierTable.Entries;
 
             for (int i = 0; i < jobs.Count; i++)
             {
-                EditorUtility.DisplayProgressBar("Prop Factory", $"Definitions {jobs[i].PrefabName} ({i + 1}/{jobs.Count})", (float)i / jobs.Count);
+                EditorUtility.DisplayProgressBar("Prop Factory",
+                        $"Definitions {jobs[i].PrefabName} ({i + 1}/{jobs.Count})", (float)i / jobs.Count);
                 BakeJobDefinitions(jobs[i], entries, definitionsPath);
             }
         }
 
-        private void BakeJobDefinitions(ModelJob job, IReadOnlyList<TierEntry> entries, string definitionsPath)
+        private void BakeJobDefinitions(ItemPropJob job, IReadOnlyList<TierEntry> entries, string definitionsPath)
         {
             for (int i = 0; i < entries.Count; i++)
             {
@@ -446,17 +446,17 @@ namespace EditorTools
                 serialized.FindProperty("_icon").objectReferenceValue = LoadIcon(job.IconPath, job.PrefabName);
                 serialized.ApplyModifiedPropertiesWithoutUndo();
 
-                job.Definitions.Add(definition);
+                job.AddDefinition(definition);
 
                 if (entry.Tier == SizeTier.Small)
                 {
-                    job.FallbackDefinition = definition;
+                    job.SetFallbackDefinition(definition);
                 }
             }
 
             if (job.FallbackDefinition == null)
             {
-                job.FallbackDefinition = job.Definitions[0];
+                job.SetFallbackDefinition(job.Definitions[0]);
             }
         }
 
@@ -472,11 +472,12 @@ namespace EditorTools
             return icon;
         }
 
-        private void CreateItemPrefabs(List<ModelJob> jobs, int collectableLayer)
+        private void CreateItemPrefabs(List<ItemPropJob> jobs, int collectableLayer)
         {
             for (int i = 0; i < jobs.Count; i++)
             {
-                EditorUtility.DisplayProgressBar("Prop Factory", $"Prefab {jobs[i].PrefabName} ({i + 1}/{jobs.Count})", (float)i / jobs.Count);
+                EditorUtility.DisplayProgressBar("Prop Factory",
+                        $"Prefab {jobs[i].PrefabName} ({i + 1}/{jobs.Count})", (float)i / jobs.Count);
 
                 if (AssetDatabase.LoadAssetAtPath<GameObject>(jobs[i].PrefabPath) != null)
                 {
@@ -487,11 +488,12 @@ namespace EditorTools
                     CreateItemPrefab(jobs[i], collectableLayer);
                 }
 
-                jobs[i].Prefab = AssetDatabase.LoadAssetAtPath<Item>(jobs[i].PrefabPath);
+                Item prefab = AssetDatabase.LoadAssetAtPath<Item>(jobs[i].PrefabPath);
+                jobs[i].SetPrefab(prefab);
             }
         }
 
-        private void CreateItemPrefab(ModelJob job, int collectableLayer)
+        private void CreateItemPrefab(ItemPropJob job, int collectableLayer)
         {
             GameObject root = new GameObject(job.PrefabName)
             {
@@ -512,7 +514,7 @@ namespace EditorTools
             DestroyImmediate(root);
         }
 
-        private void UpdateItemPrefab(ModelJob job, int collectableLayer)
+        private void UpdateItemPrefab(ItemPropJob job, int collectableLayer)
         {
             GameObject contents = PrefabUtility.LoadPrefabContents(job.PrefabPath);
 
@@ -520,9 +522,7 @@ namespace EditorTools
             {
                 contents.layer = collectableLayer;
 
-                BoxCollider collider = contents.GetComponent<BoxCollider>();
-
-                if (collider == null)
+                if (contents.TryGetComponent(out BoxCollider collider) == false)
                 {
                     collider = contents.AddComponent<BoxCollider>();
                 }
@@ -530,9 +530,7 @@ namespace EditorTools
                 ApplyCollider(collider, ComputeBounds(contents));
                 ApplyNormalizedScale(contents, collider);
 
-                Item item = contents.GetComponent<Item>();
-
-                if (item == null)
+                if (contents.TryGetComponent(out Item item) == false)
                 {
                     item = contents.AddComponent<Item>();
                 }
@@ -573,7 +571,7 @@ namespace EditorTools
             serializedVisual.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        private void WritePropSet(List<ModelJob> jobs)
+        private void WritePropSet(List<ItemPropJob> jobs)
         {
             SerializedObject serialized = new SerializedObject(_propSet);
 
@@ -646,9 +644,15 @@ namespace EditorTools
 
             Vector3 localSize = new Vector3
             (
-                Mathf.Abs(worldToLocal.m00) * world.size.x + Mathf.Abs(worldToLocal.m01) * world.size.y + Mathf.Abs(worldToLocal.m02) * world.size.z,
-                Mathf.Abs(worldToLocal.m10) * world.size.x + Mathf.Abs(worldToLocal.m11) * world.size.y + Mathf.Abs(worldToLocal.m12) * world.size.z,
-                Mathf.Abs(worldToLocal.m20) * world.size.x + Mathf.Abs(worldToLocal.m21) * world.size.y + Mathf.Abs(worldToLocal.m22) * world.size.z
+                Mathf.Abs(worldToLocal.m00) * world.size.x
+                    + Mathf.Abs(worldToLocal.m01) * world.size.y
+                    + Mathf.Abs(worldToLocal.m02) * world.size.z,
+                Mathf.Abs(worldToLocal.m10) * world.size.x
+                    + Mathf.Abs(worldToLocal.m11) * world.size.y
+                    + Mathf.Abs(worldToLocal.m12) * world.size.z,
+                Mathf.Abs(worldToLocal.m20) * world.size.x
+                    + Mathf.Abs(worldToLocal.m21) * world.size.y
+                    + Mathf.Abs(worldToLocal.m22) * world.size.z
             );
 
             if (localSize.x <= 0f || localSize.y <= 0f || localSize.z <= 0f)
@@ -861,20 +865,9 @@ namespace EditorTools
             return AssetDatabase.GetAssetPath(asset);
         }
 
-        private static int CompareJobNames(ModelJob left, ModelJob right)
+        private static int CompareJobNames(ItemPropJob left, ItemPropJob right)
         {
             return string.CompareOrdinal(left.PrefabName, right.PrefabName);
-        }
-
-        private class ModelJob
-        {
-            public GameObject Model;
-            public string PrefabName;
-            public string PrefabPath;
-            public string IconPath;
-            public Item Prefab;
-            public ItemDefinition FallbackDefinition;
-            public readonly List<ItemDefinition> Definitions = new List<ItemDefinition>();
         }
 
         [Serializable]

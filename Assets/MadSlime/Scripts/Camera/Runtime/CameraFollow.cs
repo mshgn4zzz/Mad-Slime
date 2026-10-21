@@ -35,7 +35,8 @@ namespace CameraSystem
             if (_pullAnimator == null || _shakeAnimator == null || _fovKickAnimator == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: a camera animator is not assigned. Drag the CameraPullAnimator, CameraShakeAnimator and CameraFovKickAnimator components into the fields.");
+                    $"{name}: a camera animator is not assigned. Drag the CameraPullAnimator, "
+                        + $"CameraShakeAnimator and CameraFovKickAnimator components into the fields.");
             }
 
             if (TryGetComponent(out Camera cameraComponent) == false)

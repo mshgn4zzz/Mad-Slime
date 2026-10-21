@@ -68,7 +68,7 @@ namespace Quota
 
             entry.RegisterCollected();
 
-            QuotaChanged?.Invoke(entry.Remaining, entry);
+            QuotaChanged?.Invoke(entry.GetRemaining(), entry);
 
             return true;
         }
