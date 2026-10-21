@@ -30,7 +30,6 @@ namespace UI
             }
 
             _parent = parent;
-            // This container can be hidden while arranging the scene in the editor.
             _parent.gameObject.SetActive(true);
         }
 

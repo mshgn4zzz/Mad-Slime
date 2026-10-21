@@ -18,6 +18,9 @@ namespace Game
 {
     public class GameplayOrchestrator : MonoBehaviour
     {
+        private const float LevelGenerationProgressWeight = 0.85f;
+        private const float OutlinePreparationProgressWeight = 0.15f;
+
         private enum SessionState
         {
             Preparing,
@@ -234,14 +237,25 @@ namespace Game
 
             _timer.Setup(config.TimerDuration);
             await _levelGenerator.GenerateAsync(
-                progress => _sceneNavigator.ReportPreparationProgress(progress * 0.85f), cancellationToken);
+                ReportLevelGenerationProgress, cancellationToken);
             await _smellAbility.PrepareAsync(_levelGenerator.SpawnedItems,
-                progress => _sceneNavigator.ReportPreparationProgress(0.85f + progress * 0.15f), cancellationToken);
+                ReportOutlinePreparationProgress, cancellationToken);
             _quotaCounter.ResetSession();
             _isFinalCountdownStarted = false;
             _pauser.RequestPause();
             ApplyPause();
             SceneSessionPrepared?.Invoke();
+        }
+
+        private void ReportLevelGenerationProgress(float progress)
+        {
+            _sceneNavigator.ReportPreparationProgress(progress * LevelGenerationProgressWeight);
+        }
+
+        private void ReportOutlinePreparationProgress(float progress)
+        {
+            float totalProgress = LevelGenerationProgressWeight + progress * OutlinePreparationProgressWeight;
+            _sceneNavigator.ReportPreparationProgress(totalProgress);
         }
 
         private void RunSession()

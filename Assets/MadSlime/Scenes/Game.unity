@@ -676,7 +676,7 @@ MonoBehaviour:
   _radius: 16.560123
   _layerMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 512
   _gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1 &424352346
 GameObject:
@@ -949,7 +949,7 @@ MonoBehaviour:
   _radius: 0.42937404
   _layerMask:
     serializedVersion: 2
-    m_Bits: 264
+    m_Bits: 776
   _gizmoColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1001 &622043849
 PrefabInstance:
@@ -8253,7 +8253,7 @@ MonoBehaviour:
   _radius: 0.7
   _layerMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 520
   _gizmoColor: {r: 0.2396766, g: 1, b: 0, a: 1}
 --- !u!114 &3202154986451836065
 MonoBehaviour:
@@ -8489,7 +8489,7 @@ MonoBehaviour:
   _radius: 1.3205123
   _layerMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 520
   _gizmoColor: {r: 1, g: 0.80092674, b: 0, a: 1}
 --- !u!1 &4412971279007650109
 GameObject:

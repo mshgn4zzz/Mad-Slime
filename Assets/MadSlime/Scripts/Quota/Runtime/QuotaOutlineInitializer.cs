@@ -12,14 +12,19 @@ namespace Game
     public class QuotaOutlineInitializer
     {
         private const float FrameBudgetSeconds = 0.006f;
-        private static readonly ProfilerMarker s_prepareItemMarker =
+        private ProfilerMarker _prepareItemMarker =
             new ProfilerMarker("QuotaOutlineInitializer.PrepareItem");
 
-        private readonly QuotaBoard _board;
+        private QuotaBoard _board;
 
         public QuotaOutlineInitializer(QuotaBoard board)
         {
-            _board = board ?? throw new ArgumentNullException(nameof(board));
+            if (board == null)
+            {
+                throw new ArgumentNullException(nameof(board));
+            }
+
+            _board = board;
         }
 
         public async UniTask PrepareAsync(IReadOnlyList<Item> items, Color color, float width,
@@ -53,10 +58,7 @@ namespace Game
 
                 if (item != null && quotaTypes.Contains(item.Definition))
                 {
-                    using (s_prepareItemMarker.Auto())
-                    {
-                        PrepareItem(item, color, width);
-                    }
+                    PrepareItem(item, color, width);
                 }
 
                 if (Time.realtimeSinceStartup - frameStart >= FrameBudgetSeconds)
@@ -71,8 +73,10 @@ namespace Game
             progress?.Invoke(1f);
         }
 
-        private static void PrepareItem(Item item, Color color, float width)
+        private void PrepareItem(Item item, Color color, float width)
         {
+            using ProfilerMarker.AutoScope prepareItemScope = _prepareItemMarker.Auto();
+
             if (item.TryGetComponent(out GhostAnimator animator) == false)
             {
                 throw new InvalidOperationException($"{item.name}: quota item requires a GhostAnimator.");
