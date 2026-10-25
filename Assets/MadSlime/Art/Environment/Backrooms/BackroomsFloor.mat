@@ -32,5 +32,5 @@ Material:
     - _Glossiness: 0.03
     - _TileMeters: 12
     m_Colors:
-    - _Color: {r: 1, g: 0.86, b: 0.48, a: 1}
+    - _Color: {r: 0.91, g: 0.88, b: 0.61, a: 1}
   m_BuildTextureStacks: []

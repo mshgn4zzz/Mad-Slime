@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 2004}
   - component: {fileID: 2005}
   m_Layer: 8
-  m_Name: SM_BlockGardenNearBenches_East
+  m_Name: SM_BlockGardenGrove_NE
   m_TagString: Untagged
   m_IsActive: 1
 --- !u!4 &2001
@@ -80,7 +80,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2000}
-  m_Mesh: {fileID: 4300000, guid: de6c395ee5d655a99328dc833a82448e, type: 3}
+  m_Mesh: {fileID: 4300000, guid: f7c398e97278513badd9865a1cd57946, type: 3}
 --- !u!23 &2003
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -97,7 +97,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_Materials:
-  - {fileID: 2100000, guid: bc9a1743e6f05413bdd620af5c4b7319, type: 2}
+  - {fileID: 2100000, guid: 52ce7c121d925453b85aaf928f54ed54, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -119,8 +119,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 51.0, y: 78.0, z: 327.5}
-  m_Center: {x: -345.0, y: 38.75, z: 15.0}
+  m_Size: {x: 184.75, y: 180, z: 195}
+  m_Center: {x: -389.625, y: 90, z: -402.5}
 --- !u!114 &2005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 2014}
   - component: {fileID: 2015}
   m_Layer: 8
-  m_Name: SM_BlockGardenNearBlooms_South
+  m_Name: SM_BlockGardenGrove_NW
   m_TagString: Untagged
   m_IsActive: 1
 --- !u!4 &2011
@@ -174,7 +174,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2010}
-  m_Mesh: {fileID: 4300000, guid: 7218e3d74aca51588f5ed889a5370608, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 83a544582f525ce99a47f4ef0805deb6, type: 3}
 --- !u!23 &2013
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -191,7 +191,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_Materials:
-  - {fileID: 2100000, guid: bc9a1743e6f05413bdd620af5c4b7319, type: 2}
+  - {fileID: 2100000, guid: 52ce7c121d925453b85aaf928f54ed54, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -213,8 +213,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 387.600006, y: 74.519997, z: 57.599976}
-  m_Center: {x: 5.0, y: 37.009998, z: 340.0}
+  m_Size: {x: 195, y: 180, z: 184.75}
+  m_Center: {x: 402.499969, y: 90, z: -389.625031}
 --- !u!114 &2015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -243,7 +243,7 @@ GameObject:
   - component: {fileID: 2024}
   - component: {fileID: 2025}
   m_Layer: 8
-  m_Name: SM_BlockGardenNearCrystals_West
+  m_Name: SM_BlockGardenGrove_SE
   m_TagString: Untagged
   m_IsActive: 1
 --- !u!4 &2021
@@ -268,7 +268,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2020}
-  m_Mesh: {fileID: 4300000, guid: e24c79742a725cbca5770a769e59f48f, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 38df3635fe85528996fd320429a8d826, type: 3}
 --- !u!23 &2023
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -285,7 +285,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_Materials:
-  - {fileID: 2100000, guid: bc9a1743e6f05413bdd620af5c4b7319, type: 2}
+  - {fileID: 2100000, guid: 52ce7c121d925453b85aaf928f54ed54, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -307,8 +307,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 73.0, y: 93.439995, z: 352.049988}
-  m_Center: {x: 345.0, y: 46.469997, z: -15.0}
+  m_Size: {x: 195, y: 180, z: 184.750031}
+  m_Center: {x: -402.499969, y: 90, z: 389.625015}
 --- !u!114 &2025
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -337,7 +337,7 @@ GameObject:
   - component: {fileID: 2034}
   - component: {fileID: 2035}
   m_Layer: 8
-  m_Name: SM_BlockGardenNearTrees_North
+  m_Name: SM_BlockGardenGrove_SW
   m_TagString: Untagged
   m_IsActive: 1
 --- !u!4 &2031
@@ -362,7 +362,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2030}
-  m_Mesh: {fileID: 4300000, guid: 2cd2c6c35c5f5e0aa713c169f7283339, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 384fbb8f5ce357cfa625394ff2072c88, type: 3}
 --- !u!23 &2033
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -379,7 +379,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_Materials:
-  - {fileID: 2100000, guid: bc9a1743e6f05413bdd620af5c4b7319, type: 2}
+  - {fileID: 2100000, guid: 52ce7c121d925453b85aaf928f54ed54, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -401,8 +401,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 452.199997, y: 206.850006, z: 124.299988}
-  m_Center: {x: -11.099998, y: 103.175003, z: -374.649994}
+  m_Size: {x: 184.75, y: 180, z: 195}
+  m_Center: {x: 389.625031, y: 90, z: 402.499969}
 --- !u!114 &2035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -538,7 +538,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_Materials:
-  - {fileID: 2100000, guid: bc9a1743e6f05413bdd620af5c4b7319, type: 2}
+  - {fileID: 2100000, guid: 52ce7c121d925453b85aaf928f54ed54, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -560,8 +560,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1112.800018, y: 300.150024, z: 1340.000061}
-  m_Center: {x: -958.599991, y: 149.825012, z: 3.1e-05}
+  m_Size: {x: 325, y: 175, z: 500.000015}
+  m_Center: {x: -437.5, y: 62.5, z: 2.3e-05}
 --- !u!114 &2055
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -632,7 +632,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_Materials:
-  - {fileID: 2100000, guid: bc9a1743e6f05413bdd620af5c4b7319, type: 2}
+  - {fileID: 2100000, guid: 52ce7c121d925453b85aaf928f54ed54, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -654,8 +654,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1340.0, y: 300.150024, z: 1112.799988}
-  m_Center: {x: 0.0, y: 149.825012, z: -958.600006}
+  m_Size: {x: 500, y: 175, z: 325}
+  m_Center: {x: 0, y: 62.5, z: -437.5}
 --- !u!114 &2065
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -726,7 +726,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_Materials:
-  - {fileID: 2100000, guid: bc9a1743e6f05413bdd620af5c4b7319, type: 2}
+  - {fileID: 2100000, guid: 52ce7c121d925453b85aaf928f54ed54, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -748,8 +748,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1340.000061, y: 300.150024, z: 1112.800018}
-  m_Center: {x: 9.2e-05, y: 149.825012, z: 958.599991}
+  m_Size: {x: 500.000015, y: 175, z: 325.000031}
+  m_Center: {x: 3.8e-05, y: 62.5, z: 437.499985}
 --- !u!114 &2075
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -820,7 +820,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_Materials:
-  - {fileID: 2100000, guid: bc9a1743e6f05413bdd620af5c4b7319, type: 2}
+  - {fileID: 2100000, guid: 52ce7c121d925453b85aaf928f54ed54, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -842,8 +842,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1112.800018, y: 300.150024, z: 1340.000061}
-  m_Center: {x: 958.599991, y: 149.825012, z: -9.2e-05}
+  m_Size: {x: 325.000031, y: 175, z: 500.000031}
+  m_Center: {x: 437.499985, y: 62.5, z: -3.1e-05}
 --- !u!114 &2085
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -914,7 +914,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_Materials:
-  - {fileID: 2100000, guid: bc9a1743e6f05413bdd620af5c4b7319, type: 2}
+  - {fileID: 2100000, guid: 52ce7c121d925453b85aaf928f54ed54, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -936,8 +936,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 20.000015, y: 65.0, z: 500.0}
-  m_Center: {x: -259.999992, y: 32.5, z: 1.5e-05}
+  m_Size: {x: 25, y: 50, z: 500}
+  m_Center: {x: -262.5, y: 25, z: 0}
 --- !u!114 &2095
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1008,7 +1008,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_Materials:
-  - {fileID: 2100000, guid: bc9a1743e6f05413bdd620af5c4b7319, type: 2}
+  - {fileID: 2100000, guid: 52ce7c121d925453b85aaf928f54ed54, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1030,8 +1030,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 540.0, y: 65.0, z: 20.0}
-  m_Center: {x: 0.0, y: 32.5, z: -260.0}
+  m_Size: {x: 550, y: 50, z: 25}
+  m_Center: {x: 0, y: 25, z: -262.5}
 --- !u!114 &2105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1102,7 +1102,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_Materials:
-  - {fileID: 2100000, guid: bc9a1743e6f05413bdd620af5c4b7319, type: 2}
+  - {fileID: 2100000, guid: 52ce7c121d925453b85aaf928f54ed54, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1124,8 +1124,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 540.0, y: 65.0, z: 20.000061}
-  m_Center: {x: 3.1e-05, y: 32.5, z: 260.0}
+  m_Size: {x: 550, y: 50, z: 25}
+  m_Center: {x: 0, y: 25, z: 262.5}
 --- !u!114 &2115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1196,7 +1196,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_Materials:
-  - {fileID: 2100000, guid: bc9a1743e6f05413bdd620af5c4b7319, type: 2}
+  - {fileID: 2100000, guid: 52ce7c121d925453b85aaf928f54ed54, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1218,8 +1218,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 20.000046, y: 65.0, z: 500.0}
-  m_Center: {x: 260.000008, y: 32.5, z: -1.5e-05}
+  m_Size: {x: 25, y: 50, z: 500}
+  m_Center: {x: 262.5, y: 25, z: 0}
 --- !u!114 &2125
 MonoBehaviour:
   m_ObjectHideFlags: 0

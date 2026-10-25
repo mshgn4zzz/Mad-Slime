@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fillDelay: 0.55
   _spawnInterval: 0.04
+  _maxFillDuration: 8
   _flightDuration: 0.5
   _boostedSpawnInterval: 0.015
+  _maxBoostedFillDuration: 3
   _boostedFlightDuration: 0.25
   _instantFillDuration: 0.25
   _instantFlightDuration: 0.1

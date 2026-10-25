@@ -192,7 +192,7 @@ MonoBehaviour:
       AnchorMax: {x: 0.5, y: 0.5}
       Pivot: {x: 0.5, y: 0.5}
       Position: {x: 0, y: 0}
-      Size: {x: 1000, y: 1240}
+      Size: {x: 1000, y: 900}
       Scale: 1
     Landscape:
       AnchorMin: {x: 0.5, y: 0.5}
@@ -208,7 +208,7 @@ MonoBehaviour:
       AnchorMin: {x: 0.5, y: 0.5}
       AnchorMax: {x: 0.5, y: 0.5}
       Pivot: {x: 0.5, y: 0.5}
-      Position: {x: 0, y: 460}
+      Position: {x: 0, y: 320}
       Size: {x: 800, y: 130}
       Scale: 1
     Landscape:
@@ -225,7 +225,7 @@ MonoBehaviour:
       AnchorMin: {x: 0.1, y: 0.5}
       AnchorMax: {x: 0.9, y: 0.5}
       Pivot: {x: 0.5, y: 0.5}
-      Position: {x: 0, y: 179}
+      Position: {x: 0, y: 65}
       Size: {x: 0, y: 132}
       Scale: 1
     Landscape:
@@ -242,7 +242,7 @@ MonoBehaviour:
       AnchorMin: {x: 0.5, y: 0.5}
       AnchorMax: {x: 0.5, y: 0.5}
       Pivot: {x: 0.5, y: 0.5}
-      Position: {x: 0, y: -100}
+      Position: {x: 0, y: -260}
       Size: {x: 320, y: 228}
       Scale: 1
     Landscape:
@@ -259,7 +259,7 @@ MonoBehaviour:
       AnchorMin: {x: 0.5, y: 0.5}
       AnchorMax: {x: 0.5, y: 0.5}
       Pivot: {x: 0.5, y: 0.5}
-      Position: {x: -150, y: -390}
+      Position: {x: -300, y: -260}
       Size: {x: 228, y: 228}
       Scale: 1
     Landscape:
@@ -276,7 +276,7 @@ MonoBehaviour:
       AnchorMin: {x: 0.5, y: 0.5}
       AnchorMax: {x: 0.5, y: 0.5}
       Pivot: {x: 0.5, y: 0.5}
-      Position: {x: 150, y: -390}
+      Position: {x: 300, y: -260}
       Size: {x: 228, y: 228}
       Scale: 1
     Landscape:
@@ -586,7 +586,7 @@ MonoBehaviour:
   m_fontSizeMin: 24
   m_fontSizeMax: 52
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 32
   m_VerticalAlignment: 4096
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -1590,7 +1590,7 @@ MonoBehaviour:
   m_fontSizeMin: 24
   m_fontSizeMax: 100
   m_fontStyle: 1
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 32
   m_VerticalAlignment: 4096
   m_textAlignment: 65535
   m_characterSpacing: 0

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 646746c265ddc914eb0bd476220de830, type: 3}
   m_Name: RewardConfig
   m_EditorClassIdentifier: 
-  _baseReward: 20
+  _baseReward: 32
   _growthExponent: 1.65
   _loseMultiplierThreshold: 0.25
   _loseRewardDivisor: 4

@@ -1,22 +1,23 @@
 {
-    "CurrentLevel": 12,
-    "MaxLevel": 12,
-    "CollectedItemsCount": 18638,
-    "Language": "",
-    "musicVolume": 0.5,
-    "sfxVolume": 0.3499999940395355,
-    "Balance": 9611876,
-    "TestFundsGranted": true,
-    "SelectedSkinId": "Slime",
+    "CurrentLevel": 68,
+    "MaxLevel": 68,
+    "CollectedItemsCount": 57214,
+    "Language": "ru",
+    "musicVolume": 100.0,
+    "sfxVolume": 100.0,
+    "Balance": 10411033,
+    "SelectedSkinId": "Car",
     "_openSkinIds": [
-        "Slime"
+        "Slime",
+        "Car",
+        "Ufo"
     ],
     "_showcaseSkinIds": [
-        "CubeSlime",
+        "Cactus",
         "Sahur",
         "BabyDragon",
-        "LegacySlime",
-        "Snail"
+        "Fox",
+        "Dog"
     ],
     "SpeedLevel": 5,
     "AppetiteLevel": 5,
@@ -27,8 +28,11 @@
         1,
         2
     ],
-    "LastFreeSpinUnixTime": 0,
-    "RouletteAdSpinTimes": [],
-    "SkinSpinCount": 0,
-    "idSave": 47
+    "LastFreeSpinUnixTime": 1792929508,
+    "RouletteAdSpinTimes": [
+        1792921932,
+        1792921991
+    ],
+    "SkinSpinCount": 2,
+    "idSave": 303
 }

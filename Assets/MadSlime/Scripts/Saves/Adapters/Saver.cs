@@ -12,9 +12,7 @@ namespace Saves
     public class Saver : ISavesReadiness, IBalanceStorage, ILevelStorage, IAudioStorage, IUpgradesStorage,
         ISkinStorage, IRouletteStorage, ILanguageStorage, ICollectedItemsStorage, ISaveConfirmation, IPlayerProgressStorage
     {
-        private const float MinVolume = 0f;
-        private const float MaxVolume = 1f;
-        private const int TestBalance = 9999999;
+        private const int MaxVolumePercent = 100;
 
         private Yg2SavesAccess _access;
 
@@ -48,25 +46,6 @@ namespace Saves
             return _access.ConfirmSavedAsync(cancellationToken);
         }
 
-        public void GrantTestFunds()
-        {
-            SavesYG data = LoadData();
-
-            if (data.TestFundsGranted == true)
-            {
-                return;
-            }
-
-            ExecuteTransaction(ApplyTestFunds);
-        }
-
-        private void ApplyTestFunds()
-        {
-            SavesYG data = LoadData();
-            data.Balance = Mathf.Max(data.Balance, TestBalance);
-            data.TestFundsGranted = true;
-        }
-
         public void ResetProgress()
         {
             ExecuteTransaction(ApplyProgressReset);
@@ -82,7 +61,6 @@ namespace Saves
             initialData.musicVolume = data.musicVolume;
             initialData.sfxVolume = data.sfxVolume;
             initialData.Balance = 0;
-            initialData.TestFundsGranted = true;
             JsonUtility.FromJsonOverwrite(JsonUtility.ToJson(initialData), data);
         }
 
@@ -114,9 +92,9 @@ namespace Saves
 
         public int MaxLevel => LoadData().MaxLevel;
 
-        public float MusicVolume => LoadData().musicVolume;
+        public int MusicVolume => ToVolumePercent(LoadData().musicVolume);
 
-        public float SfxVolume => LoadData().sfxVolume;
+        public int SfxVolume => ToVolumePercent(LoadData().sfxVolume);
 
         public string SelectedSkinId => LoadData().SelectedSkinId;
 
@@ -162,12 +140,19 @@ namespace Saves
             SaveChanges();
         }
 
-        public void SetVolumes(float musicVolume, float sfxVolume)
+        public void SetVolumes(int musicVolume, int sfxVolume)
         {
             SavesYG data = LoadData();
-            data.musicVolume = Mathf.Clamp01(musicVolume);
-            data.sfxVolume = Mathf.Clamp01(sfxVolume);
+            data.musicVolume = Mathf.Clamp(musicVolume, 0, MaxVolumePercent);
+            data.sfxVolume = Mathf.Clamp(sfxVolume, 0, MaxVolumePercent);
             SaveChanges();
+        }
+
+        // Legacy saves stored volumes as 0..1 fractions; current scale is 0..100 percents.
+        private static int ToVolumePercent(float storedVolume)
+        {
+            float percent = storedVolume <= 1f ? storedVolume * 100f : storedVolume;
+            return Mathf.Clamp(Mathf.RoundToInt(percent), 0, MaxVolumePercent);
         }
 
         public int GetUpgradeLevel(UpgradeType type)

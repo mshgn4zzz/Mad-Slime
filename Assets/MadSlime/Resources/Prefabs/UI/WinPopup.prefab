@@ -104,7 +104,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b167560c4279990c799c37619b4907ae, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6ec871ded5df49559732aaff04bfe8b7, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -113,7 +113,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 2
 --- !u!114 &2006424072979240787
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,7 +271,7 @@ MonoBehaviour:
   m_fontSizeMin: 24
   m_fontSizeMax: 64
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 32
   m_VerticalAlignment: 4096
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -405,7 +405,7 @@ MonoBehaviour:
   m_fontSizeMin: 24
   m_fontSizeMax: 64
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 32
   m_VerticalAlignment: 4096
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -434,7 +434,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 6, y: 2, z: 6, w: 11.080017}
+  m_margin: {x: 6, y: 2, z: 6, w: 2}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -670,10 +670,10 @@ MonoBehaviour:
   _epicFrame: {fileID: 21300000, guid: 034b904622abf38bf96f1ef9d877b0bf, type: 3}
   _legendaryFrame: {fileID: 21300000, guid: 034b904622abf38bf96f1ef9d877b0bf, type: 3}
   _plate: {fileID: 2410658096650790846}
-  _normalPlate: {fileID: 21300000, guid: 576be49e7b816f04cb4bbeccbe797f4a, type: 3}
-  _rarePlate: {fileID: 21300000, guid: b167560c4279990c799c37619b4907ae, type: 3}
-  _epicPlate: {fileID: 21300000, guid: a3bf9aa4af0bed47396cea961f71c776, type: 3}
-  _legendaryPlate: {fileID: 21300000, guid: 4fad5ff3e9bf59197ad260c27d8ba1bd, type: 3}
+  _normalPlate: {fileID: 21300000, guid: a681563fbd7f4f9893984d789946c3eb, type: 3}
+  _rarePlate: {fileID: 21300000, guid: 6ec871ded5df49559732aaff04bfe8b7, type: 3}
+  _epicPlate: {fileID: 21300000, guid: 4604a887e9dc4ba99f3d5db24d827889, type: 3}
+  _legendaryPlate: {fileID: 21300000, guid: 017bcb9fdf134446ba32b145bdc8392f, type: 3}
   _plateText: {fileID: 3491082892283228851}
   _takeButton: {fileID: 2006424072979240787}
 --- !u!114 &900000000000100001
@@ -1059,7 +1059,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 576be49e7b816f04cb4bbeccbe797f4a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a681563fbd7f4f9893984d789946c3eb, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1068,7 +1068,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 2
 --- !u!1 &6899991044710134924
 GameObject:
   m_ObjectHideFlags: 0

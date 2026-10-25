@@ -10,8 +10,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: MAT_EnvironmentPalette
-    second: {fileID: 2100000, guid: bc9a1743e6f05413bdd620af5c4b7319, type: 2}
+      name: MAT_BackroomsPalette
+    second: {fileID: 2100000, guid: 87fed372ab9f5cca86e2111ae10193ae, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
@@ -79,12 +79,12 @@ ModelImporter:
     strictVertexDataChecks: 0
   tangentSpace:
     normalSmoothAngle: 60
-    normalImportMode: 0
+    normalImportMode: 1
     tangentImportMode: 3
     normalCalculationMode: 4
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
-    normalSmoothingSource: 0
+    normalSmoothingSource: 2
   referencedClips: []
   importAnimation: 0
   humanDescription:

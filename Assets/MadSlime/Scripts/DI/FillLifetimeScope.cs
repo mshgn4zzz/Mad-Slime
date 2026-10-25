@@ -15,6 +15,7 @@ namespace DI
         [SerializeField] private FillConfig _fillConfig;
         [SerializeField] private FillSceneOrchestrator _fillSceneOrchestrator;
         [SerializeField] private ShapeFillOrchestrator _fillOrchestrator;
+        [SerializeField] private GridCameraFitter _cameraFitter;
         [SerializeField] private GridBuilder _gridBuilder;
         [SerializeField] private ShapeFiller _shapeFiller;
         [SerializeField] private CubeSpawner _cubeSpawner;
@@ -36,6 +37,7 @@ namespace DI
             ValidateAssigned(_fillConfig, nameof(_fillConfig));
             ValidateAssigned(_fillSceneOrchestrator, nameof(_fillSceneOrchestrator));
             ValidateAssigned(_fillOrchestrator, nameof(_fillOrchestrator));
+            ValidateAssigned(_cameraFitter, nameof(_cameraFitter));
             ValidateAssigned(_gridBuilder, nameof(_gridBuilder));
             ValidateAssigned(_shapeFiller, nameof(_shapeFiller));
             ValidateAssigned(_cubeSpawner, nameof(_cubeSpawner));
@@ -56,6 +58,7 @@ namespace DI
             builder.Register<UiSpawner>(Lifetime.Scoped);
             builder.RegisterComponent(_fillSceneOrchestrator);
             builder.RegisterComponent(_fillOrchestrator);
+            builder.RegisterComponent(_cameraFitter);
             builder.RegisterComponent(_gridBuilder);
             builder.RegisterComponent(_shapeFiller);
             builder.RegisterComponent(_cubeSpawner);

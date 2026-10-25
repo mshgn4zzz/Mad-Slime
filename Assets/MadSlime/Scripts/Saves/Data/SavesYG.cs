@@ -10,11 +10,11 @@ namespace YG
         public int CollectedItemsCount;
         public string Language = "";
 
-        public float musicVolume = 0.5f;
-        public float sfxVolume = 0.35f;
+        // Volumes are 0..100 percents; legacy saves stored 0..1 fractions (migrated on read).
+        public float musicVolume = 50f;
+        public float sfxVolume = 35f;
 
-        public int Balance = 250;
-        public bool TestFundsGranted;
+        public int Balance;
 
         public string SelectedSkinId = "Slime";
         public List<string> _openSkinIds = new List<string> { "Slime" };

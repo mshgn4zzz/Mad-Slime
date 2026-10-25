@@ -2,10 +2,10 @@ namespace Saves
 {
     public interface IAudioStorage
     {
-        float MusicVolume { get; }
+        int MusicVolume { get; }
 
-        float SfxVolume { get; }
+        int SfxVolume { get; }
 
-        void SetVolumes(float musicVolume, float sfxVolume);
+        void SetVolumes(int musicVolume, int sfxVolume);
     }
 }
