@@ -1,10 +1,9 @@
+using Leaderboards;
 using System;
-using Core;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
-
-namespace UI
+namespace UI.Leaderboards
 {
     public class LeaderboardRowViewFactory : MonoBehaviour
     {

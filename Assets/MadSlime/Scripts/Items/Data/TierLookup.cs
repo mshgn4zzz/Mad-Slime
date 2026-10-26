@@ -1,7 +1,5 @@
 using System;
-using Skills;
-
-namespace Scriptables
+namespace Items
 {
     public class TierLookup
     {
@@ -27,7 +25,8 @@ namespace Scriptables
                 {
                     if (entry.Scale <= 0f || entry.Mass <= 0)
                     {
-                        throw new InvalidOperationException($"{_table.name}: tier '{tier}' requires positive scale and mass.");
+                                                throw new InvalidOperationException($"{_table.name}: tier '{tier}' "
+                                                        + $"requires positive scale and mass.");
                     }
 
                     return entry;

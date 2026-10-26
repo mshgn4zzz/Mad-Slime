@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-
 namespace ShapeFill
 {
     public class GridBuilder : MonoBehaviour
@@ -52,9 +51,20 @@ namespace ShapeFill
         public void SetPlayArea(Bounds playArea)
         {
             if (playArea.size.x <= 0f || playArea.size.z <= 0f)
+            {
                 throw new ArgumentOutOfRangeException(nameof(playArea));
+            }
 
             _playArea = playArea;
+        }
+
+        private static void ExpandBounds(List<Vector2Int> cells, ref Vector2 min, ref Vector2 max)
+        {
+            foreach (Vector2Int cell in cells)
+            {
+                min = Vector2.Min(min, cell);
+                max = Vector2.Max(max, cell);
+            }
         }
 
         public void Build()
@@ -64,16 +74,8 @@ namespace ShapeFill
             ClassifyBorder();
             Vector2 min = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
             Vector2 max = new Vector2(float.NegativeInfinity, float.NegativeInfinity);
-            foreach (Vector2Int cell in _borderCells)
-            {
-                min = Vector2.Min(min, cell);
-                max = Vector2.Max(max, cell);
-            }
-            foreach (Vector2Int cell in _fillCells)
-            {
-                min = Vector2.Min(min, cell);
-                max = Vector2.Max(max, cell);
-            }
+            ExpandBounds(_borderCells, ref min, ref max);
+            ExpandBounds(_fillCells, ref min, ref max);
             _gridCenter = (min + max) * 0.5f;
             SortFillBottomToTop();
             FitToPlayArea();
@@ -91,8 +93,10 @@ namespace ShapeFill
             Bounds bounds = new Bounds(transform.position, Vector3.zero);
             EncapsulateCells(_borderCells, ref bounds, ref hasCell);
             EncapsulateCells(_fillCells, ref bounds, ref hasCell);
-            if (!hasCell)
+            if (hasCell == false)
+            {
                 throw new InvalidOperationException($"{name}: the shape has no opaque cells.");
+            }
 
             bounds.Expand(CellSize);
             return bounds;
@@ -103,20 +107,24 @@ namespace ShapeFill
             foreach (Vector2Int cell in cells)
             {
                 Vector3 position = GridToWorld(cell.x, cell.y);
-                if (!hasCell)
+                if (hasCell == false)
                 {
                     bounds = new Bounds(position, Vector3.zero);
                     hasCell = true;
                 }
                 else
+                {
                     bounds.Encapsulate(position);
+                }
             }
         }
 
         private void FitToPlayArea()
         {
-            if (!_playArea.HasValue)
+            if (_playArea.HasValue == false)
+            {
                 return;
+            }
 
             Bounds area = _playArea.Value;
             Bounds form = GetFormBounds();
@@ -151,7 +159,6 @@ namespace ShapeFill
 
         private void ReadPixels()
         {
-            Color[] pixels = _shapeTexture.GetPixels();
             int textureWidth = _shapeTexture.width;
             int textureHeight = _shapeTexture.height;
 
@@ -169,7 +176,7 @@ namespace ShapeFill
                 {
                     int pixelX = Mathf.Min((int)((gridX + 0.5f) * textureWidth / _gridWidth), textureWidth - 1);
                     int pixelY = Mathf.Min((int)((gridY + 0.5f) * textureHeight / _gridHeight), textureHeight - 1);
-                    Color pixelColor = pixels[pixelX + pixelY * textureWidth];
+                    Color pixelColor = _shapeTexture.GetPixel(pixelX, pixelY);
 
                     _filledCells[gridX, gridY] = pixelColor.a > MinFillAlpha;
                     _pixelColors[gridX, gridY] = pixelColor;

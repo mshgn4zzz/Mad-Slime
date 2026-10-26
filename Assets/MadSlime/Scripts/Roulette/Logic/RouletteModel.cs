@@ -1,8 +1,8 @@
+using Economy;
+using Saves;
+using Skins;
 using System;
 using System.Collections.Generic;
-using Game;
-using Skins;
-
 namespace Roulette
 {
     public class RouletteModel
@@ -14,7 +14,7 @@ namespace Roulette
         private LootRoller _roller;
         private SkinInventory _inventory;
         private Wallet _wallet;
-        private Action<Action> _transaction;
+        private SavesTransaction _transaction;
         private Action _refreshShowcase;
         private List<RouletteSlot> _slots;
         private bool _advertisementGranted;
@@ -24,19 +24,62 @@ namespace Roulette
         public IReadOnlyList<RouletteSlot> Slots => _slots;
         public bool HasAdvertising => _access.HasAdvertising;
 
-        public RouletteModel(RouletteConfig config, Func<List<RouletteSlot>> createSlots, RouletteAccess access,
-            Func<RouletteSlot, RoulettePrize> resolvePrize, LootRoller roller, SkinInventory inventory,
-            Wallet wallet, Action<Action> transaction, Action refreshShowcase)
+        public RouletteModel(RouletteModelDependencies dependencies)
         {
-            _config = config;
-            _createSlots = createSlots;
-            _access = access;
-            _resolvePrize = resolvePrize;
-            _roller = roller;
-            _inventory = inventory;
-            _wallet = wallet;
-            _transaction = transaction;
-            _refreshShowcase = refreshShowcase;
+            if (dependencies == null)
+            {
+                throw new ArgumentNullException(nameof(dependencies));
+            }
+
+            if (dependencies.Config == null)
+            {
+                throw new ArgumentNullException(nameof(dependencies.Config));
+            }
+
+            if (dependencies.CreateSlots == null)
+            {
+                throw new ArgumentNullException(nameof(dependencies.CreateSlots));
+            }
+
+            if (dependencies.Access == null)
+            {
+                throw new ArgumentNullException(nameof(dependencies.Access));
+            }
+
+            if (dependencies.ResolvePrize == null)
+            {
+                throw new ArgumentNullException(nameof(dependencies.ResolvePrize));
+            }
+
+            if (dependencies.Roller == null)
+            {
+                throw new ArgumentNullException(nameof(dependencies.Roller));
+            }
+
+            if (dependencies.Inventory == null)
+            {
+                throw new ArgumentNullException(nameof(dependencies.Inventory));
+            }
+
+            if (dependencies.Wallet == null)
+            {
+                throw new ArgumentNullException(nameof(dependencies.Wallet));
+            }
+
+            if (dependencies.Transaction == null)
+            {
+                throw new ArgumentNullException(nameof(dependencies.Transaction));
+            }
+
+            _config = dependencies.Config;
+            _createSlots = dependencies.CreateSlots;
+            _access = dependencies.Access;
+            _resolvePrize = dependencies.ResolvePrize;
+            _roller = dependencies.Roller;
+            _inventory = dependencies.Inventory;
+            _wallet = dependencies.Wallet;
+            _transaction = dependencies.Transaction;
+            _refreshShowcase = dependencies.RefreshShowcase;
         }
 
         public void RefreshSlots()

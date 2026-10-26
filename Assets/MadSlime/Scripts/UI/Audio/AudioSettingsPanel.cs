@@ -1,10 +1,9 @@
+using Audio;
 using System;
-using Scriptables;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
-
-namespace Audio
+namespace UI.Audio
 {
     public class AudioSettingsPanel : MonoBehaviour
     {
@@ -19,7 +18,6 @@ namespace Audio
         private AudioMixerController _mixerController;
         private IUISoundPlayer _soundPlayer;
         private float _lastTickTime;
-        private bool _isInitialized;
 
         [Inject]
         public void Construct(AudioMixerController mixerController, IUISoundPlayer soundPlayer)
@@ -28,23 +26,7 @@ namespace Audio
             _soundPlayer = soundPlayer;
         }
 
-        private void OnDisable()
-        {
-            if (_isInitialized == false)
-            {
-                return;
-            }
-
-            _musicSlider.onValueChanged.RemoveListener(OnMusicSliderChanged);
-            _sfxSlider.onValueChanged.RemoveListener(OnSfxSliderChanged);
-            _mixerController.VolumesChanged -= RefreshVolumes;
-
-            _mixerController.CommitVolumes();
-
-            _isInitialized = false;
-        }
-
-        public void Initialize()
+        private void Awake()
         {
             if (_mixerController == null)
             {
@@ -84,27 +66,32 @@ namespace Audio
             _musicSlider.maxValue = MaxSliderValue;
             _sfxSlider.maxValue = MaxSliderValue;
 
-            _musicSlider.onValueChanged.RemoveListener(OnMusicSliderChanged);
-            _sfxSlider.onValueChanged.RemoveListener(OnSfxSliderChanged);
-
             // Slider holds 0..20 whole steps; each step equals VolumeStepPercent percents.
             _musicSlider.wholeNumbers = true;
             _sfxSlider.wholeNumbers = true;
+        }
 
-            _mixerController.VolumesChanged -= RefreshVolumes;
-            _mixerController.VolumesChanged += RefreshVolumes;
-            RefreshVolumes();
-
+        private void OnEnable()
+        {
             _musicSlider.onValueChanged.AddListener(OnMusicSliderChanged);
             _sfxSlider.onValueChanged.AddListener(OnSfxSliderChanged);
+            _mixerController.VolumesChanged += RefreshVolumes;
+            RefreshVolumes();
+        }
 
-            _isInitialized = true;
+        private void OnDisable()
+        {
+            _musicSlider.onValueChanged.RemoveListener(OnMusicSliderChanged);
+            _sfxSlider.onValueChanged.RemoveListener(OnSfxSliderChanged);
+            _mixerController.VolumesChanged -= RefreshVolumes;
+
+            _mixerController.CommitVolumes();
         }
 
         private void RefreshVolumes()
         {
             _musicSlider.SetValueWithoutNotify(_mixerController.MusicVolume / (float)VolumeStepPercent);
-            _sfxSlider.SetValueWithoutNotify(_mixerController.SFXVolume / (float)VolumeStepPercent);
+            _sfxSlider.SetValueWithoutNotify(_mixerController.SfxVolume / (float)VolumeStepPercent);
             _musicSlider.interactable = _mixerController.IsVolumesLoaded;
             _sfxSlider.interactable = _mixerController.IsVolumesLoaded;
         }
@@ -116,7 +103,7 @@ namespace Audio
 
         private void OnSfxSliderChanged(float value)
         {
-            _mixerController.SetSFXVolume((int)value * VolumeStepPercent);
+            _mixerController.SetSfxVolume((int)value * VolumeStepPercent);
             PlayTick();
         }
 

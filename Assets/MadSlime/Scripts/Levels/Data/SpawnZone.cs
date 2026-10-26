@@ -1,13 +1,14 @@
-using Skills;
+using Items;
+using System;
 using UnityEngine;
-
-namespace Scriptables
+namespace Levels
 {
-    [System.Serializable]
+    [Serializable]
     public class SpawnZone
     {
         [Tooltip("Форма зоны раскладки: Grid (сетка), Circle (круг), Scatter (хаотичный "
-            + "россыпь), CircleGrid (концентрические ряды), SquareRing (периметр квадрата), SquareScatter (хаос в квадрате).")]
+            + "россыпь), CircleGrid (концентрические ряды), SquareRing (периметр квадрата), "
+                    + "SquareScatter (хаос в квадрате).")]
         [SerializeField] private SpawnShape _shape = SpawnShape.Circle;
 
         [Tooltip("Центр зоны в координатах комнаты.")]

@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using Game;
+using Economy;
 using Saves;
 using Skins;
-
+using System;
+using System.Collections.Generic;
 namespace Roulette
 {
     public class RouletteFactory
@@ -13,13 +12,13 @@ namespace Roulette
         private ISkinStorage _skinStorage;
         private SkinInventory _inventory;
         private Wallet _wallet;
-        private Action<Action> _transaction;
+        private SavesTransaction _transaction;
         private SkinShowcase _showcase;
         private int _dailySlotCount;
         private int _skinSlotCount;
 
         public RouletteFactory(RouletteConfig config, IRouletteStorage storage, ISkinStorage skinStorage,
-            SkinInventory inventory, Wallet wallet, Action<Action> transaction)
+            SkinInventory inventory, Wallet wallet, SavesTransaction transaction)
         {
             _config = config;
             _storage = storage;
@@ -34,8 +33,18 @@ namespace Roulette
             _dailySlotCount = slotCount;
             RouletteAccess access = new RouletteAccess(GetZero, GetFreeRemainSeconds, GetAdSpinsLeft,
                 CanSpinDaily, PayDaily, true);
-            return new RouletteModel(_config, CreateDailySlots, access, ResolveDailyPrize,
-                new LootRoller(), _inventory, _wallet, _transaction, null);
+            return new RouletteModel(new RouletteModelDependencies
+            {
+                Config = _config,
+                CreateSlots = CreateDailySlots,
+                Access = access,
+                ResolvePrize = ResolveDailyPrize,
+                Roller = new LootRoller(),
+                Inventory = _inventory,
+                Wallet = _wallet,
+                Transaction = _transaction,
+                RefreshShowcase = null
+            });
         }
 
         public RouletteModel CreateSkins(IReadOnlyList<SkinItem> catalog, int slotCount)
@@ -44,8 +53,18 @@ namespace Roulette
             _showcase = new SkinShowcase(_config, _skinStorage, _inventory, catalog);
             RouletteAccess access = new RouletteAccess(GetSkinPrice, GetZero, GetZero,
                 CanSpinSkins, PaySkins, false);
-            return new RouletteModel(_config, CreateSkinSlots, access, ResolveSkinPrize,
-                new LootRoller(), _inventory, _wallet, _transaction, _showcase.Refresh);
+            return new RouletteModel(new RouletteModelDependencies
+            {
+                Config = _config,
+                CreateSlots = CreateSkinSlots,
+                Access = access,
+                ResolvePrize = ResolveSkinPrize,
+                Roller = new LootRoller(),
+                Inventory = _inventory,
+                Wallet = _wallet,
+                Transaction = _transaction,
+                RefreshShowcase = _showcase.Refresh
+            });
         }
 
         private List<RouletteSlot> CreateDailySlots()
@@ -54,13 +73,14 @@ namespace Roulette
 
             if (_config.Sectors.Count != _dailySlotCount)
             {
-                throw new InvalidOperationException("Daily roulette must configure exactly one reward per wheel sector.");
+                                throw new InvalidOperationException("Daily roulette must configure exactly one "
+                                        + "reward per wheel sector.");
             }
 
             for (int i = 0; i < _dailySlotCount; i++)
             {
                 RouletteSector sector = _config.Sectors[i];
-                bool isHidden = sector.RewardType == RouletteSector.RewardKind.Skin;
+                bool isHidden = sector.RewardType == RewardType.Skin;
                 slots.Add(new RouletteSlot(null, sector.Coins, sector.DropChance, isHidden));
             }
 

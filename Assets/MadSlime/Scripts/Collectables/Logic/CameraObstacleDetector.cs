@@ -5,15 +5,13 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using VContainer;
-
 namespace Collectables
 {
     [DefaultExecutionOrder(100)]
-    public class CameraObstacleDetector : MonoBehaviour, IRadiusRecipient
+    public class CameraObstacleDetector : OverlapRadiusDetector
     {
         private const int BufferSize = 256;
 
-        [SerializeField, Min(0.001f)] private float _radius = 0.4f;
         [SerializeField] private LayerMask _layerMask;
         [SerializeField] private Color _gizmoColor = Color.cyan;
 
@@ -27,13 +25,28 @@ namespace Collectables
 
         public event Action<GhostAnimator> Exited;
 
-        public float Radius => _radius;
-
         [Inject]
         public void Construct(CameraFollow cameraFollow, PlayerScaler playerScaler)
         {
             _cameraFollow = cameraFollow;
             _playerScaler = playerScaler;
+        }
+
+        private void Awake()
+        {
+            if (_cameraFollow == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: CameraFollow was not injected. Check that GameLifetimeScope "
+                        + $"registers CameraFollow and CameraObstacleDetector.");
+            }
+
+            if (_playerScaler == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: PlayerScaler was not injected. Check that GameLifetimeScope "
+                        + $"registers PlayerScaler and CameraObstacleDetector.");
+            }
         }
 
         private void LateUpdate()
@@ -51,7 +64,8 @@ namespace Collectables
                 {
                     GhostAnimator animator = _buffer[i].collider.GetComponentInParent<GhostAnimator>();
 
-                    if (animator != null && animator.isActiveAndEnabled == true && _currentTargets.Add(animator) == true)
+                    if (animator != null && animator.isActiveAndEnabled == true
+                        && _currentTargets.Add(animator) == true)
                     {
                         Detected?.Invoke(animator);
                     }
@@ -96,16 +110,6 @@ namespace Collectables
 
             _previousTargets.Clear();
             _currentTargets.Clear();
-        }
-
-        public void SetRadius(float radius)
-        {
-            if (radius <= 0f)
-            {
-                throw new ArgumentOutOfRangeException(nameof(radius));
-            }
-
-            _radius = radius;
         }
 
         private void OnDrawGizmosSelected()

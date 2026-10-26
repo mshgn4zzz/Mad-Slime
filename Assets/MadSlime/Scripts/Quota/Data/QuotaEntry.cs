@@ -1,7 +1,6 @@
-using System;
 using Items;
+using System;
 using UnityEngine;
-
 namespace Quota
 {
     [Serializable]

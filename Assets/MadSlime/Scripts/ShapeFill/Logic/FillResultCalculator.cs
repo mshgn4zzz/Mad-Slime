@@ -1,7 +1,7 @@
 using Quota;
+using System;
 using UnityEngine;
 using VContainer;
-
 namespace ShapeFill
 {
     public class FillResultCalculator : MonoBehaviour
@@ -12,6 +12,16 @@ namespace ShapeFill
         public void Construct(QuotaCounter quotaCounter)
         {
             _quotaCounter = quotaCounter;
+        }
+
+        private void Awake()
+        {
+            if (_quotaCounter == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: QuotaCounter was not injected. Check that ProjectLifetimeScope "
+                        + $"registers QuotaCounter and FillLifetimeScope registers FillResultCalculator.");
+            }
         }
 
         public FillResult Calculate(int requiredCubes, Vector3 formCenter, Vector3 formSize)
@@ -29,7 +39,8 @@ namespace ShapeFill
                 return 0;
             }
 
-            float quotaPercent = Mathf.Clamp01(_quotaCounter.CollectedQuotaCount / (float)_quotaCounter.TotalQuotaTarget);
+            float quotaPercent = Mathf.Clamp01(
+                _quotaCounter.CollectedQuotaCount / (float)_quotaCounter.TotalQuotaTarget);
 
             return Mathf.Clamp(Mathf.RoundToInt(quotaPercent * maxCubes), 0, maxCubes);
         }

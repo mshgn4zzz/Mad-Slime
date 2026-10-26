@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-
-namespace Scriptables
+namespace Levels
 {
     [CreateAssetMenu(menuName = "Mad Slime/Layouts Library", fileName = "NewLayoutsLibrary")]
     public class LayoutsLibrary : ScriptableObject

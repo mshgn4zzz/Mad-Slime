@@ -1,8 +1,7 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
-
 namespace Game
 {
     public class Timer : MonoBehaviour
@@ -15,10 +14,7 @@ namespace Game
         private CancellationTokenSource _runCancellationTokenSource;
 
         public event Action Finished;
-        public event Action Stopped;
         public event Action<float> Ticked;
-
-        public float Duration => _duration;
 
         public void Setup(float duration)
         {
@@ -59,8 +55,6 @@ namespace Game
             _runCancellationTokenSource?.Dispose();
             _runCancellationTokenSource = null;
             _isRunning = false;
-
-            Stopped?.Invoke();
         }
 
         private void StartInternal()
@@ -84,6 +78,7 @@ namespace Game
 
                     await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
 
+                    // The timer ticks only in real play: Pauser.ApplyState sets Time.timeScale to 0 while paused.
                     if (Time.timeScale > 0f)
                     {
                         float delta = Time.deltaTime;

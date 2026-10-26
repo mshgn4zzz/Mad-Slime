@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -12,7 +13,7 @@ namespace Items
             item.SetDefinition(definition);
             if (item.TryGetComponent(out ItemBody body) == false)
             {
-                throw new System.InvalidOperationException($"{prefab.name}: ItemBody is missing.");
+                throw new InvalidOperationException($"{prefab.name}: ItemBody is missing.");
             }
 
             body.Initialize(position, scale);

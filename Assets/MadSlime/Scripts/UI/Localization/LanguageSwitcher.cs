@@ -1,11 +1,11 @@
 using System;
-using Game;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
-namespace UI
+namespace UI.Localization
 {
+    using Localization = global::Localization.Localization;
+
     public class LanguageSwitcher : MonoBehaviour
     {
         [SerializeField] private Button _button;
@@ -69,7 +69,8 @@ namespace UI
                     _flag.sprite = _turkishFlag;
                     break;
                 default:
-                    throw new InvalidOperationException($"{name}: Unsupported language {Localization.CurrentLanguage}.");
+                                        throw new InvalidOperationException($"{name}: Unsupported language "
+                                                + $"{Localization.CurrentLanguage}.");
             }
         }
     }

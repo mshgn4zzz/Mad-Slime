@@ -1,7 +1,6 @@
-using System;
 using DG.Tweening;
+using System;
 using UnityEngine;
-
 namespace UI.Animations
 {
     [RequireComponent(typeof(ReactiveUIView))]

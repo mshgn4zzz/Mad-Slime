@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
-
-namespace Scriptables
+namespace Levels
 {
     [Serializable]
     public class LevelRange

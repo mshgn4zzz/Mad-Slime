@@ -1,5 +1,4 @@
 using System;
-
 namespace Skins
 {
     public class SkinRarityLookup

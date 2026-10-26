@@ -1,8 +1,7 @@
-using System;
 using DG.Tweening;
+using System;
 using UnityEngine;
-
-namespace Quota
+namespace UI.Quota
 {
     public class QuotaPlateAnimator : MonoBehaviour
     {

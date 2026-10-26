@@ -2,8 +2,7 @@ using Saves;
 using System;
 using UnityEngine;
 using VContainer;
-
-namespace Game
+namespace Economy
 {
     public class Wallet : MonoBehaviour
     {
@@ -17,6 +16,16 @@ namespace Game
         public void Construct(IBalanceStorage balanceStorage)
         {
             _balanceStorage = balanceStorage;
+        }
+
+        private void Awake()
+        {
+            if (_balanceStorage == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: IBalanceStorage was not injected. Check that ProjectLifetimeScope "
+                        + $"registers BalanceStorage as IBalanceStorage and Wallet.");
+            }
         }
 
         public void Add(int amount)

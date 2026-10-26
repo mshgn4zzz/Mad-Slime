@@ -1,11 +1,9 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Cysharp.Threading.Tasks;
-using Scriptables;
 using UnityEngine;
 using VContainer;
-
 namespace ShapeFill
 {
     [RequireComponent(typeof(CubeSpawner))]
@@ -27,6 +25,7 @@ namespace ShapeFill
         private int _currentTarget;
         private int _quotaTarget;
         private bool _isFilling;
+        private bool _isStopped;
         private bool _hasResult;
         private BoostStage _boostStage;
         private Sprite _ghostSprite;
@@ -80,13 +79,15 @@ namespace ShapeFill
             if (_gridShape == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: GridBuilder was not injected. Check that FillLifetimeScope registers GridBuilder and ShapeFiller.");
+                    $"{name}: GridBuilder was not injected. Check that FillLifetimeScope "
+                        + $"registers GridBuilder and ShapeFiller.");
             }
 
             if (_spawner == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: CubeSpawner was not injected. Check that FillLifetimeScope registers CubeSpawner and ShapeFiller.");
+                    $"{name}: CubeSpawner was not injected. Check that FillLifetimeScope "
+                        + $"registers CubeSpawner and ShapeFiller.");
             }
 
             if (_config == null)
@@ -153,9 +154,8 @@ namespace ShapeFill
             }
 
             _isFilling = true;
-            _fillCts = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
-
-            FillAsync(_fillCts.Token, _currentTarget).Forget();
+            _isStopped = false;
+            StartFillLoop(token => FillAsync(token, _currentTarget));
         }
 
         public void Rescue()
@@ -169,16 +169,14 @@ namespace ShapeFill
             _currentTarget = RequiredFillCount;
             _boostStage = BoostStage.Normal;
             _isFilling = true;
-
-            CancelFillLoop();
-            _fillCts = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
-
-            FillAsync(_fillCts.Token, _currentTarget).Forget();
+            _isStopped = false;
+            StartFillLoop(token => FillAsync(token, _currentTarget));
         }
 
         public void StopFill()
         {
             _isFilling = false;
+            _isStopped = true;
             CancelFillLoop();
         }
 
@@ -204,9 +202,15 @@ namespace ShapeFill
         private void StartInstantCompletion()
         {
             _boostStage = BoostStage.Instant;
+            _isStopped = false;
+            StartFillLoop(CompleteInstantlyAsync);
+        }
+
+        private void StartFillLoop(Func<CancellationToken, UniTaskVoid> loop)
+        {
             CancelFillLoop();
             _fillCts = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
-            CompleteInstantlyAsync(_fillCts.Token).Forget();
+            loop(_fillCts.Token).Forget();
         }
 
         private void CancelFillLoop()
@@ -274,20 +278,18 @@ namespace ShapeFill
             try
             {
                 float elapsed = 0f;
-                int spawned = 0;
-                while (spawned < borderCells.Count)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    elapsed += Time.deltaTime;
-                    int due = CubeSpawnSchedule.GetTargetCount(elapsed, _config.BorderCascadeDuration, borderCells.Count);
-                    while (spawned < due)
-                    {
-                        SpawnBorderCube(borderCells[spawned++]);
-                    }
 
-                    if (spawned < borderCells.Count)
-                        await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
-                }
+                await PumpSpawnAsync(
+                    cancellationToken,
+                    0,
+                    borderCells.Count,
+                    () =>
+                    {
+                        elapsed += Time.deltaTime;
+                        return CubeSpawnSchedule.GetTargetCount(
+                            elapsed, _config.BorderCascadeDuration, borderCells.Count);
+                    },
+                    index => SpawnBorderCube(borderCells[index]));
             }
             catch (OperationCanceledException)
             {
@@ -318,27 +320,13 @@ namespace ShapeFill
                     await UniTask.Delay((int)(_config.FillDelay * 1000f), cancellationToken: cancellationToken);
                 }
 
-                float progress = _fillIndex / (float)target;
-                while (_fillIndex < target)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    float maxDuration = _boostStage == BoostStage.Boosted
-                        ? _config.MaxBoostedFillDuration : _config.MaxFillDuration;
-                    float duration = Mathf.Max(0.001f, Mathf.Min(GetSpawnInterval() * target, maxDuration));
-                    progress = Mathf.Min(1f, progress + Time.deltaTime / duration);
-                    int due = CubeSpawnSchedule.GetTargetCount(progress, 1f, target);
-                    while (_fillIndex < due)
-                    {
-                        if (IsBonusWaveStart(target))
-                        {
-                            await UniTask.Delay((int)(_config.BonusWaveDelay * 1000f), cancellationToken: cancellationToken);
-                        }
-                        SpawnFillCube(fillCells[_fillIndex], GetFlightDuration());
-                        _fillIndex++;
-                    }
+                int mainTarget = GetMainWaveTarget(target);
 
-                    if (_fillIndex < target)
-                        await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
+                await PumpFillAsync(cancellationToken, fillCells, 0, mainTarget);
+
+                if (mainTarget < target)
+                {
+                    await SpawnBonusWaveAsync(cancellationToken, fillCells, mainTarget, target);
                 }
             }
             catch (OperationCanceledException)
@@ -347,6 +335,83 @@ namespace ShapeFill
             }
 
             _isFilling = false;
+        }
+
+        private async UniTask SpawnBonusWaveAsync(
+            CancellationToken cancellationToken,
+            IReadOnlyList<Vector2Int> fillCells,
+            int startIndex,
+            int target)
+        {
+            await UniTask.Delay((int)(_config.BonusWaveDelay * 1000f), cancellationToken: cancellationToken);
+
+            await PumpFillAsync(cancellationToken, fillCells, startIndex, target);
+        }
+
+        private async UniTask PumpFillAsync(
+            CancellationToken cancellationToken,
+            IReadOnlyList<Vector2Int> fillCells,
+            int startIndex,
+            int target)
+        {
+            if (startIndex >= target)
+            {
+                return;
+            }
+
+            float progress = startIndex / (float)target;
+
+            await PumpSpawnAsync(
+                cancellationToken,
+                startIndex,
+                target,
+                () =>
+                {
+                    float maxDuration = _boostStage == BoostStage.Boosted
+                        ? _config.MaxBoostedFillDuration
+                        : _config.MaxFillDuration;
+                    float duration = Mathf.Max(0.001f, Mathf.Min(GetSpawnInterval() * target, maxDuration));
+                    progress = Mathf.Min(1f, progress + Time.deltaTime / duration);
+                    return CubeSpawnSchedule.GetTargetCount(progress, 1f, target);
+                },
+                index => SpawnFillCube(fillCells[index], GetFlightDuration()));
+        }
+
+        private int GetMainWaveTarget(int target)
+        {
+            if (_quotaTarget > 0 && _quotaTarget < target)
+            {
+                return _quotaTarget;
+            }
+
+            return target;
+        }
+
+        private async UniTask PumpSpawnAsync(
+            CancellationToken cancellationToken,
+            int startIndex,
+            int target,
+            Func<int> getDue,
+            Action<int> spawnAt)
+        {
+            int index = startIndex;
+
+            while (index < target)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                int due = getDue();
+
+                while (index < due)
+                {
+                    spawnAt(index);
+                    index++;
+                }
+
+                if (index < target)
+                {
+                    await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
+                }
+            }
         }
 
         private float GetSpawnInterval()
@@ -367,11 +432,6 @@ namespace ShapeFill
             }
 
             return _config.FlightDuration;
-        }
-
-        private bool IsBonusWaveStart(int target)
-        {
-            return _fillIndex == _quotaTarget && _quotaTarget > 0 && _quotaTarget < target;
         }
 
         private Color GetCubeColor(Vector2Int cell)
@@ -401,22 +461,18 @@ namespace ShapeFill
                 int startIndex = _fillIndex;
                 int remaining = _currentTarget - startIndex;
                 float elapsed = 0f;
-                while (_fillIndex < _currentTarget)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    elapsed += Time.deltaTime;
-                    int due = startIndex + CubeSpawnSchedule.GetTargetCount(elapsed, _config.InstantFillDuration, remaining);
-                    while (_fillIndex < due)
-                    {
-                        SpawnFillCube(fillCells[_fillIndex], _config.InstantFlightDuration);
-                        _fillIndex++;
-                    }
 
-                    if (_fillIndex < _currentTarget)
+                await PumpSpawnAsync(
+                    cancellationToken,
+                    startIndex,
+                    _currentTarget,
+                    () =>
                     {
-                        await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
-                    }
-                }
+                        elapsed += Time.deltaTime;
+                        return startIndex + CubeSpawnSchedule.GetTargetCount(
+                            elapsed, _config.InstantFillDuration, remaining);
+                    },
+                    index => SpawnFillCube(fillCells[index], _config.InstantFlightDuration));
             }
             catch (OperationCanceledException)
             {
@@ -443,6 +499,12 @@ namespace ShapeFill
         private void OnCubeArrived(CubeFlightAnimator cube)
         {
             cube.Arrived -= OnCubeArrived;
+
+            if (_isStopped == true)
+            {
+                return;
+            }
+
             _arrivedCount++;
 
             CubeArrived?.Invoke(cube);

@@ -1,9 +1,7 @@
-using Scriptables;
 using ShapeFill;
 using System;
 using UnityEngine;
 using VContainer;
-
 namespace Audio
 {
     [RequireComponent(typeof(ShapeFiller))]
@@ -28,7 +26,8 @@ namespace Audio
             if (_soundPlayer == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: IGameSoundPlayer was not injected. FillLifetimeScope must be the first object in the scene hierarchy.");
+                    $"{name}: IGameSoundPlayer was not injected. FillLifetimeScope must be the "
+                        + $"first object in the scene hierarchy.");
             }
 
             if (_sfxClip == null)

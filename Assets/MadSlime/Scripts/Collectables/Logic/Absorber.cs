@@ -1,7 +1,7 @@
+using Cysharp.Threading.Tasks;
+using Player;
 using System;
 using System.Threading;
-using Cysharp.Threading.Tasks;
-using Scriptables;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -36,7 +36,8 @@ namespace Collectables
             if (_config.MinSpinSpeed > _config.MaxSpinSpeed)
             {
                 throw new InvalidOperationException(
-                    $"{name}: PlayerConfig has MinSpinSpeed {_config.MinSpinSpeed} greater than MaxSpinSpeed {_config.MaxSpinSpeed}.");
+                    $"{name}: PlayerConfig has MinSpinSpeed {_config.MinSpinSpeed} greater than "
+                        + $"MaxSpinSpeed {_config.MaxSpinSpeed}.");
             }
         }
 
@@ -58,7 +59,8 @@ namespace Collectables
                 float progress = Mathf.Clamp01(elapsedTime / duration);
                 float easedProgress = Mathf.Pow(progress, _config.AbsorbEasePower);
 
-                itemTransform.position = GetBezierPoint(startPosition, controlPosition, transform.position, easedProgress);
+                itemTransform.position = GetBezierPoint(
+                    startPosition, controlPosition, transform.position, easedProgress);
                 itemTransform.Rotate(spinAxis, spinSpeed * Time.deltaTime, Space.World);
 
                 float shrink = Mathf.Clamp01(Mathf.InverseLerp(_config.ShrinkStart, 1f, progress));

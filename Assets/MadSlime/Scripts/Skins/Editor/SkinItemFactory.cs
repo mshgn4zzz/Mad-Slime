@@ -1,23 +1,27 @@
+using Items.Editor;
+using Shop;
+using Skins;
 using System;
 using System.IO;
-using Skins;
-using Shop;
 using UnityEditor;
 using UnityEngine;
-
-namespace EditorTools
+namespace Skins.Editor
 {
     public class SkinItemFactory : EditorWindow
     {
         private const string PrefsKey = "MadSlime.SkinItemFactory";
         private const int IconSize = 512;
         private const float IconCameraDistance = 10f;
-        private const float IconOrthographicPadding = 1f;
-        private const float IconLightIntensity = 1.2f;
         private const string DefaultSkinsPath = "Assets/MadSlime/Scriptables/Skins";
         private const string DefaultPrefabsPath = "Assets/MadSlime/Resources/PlayerModel/Prefabs";
         private const string DefaultIconsPath = "Assets/MadSlime/Resources/Icons/Skins";
         private const string DefaultShopContentPath = "Assets/MadSlime/Scriptables/Shop/ShopContent.asset";
+
+        private const string ModelField = "_model";
+        private const string IconField = "_icon";
+        private const string RarityField = "_rarity";
+        private const string IdField = "_id";
+        private const string SkinItemsField = "_skinItems";
 
         private GameObject _sourceModel;
         private ShopContent _shopContent;
@@ -62,9 +66,9 @@ namespace EditorTools
 
         public static SkinItem RebuildSkin(GameObject sourceModel, string skinId, SkinRarity rarity)
         {
-            EnsureFolder(DefaultPrefabsPath);
-            EnsureFolder(DefaultSkinsPath);
-            EnsureFolder(DefaultIconsPath);
+            ItemFactoryTools.EnsureFolder(DefaultPrefabsPath);
+            ItemFactoryTools.EnsureFolder(DefaultSkinsPath);
+            ItemFactoryTools.EnsureFolder(DefaultIconsPath);
             SkinItemFactory factory = CreateInstance<SkinItemFactory>();
             try
             {
@@ -106,17 +110,24 @@ namespace EditorTools
         {
             EditorGUILayout.HelpBox(
                 "Drop a model or a prefab into Source Model. A prefab is used as is; a raw model is saved as " +
-                "'<Name>Skin.prefab' into the Prefabs Folder (an existing file is reused, never duplicated). The tool " +
+                                "'<Name>Skin.prefab' into the Prefabs Folder (an existing file is reused, never "
+                                        + "duplicated). The tool  " +
                 "renders the icon into the Icons Folder as '<Id>.png' (kept unless Force Icon is on), creates the " +
-                "SkinItem asset in the Skins Folder and appends it to Shop Content. The id must be unique — it is the " +
+                                "SkinItem asset in the Skins Folder and appends it to Shop Content. The id must be "
+                                        + "unique — it is the  " +
                 "save key of the skin and must never change after release.",
                 MessageType.Info);
 
-            _sourceModel = (GameObject)EditorGUILayout.ObjectField("Source Model", _sourceModel, typeof(GameObject), false);
-            _shopContent = (ShopContent)EditorGUILayout.ObjectField("Shop Content", _shopContent, typeof(ShopContent), false);
-            _skinsFolder = (DefaultAsset)EditorGUILayout.ObjectField("Skins Folder", _skinsFolder, typeof(DefaultAsset), false);
-            _prefabsFolder = (DefaultAsset)EditorGUILayout.ObjectField("Prefabs Folder", _prefabsFolder, typeof(DefaultAsset), false);
-            _iconsFolder = (DefaultAsset)EditorGUILayout.ObjectField("Icons Folder", _iconsFolder, typeof(DefaultAsset), false);
+            _sourceModel = (GameObject)EditorGUILayout.ObjectField(
+                "Source Model", _sourceModel, typeof(GameObject), false);
+            _shopContent = (ShopContent)EditorGUILayout.ObjectField(
+                "Shop Content", _shopContent, typeof(ShopContent), false);
+            _skinsFolder = (DefaultAsset)EditorGUILayout.ObjectField(
+                "Skins Folder", _skinsFolder, typeof(DefaultAsset), false);
+            _prefabsFolder = (DefaultAsset)EditorGUILayout.ObjectField(
+                "Prefabs Folder", _prefabsFolder, typeof(DefaultAsset), false);
+            _iconsFolder = (DefaultAsset)EditorGUILayout.ObjectField(
+                "Icons Folder", _iconsFolder, typeof(DefaultAsset), false);
 
             EditorGUILayout.Space();
 
@@ -139,14 +150,15 @@ namespace EditorTools
                 return;
             }
 
-            string skinsPath = GetFolderPath(_skinsFolder);
-            string prefabsPath = GetFolderPath(_prefabsFolder);
-            string iconsPath = GetFolderPath(_iconsFolder);
+            string skinsPath = ItemFactoryTools.GetFolderPath(_skinsFolder);
+            string prefabsPath = ItemFactoryTools.GetFolderPath(_prefabsFolder);
+            string iconsPath = ItemFactoryTools.GetFolderPath(_iconsFolder);
             string assetPath = $"{skinsPath}/{_skinId}.asset";
 
             if (IsIdUsed(_skinId) == true && _replaceExisting == false)
             {
-                Debug.LogError($"[SkinFactory] Skin id '{_skinId}' is already used in ShopContent '{_shopContent.name}'.");
+                                Debug.LogError($"[SkinFactory] Skin id '{_skinId}' is already used in ShopContent "
+                                        + $"'{_shopContent.name}'.");
                 return;
             }
 
@@ -164,7 +176,7 @@ namespace EditorTools
             }
 
             EnsurePreviewModel(prefab);
-            EnsureFolder(skinsPath);
+            ItemFactoryTools.EnsureFolder(skinsPath);
 
             string iconPath = $"{iconsPath}/{_skinId}.png";
 
@@ -178,10 +190,10 @@ namespace EditorTools
             }
 
             SerializedObject serialized = new SerializedObject(skin);
-            serialized.FindProperty("_model").objectReferenceValue = prefab;
-            serialized.FindProperty("_icon").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Sprite>(iconPath);
-            serialized.FindProperty("_rarity").enumValueIndex = (int)_rarity;
-            serialized.FindProperty("_id").stringValue = _skinId;
+            serialized.FindProperty(ModelField).objectReferenceValue = prefab;
+            serialized.FindProperty(IconField).objectReferenceValue = AssetDatabase.LoadAssetAtPath<Sprite>(iconPath);
+            serialized.FindProperty(RarityField).intValue = (int)_rarity;
+            serialized.FindProperty(IdField).stringValue = _skinId;
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
             if (isNew)
@@ -234,7 +246,8 @@ namespace EditorTools
 
             if (_sourceModel.GetComponentsInChildren<Renderer>().Length == 0)
             {
-                Debug.LogError($"[SkinFactory] '{_sourceModel.name}' has no Renderers — there is nothing to render the icon from.");
+                                Debug.LogError($"[SkinFactory] '{_sourceModel.name}' has no Renderers — there is "
+                                        + $"nothing to render the icon from.");
                 return false;
             }
 
@@ -263,7 +276,7 @@ namespace EditorTools
                 return _sourceModel;
             }
 
-            EnsureFolder(prefabsPath);
+            ItemFactoryTools.EnsureFolder(prefabsPath);
 
             string prefabPath = $"{prefabsPath}/{_sourceModel.name}Skin.prefab";
 
@@ -287,7 +300,8 @@ namespace EditorTools
 
             if (_replaceExisting && PrefabUtility.IsPartOfPrefabInstance(instance))
             {
-                PrefabUtility.UnpackPrefabInstance(instance, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+                PrefabUtility.UnpackPrefabInstance(
+                    instance, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
             }
             instance.name = $"{_sourceModel.name}Skin";
 
@@ -325,18 +339,26 @@ namespace EditorTools
                 return;
             }
 
-            EnsureFolder(Path.GetDirectoryName(iconPath)?.Replace('\\', '/'));
+            ItemFactoryTools.EnsureFolder(Path.GetDirectoryName(iconPath)?.Replace('\\', '/'));
 
-            int iconLayer = ResolveFreeLayer();
+            int iconLayer = ItemFactoryTools.ResolveFreeLayer();
 
             if (iconLayer < 0)
             {
                 Debug.LogError("[SkinFactory] No unnamed layer left in 9-31 for icon rendering. Free one in "
-                    + "Project Settings → Tags and Layers.");
+                        + "Project Settings → Tags and Layers.");
                 return;
             }
 
-            Texture2D texture = RenderModelToTexture(prefab, iconLayer);
+            IconRenderSettings settings = new IconRenderSettings
+            {
+                LightEuler = new Vector3(35f, 210f, 0f),
+                RelightToCamera = false,
+                CameraOffset = Quaternion.Euler(0f, 30f, 0f) * new Vector3(0f, 0.35f, 1f),
+                OrthographicPadding = 1f,
+                FitByProjectiveBounds = false
+            };
+            Texture2D texture = ItemFactoryTools.RenderToTexture(prefab, iconLayer, IconSize, settings);
 
             File.WriteAllBytes(iconPath, texture.EncodeToPNG());
             DestroyImmediate(texture);
@@ -361,7 +383,7 @@ namespace EditorTools
         private void AppendToShopContent(SkinItem skin)
         {
             SerializedObject serialized = new SerializedObject(_shopContent);
-            SerializedProperty items = serialized.FindProperty("_skinItems");
+            SerializedProperty items = serialized.FindProperty(SkinItemsField);
 
             if (items == null || items.isArray == false)
             {
@@ -374,134 +396,11 @@ namespace EditorTools
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        private static int ResolveFreeLayer()
-        {
-            for (int i = 9; i <= 31; i++)
-            {
-                if (LayerMask.LayerToName(i) == "")
-                {
-                    return i;
-                }
-            }
 
-            return -1;
-        }
 
-        private static void SetLayerRecursively(GameObject root, int layer)
-        {
-            Transform[] children = root.GetComponentsInChildren<Transform>(true);
 
-            for (int i = 0; i < children.Length; i++)
-            {
-                children[i].gameObject.layer = layer;
-            }
-        }
 
-        private static Texture2D RenderModelToTexture(GameObject modelPrefab, int iconLayer)
-        {
-            GameObject renderRoot = new GameObject("IconRenderRoot");
-            renderRoot.layer = iconLayer;
 
-            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(modelPrefab, renderRoot.transform);
-            SetLayerRecursively(instance, iconLayer);
-
-            GameObject cameraGO = new GameObject("IconCamera");
-            cameraGO.transform.SetParent(renderRoot.transform);
-            cameraGO.layer = iconLayer;
-
-            Camera cam = cameraGO.AddComponent<Camera>();
-            cam.clearFlags = CameraClearFlags.SolidColor;
-            cam.backgroundColor = new Color(0f, 0f, 0f, 0f);
-            cam.orthographic = true;
-            cam.cullingMask = 1 << iconLayer;
-
-            GameObject lightGO = new GameObject("IconLight");
-            lightGO.transform.SetParent(renderRoot.transform);
-            lightGO.layer = iconLayer;
-
-            Light light = lightGO.AddComponent<Light>();
-            light.type = LightType.Directional;
-            light.transform.rotation = Quaternion.Euler(35f, 210f, 0f);
-            light.intensity = IconLightIntensity;
-            light.cullingMask = 1 << iconLayer;
-            light.shadows = LightShadows.None;
-
-            FitCameraToBounds(cam, instance);
-
-            RenderTexture rt = new RenderTexture(IconSize, IconSize, 24, RenderTextureFormat.ARGB32);
-            rt.antiAliasing = 4;
-            cam.targetTexture = rt;
-            RenderTexture.active = rt;
-            cam.Render();
-
-            Texture2D tex = new Texture2D(IconSize, IconSize, TextureFormat.RGBA32, false);
-            tex.ReadPixels(new Rect(0f, 0f, IconSize, IconSize), 0, 0);
-            tex.Apply();
-
-            RenderTexture.active = null;
-            cam.targetTexture = null;
-            rt.Release();
-            DestroyImmediate(rt);
-            DestroyImmediate(renderRoot);
-
-            return tex;
-        }
-
-        private static void FitCameraToBounds(Camera cam, GameObject instance)
-        {
-            Renderer[] renderers = instance.GetComponentsInChildren<Renderer>();
-
-            if (renderers.Length == 0)
-            {
-                cam.transform.position = new Vector3(-2f, 2f, -2f);
-                cam.transform.LookAt(instance.transform.position);
-                cam.orthographicSize = 1f;
-                return;
-            }
-
-            Bounds bounds = renderers[0].bounds;
-
-            for (int i = 1; i < renderers.Length; i++)
-            {
-                bounds.Encapsulate(renderers[i].bounds);
-            }
-
-            Vector3 offset = Quaternion.Euler(0f, 30f, 0f) * new Vector3(0f, 0.35f, 1f);
-            cam.transform.position = bounds.center + offset.normalized * IconCameraDistance;
-            cam.transform.LookAt(bounds.center);
-
-            cam.orthographicSize = bounds.extents.magnitude * IconOrthographicPadding;
-        }
-
-        private static string GetFolderPath(DefaultAsset folder)
-        {
-            string path = AssetDatabase.GetAssetPath(folder);
-
-            if (File.Exists(path) == true)
-            {
-                path = Path.GetDirectoryName(path);
-            }
-
-            return path;
-        }
-
-        private static void EnsureFolder(string folder)
-        {
-            if (string.IsNullOrEmpty(folder) == true || AssetDatabase.IsValidFolder(folder) == true)
-            {
-                return;
-            }
-
-            string parent = Path.GetDirectoryName(folder)?.Replace('\\', '/');
-            string leaf = Path.GetFileName(folder);
-
-            if (string.IsNullOrEmpty(parent) == false && AssetDatabase.IsValidFolder(parent) == false)
-            {
-                EnsureFolder(parent);
-            }
-
-            AssetDatabase.CreateFolder(parent, leaf);
-        }
 
         private void LoadState()
         {

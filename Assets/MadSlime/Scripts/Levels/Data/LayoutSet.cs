@@ -1,7 +1,7 @@
+using Items;
 using System.Collections.Generic;
 using UnityEngine;
-
-namespace Scriptables
+namespace Levels
 {
     [CreateAssetMenu(menuName = "Mad Slime/Layout Set", fileName = "NewLayoutSet")]
     public class LayoutSet : ScriptableObject
@@ -13,13 +13,15 @@ namespace Scriptables
         [SerializeField] private bool _allowMirroring = true;
 
         [Header("Item Placement")]
-        [Tooltip("Шаг авторасстояния между предметами = радиус крупнейшего предмета × этот множитель. Больше = предметы реже.")]
+                [Tooltip("Шаг авторасстояния между предметами = радиус крупнейшего предмета × этот множитель. "
+                    + "Больше = предметы реже.")]
         [SerializeField] private float _autoSpacingFactor = 2.2f;
 
         [Tooltip("Минимальная дистанция между предметами = шаг × этот множитель. Меньше = плотнее рой.")]
         [SerializeField] private float _scatterDistanceFactor = 0.7f;
 
-        [Tooltip("Радиус свободной зоны для Medium и более крупных предметов вокруг (0, 0). Учитывается весь габарит предмета.")]
+                [Tooltip("Радиус свободной зоны для Medium и более крупных предметов вокруг (0, 0). Учитывается "
+                    + "весь габарит предмета.")]
         [SerializeField, Min(0f)] private float _startClearRadius = 10f;
 
         [Tooltip("Радиус свободной зоны для Small вокруг (0, 0). Учитывается весь габарит предмета.")]

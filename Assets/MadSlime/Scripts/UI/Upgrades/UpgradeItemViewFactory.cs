@@ -2,8 +2,7 @@ using System;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
-
-namespace Shop
+namespace UI.Upgrades
 {
     public class UpgradeItemViewFactory : MonoBehaviour
     {
@@ -22,11 +21,12 @@ namespace Shop
             if (_resolver == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: Resolver was not injected. MenuLifetimeScope must be the first object in the scene hierarchy.");
+                    $"{name}: Resolver was not injected. MenuLifetimeScope must be the first "
+                        + $"object in the scene hierarchy.");
             }
         }
 
-        public UpgradeItemView Get(Transform parent)
+        public UpgradeItemView Create(Transform parent)
         {
             return _resolver.Instantiate(_upgradeItemViewPrefab, parent);
         }

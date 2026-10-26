@@ -1,12 +1,12 @@
-using System;
-using Game;
 using Skins;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
-namespace Shop
+namespace UI.Shop
 {
+    using Localization = global::Localization.Localization;
+
     public class SkinRarityGroupView : MonoBehaviour
     {
         [SerializeField] private TMP_Text _title;
@@ -22,7 +22,8 @@ namespace Shop
         {
             if (_title == null || _background == null || _itemsParent == null)
             {
-                throw new InvalidOperationException($"{name}: assign the rarity group title, background and items parent.");
+                                throw new InvalidOperationException($"{name}: assign the rarity group title, "
+                                        + $"background and items parent.");
             }
         }
 

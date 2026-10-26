@@ -1,8 +1,8 @@
 using System;
 using UI.Animations;
+using UI.Spawning;
 using UnityEngine;
-
-namespace UI
+namespace UI.Windows
 {
     [RequireComponent(typeof(ReactiveUIView))]
     public class BaseWindow : MonoBehaviour, IShowable

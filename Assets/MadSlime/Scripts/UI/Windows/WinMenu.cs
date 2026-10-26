@@ -4,8 +4,7 @@ using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
-namespace UI
+namespace UI.Windows
 {
     public class WinMenu : BaseWindow
     {
@@ -43,6 +42,12 @@ namespace UI
                     $"{name}: NextLevelButton is not assigned. Drag a Button into the _nextLevelButton field.");
             }
 
+            if (_doubleRewardButton == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: DoubleRewardButton is not assigned. Drag a Button into the _doubleRewardButton field.");
+            }
+
             if (_menuButton == null)
             {
                 throw new InvalidOperationException(
@@ -58,7 +63,7 @@ namespace UI
             _menuButton.interactable = true;
             _doubleRewardButton.interactable = canDoubleReward;
             _moneyCountShown = previousMoneyCount;
-            _moneyCount.text = $"{previousMoneyCount}";
+            _moneyCount.text = previousMoneyCount.ToString();
 
             _doubleRewardButton.gameObject.SetActive(canDoubleReward);
         }
@@ -74,11 +79,12 @@ namespace UI
             if (targetAmount <= _moneyCountShown)
             {
                 _moneyCountShown = targetAmount;
-                _moneyCount.text = $"{targetAmount}";
+                _moneyCount.text = targetAmount.ToString();
                 return;
             }
 
-            _countUpCancellation = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
+            _countUpCancellation = CancellationTokenSource.CreateLinkedTokenSource(
+                this.GetCancellationTokenOnDestroy());
             CountUpMoneyAsync(_moneyCountShown, targetAmount, _countUpCancellation.Token).Forget();
         }
 
@@ -94,7 +100,7 @@ namespace UI
                     float progress = Mathf.Clamp01(elapsedTime / _countUpDuration);
                     int shownAmount = Mathf.RoundToInt(Mathf.Lerp(fromAmount, toAmount, progress));
                     _moneyCountShown = shownAmount;
-                    _moneyCount.text = $"{shownAmount}";
+                    _moneyCount.text = shownAmount.ToString();
                     await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
                 }
             }
@@ -104,7 +110,7 @@ namespace UI
             }
 
             _moneyCountShown = toAmount;
-            _moneyCount.text = $"{toAmount}";
+            _moneyCount.text = toAmount.ToString();
         }
 
         private void OnEnable()
@@ -153,7 +159,6 @@ namespace UI
             _isNavigationRequested = true;
             Action nextLevelRequested = NextLevelRequested;
             nextLevelRequested?.Invoke();
-
         }
 
         public void SetDoubleRewardAvailable(bool isAvailable)
@@ -167,6 +172,7 @@ namespace UI
             {
                 return;
             }
+
             Action doubleRewardRequested = DoubleRewardRequested;
             doubleRewardRequested?.Invoke();
         }
@@ -181,7 +187,6 @@ namespace UI
             _isNavigationRequested = true;
             Action menuRequested = MenuRequested;
             menuRequested?.Invoke();
-
         }
     }
 }

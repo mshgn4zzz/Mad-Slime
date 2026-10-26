@@ -1,9 +1,7 @@
-using Scriptables;
+using Items;
 using System;
 using System.Collections.Generic;
-using Skills;
 using UnityEngine;
-
 namespace Player
 {
     public class TierResolver : MonoBehaviour
@@ -23,7 +21,8 @@ namespace Player
             if (_config.Thresholds.Count == 0)
             {
                 throw new InvalidOperationException(
-                    $"{name}: PlayerConfig '{_config.name}' has no tier thresholds. Add at least one threshold row to the asset.");
+                    $"{name}: PlayerConfig '{_config.name}' has no tier thresholds. Add at "
+                        + $"least one threshold row to the asset.");
             }
 
             _sortedByMass.AddRange(_config.Thresholds);
@@ -51,15 +50,9 @@ namespace Player
 
         public float GetSpeedFor(SizeTier tier)
         {
-            for (int i = 0; i < _sortedByMass.Count; i++)
-            {
-                if (_sortedByMass[i].Tier == tier)
-                {
-                    return _sortedByMass[i].Speed;
-                }
-            }
+            PlayerTierThreshold threshold = GetThreshold(tier);
 
-            return _sortedByMass[0].Speed;
+            return threshold.Speed;
         }
 
         public float GetTierProgress(int mass)
@@ -99,28 +92,42 @@ namespace Player
 
         public float GetScaleFor(SizeTier tier)
         {
-            for (int i = 0; i < _sortedByMass.Count; i++)
-            {
-                if (_sortedByMass[i].Tier == tier)
-                {
-                    return _sortedByMass[i].ScaleMultiplier;
-                }
-            }
+            PlayerTierThreshold threshold = GetThreshold(tier);
 
-            return 1f;
+            return threshold.ScaleMultiplier;
         }
 
         public float GetCameraOffsetFor(SizeTier tier)
+        {
+            PlayerTierThreshold threshold = GetThreshold(tier);
+
+            return threshold.CameraOffsetMultiplier;
+        }
+
+        private PlayerTierThreshold GetThreshold(SizeTier tier)
         {
             for (int i = 0; i < _sortedByMass.Count; i++)
             {
                 if (_sortedByMass[i].Tier == tier)
                 {
-                    return _sortedByMass[i].CameraOffsetMultiplier;
+                    ValidateScale(_sortedByMass[i], tier);
+                    return _sortedByMass[i];
                 }
             }
 
-            return 1f;
+            throw new InvalidOperationException(
+                $"{name}: PlayerConfig '{_config.name}' has no threshold for tier '{tier}'. Add the threshold row.");
+        }
+
+        private void ValidateScale(PlayerTierThreshold threshold, SizeTier tier)
+        {
+            if (threshold.ScaleMultiplier <= 0f)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: threshold for tier '{tier}' in PlayerConfig '{_config.name}' has ScaleMultiplier "
+                        + $"{threshold.ScaleMultiplier}. It must be greater than zero, "
+                        + $"otherwise the slime would collapse.");
+            }
         }
     }
 }

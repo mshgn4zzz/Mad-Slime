@@ -1,9 +1,7 @@
-using Player;
-using Scriptables;
 using System;
 using UnityEngine;
+using Upgrades;
 using VContainer;
-
 namespace Audio
 {
     public class AdrenalineSound : MonoBehaviour
@@ -25,7 +23,8 @@ namespace Audio
             if (_soundPlayer == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: IGameSoundPlayer was not injected. GameLifetimeScope must be the first object in the scene hierarchy.");
+                    $"{name}: IGameSoundPlayer was not injected. GameLifetimeScope must be the "
+                        + $"first object in the scene hierarchy.");
             }
 
             if (_adrenalineBoost == null)

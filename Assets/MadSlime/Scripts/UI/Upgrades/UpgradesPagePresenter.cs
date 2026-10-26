@@ -1,12 +1,14 @@
+using Economy;
+using Saves;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Game;
 using UnityEngine;
 using Upgrades;
-
-namespace Shop
+namespace UI.Upgrades
 {
+    using Localization = global::Localization.Localization;
+
     public class UpgradesPagePresenter : MonoBehaviour
     {
         private const float MillionsPriceThreshold = 1000000f;
@@ -22,7 +24,7 @@ namespace Shop
         private List<UpgradeItemView> _upgradeViews = new List<UpgradeItemView>();
         private List<UpgradeItemView> _perkViews = new List<UpgradeItemView>();
 
-        public void Setup(PlayerUpgrades upgrades, Wallet wallet, Action<Action> transaction)
+        public void Setup(PlayerUpgrades upgrades, Wallet wallet, SavesTransaction transaction)
         {
             if (_upgradesParent == null || _perksParent == null || _upgradeFactory == null)
             {
@@ -62,7 +64,7 @@ namespace Shop
 
             foreach (UpgradeEntry entry in _upgrades.Config.Upgrades)
             {
-                UpgradeItemView view = _upgradeFactory.Get(_upgradesParent);
+                UpgradeItemView view = _upgradeFactory.Create(_upgradesParent);
                 view.Initialize(entry.Icon, Localization.Get(GetUpgradeKey(entry.Type)), string.Empty, true);
                 view.Click += OnClicked;
                 _upgradeViews.Add(view);
@@ -71,7 +73,7 @@ namespace Shop
 
             foreach (PerkEntry entry in _upgrades.Config.Perks)
             {
-                UpgradeItemView view = _upgradeFactory.Get(_perksParent);
+                UpgradeItemView view = _upgradeFactory.Create(_perksParent);
                 view.Initialize(entry.Icon, Localization.Get(GetPerkKey(entry.Type)),
                     Localization.Get(GetPerkDescKey(entry.Type)), false);
                 view.Click += OnClicked;
@@ -237,26 +239,7 @@ namespace Shop
 
         private string GetUpgradeDescKey(UpgradeType type)
         {
-            switch (type)
-            {
-                case UpgradeType.Speed:
-                    return "upgrade_speed_desc";
-
-                case UpgradeType.Appetite:
-                    return "upgrade_appetite_desc";
-
-                case UpgradeType.Taste:
-                    return "upgrade_taste_desc";
-
-                case UpgradeType.Metabolism:
-                    return "upgrade_metabolism_desc";
-
-                default:
-                    throw new ArgumentOutOfRangeException(
-                        nameof(type),
-                        type,
-                        "UpgradesPagePresenter received an unknown upgrade type.");
-            }
+            return GetUpgradeKey(type) + "_desc";
         }
 
         private string GetPerkKey(PerkType type)
@@ -282,23 +265,7 @@ namespace Shop
 
         private string GetPerkDescKey(PerkType type)
         {
-            switch (type)
-            {
-                case PerkType.Smell:
-                    return "perk_smell_desc";
-
-                case PerkType.Adrenaline:
-                    return "perk_adrenaline_desc";
-
-                case PerkType.Ambitions:
-                    return "perk_ambitions_desc";
-
-                default:
-                    throw new ArgumentOutOfRangeException(
-                        nameof(type),
-                        type,
-                        "UpgradesPagePresenter received an unknown perk type.");
-            }
+            return GetPerkKey(type) + "_desc";
         }
     }
 }

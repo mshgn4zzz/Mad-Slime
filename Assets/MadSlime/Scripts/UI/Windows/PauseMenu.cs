@@ -1,9 +1,9 @@
 using System;
-using Audio;
+using UI.Audio;
+using UI.ResponsiveUI;
 using UnityEngine;
 using UnityEngine.UI;
-
-namespace UI
+namespace UI.Windows
 {
     public class PauseMenu : BaseWindow
     {
@@ -44,7 +44,8 @@ namespace UI
             if (_settingsPanel == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: SettingsPanel is not assigned. Drag an AudioSettingsPanel into the _settingsPanel field.");
+                    $"{name}: SettingsPanel is not assigned. Drag an AudioSettingsPanel into "
+                        + $"the _settingsPanel field.");
             }
 
             if (_languageButton == null)
@@ -54,7 +55,8 @@ namespace UI
 
             if (_resetButton == null || _resetConfirmation == null || _settingsInput == null)
             {
-                throw new InvalidOperationException($"{name}: assign the reset button, confirmation and settings input group.");
+                                throw new InvalidOperationException($"{name}: assign the reset button, confirmation "
+                                        + $"and settings input group.");
             }
         }
 
@@ -64,7 +66,6 @@ namespace UI
             _isActionRequested = false;
             _closeButton.interactable = true;
             _menuButton.interactable = true;
-            _settingsPanel.Initialize();
             _resetButton.gameObject.SetActive(isResetAvailable);
             _resetButton.interactable = true;
             OnResetCanceled();

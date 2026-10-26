@@ -1,8 +1,6 @@
-using Scriptables;
 using System;
 using UnityEngine;
 using VContainer;
-
 namespace Audio
 {
     public class TimerTickSound : MonoBehaviour
@@ -23,7 +21,8 @@ namespace Audio
             if (_soundPlayer == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: IGameSoundPlayer was not injected. GameLifetimeScope must be the first object in the scene hierarchy.");
+                    $"{name}: IGameSoundPlayer was not injected. GameLifetimeScope must be the "
+                        + $"first object in the scene hierarchy.");
             }
 
             if (_sfxClip == null)

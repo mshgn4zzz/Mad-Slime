@@ -1,9 +1,9 @@
-using System.Collections.Generic;
+using Shop;
 using Skins;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
-namespace Shop
+namespace UI.Shop
 {
     public class SkinsPagePresenter : MonoBehaviour
     {
@@ -113,7 +113,7 @@ namespace Shop
                     end++;
                 }
 
-                SkinRarityGroupView group = _factory.GetRarityGroup(_itemsParent);
+                SkinRarityGroupView group = _factory.CreateRarityGroup(_itemsParent);
                 group.Initialize(rarity, _rarityLookup.Get(rarity).PlateColor);
                 _groups.Add(group);
                 SpawnGroup(group.ItemsParent, index, end, true);
@@ -145,7 +145,7 @@ namespace Shop
                     continue;
                 }
 
-                ShopItemView view = _factory.Get(parent);
+                ShopItemView view = _factory.Create(parent);
                 view.Initialize(skin.Id, skin.Icon, _rarityLookup.Get(skin.Rarity).PlateColor,
                     isOpen, _inventory.SelectedSkinId == skin.Id);
                 view.Click += OnClicked;

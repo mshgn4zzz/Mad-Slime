@@ -1,9 +1,8 @@
+using Audio;
+using Skins;
 using System;
 using System.Collections.Generic;
-using Scriptables;
-using Skins;
 using UnityEngine;
-
 namespace Roulette
 {
     [CreateAssetMenu(menuName = "Mad Slime/Roulette Config", fileName = "NewRouletteConfig")]
@@ -19,7 +18,8 @@ namespace Roulette
 
         [Header("Skin Roulette")]
         [Tooltip("Шанс обычных скинов в процентах (если доступных скинов редкости нет, её доля "
-            + "распределяется пропорционально между оставшимися): сумма четырёх значений должна быть 100. 0 — редкость не выпадает.")]
+            + "распределяется пропорционально между оставшимися): сумма четырёх значений должна быть "
+                    + "100. 0 — редкость не выпадает.")]
 
         [SerializeField, Range(0f, 100f)] private float _commonDropChance = 78f;
 
@@ -93,11 +93,13 @@ namespace Roulette
         [Tooltip("Длительность основной крутки (с).")]
         [SerializeField, Min(0.5f)] private float _spinDuration = 3.2f;
 
-        [Tooltip("Крутизна торможения: 2 — мягкий разгон и плавный выбег, 5 — классика слотов, 8+ — резкий старт и долгое затухание.")]
+                [Tooltip("Крутизна торможения: 2 — мягкий разгон и плавный выбег, 5 — классика слотов, 8+ — резкий "
+                    + "старт и долгое затухание.")]
         [SerializeField, Min(1f)] private float _spinEasePower = 5f;
 
         [Tooltip("Максимальное отклонение финала в градусах: колесо перелетает или недолетает "
-            + "выпавшую ячейку на случайную величину от 0 до этого значения, затем щёлкает на место. 0 — всегда точная остановка.")]
+            + "выпавшую ячейку на случайную величину от 0 до этого значения, затем щёлкает на место. 0 "
+                    + "— всегда точная остановка.")]
 
         [SerializeField, Min(0f)] private float _settleMaxDeviationDegrees = 25f;
 
@@ -147,28 +149,4 @@ namespace Roulette
 
     }
 
-    [Serializable]
-    public class RouletteSector
-    {
-        public enum RewardKind
-        {
-            Coins = 0,
-            Skin
-        }
-
-        [Tooltip("Тип награды сектора: монеты или скин.")]
-        [SerializeField] private RewardKind _rewardKind = RewardKind.Coins;
-
-        [Tooltip("Количество монет (для типа Coins).")]
-        [SerializeField, Min(0)] private int _coins = 100;
-
-        [Tooltip("Шанс именно этого сектора в процентах. Сумма всех секторов должна быть 100. "
-            + "Значения не перераспределяются автоматически. 0 — сектор не выпадает.")]
-
-        [SerializeField, Range(0f, 100f)] private float _dropChance = 25f;
-
-        public RewardKind RewardType => _rewardKind;
-        public int Coins => _coins;
-        public float DropChance => _dropChance;
-    }
 }

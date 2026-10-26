@@ -1,15 +1,16 @@
 using DG.Tweening;
-using Game;
+using Items;
 using Player;
-using Skills;
 using System;
 using TMPro;
+using UI.Common;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
-
-namespace UI
+namespace UI.Player
 {
+    using Localization = global::Localization.Localization;
+
     public class GrowthBarView : MonoBehaviour
     {
         [SerializeField] private Image _progressBar;
@@ -19,6 +20,7 @@ namespace UI
         private PlayerTier _playerTier;
         private TierResolver _tierResolver;
         private Tween _fillTween;
+        private BarFiller _barFiller;
 
         [Inject]
         public void Construct(PlayerTier playerTier, TierResolver tierResolver)
@@ -32,13 +34,15 @@ namespace UI
             if (_playerTier == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: PlayerTier was not injected. Check that GameLifetimeScope registers PlayerTier and GrowthBarView.");
+                    $"{name}: PlayerTier was not injected. Check that GameLifetimeScope "
+                        + $"registers PlayerTier and GrowthBarView.");
             }
 
             if (_tierResolver == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: TierResolver was not injected. Check that GameLifetimeScope registers TierResolver and GrowthBarView.");
+                    $"{name}: TierResolver was not injected. Check that GameLifetimeScope "
+                        + $"registers TierResolver and GrowthBarView.");
             }
 
             if (_progressBar == null)
@@ -52,6 +56,8 @@ namespace UI
                 throw new InvalidOperationException(
                     $"{name}: TierText is not assigned. Drag a TMP_Text into the _tierText field.");
             }
+
+            _barFiller = new BarFiller(_progressBar);
         }
 
         private void OnEnable()
@@ -110,15 +116,7 @@ namespace UI
 
         private void ApplyFillAmount(float fillAmount)
         {
-            _progressBar.fillAmount = fillAmount;
-            if (_progressBar.type == Image.Type.Sliced)
-            {
-                RectTransform fill = _progressBar.rectTransform;
-                fill.anchorMax = new Vector2(fillAmount, 1f);
-                fill.offsetMin = Vector2.zero;
-                fill.offsetMax = Vector2.zero;
-                _progressBar.enabled = fillAmount > 0f;
-            }
+            _barFiller.SetFill(fillAmount);
         }
     }
 }

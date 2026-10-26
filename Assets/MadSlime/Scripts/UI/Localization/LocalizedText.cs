@@ -1,10 +1,10 @@
 using System;
-using Game;
 using TMPro;
 using UnityEngine;
-
-namespace UI
+namespace UI.Localization
 {
+    using Localization = global::Localization.Localization;
+
     [RequireComponent(typeof(TMP_Text))]
     public class LocalizedText : MonoBehaviour
     {
@@ -17,6 +17,12 @@ namespace UI
             if (TryGetComponent(out _text) == false)
             {
                 throw new InvalidOperationException($"{name}: TMP_Text is required.");
+            }
+
+            if (string.IsNullOrEmpty(_key) == true)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: LocalizedText key is empty. Fill the _key field.");
             }
         }
 
@@ -33,12 +39,6 @@ namespace UI
 
         private void OnLanguageChanged()
         {
-            if (_key == null || _key == string.Empty)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: LocalizedText key is empty. Fill the _key field.");
-            }
-
             _text.text = Localization.Get(_key);
         }
     }

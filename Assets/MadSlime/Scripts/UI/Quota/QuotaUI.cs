@@ -1,10 +1,10 @@
+using Quota;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using UI.Animations;
+using UnityEngine;
 using VContainer;
-
-namespace Quota
+namespace UI.Quota
 {
     [RequireComponent(typeof(AnimationScheduler))]
     public class QuotaUI : MonoBehaviour
@@ -89,7 +89,7 @@ namespace Quota
                     throw new InvalidOperationException($"{name}: plate requires QuotaPlateAnimator.");
                 }
 
-                plate.transform.localPosition = new Vector3(0f, -i * _verticalSpacing, 0f);
+                plate.transform.localPosition = new Vector3(0f, -_plates.Count * _verticalSpacing, 0f);
                 animator.PrepareIntro();
                 _introAnimations.Add(animator.PlayIntro);
                 float delay = 0f;

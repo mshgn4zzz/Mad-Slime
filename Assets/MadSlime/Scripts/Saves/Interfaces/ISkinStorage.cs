@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-
 namespace Saves
 {
     public interface ISkinStorage

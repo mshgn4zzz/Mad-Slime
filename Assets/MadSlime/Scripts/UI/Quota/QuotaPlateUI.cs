@@ -1,14 +1,24 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
-namespace Quota
+using Game;
+namespace UI.Quota
 {
     [RequireComponent(typeof(QuotaPlateAnimator))]
     public class QuotaPlateUI : MonoBehaviour
     {
         [SerializeField] private Image _icon;
         [SerializeField] private TMP_Text _text;
+
+        private void Awake()
+        {
+            if (_icon == null || _text == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: assign the quota plate references (_icon, _text).");
+            }
+        }
 
         public void Setup(Sprite icon, int remaining)
         {

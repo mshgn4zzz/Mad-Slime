@@ -1,6 +1,5 @@
 using UnityEngine;
-
-namespace Roulette
+namespace UI.Roulette
 {
     public struct RouletteSectorIcon
     {

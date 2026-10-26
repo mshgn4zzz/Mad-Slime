@@ -1,8 +1,7 @@
-using System;
-using System.Collections.Generic;
 using Saves;
 using Skins;
-
+using System;
+using System.Collections.Generic;
 namespace Roulette
 {
     public class SkinShowcase
@@ -29,14 +28,17 @@ namespace Roulette
         {
             List<string> existing = _storage.ReadShowcaseSkinIds();
             List<string> formed = new List<string>();
-            AppendQuota(formed, existing, SkinRarity.Legendary, _probabilityRules.GetShowcaseQuota(SkinRarity.Legendary));
+            AppendQuota(
+                formed, existing, SkinRarity.Legendary,
+                _probabilityRules.GetShowcaseQuota(SkinRarity.Legendary));
             AppendQuota(formed, existing, SkinRarity.Epic, _probabilityRules.GetShowcaseQuota(SkinRarity.Epic));
             AppendQuota(formed, existing, SkinRarity.Rare, _probabilityRules.GetShowcaseQuota(SkinRarity.Rare));
 
             if (formed.Count == 0)
             {
                 int quota = _probabilityRules.GetShowcaseQuota(SkinRarity.Legendary)
-                    + _probabilityRules.GetShowcaseQuota(SkinRarity.Epic) + _probabilityRules.GetShowcaseQuota(SkinRarity.Rare);
+                    + _probabilityRules.GetShowcaseQuota(SkinRarity.Epic)
+                    + _probabilityRules.GetShowcaseQuota(SkinRarity.Rare);
                 AppendQuota(formed, existing, SkinRarity.Common, quota);
             }
 
@@ -148,7 +150,8 @@ namespace Roulette
 
                 if (availableChance > 0f)
                 {
-                    weight = FullChance * _probabilityRules.GetSkinDropChance(skin.Rarity) / availableChance / raritySlots;
+                    weight = FullChance * _probabilityRules.GetSkinDropChance(skin.Rarity)
+                        / availableChance / raritySlots;
                 }
                 slots.Add(new RouletteSlot(skin, 0, weight, false));
             }
@@ -209,8 +212,9 @@ namespace Roulette
                 }
             }
 
-            throw new InvalidOperationException("Skin roulette needs at least one sector for every available rarity with a "
-                + "positive chance.");
+                throw new InvalidOperationException(
+                    "Skin roulette needs at least one sector for every available rarity with a "
+                        + "positive chance.");
         }
 
         private void AppendQuota(List<string> formed, List<string> existing, SkinRarity rarity, int quota)

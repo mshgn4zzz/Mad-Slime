@@ -1,8 +1,7 @@
-using Skills;
+using Items;
 using System;
 using UnityEngine;
-
-namespace Scriptables
+namespace Player
 {
     [Serializable]
     public class PlayerTierThreshold

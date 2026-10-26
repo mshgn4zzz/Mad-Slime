@@ -2,8 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
-namespace UI
+namespace UI.Windows
 {
     public class FailMenu : BaseWindow
     {
@@ -54,7 +53,7 @@ namespace UI
             _isNavigationRequested = false;
             _restartButton.interactable = true;
             _menuButton.interactable = true;
-            _moneyCount.text = $"{moneyCount}";
+            _moneyCount.text = moneyCount.ToString();
 
             _rescueButton.interactable = canRescue;
             _rescueButton.gameObject.SetActive(canRescue);

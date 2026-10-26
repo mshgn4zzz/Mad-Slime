@@ -1,9 +1,8 @@
-using Core;
+using Ads;
 using Saves;
 using System;
 using UnityEngine;
 using VContainer;
-
 namespace Game
 {
     [DisallowMultipleComponent]
@@ -35,6 +34,8 @@ namespace Game
         {
             _visibility.Hidden += OnHidden;
             _visibility.Shown += OnShown;
+            _adsService.PauseGameChanged += OnAdsPauseGame;
+            _isPlatformPaused = _adsService.IsPauseGame;
             ApplyState();
         }
 
@@ -42,16 +43,7 @@ namespace Game
         {
             _visibility.Hidden -= OnHidden;
             _visibility.Shown -= OnShown;
-        }
-
-        private void Update()
-        {
-            if (_isPlatformPaused == _adsService.IsPauseGame)
-            {
-                return;
-            }
-
-            ApplyState();
+            _adsService.PauseGameChanged -= OnAdsPauseGame;
         }
 
         public void RequestPause()
@@ -106,9 +98,14 @@ namespace Game
             RequestResume();
         }
 
+        private void OnAdsPauseGame(bool isPaused)
+        {
+            _isPlatformPaused = isPaused;
+            ApplyState();
+        }
+
         private void ApplyState()
         {
-            _isPlatformPaused = _adsService.IsPauseGame;
             AudioListener.pause = _hasVisibilityPause || _isPlatformPaused;
 
             if (IsPaused() == true)

@@ -1,12 +1,13 @@
+using DG.Tweening;
+using Roulette;
 using System;
 using System.Collections.Generic;
-using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
-namespace Roulette
+namespace UI.Roulette
 {
     public class RouletteWheel : MonoBehaviour
     {
@@ -21,7 +22,8 @@ namespace Roulette
         private RectTransform _spinContainer;
         [SerializeField, Tooltip("Стрелка-указатель: её направление задаёт выигрышную позицию колеса.")]
         private RectTransform _arrow;
-        [SerializeField, Tooltip("Слоты иконок — прямые дети SpinContainer, по часовой стрелке. Порядок списка = порядок секторов.")]
+                [SerializeField, Tooltip("Слоты иконок — прямые дети SpinContainer, по часовой стрелке. Порядок "
+                        + "списка = порядок секторов.")]
         private List<Image> _sectorIcons = new List<Image>();
         [SerializeField, Tooltip("Лейблы секторов — по одному на слот иконки, порядок совпадает со слотами.")]
         private List<TMP_Text> _sectorLabels = new List<TMP_Text>();
@@ -40,8 +42,6 @@ namespace Roulette
 
         public event Action Tick;
         public event Action Completed;
-
-        public bool IsSpinning => _isSpinning;
 
         public int SectorCount => _sectorIcons.Count;
 
@@ -173,7 +173,8 @@ namespace Roulette
                 throw new ArgumentOutOfRangeException(
                     nameof(targetIndex),
                     targetIndex,
-                    $"RouletteWheel.Spin received a target index outside the 0..{_sectorAngles.Length - 1} sector range.");
+                    $"RouletteWheel.Spin received a target index outside the "
+                        + $"0..{_sectorAngles.Length - 1} sector range.");
             }
 
             Stop();
@@ -285,7 +286,8 @@ namespace Roulette
         {
             float targetAngle = Mod(_arrowAngle - _sectorAngles[_pendingTargetIndex], FullCircleDegrees);
 
-            _rotation = targetAngle + FullCircleDegrees * Mathf.RoundToInt((_rotation - targetAngle) / FullCircleDegrees);
+            _rotation = targetAngle
+                + FullCircleDegrees * Mathf.RoundToInt((_rotation - targetAngle) / FullCircleDegrees);
 
             ApplyRotation(_rotation);
             PunchWinningIcon();
@@ -300,7 +302,11 @@ namespace Roulette
             _iconScaleBeforePunch = _punchedIcon.localScale;
 
             _punchedIcon
-                .DOPunchScale(new Vector3(WinPunchStrength, WinPunchStrength, 0f), punchDuration, WinPunchVibrato, WinPunchElasticity)
+                .DOPunchScale(
+                    new Vector3(WinPunchStrength, WinPunchStrength, 0f),
+                    punchDuration,
+                    WinPunchVibrato,
+                    WinPunchElasticity)
                 .SetTarget(this)
                 .SetUpdate(true)
                 .SetLink(gameObject, LinkBehaviour.KillOnDisable);

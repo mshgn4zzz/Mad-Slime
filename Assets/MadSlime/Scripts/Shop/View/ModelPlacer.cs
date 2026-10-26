@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-
 namespace Shop
 {
     public class ModelPlacer : MonoBehaviour
@@ -13,9 +12,11 @@ namespace Shop
 
         [SerializeField] private PreviewRotator _rotator;
         [SerializeField] private float _padding = 0.85f;
-        [SerializeField, Min(0.1f), Tooltip("Общий масштаб после нормализации размеров моделей. 1 — стандартный размер.")]
+                [SerializeField, Min(0.1f), Tooltip("Общий масштаб после нормализации размеров моделей. 1 — "
+                        + "стандартный размер.")]
         private float _previewZoom = 1f;
-        [SerializeField, Min(0.1f), Tooltip("Размер модели до применения общего масштаба: максимальная высота или диаметр при вращении.")]
+                [SerializeField, Min(0.1f), Tooltip("Размер модели до применения общего масштаба: максимальная "
+                        + "высота или диаметр при вращении.")]
         private float _normalizedSize = 2f;
         [SerializeField] private Transform _modelsParent;
         [SerializeField] private Camera _camera;
@@ -74,7 +75,8 @@ namespace Shop
             if (_currentModel.TryGetComponent(out SkinModel skinModel) == false)
             {
                 throw new InvalidOperationException(
-                    $"{name}: Model '{model.name}' has no SkinModel component. Add a SkinModel component to the model prefab root.");
+                    $"{name}: Model '{model.name}' has no SkinModel component. Add a SkinModel "
+                        + $"component to the model prefab root.");
             }
 
             SetPreviewLayer(_currentModel);
@@ -100,7 +102,8 @@ namespace Shop
 
             if (layer < 0)
             {
-                throw new InvalidOperationException($"{name}: layer '{PreviewLayerName}' is required for skin previews.");
+                                throw new InvalidOperationException($"{name}: layer '{PreviewLayerName}' is "
+                                        + $"required for skin previews.");
             }
 
             Transform[] transforms = model.GetComponentsInChildren<Transform>(true);
@@ -119,7 +122,8 @@ namespace Shop
             if (toCamera.sqrMagnitude <= 0f)
             {
                 throw new InvalidOperationException(
-                    $"{name}: the preview camera is directly above the spawn point. Move the camera so the model can face it.");
+                    $"{name}: the preview camera is directly above the spawn point. Move the "
+                        + $"camera so the model can face it.");
             }
 
             float yaw = Mathf.Atan2(toCamera.x, toCamera.z) * Mathf.Rad2Deg;

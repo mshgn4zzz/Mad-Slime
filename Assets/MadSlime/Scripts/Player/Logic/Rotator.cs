@@ -1,6 +1,5 @@
 using UnityEngine;
-
-namespace Movement
+namespace Player
 {
     public class Rotator : MonoBehaviour
     {

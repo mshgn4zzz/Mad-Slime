@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-
-namespace Shop
+using Game;
+namespace UI.Shop
 {
     [RequireComponent(typeof(Image), typeof(Button))]
     public class ShopItemView : MonoBehaviour
@@ -28,6 +28,14 @@ namespace Shop
             if (_backgroundImage == null)
             {
                 TryGetComponent(out _backgroundImage);
+            }
+
+            if (_button == null || _backgroundImage == null || _contentImage == null || _lockImage == null
+                || _selectedMark == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: assign all shop item references (_backgroundImage, _contentImage, _lockImage, "
+                        + $"_selectedMark) and keep a Button on the same object.");
             }
         }
 

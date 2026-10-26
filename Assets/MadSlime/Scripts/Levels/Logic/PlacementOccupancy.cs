@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-
-namespace Game
+namespace Levels
 {
     public class PlacementOccupancy
     {

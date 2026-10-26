@@ -1,15 +1,12 @@
+using Items;
 using System;
 using System.Collections.Generic;
-using Items;
-using Scriptables;
-using Skills;
-using UnityEngine;
-
-#if UNITY_EDITOR
 using UnityEditor;
+using UnityEngine;
+#if UNITY_EDITOR
 #endif
 
-namespace Game
+namespace Levels
 {
     public class LayoutPreviewDrawer : MonoBehaviour
     {
@@ -303,7 +300,8 @@ namespace Game
                 typeMark = string.Empty;
             }
 
-            string labelText = $"L{layoutIndex} / Zone {zoneIndex}: {zone.Shape} x{positionsCount} {tierRange}{typeMark}";
+                        string labelText = $"L{layoutIndex} / Zone {zoneIndex}: {zone.Shape} x{positionsCount} "
+                                + $"{tierRange}{typeMark}";
 
             Vector3 labelPosition = transform.TransformPoint(new Vector3(center.x, 0f, center.y)) + Vector3.up;
 
@@ -312,32 +310,21 @@ namespace Game
 
         private static Color GetTierColor(SizeTier tier)
         {
-            if (tier == SizeTier.Small)
+            switch (tier)
             {
-                return Color.green;
+                case SizeTier.Small:
+                    return Color.green;
+                case SizeTier.Medium:
+                    return Color.yellow;
+                case SizeTier.Large:
+                    return new Color(1f, 0.5f, 0f);
+                case SizeTier.Huge:
+                    return new Color(1f, 0.2f, 0.2f);
+                case SizeTier.Giant:
+                    return new Color(0.8f, 0.2f, 1f);
+                default:
+                    return Color.magenta;
             }
-
-            if (tier == SizeTier.Medium)
-            {
-                return Color.yellow;
-            }
-
-            if (tier == SizeTier.Large)
-            {
-                return new Color(1f, 0.5f, 0f);
-            }
-
-            if (tier == SizeTier.Huge)
-            {
-                return new Color(1f, 0.2f, 0.2f);
-            }
-
-            if (tier == SizeTier.Giant)
-            {
-                return new Color(0.8f, 0.2f, 1f);
-            }
-
-            return Color.magenta;
         }
 #endif
     }

@@ -2,11 +2,10 @@ using Cysharp.Threading.Tasks;
 using Items;
 using Player;
 using System;
-using System.Threading;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using VContainer;
-
 namespace Collectables
 {
     public class ItemCollector : MonoBehaviour
@@ -41,13 +40,15 @@ namespace Collectables
             if (_detector == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: Detector was not injected. Check that GameLifetimeScope registers ItemDetector and ItemCollector.");
+                    $"{name}: Detector was not injected. Check that GameLifetimeScope registers "
+                        + $"ItemDetector and ItemCollector.");
             }
 
             if (_absorber == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: Absorber was not injected. Check that GameLifetimeScope registers Absorber and ItemCollector.");
+                    $"{name}: Absorber was not injected. Check that GameLifetimeScope registers "
+                        + $"Absorber and ItemCollector.");
             }
         }
 
@@ -67,7 +68,8 @@ namespace Collectables
         {
             if (_absorptionSource == null)
             {
-                _absorptionSource = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
+                _absorptionSource = CancellationTokenSource.CreateLinkedTokenSource(
+                    this.GetCancellationTokenOnDestroy());
             }
 
             _isRunning = true;
@@ -136,7 +138,7 @@ namespace Collectables
 
             ItemCollected?.Invoke(item);
 
-                        if (cancellationToken.IsCancellationRequested == false)
+            if (cancellationToken.IsCancellationRequested == false)
             {
                 AbsorbAsync(item, cancellationToken).Forget();
             }

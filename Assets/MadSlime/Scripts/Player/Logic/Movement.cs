@@ -1,15 +1,16 @@
-using Player;
+using Items;
 using PlayerInput;
-using Skills;
 using System;
 using UnityEngine;
 using Upgrades;
 using VContainer;
-
-namespace Movement
+namespace Player
 {
     public class Movement : MonoBehaviour
     {
+        private static Vector3 s_forward = new Vector3(0f, 0f, 1f);
+        private static Vector3 s_right = new Vector3(1f, 0f, 0f);
+
         [SerializeField] private Mover _mover;
         [SerializeField] private Rotator _rotator;
 
@@ -54,7 +55,29 @@ namespace Movement
             if (_playerTier == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: PlayerTier was not injected. Check that GameLifetimeScope registers PlayerTier and Movement.");
+                    $"{name}: PlayerTier was not injected. Check that GameLifetimeScope "
+                        + $"registers PlayerTier and Movement.");
+            }
+
+            if (_tierResolver == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: TierResolver was not injected. Check that GameLifetimeScope "
+                        + $"registers TierResolver and Movement.");
+            }
+
+            if (_upgrades == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: PlayerUpgrades was not injected. Check that GameLifetimeScope "
+                        + $"registers PlayerUpgrades and Movement.");
+            }
+
+            if (_inputReader == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: PlayerInputReader was not injected. Check that GameLifetimeScope "
+                        + $"registers PlayerInputReader and Movement.");
             }
 
             if (TryGetComponent(out Clamper clamper) == false)
@@ -146,16 +169,7 @@ namespace Movement
 
         private Vector3 ConvertToWorldDirection(Vector2 input)
         {
-            Vector3 forward = Vector3.forward;
-            Vector3 right = Vector3.right;
-
-            forward.y = 0f;
-            right.y = 0f;
-
-            forward.Normalize();
-            right.Normalize();
-
-            return forward * input.y + right * input.x;
+            return s_forward * input.y + s_right * input.x;
         }
     }
 }

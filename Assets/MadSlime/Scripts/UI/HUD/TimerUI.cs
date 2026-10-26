@@ -1,10 +1,9 @@
-using System;
 using Game;
+using System;
 using TMPro;
 using UnityEngine;
 using VContainer;
-
-namespace UI
+namespace UI.HUD
 {
     public class TimerUI : MonoBehaviour
     {

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-
 namespace ShapeFill
 {
     public class GridCameraFitter : MonoBehaviour
@@ -22,7 +21,10 @@ namespace ShapeFill
         public void Fit(GridBuilder grid)
         {
             if (grid == null)
+            {
                 throw new ArgumentNullException(nameof(grid));
+            }
+
             Bounds bounds = grid.GetFormBounds();
             FitBounds(grid.transform.position, bounds.size, grid);
         }
@@ -35,10 +37,14 @@ namespace ShapeFill
         private void FitBounds(Vector3 formCenter, Vector3 formSize, GridBuilder grid)
         {
             if (_camera == null)
+            {
                 throw new InvalidOperationException($"{name}: Fill camera is not assigned.");
+            }
 
             if (formSize.x <= 0f || formSize.y <= 0f || formSize.z <= 0f)
+            {
                 throw new ArgumentOutOfRangeException(nameof(formSize), "Fit requires positive world-space bounds.");
+            }
 
             _formCenter = formCenter;
             _fieldOfView = _camera.fieldOfView;
@@ -50,12 +56,21 @@ namespace ShapeFill
             void AddCube(Vector3 offset, Vector3 extents)
             {
                 for (int x = -1; x <= 1; x += 2)
-                for (int y = -1; y <= 1; y += 2)
-                for (int z = -1; z <= 1; z += 2)
-                    _corners.Add(offset + Vector3.Scale(extents, new Vector3(x, y, z)));
+                {
+                    for (int y = -1; y <= 1; y += 2)
+                    {
+                        for (int z = -1; z <= 1; z += 2)
+                        {
+                            _corners.Add(offset + Vector3.Scale(extents, new Vector3(x, y, z)));
+                        }
+                    }
+                }
             }
+
             if (grid == null)
+            {
                 AddCube(Vector3.zero, halfSize);
+            }
             else
             {
                 // Border cells contain every extreme of the occupied shape.
@@ -119,7 +134,7 @@ namespace ShapeFill
         {
             // Use the prepared geometry and FOV: a resize during the completion pulse/kick
             // must not bake the temporary animation values into the resting camera fit.
-            if (_hasForm && !Mathf.Approximately(_aspect, _camera.aspect))
+            if (_hasForm && Mathf.Approximately(_aspect, _camera.aspect) == false)
                 ApplyFit();
         }
     }

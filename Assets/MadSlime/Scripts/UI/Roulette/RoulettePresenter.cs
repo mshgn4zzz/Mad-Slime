@@ -1,18 +1,29 @@
+using Ads;
+using Audio;
+using Cysharp.Threading.Tasks;
+using Roulette;
+using Saves;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Audio;
-using Cysharp.Threading.Tasks;
-using Game;
-using Scriptables;
-using Saves;
 using UnityEngine;
-
-namespace Roulette
+namespace UI.Roulette
 {
+    using Localization = global::Localization.Localization;
+
     public class RoulettePresenter : MonoBehaviour
     {
         private const float ButtonRefreshInterval = 1f;
+
+        private enum RouletteState
+        {
+            Hidden,
+            Idle,
+            WaitingForAd,
+            ConfirmingSave,
+            Spinning,
+            SaveFailed
+        }
 
         [SerializeField] private RouletteView _view;
 
@@ -23,11 +34,8 @@ namespace Roulette
         private IUISoundPlayer _soundPlayer;
         private RouletteOutcome _outcome;
         private CancellationTokenSource _presentationCancellation;
-        private bool _isShown;
-        private bool _isBusy;
-        private bool _isWaitingForAd;
+        private RouletteState _state = RouletteState.Hidden;
         private bool _isSubscribed;
-        private bool _hasSaveFailed;
         private Action<RoulettePrize> _onComplete;
         private float _nextRefreshTime;
 
@@ -55,24 +63,14 @@ namespace Roulette
             }
         }
 
-        public int GetSpinPrice()
-        {
-            return _model.GetPrice();
-        }
-
         public bool CanSpin()
         {
-            return _isBusy == false && _model.CanSpin(false);
-        }
-
-        public bool HasAvailableSkin()
-        {
-            return _model.HasAvailableSkin();
+            return IsBusy() == false && _model.CanSpin(false);
         }
 
         public bool ShowAndSpin(Action<RoulettePrize> onComplete)
         {
-            if (_isShown == true || CanSpin() == false)
+            if (_state != RouletteState.Idle || CanSpin() == false)
             {
                 return false;
             }
@@ -84,7 +82,7 @@ namespace Roulette
 
         public void Show(Action<RoulettePrize> onComplete)
         {
-            if (_isShown == true)
+            if (_state != RouletteState.Hidden)
             {
                 return;
             }
@@ -96,8 +94,9 @@ namespace Roulette
 
             _onComplete = onComplete;
             Subscribe();
-            _isShown = true;
-            _presentationCancellation = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
+            _state = RouletteState.Idle;
+            _presentationCancellation = CancellationTokenSource.CreateLinkedTokenSource(
+                this.GetCancellationTokenOnDestroy());
             BuildWheel();
             _view.Show();
             RefreshButtons();
@@ -105,7 +104,7 @@ namespace Roulette
 
         public void Hide()
         {
-            if (_isShown == false)
+            if (_state == RouletteState.Hidden)
             {
                 return;
             }
@@ -116,14 +115,14 @@ namespace Roulette
 
         public void ResumeAfterPrize()
         {
-            if (_isShown == false)
+            if (_state == RouletteState.Hidden)
             {
                 return;
             }
 
             _view.Wheel.Stop();
             _outcome = null;
-            _isBusy = false;
+            _state = RouletteState.Idle;
             BuildWheel();
             RefreshButtons();
         }
@@ -178,7 +177,7 @@ namespace Roulette
 
         private void Update()
         {
-            if (_isShown == false || Time.unscaledTime < _nextRefreshTime)
+            if (_state == RouletteState.Hidden || Time.unscaledTime < _nextRefreshTime)
             {
                 return;
             }
@@ -189,10 +188,16 @@ namespace Roulette
 
         private void OnCloseRequested()
         {
-            if (_isBusy == false)
+            if (IsBusy() == false)
             {
                 CloseRequested?.Invoke();
             }
+        }
+
+        private bool IsBusy()
+        {
+            return _state == RouletteState.WaitingForAd || _state == RouletteState.ConfirmingSave
+                || _state == RouletteState.Spinning;
         }
 
         private void BuildWheel()
@@ -228,33 +233,21 @@ namespace Roulette
 
         private void OnSpinRequested()
         {
-            if (_isShown == false || _isBusy == true)
+            if (_state == RouletteState.Idle || _state == RouletteState.SaveFailed)
             {
-                return;
+                Spin(false);
             }
-
-            if (_hasSaveFailed == true)
-            {
-                _hasSaveFailed = false;
-                _isBusy = true;
-                RefreshButtons();
-                ConfirmAndSpinAsync(_presentationCancellation.Token).Forget();
-                return;
-            }
-
-            Spin(false);
         }
 
         private void OnAdRequested()
         {
-            if (_isShown == false || _isBusy == true || _model.HasAdvertising == false
+            if (_state != RouletteState.Idle || _model.HasAdvertising == false
                 || _model.CanSpin(true) == false)
             {
                 return;
             }
 
-            _isBusy = true;
-            _isWaitingForAd = true;
+            _state = RouletteState.WaitingForAd;
             RefreshButtons();
             _adScheduler.ShowRewarded(_adScheduler.RouletteRewardId, OnAdGranted,
                 OnAdNotGranted, OnAdNotGranted, OnAdNotGranted);
@@ -262,24 +255,22 @@ namespace Roulette
 
         private void OnAdGranted()
         {
-            if (_isShown == false || _isWaitingForAd == false)
+            if (_state != RouletteState.WaitingForAd)
             {
                 return;
             }
 
-            _isWaitingForAd = false;
             Spin(true);
         }
 
         private void OnAdNotGranted()
         {
-            if (_isWaitingForAd == false)
+            if (_state != RouletteState.WaitingForAd)
             {
                 return;
             }
 
-            _isWaitingForAd = false;
-            _isBusy = false;
+            _state = RouletteState.Idle;
             RefreshButtons();
         }
 
@@ -287,12 +278,12 @@ namespace Roulette
         {
             if (_model.Spin(advertisementGranted, out _outcome) == false)
             {
-                _isBusy = false;
+                _state = RouletteState.Idle;
                 RefreshButtons();
                 return;
             }
 
-            _isBusy = true;
+            _state = RouletteState.ConfirmingSave;
             RefreshButtons();
             ConfirmAndSpinAsync(_presentationCancellation.Token).Forget();
         }
@@ -310,22 +301,25 @@ namespace Roulette
             }
             catch (Exception)
             {
-                _hasSaveFailed = true;
-                _isBusy = false;
+                _state = RouletteState.SaveFailed;
                 RefreshButtons();
                 return;
             }
 
             _sound.PlaySpin();
+            _state = RouletteState.Spinning;
             _view.Wheel.Spin(_outcome.SlotIndex);
         }
 
         private void OnWheelCompleted()
         {
-            ShowPrizeAsync(_presentationCancellation.Token).Forget();
+            RoulettePrize prize = _outcome.Prize;
+            Action<RoulettePrize> onComplete = _onComplete;
+            ShowPrizeAsync(prize, onComplete, this.GetCancellationTokenOnDestroy()).Forget();
         }
 
-        private async UniTaskVoid ShowPrizeAsync(CancellationToken cancellationToken)
+        private async UniTaskVoid ShowPrizeAsync(RoulettePrize prize, Action<RoulettePrize> onComplete,
+            CancellationToken cancellationToken)
         {
             try
             {
@@ -334,21 +328,18 @@ namespace Roulette
             }
             catch (OperationCanceledException)
             {
+                // The prize is granted and saved, so the callback must run even if the popup never shows.
+                onComplete?.Invoke(prize);
                 return;
             }
 
             _sound.PlayWin();
-            RoulettePrize prize = _outcome.Prize;
-            Action<RoulettePrize> onComplete = _onComplete;
             onComplete?.Invoke(prize);
         }
 
         private void OnViewDisabled()
         {
-            _isShown = false;
-            _isBusy = false;
-            _isWaitingForAd = false;
-            _hasSaveFailed = false;
+            _state = RouletteState.Hidden;
             _onComplete = null;
             _outcome = null;
 
@@ -367,6 +358,13 @@ namespace Roulette
             Closed?.Invoke();
         }
 
+        private string FormatRemainingTime(int totalSeconds)
+        {
+            int minutes = totalSeconds / 60;
+            int seconds = totalSeconds % 60;
+            return $"{minutes}:{seconds:00}";
+        }
+
         private void RefreshButtons()
         {
             string title = Localization.Get("skin_roulette_title");
@@ -380,22 +378,30 @@ namespace Roulette
 
                 if (remaining > 0)
                 {
-                    spinText = $"{remaining / 60}:{remaining % 60:00}";
+                    spinText = FormatRemainingTime(remaining);
                 }
             }
 
-            if (_hasSaveFailed == true)
+            if (_state == RouletteState.SaveFailed)
             {
                 title = Localization.Get("roulette_save_error");
                 spinText = Localization.Get("leaderboard_retry");
             }
 
-            string adText = string.Format(Localization.Get("roulette_ad_spins"), _model.GetAdSpinsLeft());
-            bool canSpin = _isBusy == false && (_hasSaveFailed == true || _model.CanSpin(false));
-            bool showAd = _model.HasAdvertising == true && _hasSaveFailed == false;
-            _view.Display(title, _model.HasAdvertising == true || _hasSaveFailed == true, spinText, canSpin,
-                showAd, adText, _isBusy == false && _model.CanSpin(true), _model.HasAdvertising,
-                _isBusy == false);
+            RouletteDisplayData data = new RouletteDisplayData
+            {
+                Title = title,
+                ShowSpin = _model.HasAdvertising == true || _state == RouletteState.SaveFailed,
+                SpinText = spinText,
+                CanSpin = (_state == RouletteState.Idle && _model.CanSpin(false))
+                    || _state == RouletteState.SaveFailed,
+                ShowAd = _model.HasAdvertising == true && _state != RouletteState.SaveFailed,
+                AdText = string.Format(Localization.Get("roulette_ad_spins"), _model.GetAdSpinsLeft()),
+                CanWatchAd = _state == RouletteState.Idle && _model.CanSpin(true),
+                ShowClose = _model.HasAdvertising,
+                CanClose = IsBusy() == false
+            };
+            _view.Display(data);
         }
     }
 }

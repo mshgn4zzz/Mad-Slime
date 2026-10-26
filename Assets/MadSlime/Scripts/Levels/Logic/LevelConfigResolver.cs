@@ -1,7 +1,5 @@
 using System;
-using Scriptables;
-
-namespace Game
+namespace Levels
 {
     public class LevelConfigResolver
     {
@@ -31,8 +29,10 @@ namespace Game
             if (IsPlayable(matched) == false)
             {
                 throw new InvalidOperationException(
-                    $"LevelsCatalog '{_catalog.name}': level {levelNumber} resolved to a config that is not playable — " +
-                    $"{DescribeProblem(matched)}. Fix the config of this range and run Mad Slime → Prop Factory if needed.");
+                    $"LevelsCatalog '{_catalog.name}': level {levelNumber} resolved to a config "
+                        + $"that is not playable —  " +
+                    $"{DescribeProblem(matched)}. Fix the config of this range and run Mad "
+                        + $"Slime → Prop Factory if needed.");
             }
 
             return matched;
@@ -56,7 +56,9 @@ namespace Game
                 }
             }
 
-            return _catalog.Ranges[_catalog.Ranges.Count - 1].Config;
+            throw new InvalidOperationException(
+                $"LevelsCatalog '{_catalog.name}': level {levelNumber} (cycle level {cycleLevel} of {cycleLength}) "
+                    + $"falls into no range. Check the ranges for gaps.");
         }
 
         private static bool IsPlayable(LevelConfig config)

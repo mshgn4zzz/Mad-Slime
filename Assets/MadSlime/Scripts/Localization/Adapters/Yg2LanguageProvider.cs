@@ -1,8 +1,6 @@
 using System;
-using Core;
 using YG;
-
-namespace Adapters
+namespace Localization
 {
     public class Yg2LanguageProvider : ILanguageProvider
     {

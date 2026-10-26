@@ -1,7 +1,6 @@
+using Skins;
 using System;
 using System.Collections.Generic;
-using Skins;
-
 namespace Roulette
 {
     public class RouletteConfigValidator
@@ -9,7 +8,8 @@ namespace Roulette
         private const float FullChance = 100f;
         private const float ChanceTolerance = 0.01f;
 
-        public void Validate(RouletteConfig config, IReadOnlyList<SkinItem> catalog, int dailySlotCount, int skinSlotCount)
+        public void Validate(RouletteConfig config, IReadOnlyList<SkinItem> catalog,
+            int dailySlotCount, int skinSlotCount)
         {
             if (config == null || config.RarityTable == null)
             {
@@ -23,7 +23,7 @@ namespace Roulette
 
             if (config.SkinSpinMinCost <= 0 || config.SkinSpinCostStep < 0
                 || config.SkinSpinMaxCost < 0 || config.DuplicateCoinsCompensation <= 0
-                || config.SkinSpinMaxCost > 0 && config.SkinSpinMaxCost < config.SkinSpinMinCost)
+                || (config.SkinSpinMaxCost > 0 && config.SkinSpinMaxCost < config.SkinSpinMinCost))
             {
                 throw new InvalidOperationException("Roulette prices and compensation are invalid.");
             }
@@ -35,7 +35,8 @@ namespace Roulette
 
             if (config.MinTurns <= 0 || config.MaxTurns < config.MinTurns || config.SpinDuration <= 0f
                 || config.WindBackDuration <= 0f || config.SpinEasePower < 1f || config.WinDwellSeconds < 0f
-                || config.IdleRotationSpeed < 0f || config.WindBackDegrees < 0f || config.SettleMaxDeviationDegrees < 0f)
+                || config.IdleRotationSpeed < 0f || config.WindBackDegrees < 0f
+                || config.SettleMaxDeviationDegrees < 0f)
             {
                 throw new InvalidOperationException("Roulette motion configuration is invalid.");
             }
@@ -54,12 +55,12 @@ namespace Roulette
 
                 sectorWeight += sector.DropChance;
 
-                if (sector.RewardType == RouletteSector.RewardKind.Coins && sector.Coins <= 0)
+                if (sector.RewardType == RewardType.Coins && sector.Coins <= 0)
                 {
                     throw new InvalidOperationException("Roulette coin sector must grant a positive amount.");
                 }
 
-                if (sector.RewardType == RouletteSector.RewardKind.Skin)
+                if (sector.RewardType == RewardType.Skin)
                 {
                     hiddenSectors++;
 
@@ -72,7 +73,8 @@ namespace Roulette
 
             if (Math.Abs(sectorWeight - FullChance) > ChanceTolerance)
             {
-                throw new InvalidOperationException($"{config.name}: daily sector chances must total 100%, got {sectorWeight}%.");
+                                throw new InvalidOperationException($"{config.name}: daily sector chances must "
+                                        + $"total 100%, got {sectorWeight}%.");
             }
 
             if (hiddenSectors != 1)
@@ -88,11 +90,11 @@ namespace Roulette
             for (int rarityIndex = 0; rarityIndex <= (int)SkinRarity.Legendary; rarityIndex++)
             {
                 SkinRarity rarity = (SkinRarity)rarityIndex;
-                rarityLookup.Get(rarity);
+                ValidateRarityExists(rarityLookup, rarity);
                 float weight = probabilityRules.GetSkinDropChance(rarity);
                 int quota = probabilityRules.GetShowcaseQuota(rarity);
 
-                if (IsWeightValid(weight) == false || quota < 0 || quota > 0 && weight <= 0f)
+                if (IsWeightValid(weight) == false || quota < 0 || (quota > 0 && weight <= 0f))
                 {
                     throw new InvalidOperationException("Skin roulette quotas and weights are invalid.");
                 }
@@ -103,7 +105,8 @@ namespace Roulette
 
             if (Math.Abs(skinWeight - FullChance) > ChanceTolerance)
             {
-                throw new InvalidOperationException($"{config.name}: skin rarity chances must total 100%, got {skinWeight}%.");
+                                throw new InvalidOperationException($"{config.name}: skin rarity chances must total "
+                                        + $"100%, got {skinWeight}%.");
             }
 
             if (showcaseSize <= 0 || showcaseSize > skinSlotCount)
@@ -137,7 +140,8 @@ namespace Roulette
 
                 if (ids.Contains(skin.Id) == false || exclusiveIds.Add(skin.Id) == false)
                 {
-                    throw new InvalidOperationException("Exclusive skins must be unique entries from the skin catalog.");
+                                        throw new InvalidOperationException("Exclusive skins must be unique entries "
+                                                + "from the skin catalog.");
                 }
             }
 
@@ -145,7 +149,13 @@ namespace Roulette
 
         private bool IsWeightValid(float weight)
         {
-            return weight >= 0f && weight <= FullChance && float.IsNaN(weight) == false && float.IsInfinity(weight) == false;
+            return weight >= 0f && weight <= FullChance
+                && float.IsNaN(weight) == false && float.IsInfinity(weight) == false;
+        }
+
+        private void ValidateRarityExists(SkinRarityLookup rarityLookup, SkinRarity rarity)
+        {
+            rarityLookup.Get(rarity);
         }
 
         private void ValidateSkin(SkinItem skin)

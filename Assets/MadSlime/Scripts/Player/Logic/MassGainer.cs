@@ -1,12 +1,10 @@
 using Collectables;
 using Items;
 using Quota;
-using Scriptables;
 using System;
 using UnityEngine;
 using Upgrades;
 using VContainer;
-
 namespace Player
 {
     public class MassGainer : MonoBehaviour

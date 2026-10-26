@@ -1,11 +1,8 @@
-using Core;
 using Saves;
-using Scriptables;
 using System;
 using UnityEngine;
 using VContainer;
-
-namespace Game
+namespace Localization
 {
     public class LocalizationService : MonoBehaviour
     {
@@ -39,7 +36,8 @@ namespace Game
             if (_languageStorage == null || _savesReadiness == null || _languageProvider == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: dependencies were not injected. Check that ProjectScope is the first root object of the project.");
+                    $"{name}: dependencies were not injected. Check that ProjectScope is the "
+                        + $"first root object of the project.");
             }
 
             Localization.Initialize(_table, "");
@@ -58,7 +56,10 @@ namespace Game
                 _savesReadiness.Ready -= OnSavesReady;
             }
 
-            _languageProvider.LanguageSwitched -= OnYandexLangChanged;
+            if (_languageProvider != null)
+            {
+                _languageProvider.LanguageSwitched -= OnYandexLangChanged;
+            }
         }
 
         private void ApplyLanguage()

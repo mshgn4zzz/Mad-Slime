@@ -1,12 +1,9 @@
-using System;
-using Game;
 using Saves;
 using Shop;
-using Skins;
+using System;
 using UnityEngine;
 using VContainer;
-
-namespace Player
+namespace Skins
 {
     public class SkinApplier : MonoBehaviour
     {
@@ -42,6 +39,14 @@ namespace Player
             {
                 throw new InvalidOperationException(
                     $"{name}: SkinApplier requires _skinsContainer to be assigned in the inspector.");
+            }
+
+            if (_skinStorage == null || _inventory == null || _savesReadiness == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: skin dependencies were not injected. Check that ProjectLifetimeScope "
+                        + $"registers SkinsStorage/ISavesReadiness and SkinInventory, and that "
+                        + $"SkinApplier is registered in a LifetimeScope.");
             }
         }
 
@@ -92,7 +97,8 @@ namespace Player
                 if (matchingItem == null || matchingItem.Model == null)
                 {
                     throw new InvalidOperationException(
-                        $"{name}: the initial skin '{SkinInventory.InitialSkinId}' and its model must exist in ShopContent.");
+                        $"{name}: the initial skin '{SkinInventory.InitialSkinId}' and its "
+                            + $"model must exist in ShopContent.");
                 }
 
                 _inventory.Select(matchingItem.Id);

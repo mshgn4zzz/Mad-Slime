@@ -1,16 +1,18 @@
+using Ads;
 using Audio;
+using Economy;
 using Game;
-using Scriptables;
+using Leaderboards;
 using ShapeFill;
 using System;
-using UI;
+using UI.Fill;
+using UI.Spawning;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
-
 namespace DI
 {
-    public class FillLifetimeScope : LifetimeScope
+    public class FillLifetimeScope : ValidatedLifetimeScope
     {
         [SerializeField] private FillConfig _fillConfig;
         [SerializeField] private FillSceneOrchestrator _fillSceneOrchestrator;
@@ -29,7 +31,7 @@ namespace DI
         [SerializeField] private LeaderboardReporter _leaderboardReporter;
         [SerializeField] private Wallet _wallet;
         [SerializeField] private Pauser _pauser;
-        [SerializeField] private FillUIFabric _fillUIFabric;
+        [SerializeField] private FillUiPresenter _fillUiPresenter;
         [SerializeField] private FlyingCubeArrivalSound _flyingCubeArrivalSound;
 
         protected override void Configure(IContainerBuilder builder)
@@ -51,7 +53,7 @@ namespace DI
             ValidateAssigned(_leaderboardReporter, nameof(_leaderboardReporter));
             ValidateAssigned(_wallet, nameof(_wallet));
             ValidateAssigned(_pauser, nameof(_pauser));
-            ValidateAssigned(_fillUIFabric, nameof(_fillUIFabric));
+            ValidateAssigned(_fillUiPresenter, nameof(_fillUiPresenter));
             ValidateAssigned(_flyingCubeArrivalSound, nameof(_flyingCubeArrivalSound));
 
             builder.RegisterInstance(_fillConfig);
@@ -70,10 +72,13 @@ namespace DI
             builder.RegisterComponent(_rewarder);
             builder.RegisterComponent(_adScheduler);
             builder.RegisterComponent(_leaderboardReporter);
+            builder.Register<FillSessionSaver>(Lifetime.Scoped);
+            builder.Register<LevelThemeApplier>(Lifetime.Scoped);
+            builder.Register<FillExitFlow>(Lifetime.Scoped);
             builder.RegisterComponent(_wallet);
             builder.RegisterComponent(_pauser);
             builder.RegisterBuildCallback(InjectSceneButtonSounds);
-            builder.RegisterComponent(_fillUIFabric);
+            builder.RegisterComponent(_fillUiPresenter);
             builder.RegisterComponent(_flyingCubeArrivalSound);
         }
 
@@ -82,13 +87,5 @@ namespace DI
             SceneButtonSoundInjector.Inject(container, gameObject.scene);
         }
 
-        private void ValidateAssigned(object dependency, string fieldName)
-        {
-            if (dependency == null)
-            {
-                throw new InvalidOperationException(
-                    $"FillLifetimeScope: '{fieldName}' is not assigned. Select the DI object in the scene and drag the missing reference.");
-            }
-        }
     }
 }

@@ -1,7 +1,6 @@
 using Items;
 using UnityEngine;
-
-namespace Game
+namespace Levels
 {
     public struct LevelPlacement
     {

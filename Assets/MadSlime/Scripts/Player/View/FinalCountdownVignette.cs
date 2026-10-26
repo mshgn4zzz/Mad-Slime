@@ -2,7 +2,6 @@ using DG.Tweening;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-
 namespace Player
 {
     public class FinalCountdownVignette : MonoBehaviour
@@ -22,7 +21,8 @@ namespace Player
             if (_vignetteImage == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: VignetteImage is not assigned. Drag the fullscreen vignette Image into the _vignetteImage field.");
+                    $"{name}: VignetteImage is not assigned. Drag the fullscreen vignette Image "
+                        + $"into the _vignetteImage field.");
             }
 
             _vignetteImage.enabled = false;

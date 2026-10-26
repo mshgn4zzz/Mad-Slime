@@ -1,8 +1,7 @@
-using Game;
+using Economy;
 using TMPro;
 using UnityEngine;
-
-namespace Shop
+namespace UI.Shop
 {
     public class ShopBalanceView : MonoBehaviour
     {

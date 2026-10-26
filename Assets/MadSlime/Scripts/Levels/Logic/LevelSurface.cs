@@ -1,9 +1,7 @@
 using System;
-using Scriptables;
 using UnityEngine;
 using UnityEngine.Rendering;
-
-namespace Game
+namespace Levels
 {
     public class LevelSurface
     {
@@ -57,7 +55,8 @@ namespace Game
         {
             renderer.sharedMaterial = material;
             renderer.transform.position = position;
-            renderer.transform.localScale = new Vector3(size.x / _meshSize.x, size.y / _meshSize.y, size.z / _meshSize.z);
+            renderer.transform.localScale = new Vector3(
+                size.x / _meshSize.x, size.y / _meshSize.y, size.z / _meshSize.z);
         }
     }
 }

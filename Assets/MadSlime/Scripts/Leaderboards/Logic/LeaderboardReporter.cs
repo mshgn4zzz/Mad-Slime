@@ -1,11 +1,9 @@
-using Core;
+using Game;
 using Saves;
-using Scriptables;
 using System;
 using UnityEngine;
 using VContainer;
-
-namespace Game
+namespace Leaderboards
 {
     public class LeaderboardReporter : MonoBehaviour
     {
@@ -41,6 +39,13 @@ namespace Game
                 throw new InvalidOperationException(
                     $"{name}: ILeaderboardService was not injected. Check that ProjectLifetimeScope "
                         + $"registers the YG2 leaderboard adapter.");
+            }
+
+            if (_storage == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: ICollectedItemsStorage was not injected. Check that ProjectLifetimeScope "
+                        + $"registers CollectedItemsStorage as ICollectedItemsStorage and LeaderboardReporter.");
             }
         }
 

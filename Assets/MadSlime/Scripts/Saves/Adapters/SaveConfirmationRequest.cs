@@ -1,21 +1,17 @@
 using Cysharp.Threading.Tasks;
-
-namespace Adapters
+namespace Saves
 {
     public class SaveConfirmationRequest
     {
-        private int _id;
-        private string _json;
-        private UniTaskCompletionSource _completion = new UniTaskCompletionSource();
-
-        public int Id => _id;
-        public string Json => _json;
-        public UniTaskCompletionSource Completion => _completion;
+        public int Id { get; }
+        public string Json { get; }
+        public UniTaskCompletionSource Completion { get; }
 
         public SaveConfirmationRequest(int id, string json)
         {
-            _id = id;
-            _json = json;
+            Id = id;
+            Json = json;
+            Completion = new UniTaskCompletionSource();
         }
     }
 }

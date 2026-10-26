@@ -1,11 +1,8 @@
 using Items;
 using Player;
-using Scriptables;
-using Skills;
 using System;
 using UnityEngine;
 using VContainer;
-
 namespace Collectables
 {
     public class ItemAttractor : MonoBehaviour
@@ -52,7 +49,8 @@ namespace Collectables
             if (_collectDetector == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: ItemDetector was not injected. Check that GameLifetimeScope registers ItemDetector and ItemAttractor.");
+                    $"{name}: ItemDetector was not injected. Check that GameLifetimeScope "
+                        + $"registers ItemDetector and ItemAttractor.");
             }
 
             if (_detector.Radius <= _collectDetector.Radius)
@@ -90,6 +88,13 @@ namespace Collectables
 
         private void OnAttractableDetected(Item attractable)
         {
+            if (attractable.Definition == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: detected item '{attractable.name}' has no Definition assigned. " +
+                    "Assign a definition to its prefab or delete the item from the scene.");
+            }
+
             if (_collectAvailability.CanCollect(attractable.Definition.Tier) == false)
             {
                 return;

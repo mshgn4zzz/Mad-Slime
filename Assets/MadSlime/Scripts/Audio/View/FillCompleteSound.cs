@@ -1,8 +1,6 @@
-using Scriptables;
 using System;
 using UnityEngine;
 using VContainer;
-
 namespace Audio
 {
     public class FillCompleteSound : MonoBehaviour
@@ -22,7 +20,8 @@ namespace Audio
             if (_soundPlayer == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: IGameSoundPlayer was not injected. Check that FillLifetimeScope registers FillCompleteSound.");
+                    $"{name}: IGameSoundPlayer was not injected. Check that FillLifetimeScope "
+                        + $"registers FillCompleteSound.");
             }
 
             if (_sfxClip == null)

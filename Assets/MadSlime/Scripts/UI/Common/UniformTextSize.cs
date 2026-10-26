@@ -1,8 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
-
-namespace UI
+namespace UI.Common
 {
     [ExecuteAlways]
     public class UniformTextSize : MonoBehaviour

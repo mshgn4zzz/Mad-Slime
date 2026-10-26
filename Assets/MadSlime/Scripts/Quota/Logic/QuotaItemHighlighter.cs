@@ -1,20 +1,17 @@
 using Collectables;
 using Items;
 using Player;
-using Quota;
-using Skills;
 using System.Collections.Generic;
 using Unity.Profiling;
 using UnityEngine;
 using VContainer;
-
-namespace Game
+namespace Quota
 {
     public class QuotaItemHighlighter : MonoBehaviour
     {
-        private ProfilerMarker _refreshMarker = new ProfilerMarker("QuotaItemHighlighter.Refresh");
-        private ProfilerMarker _evaluateTypesMarker = new ProfilerMarker("QuotaItemHighlighter.EvaluateTypes");
-        private ProfilerMarker _applyChangesMarker = new ProfilerMarker("QuotaItemHighlighter.ApplyChanges");
+        private static ProfilerMarker _refreshMarker = new ProfilerMarker("QuotaItemHighlighter.Refresh");
+        private static ProfilerMarker _evaluateTypesMarker = new ProfilerMarker("QuotaItemHighlighter.EvaluateTypes");
+        private static ProfilerMarker _applyChangesMarker = new ProfilerMarker("QuotaItemHighlighter.ApplyChanges");
 
         [SerializeField] private Color _highlightColor = new Color(1f, 0.85f, 0.2f, 1f);
         [SerializeField, Min(0f)] private float _outlineWidth = 4f;
@@ -96,7 +93,7 @@ namespace Game
 
         private void OnExited(Item item)
         {
-            if (ReferenceEquals(item, null) || _items.TryGetValue(item, out QuotaTrackedItem tracked) == false)
+            if (item == null || _items.TryGetValue(item, out QuotaTrackedItem tracked) == false)
             {
                 return;
             }

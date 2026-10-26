@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
-
-namespace Scriptables
+namespace Economy
 {
     [CreateAssetMenu(menuName = "Mad Slime/Reward Config", fileName = "NewRewardConfig")]
     public class RewardConfig : ScriptableObject

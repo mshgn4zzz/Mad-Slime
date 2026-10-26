@@ -1,11 +1,10 @@
+using Game;
 using System;
 using System.Collections.Generic;
-using Game;
 using UI.Animations;
 using UnityEngine;
 using VContainer;
-
-namespace UI
+namespace UI.HUD
 {
     public class GameplayHud : MonoBehaviour
     {

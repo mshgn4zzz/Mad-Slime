@@ -1,17 +1,20 @@
-using System;
-using Game;
+using Economy;
 using Roulette;
 using Saves;
+using Shop;
 using Skins;
+using System;
 using TMPro;
-using UI;
+using UI.HUD;
+using UI.Upgrades;
 using UnityEngine;
 using UnityEngine.UI;
 using Upgrades;
 using VContainer;
-
-namespace Shop
+namespace UI.Shop
 {
+    using Localization = global::Localization.Localization;
+
     public class MenuContent : MonoBehaviour
     {
         [SerializeField] private SkinsPagePresenter _skinsPage;
@@ -34,12 +37,12 @@ namespace Shop
         private Wallet _wallet;
         private RouletteConfig _config;
         private ILevelStorage _levelStorage;
-        private Action<Action> _transaction;
+        private SavesTransaction _transaction;
         private bool _isPrepared;
 
         [Inject]
         public void Construct(SkinInventory inventory, ShopContent content, PlayerUpgrades upgrades,
-            Wallet wallet, RouletteConfig config, ILevelStorage levelStorage, Action<Action> transaction)
+            Wallet wallet, RouletteConfig config, ILevelStorage levelStorage, SavesTransaction transaction)
         {
             _inventory = inventory;
             _content = content;
@@ -86,7 +89,11 @@ namespace Shop
 
         public void RefreshSkins(string rewardSkinId)
         {
-            _roulettePreparation.SkinModel.RefreshSlots();
+            if (_roulettePreparation.SkinModel != null)
+            {
+                _roulettePreparation.SkinModel.RefreshSlots();
+            }
+
             _skinsPage.Refresh(rewardSkinId);
             RefreshSkinPurchase();
         }
@@ -114,6 +121,12 @@ namespace Shop
         private void RefreshSkinPurchase()
         {
             RouletteModel roulette = _roulettePreparation.SkinModel;
+
+            if (roulette == null)
+            {
+                return;
+            }
+
             bool hasSkins = roulette.HasAvailableSkin();
             _openSkinButton.gameObject.SetActive(hasSkins);
 

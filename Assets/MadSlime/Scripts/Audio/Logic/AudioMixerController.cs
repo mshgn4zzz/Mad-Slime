@@ -3,7 +3,6 @@ using System;
 using UnityEngine;
 using UnityEngine.Audio;
 using VContainer;
-
 namespace Audio
 {
     public class AudioMixerController : MonoBehaviour
@@ -39,7 +38,7 @@ namespace Audio
         }
 
         public int MusicVolume => _musicVolume;
-        public int SFXVolume => _sfxVolume;
+        public int SfxVolume => _sfxVolume;
         public bool IsVolumesLoaded => _isVolumesLoaded;
 
         private void Awake()
@@ -66,7 +65,7 @@ namespace Audio
             {
                 throw new InvalidOperationException(
                     $"{name}: saves dependencies were not injected. Check that ProjectLifetimeScope "
-                        + $"registers Saver and AudioMixerController.");
+                        + $"registers AudioStorage and AudioMixerController.");
             }
         }
 
@@ -84,8 +83,8 @@ namespace Audio
         private void Start()
         {
             _hasStarted = true;
-            ApplyMusic();
-            ApplySFX();
+            ApplyChannelVolume(MusicVolumeParam, _musicVolume);
+            ApplyChannelVolume(SfxVolumeParam, _sfxVolume);
         }
 
         private void OnSavesReady()
@@ -100,31 +99,39 @@ namespace Audio
                 return;
             }
 
-            _musicVolume = SnapToStep(_audioStorage.MusicVolume);
-            _sfxVolume = SnapToStep(_audioStorage.SfxVolume);
+            int savedMusicVolume = _audioStorage.MusicVolume;
+            int savedSfxVolume = _audioStorage.SfxVolume;
+            _musicVolume = SnapToStep(savedMusicVolume);
+            _sfxVolume = SnapToStep(savedSfxVolume);
+
+            if (_musicVolume != savedMusicVolume || _sfxVolume != savedSfxVolume)
+            {
+                _audioStorage.SetVolumes(_musicVolume, _sfxVolume);
+            }
+
             _isVolumesLoaded = true;
             _hasUnsavedChanges = false;
 
-            ApplyMusic();
-            ApplySFX();
+            ApplyChannelVolume(MusicVolumeParam, _musicVolume);
+            ApplyChannelVolume(SfxVolumeParam, _sfxVolume);
             VolumesChanged?.Invoke();
         }
 
         public void SetMusicVolume(int volume)
         {
-            _musicVolume = Mathf.Clamp(volume, MinVolume, MaxVolume);
+            _musicVolume = ClampVolume(volume);
             _hasUnsavedChanges = true;
 
-            ApplyMusic();
+            ApplyChannelVolume(MusicVolumeParam, _musicVolume);
             VolumesChanged?.Invoke();
         }
 
-        public void SetSFXVolume(int volume)
+        public void SetSfxVolume(int volume)
         {
-            _sfxVolume = Mathf.Clamp(volume, MinVolume, MaxVolume);
+            _sfxVolume = ClampVolume(volume);
             _hasUnsavedChanges = true;
 
-            ApplySFX();
+            ApplyChannelVolume(SfxVolumeParam, _sfxVolume);
             VolumesChanged?.Invoke();
         }
 
@@ -139,26 +146,20 @@ namespace Audio
             _audioStorage.SetVolumes(_musicVolume, _sfxVolume);
         }
 
-        private void ApplyMusic()
+        private static int ClampVolume(int volume)
         {
-            if (_hasStarted == false || _isVolumesLoaded == false)
-            {
-                return;
-            }
-
-            float decibels = LinearToDecibels(_musicVolume / (float)MaxVolume);
-            _mixer.SetFloat(MusicVolumeParam, decibels);
+            return Mathf.Clamp(volume, MinVolume, MaxVolume);
         }
 
-        private void ApplySFX()
+        private void ApplyChannelVolume(string mixerParameter, int volume)
         {
             if (_hasStarted == false || _isVolumesLoaded == false)
             {
                 return;
             }
 
-            float decibels = LinearToDecibels(_sfxVolume / (float)MaxVolume);
-            _mixer.SetFloat(SfxVolumeParam, decibels);
+            float decibels = LinearToDecibels(volume / (float)MaxVolume);
+            _mixer.SetFloat(mixerParameter, decibels);
         }
 
         private static int SnapToStep(int volume)

@@ -1,6 +1,5 @@
 using Items;
 using UnityEngine;
-
 namespace Quota
 {
     internal struct QuotaTrackedItem

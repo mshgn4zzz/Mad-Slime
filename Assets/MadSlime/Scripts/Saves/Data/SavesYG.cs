@@ -1,6 +1,9 @@
+using Skins;
 using System.Collections.Generic;
 using Upgrades;
 
+// Namespace YG is required by the plugin: SavesYG is a partial class merged
+// with PluginYourGames' own partial, and YG2.saves is typed as YG.SavesYG.
 namespace YG
 {
     public partial class SavesYG
@@ -16,8 +19,8 @@ namespace YG
 
         public int Balance;
 
-        public string SelectedSkinId = "Slime";
-        public List<string> _openSkinIds = new List<string> { "Slime" };
+        public string SelectedSkinId = SkinInventory.InitialSkinId;
+        public List<string> _openSkinIds = new List<string> { SkinInventory.InitialSkinId };
         public List<string> _showcaseSkinIds = new List<string>();
 
         public int SpeedLevel;

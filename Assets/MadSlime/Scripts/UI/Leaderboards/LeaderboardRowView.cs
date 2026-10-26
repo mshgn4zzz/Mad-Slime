@@ -1,14 +1,16 @@
+using Leaderboards;
 using System;
-using Core;
-using Game;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
-namespace UI
+namespace UI.Leaderboards
 {
+    using Localization = global::Localization.Localization;
+
     public class LeaderboardRowView : MonoBehaviour
     {
+        private const string AnonymousNameMarker = "anonymous";
+
         [SerializeField] private RectTransform _rectTransform;
         [SerializeField] private Image _background;
         [SerializeField] private TMP_Text _rankText;
@@ -33,7 +35,8 @@ namespace UI
 
         public void Initialize(LeaderboardEntryData entry, bool isOwn)
         {
-            if (_rectTransform == null || _background == null || _rankText == null || _nameText == null || _scoreText == null)
+            if (_rectTransform == null || _background == null || _rankText == null
+                || _nameText == null || _scoreText == null)
             {
                 throw new InvalidOperationException($"{name}: leaderboard row references are incomplete.");
             }
@@ -54,7 +57,7 @@ namespace UI
 
         private void OnLanguageChanged()
         {
-            if (string.IsNullOrEmpty(_entry.Name) == true || _entry.Name == "anonymous")
+            if (string.IsNullOrEmpty(_entry.Name) == true || _entry.Name == AnonymousNameMarker)
             {
                 string anonymousName = Localization.Get("leaderboard_anonymous");
                 _nameText.text = $"{anonymousName} #{_entry.Id}";

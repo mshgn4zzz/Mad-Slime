@@ -1,0 +1,1 @@
+50 artworks, four aspect ratios, 10% pulse margin

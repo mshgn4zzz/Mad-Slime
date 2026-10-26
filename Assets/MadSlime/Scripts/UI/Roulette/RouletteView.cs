@@ -1,11 +1,12 @@
 using System;
 using TMPro;
-using UI;
 using UI.Animations;
+using UI.ResponsiveUI;
+using UI.Spawning;
 using UnityEngine;
 using UnityEngine.UI;
-
-namespace Roulette
+using Game;
+namespace UI.Roulette
 {
     public class RouletteView : MonoBehaviour, IShowable
     {
@@ -82,6 +83,18 @@ namespace Roulette
             return icon;
         }
 
+        private void Awake()
+        {
+            if (_wheel == null || _spinButton == null || _spinPriceText == null || _title == null
+                || _secretIcon == null || _fewCoinIcon == null || _stackCoinIcon == null || _pileCoinIcon == null
+                || _bagCoinIcon == null || _safeCoinIcon == null || _winPopupPrefab == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: assign all roulette view references (_wheel, _spinButton, _spinPriceText, _title, "
+                        + $"coin icons, _secretIcon and _winPopupPrefab).");
+            }
+        }
+
         private void OnEnable()
         {
             _spinButton.onClick.AddListener(OnSpinClicked);
@@ -148,33 +161,34 @@ namespace Roulette
             OnHideCompleted(null);
         }
 
-        public void Display(string title, bool showSpin, string spinText, bool canSpin, bool showAd, string adText,
-            bool canWatchAd, bool showClose, bool canClose)
+        public void Display(RouletteDisplayData data)
         {
-            _title.text = title;
+            _title.text = data.Title;
+
             if (_layout != null)
             {
-                _layout.SetControlsVisible(showSpin, showAd);
+                _layout.SetControlsVisible(data.ShowSpin, data.ShowAd);
             }
-            _spinButton.gameObject.SetActive(showSpin);
-            _spinPriceText.text = spinText;
-            _spinButton.interactable = canSpin;
+
+            _spinButton.gameObject.SetActive(data.ShowSpin);
+            _spinPriceText.text = data.SpinText;
+            _spinButton.interactable = data.CanSpin;
 
             if (_closeButton != null)
             {
-                _closeButton.gameObject.SetActive(showClose);
-                _closeButton.interactable = canClose;
+                _closeButton.gameObject.SetActive(data.ShowClose);
+                _closeButton.interactable = data.CanClose;
             }
 
             if (_adButton != null)
             {
-                _adButton.gameObject.SetActive(showAd);
-                _adButton.interactable = canWatchAd;
+                _adButton.gameObject.SetActive(data.ShowAd);
+                _adButton.interactable = data.CanWatchAd;
             }
 
             if (_adButtonText != null)
             {
-                _adButtonText.text = adText;
+                _adButtonText.text = data.AdText;
             }
         }
 

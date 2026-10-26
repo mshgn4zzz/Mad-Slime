@@ -1,6 +1,6 @@
+using Skins;
 using System;
 using UnityEngine;
-
 namespace Player
 {
     public class ModelDeformer : MonoBehaviour
@@ -27,15 +27,14 @@ namespace Player
         private float _collectCompression;
         private float _compression;
 
-        public float Compression => _compression;
-
         private void Awake()
         {
             _compressionId = Shader.PropertyToID("_SquashCompression");
 
             if (_skinApplier == null || _deformationRoot == null || _playerCollider == null || _shader == null)
             {
-                throw new InvalidOperationException($"{name}: skin applier, deformation root, player collider and shader are required.");
+                                throw new InvalidOperationException($"{name}: skin applier, deformation root, "
+                                        + $"player collider and shader are required.");
             }
         }
 

@@ -1,10 +1,7 @@
-using Scriptables;
-using Player;
 using System;
 using UnityEngine;
 using VContainer;
-
-namespace Movement
+namespace Player
 {
     public class CrawlAnimator : MonoBehaviour
     {
@@ -18,8 +15,6 @@ namespace Movement
         private float _crawlStrength;
         private float _crawlStrengthVelocityRef;
         private float _frequency;
-
-        public float Frequency => _frequency;
 
         [Inject]
         public void Construct(PlayerConfig config)
@@ -39,7 +34,8 @@ namespace Movement
             if (_config == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: PlayerConfig was not injected. Check that GameLifetimeScope registers PlayerConfig and CrawlAnimator.");
+                    $"{name}: PlayerConfig was not injected. Check that GameLifetimeScope "
+                        + $"registers PlayerConfig and CrawlAnimator.");
             }
 
             if (_config.CrawlStretchCurve == null || _config.CrawlStretchCurve.length == 0)
@@ -54,10 +50,10 @@ namespace Movement
             }
         }
 
-        public void SetUrgency(float progress)
+        public void SetUrgency(float urgency)
         {
-            float urgency = Mathf.Clamp01(progress);
-            float multiplier = Mathf.Lerp(1f, _config.FinalSquashFrequencyMultiplier, urgency);
+            float clampedUrgency = Mathf.Clamp01(urgency);
+            float multiplier = Mathf.Lerp(1f, _config.FinalSquashFrequencyMultiplier, clampedUrgency);
             _frequency = _config.MovementSquashFrequency * multiplier;
         }
 

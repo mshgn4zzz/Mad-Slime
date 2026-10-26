@@ -1,10 +1,8 @@
-using Core;
-using Scriptables;
+using Game;
 using System;
 using UnityEngine;
 using VContainer;
-
-namespace Game
+namespace Ads
 {
     public class AdScheduler : MonoBehaviour
     {
@@ -16,6 +14,7 @@ namespace Game
         private Action _pendingRejectedAction;
         private Action _pendingErrorAction;
         private bool _rewardedReceived;
+        private bool _isRewardedRequestRunning;
 
         [Inject]
         public void Construct(IAdsService adsService)
@@ -28,13 +27,15 @@ namespace Game
             if (_config == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: YandexConfig is not assigned. Create a YandexConfig asset and drag it into the _config field.");
+                    $"{name}: YandexConfig is not assigned. Create a YandexConfig asset and "
+                        + $"drag it into the _config field.");
             }
 
             if (_adsService == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: IAdsService was not injected. Check that ProjectLifetimeScope registers the YG2 ads adapter.");
+                    $"{name}: IAdsService was not injected. Check that ProjectLifetimeScope "
+                        + $"registers the YG2 ads adapter.");
             }
         }
 
@@ -54,16 +55,22 @@ namespace Game
             _adsService.RewardedError -= OnRewardedError;
         }
 
-        public void TryShowInterstitial()
+        public bool TryShowInterstitial()
         {
+            if (_adsService.IsAdShowing == true)
+            {
+                return false;
+            }
+
             _adsService.ShowInterstitial();
+            return true;
         }
 
         public string RouletteRewardId => _config.RouletteRewardId;
 
-        public void ShowDoubleReward(Action onGranted)
+        public void ShowDoubleReward(Action onGranted, Action onNotGranted)
         {
-            ShowRewarded(_config.DoubleRewardId, onGranted, null, null, null);
+            ShowRewarded(_config.DoubleRewardId, onGranted, onNotGranted, onNotGranted, onNotGranted);
         }
 
         public void ShowRewarded(string rewardId, Action onGranted, Action onCompletedWithoutReward,
@@ -74,13 +81,14 @@ namespace Game
                 throw new ArgumentNullException(nameof(onGranted));
             }
 
-            if (_adsService.IsAdShowing == true)
+            if (_isRewardedRequestRunning == true || _adsService.IsAdShowing == true)
             {
                 onRejected?.Invoke();
                 return;
             }
 
             _rewardedReceived = false;
+            _isRewardedRequestRunning = true;
             _pendingGrantedAction = onGranted;
             _pendingCompletedWithoutRewardAction = onCompletedWithoutReward;
             _pendingRejectedAction = onRejected;
@@ -100,6 +108,12 @@ namespace Game
 
         private void OnRewardedClosed()
         {
+            if (_isRewardedRequestRunning == false)
+            {
+                return;
+            }
+
+            _isRewardedRequestRunning = false;
             Action granted = _pendingGrantedAction;
             Action completedWithoutReward = _pendingCompletedWithoutRewardAction;
             ClearPendingActions();
@@ -115,6 +129,12 @@ namespace Game
 
         private void OnRewardedError()
         {
+            if (_isRewardedRequestRunning == false)
+            {
+                return;
+            }
+
+            _isRewardedRequestRunning = false;
             Action error = _pendingErrorAction;
             ClearPendingActions();
 

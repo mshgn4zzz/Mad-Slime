@@ -2,8 +2,7 @@ using System;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
-
-namespace Shop
+namespace UI.Shop
 {
     public class ShopItemViewFactory : MonoBehaviour
     {
@@ -23,16 +22,17 @@ namespace Shop
             if (_resolver == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: Resolver was not injected. MenuLifetimeScope must be the first object in the scene hierarchy.");
+                    $"{name}: Resolver was not injected. MenuLifetimeScope must be the first "
+                        + $"object in the scene hierarchy.");
             }
         }
 
-        public SkinRarityGroupView GetRarityGroup(Transform parent)
+        public SkinRarityGroupView CreateRarityGroup(Transform parent)
         {
             return _resolver.Instantiate(_rarityGroupPrefab, parent);
         }
 
-        public ShopItemView Get(Transform parent)
+        public ShopItemView Create(Transform parent)
         {
             return _resolver.Instantiate(_shopItemViewPrefab, parent);
         }

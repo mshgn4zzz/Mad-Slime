@@ -2,28 +2,31 @@ using Audio;
 using CameraSystem;
 using Collectables;
 using Game;
-using Movement;
+using Items;
+using Leaderboards;
+using Levels;
 using Player;
 using PlayerInput;
 using Quota;
-using Scriptables;
+using Skins;
 using System;
-using UI;
-using UI.Animations;
+using UI.HUD;
+using UI.Player;
+using UI.Quota;
+using UI.Spawning;
 using UnityEngine;
 using Upgrades;
 using VContainer;
 using VContainer.Unity;
-
 namespace DI
 {
-    public class GameLifetimeScope : LifetimeScope
+    public class GameLifetimeScope : ValidatedLifetimeScope
     {
         [SerializeField] private PlayerConfig _playerConfig;
         [SerializeField] private LevelGenerator _levelGenerator;
         [SerializeField] private PlayerTier _playerTier;
         [SerializeField] private TierResolver _tierResolver;
-        [SerializeField] private Movement.Movement _movement;
+        [SerializeField] private Movement _movement;
         [SerializeField] private Clamper _clamper;
         [SerializeField] private CrawlAnimator _crawlAnimator;
         [SerializeField] private ScalePunch _scalePunch;
@@ -43,7 +46,7 @@ namespace DI
         [SerializeField] private CameraFovKickAnimator _cameraFovKickAnimator;
         [SerializeField] private CameraFollow _cameraFollow;
         [SerializeField] private SkinApplier _skinApplier;
-        [SerializeField] private GameplayUIFabric _gameplayUIFabric;
+        [SerializeField] private GameplayPauseFlow _gameplayPauseFlow;
         [SerializeField] private PlayerPickupSound _playerPickupSound;
         [SerializeField] private TierUpSound _tierUpSound;
         [SerializeField] private TierUpFx _tierUpFx;
@@ -74,6 +77,9 @@ namespace DI
             builder.Register<QuotaGenerator>(Lifetime.Scoped);
             builder.Register<QuotaOutlineInitializer>(Lifetime.Scoped);
             builder.Register<UiSpawner>(Lifetime.Scoped);
+            builder.Register<GameplayActivityController>(Lifetime.Scoped);
+            builder.Register<FinalCountdownEffects>(Lifetime.Scoped);
+            builder.Register<GameplayPlayerSetup>(Lifetime.Scoped);
 
             builder.RegisterComponent(_levelGenerator);
             builder.RegisterComponent(_playerTier);
@@ -98,7 +104,7 @@ namespace DI
             builder.RegisterComponent(_cameraFovKickAnimator);
             builder.RegisterComponent(_cameraFollow);
             builder.RegisterComponent(_skinApplier);
-            builder.RegisterComponent(_gameplayUIFabric);
+            builder.RegisterComponent(_gameplayPauseFlow);
             builder.RegisterComponent(_playerPickupSound);
             builder.RegisterComponent(_tierUpSound);
             builder.RegisterComponent(_tierUpFx);
@@ -156,7 +162,7 @@ namespace DI
             ValidateAssigned(_cameraFovKickAnimator, nameof(_cameraFovKickAnimator));
             ValidateAssigned(_cameraFollow, nameof(_cameraFollow));
             ValidateAssigned(_skinApplier, nameof(_skinApplier));
-            ValidateAssigned(_gameplayUIFabric, nameof(_gameplayUIFabric));
+            ValidateAssigned(_gameplayPauseFlow, nameof(_gameplayPauseFlow));
             ValidateAssigned(_playerPickupSound, nameof(_playerPickupSound));
             ValidateAssigned(_tierUpSound, nameof(_tierUpSound));
             ValidateAssigned(_tierUpFx, nameof(_tierUpFx));
@@ -178,13 +184,5 @@ namespace DI
             ValidateAssigned(_inputReader, nameof(_inputReader));
         }
 
-        private void ValidateAssigned(object dependency, string fieldName)
-        {
-            if (dependency == null)
-            {
-                throw new InvalidOperationException(
-                    $"GameLifetimeScope: '{fieldName}' is not assigned. Select the DI object in the scene and drag the missing reference.");
-            }
-        }
     }
 }

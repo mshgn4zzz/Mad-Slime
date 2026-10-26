@@ -1,6 +1,5 @@
 using System;
-
-namespace Core
+namespace Localization
 {
     public interface ILanguageProvider
     {

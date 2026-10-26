@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using VContainer;
-
 namespace ShapeFill
 {
     [RequireComponent(typeof(GridBuilder))]
@@ -32,13 +31,15 @@ namespace ShapeFill
             if (_gridBuilder == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: GridBuilder was not injected. Check that FillLifetimeScope registers GridBuilder and ShapeFillOrchestrator.");
+                    $"{name}: GridBuilder was not injected. Check that FillLifetimeScope "
+                        + $"registers GridBuilder and ShapeFillOrchestrator.");
             }
 
             if (_shapeFiller == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: ShapeFiller was not injected. Check that FillLifetimeScope registers ShapeFiller and ShapeFillOrchestrator.");
+                    $"{name}: ShapeFiller was not injected. Check that FillLifetimeScope "
+                        + $"registers ShapeFiller and ShapeFillOrchestrator.");
             }
 
             if (_resultCalculator == null)

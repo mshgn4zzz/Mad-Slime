@@ -1,7 +1,6 @@
-using System.Threading;
 using Cysharp.Threading.Tasks;
-
-namespace Core
+using System.Threading;
+namespace Leaderboards
 {
     public interface ILeaderboardService
     {
@@ -11,7 +10,8 @@ namespace Core
 
         void SetScore(string leaderboardName, int score);
 
-        UniTask<LeaderboardData> RequestEntriesAsync(string leaderboardName, int topCount, CancellationToken cancellationToken);
+        UniTask<LeaderboardData> RequestEntriesAsync(
+            string leaderboardName, int topCount, CancellationToken cancellationToken);
 
         void OpenAuthDialog();
     }

@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using VContainer;
-
 namespace ShapeFill
 {
     [RequireComponent(typeof(Image))]

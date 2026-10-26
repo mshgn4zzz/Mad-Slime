@@ -1,18 +1,16 @@
+using Cysharp.Threading.Tasks;
+using Items;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Cysharp.Threading.Tasks;
-using Items;
-using Quota;
 using Unity.Profiling;
 using UnityEngine;
-
-namespace Game
+namespace Quota
 {
     public class QuotaOutlineInitializer
     {
         private const float FrameBudgetSeconds = 0.006f;
-        private ProfilerMarker _prepareItemMarker =
+        private static ProfilerMarker _prepareItemMarker =
             new ProfilerMarker("QuotaOutlineInitializer.PrepareItem");
 
         private QuotaBoard _board;

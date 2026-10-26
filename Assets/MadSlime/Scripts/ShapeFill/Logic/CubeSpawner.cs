@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-
 namespace ShapeFill
 {
     public class CubeSpawner : MonoBehaviour
@@ -42,7 +41,8 @@ namespace ShapeFill
             if (cube.TryGetComponent(out CubeFlightAnimator flightAnimator) == false)
             {
                 throw new InvalidOperationException(
-                    $"{name}: the FlyingCube prefab '{_cubePrefab.name}' has no CubeFlightAnimator. Add one to the prefab.");
+                    $"{name}: the FlyingCube prefab '{_cubePrefab.name}' has no "
+                        + $"CubeFlightAnimator. Add one to the prefab.");
             }
 
             return flightAnimator;

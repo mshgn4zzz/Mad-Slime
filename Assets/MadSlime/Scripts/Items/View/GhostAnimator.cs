@@ -1,7 +1,6 @@
 using DG.Tweening;
 using System;
 using UnityEngine;
-
 namespace Items
 {
     public class GhostAnimator : MonoBehaviour
@@ -43,7 +42,8 @@ namespace Items
             if (_ghostFadeConfig == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: GhostFadeConfig is not assigned. Drag a GhostFadeConfig asset into the _ghostFadeConfig field.");
+                    $"{name}: GhostFadeConfig is not assigned. Drag a GhostFadeConfig asset "
+                        + $"into the _ghostFadeConfig field.");
             }
 
             if (_ghostFadeConfig.FadeDuration <= 0f)

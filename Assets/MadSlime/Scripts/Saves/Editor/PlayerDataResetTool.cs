@@ -1,13 +1,13 @@
+using Saves;
+using Shop;
+using Skins;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Shop;
-using Skins;
 using UnityEditor;
 using UnityEngine;
 using YG;
-
-namespace EditorTools
+namespace Saves.Editor
 {
     public class PlayerDataResetTool
     {
@@ -65,7 +65,8 @@ namespace EditorTools
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode == true)
             {
-                Debug.LogWarning("[PlayerDataResetTool] Exit play mode first — the running session would overwrite the changes.");
+                                Debug.LogWarning("[PlayerDataResetTool] Exit play mode first — the running session "
+                                        + "would overwrite the changes.");
                 return;
             }
 
@@ -123,7 +124,8 @@ namespace EditorTools
             YG2.saves = data;
             AssetDatabase.Refresh();
 
-            Debug.Log($"[PlayerDataResetTool] all player data reset, balance set to {data.Balance}, open skins {data._openSkinIds.Count}");
+                        Debug.Log($"[PlayerDataResetTool] all player data reset, balance set to {data.Balance}, "
+                                + $"open skins {data._openSkinIds.Count}");
         }
 
         private static List<string> CollectSkinIds()

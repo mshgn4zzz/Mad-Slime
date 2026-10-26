@@ -1,6 +1,5 @@
 using System;
-
-namespace Core
+namespace Ads
 {
     public interface IAdsService
     {
@@ -11,6 +10,8 @@ namespace Core
         event Action RewardedClosed;
 
         event Action RewardedError;
+
+        event Action<bool> PauseGameChanged;
 
         bool IsAdShowing { get; }
 

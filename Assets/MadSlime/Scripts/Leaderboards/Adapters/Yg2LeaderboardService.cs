@@ -1,14 +1,12 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
-using Core;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 using YG;
 using YG.Utils.LB;
-
-namespace Adapters
+namespace Leaderboards
 {
     public class Yg2LeaderboardService : MonoBehaviour, ILeaderboardService
     {
@@ -77,7 +75,8 @@ namespace Adapters
 
             try
             {
-                LeaderboardResponse playerResponse = await RequestAsync(leaderboardName, topCount, true, cancellationToken);
+                LeaderboardResponse playerResponse =
+                    await RequestAsync(leaderboardName, topCount, true, cancellationToken);
                 LeaderboardEntryData[] players = MapPlayers(playerResponse.players);
 
                 for (int i = 0; i < players.Length; i++)
@@ -101,15 +100,16 @@ namespace Adapters
             return new LeaderboardData(top, currentPlayer, hasPlayerError);
         }
 
-        private async UniTask<LeaderboardResponse> RequestAsync(string leaderboardName, int topCount, bool currentPlayer,
-            CancellationToken cancellationToken)
+        private async UniTask<LeaderboardResponse> RequestAsync(
+            string leaderboardName, int topCount, bool currentPlayer, CancellationToken cancellationToken)
         {
             using (CancellationTokenSource requestSource = CancellationTokenSource.CreateLinkedTokenSource(
                 cancellationToken, this.GetCancellationTokenOnDestroy()))
             {
                 _nextRequestId = checked(_nextRequestId + 1);
                 int requestId = _nextRequestId;
-                UniTaskCompletionSource<LeaderboardResponse> completion = new UniTaskCompletionSource<LeaderboardResponse>();
+                UniTaskCompletionSource<LeaderboardResponse> completion =
+                    new UniTaskCompletionSource<LeaderboardResponse>();
                 _requests.Add(requestId, completion);
 
                 try

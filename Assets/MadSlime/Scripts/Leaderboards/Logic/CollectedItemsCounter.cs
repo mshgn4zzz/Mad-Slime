@@ -1,9 +1,8 @@
-using System;
 using Collectables;
 using Items;
 using Saves;
-
-namespace Game
+using System;
+namespace Leaderboards
 {
     public class CollectedItemsCounter : IDisposable
     {

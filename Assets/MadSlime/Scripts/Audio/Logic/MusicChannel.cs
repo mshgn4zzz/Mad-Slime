@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Scriptables;
 using UnityEngine;
-
 namespace Audio
 {
     public class MusicChannel
@@ -23,9 +21,14 @@ namespace Audio
         public MusicChannel(AudioSource firstSource, AudioSource secondSource, float fadeInDuration,
             float fadeOutDuration, float overlapDuration)
         {
-            if (firstSource == null || secondSource == null)
+            if (firstSource == null)
             {
-                throw new ArgumentNullException("MusicChannel requires two music sources.");
+                throw new ArgumentNullException(nameof(firstSource));
+            }
+
+            if (secondSource == null)
+            {
+                throw new ArgumentNullException(nameof(secondSource));
             }
 
             if (fadeInDuration <= 0f)

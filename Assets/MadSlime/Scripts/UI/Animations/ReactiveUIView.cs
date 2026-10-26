@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-
 namespace UI.Animations
 {
     public class ReactiveUIView : MonoBehaviour
@@ -14,7 +13,6 @@ namespace UI.Animations
         public event Action EnableRequested;
         public event Action DisableRequested;
         public event Action<bool> StateReset;
-        public event Action<ReactiveUIView> EnableCompleted;
         public event Action<ReactiveUIView> DisableCompleted;
 
         public bool IsActive => _isActive;
@@ -148,7 +146,6 @@ namespace UI.Animations
         {
             if (_isActive == true)
             {
-                EnableCompleted?.Invoke(this);
             }
             else
             {

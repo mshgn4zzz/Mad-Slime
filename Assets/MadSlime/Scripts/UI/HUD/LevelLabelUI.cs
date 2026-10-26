@@ -1,15 +1,24 @@
 using System;
-using Game;
 using TMPro;
 using UnityEngine;
-
-namespace UI
+namespace UI.HUD
 {
+    using Localization = global::Localization.Localization;
+
     public class LevelLabelUI : MonoBehaviour
     {
         [SerializeField] private TMP_Text _labelText;
 
         private int _level;
+
+        private void Awake()
+        {
+            if (_labelText == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: LabelText is not assigned. Drag a TMP_Text into the _labelText field.");
+            }
+        }
 
         private void OnEnable()
         {

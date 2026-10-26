@@ -1,13 +1,12 @@
+using Collectables;
+using Cysharp.Threading.Tasks;
+using Items;
+using Quota;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Cysharp.Threading.Tasks;
-using Collectables;
-using Items;
-using Quota;
 using UnityEngine;
-
-namespace Game
+namespace Levels
 {
     public class LevelItemsSpawner
     {
@@ -17,10 +16,11 @@ namespace Game
         private Transform _itemsRoot;
         private ItemCollector _collector;
         private List<Item> _activeItems = new List<Item>(256);
+        private Dictionary<Item, int> _activeIndexes = new Dictionary<Item, int>(256);
         private Dictionary<ItemDefinition, int> _spawnedCounts = new Dictionary<ItemDefinition, int>();
 
         public IReadOnlyList<Item> ActiveItems => _activeItems;
-        public Dictionary<ItemDefinition, int> SpawnedCounts => _spawnedCounts;
+        public IReadOnlyDictionary<ItemDefinition, int> SpawnedCounts => _spawnedCounts;
 
         public LevelItemsSpawner(ItemFactory itemFactory, Transform itemsRoot)
         {
@@ -52,7 +52,8 @@ namespace Game
                 || body.Collider is BoxCollider boxCollider == false)
             {
                 throw new InvalidOperationException(
-                    $"{prefab.name}: Item prefab needs a BoxCollider in the Collider field on ItemBody to measure the XZ radius.");
+                    $"{prefab.name}: Item prefab needs a BoxCollider in the Collider field on "
+                        + $"ItemBody to measure the XZ radius.");
             }
 
             Vector3 scaledSize = Vector3.Scale(boxCollider.size, prefab.transform.lossyScale);
@@ -99,6 +100,7 @@ namespace Game
             }
 
             _activeItems.Clear();
+            _activeIndexes.Clear();
             _spawnedCounts.Clear();
         }
 
@@ -114,6 +116,7 @@ namespace Game
                 Item item = _itemFactory.Create(placement.Prefab, placement.Definition,
                     placement.Position, placement.Scale, _itemsRoot);
                 _activeItems.Add(item);
+                _activeIndexes.Add(item, _activeItems.Count - 1);
                 CountSpawned(placement.Definition);
 
                 if (Time.realtimeSinceStartup - frameStart >= SpawnFrameBudgetSeconds)
@@ -176,7 +179,12 @@ namespace Game
 
         private void OnItemCollected(Item item)
         {
-            _activeItems.Remove(item);
+            int index = _activeIndexes[item];
+            Item last = _activeItems[_activeItems.Count - 1];
+            _activeItems[index] = last;
+            _activeIndexes[last] = index;
+            _activeItems.RemoveAt(_activeItems.Count - 1);
+            _activeIndexes.Remove(item);
         }
 
         private void CountSpawned(ItemDefinition definition)

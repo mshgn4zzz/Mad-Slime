@@ -1,0 +1,198 @@
+{
+  "date": "2026-10-27",
+  "round": 2,
+  "scope": "Assets/MadSlime (все .cs, включая ResponsiveUI и Editor-инструменты) + tools/verification/*.cs; сгенерированный PlayerInputActions.cs и сторонние ассеты исключены",
+  "criteria_source": "Wiki/Ревью/Критерии оценки кода.md (1–55)",
+  "previous_findings_status": [
+    {
+      "id": 1,
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/Game/Logic/SceneNavigator.cs",
+      "class": "SceneNavigator",
+      "old_line": 313,
+      "summary": "Бесконечное ожидание регистрации сессии сцены",
+      "status": "fixed",
+      "actual_line": 15,
+      "comment": "Добавлена константа SessionRegistrationTimeoutSeconds = 10f (строка 15); цикл ожидания прерывается InvalidOperationException с подсказкой о сбое lifetime scope (строки 296–307)."
+    },
+    {
+      "id": 2,
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/UI/Localization/LocalizedText.cs",
+      "class": "LocalizedText",
+      "old_line": 36,
+      "summary": "Бросок исключения при пустом ключе внутри обработчика смены языка",
+      "status": "fixed",
+      "actual_line": 22,
+      "comment": "Проверка ключа перенесена в Awake (строки 22–27, InvalidOperationException); OnLanguageChanged больше не бросает."
+    },
+    {
+      "id": 3,
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/Saves/Logic/Saver.cs",
+      "class": "Saver",
+      "old_line": 154,
+      "summary": "ToVolumePercent неверно трактовал громкость <= 1",
+      "status": "moved",
+      "actual_line": 39,
+      "comment": "Класс Saver удалён; логика перенесена в Saves/Logic/AudioStorage.cs (ToVolumePercent, строки 35–49), условие заменено на storedVolume < 1f (строка 39)."
+    },
+    {
+      "id": 4,
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/ShapeFill/UI/FillUIFabric.cs",
+      "class": "FillUIFabric",
+      "old_line": 315,
+      "summary": "Показ x2-награды без колбэков отказа",
+      "status": "moved",
+      "actual_line": 305,
+      "comment": "Класс переименован в UI/Fill/FillUiPresenter.cs; вызов заменён на _adScheduler.ShowDoubleReward(OnDoubleRewardGranted, OnDoubleRewardNotGranted) — оба колбэка передаются (строка 305)."
+    },
+    {
+      "id": 5,
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/UI/Roulette/RoulettePresenter.cs",
+      "class": "RoulettePresenter",
+      "old_line": 332,
+      "summary": "Приз сохранён, но попап не показан и onComplete не вызван при отмене",
+      "status": "still-there",
+      "actual_line": 331,
+      "comment": "Логика переехала в ShowPrizeAsync (строки 331–349): при OperationCanceledException добавлен Debug.LogWarning «the prize was granted and saved, but its popup was not shown…» (строки 341–343), но onComplete по-прежнему не вызывается — подписчик не узнаёт о завершении вращения."
+    },
+    {
+      "id": 6,
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/Audio/Logic/AudioMixerController.cs",
+      "class": "AudioMixerController",
+      "old_line": 103,
+      "summary": "Снап громкости не сохранялся в сейв",
+      "status": "fixed",
+      "actual_line": 107,
+      "comment": "При отличии текущих громкостей от сохранённых вызывается _audioStorage.SetVolumes (строки 107–110)."
+    },
+    {
+      "id": 7,
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/CameraSystem/Logic/CameraFollow.cs",
+      "class": "CameraFollow",
+      "old_line": 70,
+      "summary": "Шейк загрязнял SmoothDamp-состояние",
+      "status": "fixed",
+      "actual_line": 68,
+      "comment": "SmoothDamp теперь считается от transform.position - shakeOffset, смещение прибавляется после (строки 68–75)."
+    },
+    {
+      "id": 8,
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/CameraSystem/Data/AttractConfig.cs",
+      "class": "AttractConfig",
+      "old_line": 23,
+      "summary": "Поле OrbitStrength не использовалось",
+      "status": "fixed",
+      "actual_line": null,
+      "comment": "Свойство и поле удалены; остались используемые AttractionForce/ApproachMultiplier/ApproachPower."
+    },
+    {
+      "id": 9,
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/Levels/Logic/LevelItemsSpawner.cs",
+      "class": "LevelItemsSpawner",
+      "old_line": 179,
+      "summary": "O(n) удаление элемента из активного списка",
+      "status": "fixed",
+      "actual_line": 180,
+      "comment": "Внедрено удаление swap-with-last и словарь _activeIndexes (строки 180–188)."
+    },
+    {
+      "id": 10,
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/Game/Logic/SceneNavigator.cs",
+      "class": "SceneNavigator",
+      "old_line": 90,
+      "summary": "ArgumentNullException всегда называл параметр preparation",
+      "status": "fixed",
+      "actual_line": 79,
+      "comment": "Каждая проверка называет свой параметр: preparation/sessionStart/sessionFinish (строки 79–92)."
+    }
+  ],
+  "new_findings": [
+    {
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/Ads/Logic/AdScheduler.cs",
+      "class": "AdScheduler",
+      "line": 77,
+      "quote": "if (_adsService.IsAdShowing == true) { onRejected?.Invoke(); return; } … _adsService.ShowRewarded(rewardId);",
+      "problem": "Защита от повторного показа опирается на YG2.nowAdsShow, который плагин выставляет только при фактическом открытии рекламы (RewardedAdv_yg.cs:62), а сам YG2.RewardedAdvShow молча игнорирует второй вызов. Между первым ShowRewarded и открытием рекламы второй вызов проходит проверку и перезаписывает _pendingGrantedAction/_pendingCompletedWithoutRewardAction/_pendingRejectedAction/_pendingErrorAction — колбэки первого вызова теряются безвозвратно. Сейчас все три вызывающих (FillUiPresenter, FillRescueFlow, RoulettePresenter) защищены своими флагами, поэтому риск латентный, но класс AdScheduler сам по себе защиту не даёт.",
+      "criteria": 45
+    },
+    {
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/UI/Shop/MenuContent.cs",
+      "class": "MenuContent",
+      "line": 92,
+      "quote": "_roulettePreparation.SkinModel.RefreshSlots();",
+      "problem": "Свойство RoulettePreparation.SkinModel может вернуть null (оно создаётся в Prepare), и соседний вызывающий UI/Menu/MenuRouletteFlow.cs:40 явно проверяет `if (_roulettePreparation.SkinModel == null) return;`, а MenuContent обращается без проверки — несогласованный потенциальный NullReferenceException.",
+      "criteria": 46
+    },
+    {
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/UI/Common/BarFiller.cs",
+      "class": "BarFiller",
+      "line": 9,
+      "quote": "public BarFiller(Image bar) { _bar = bar; } … _bar.fillAmount = clamped;",
+      "problem": "Агрегат неполной null-валидации: BarFiller не проверяет bar в конструкторе (NRE в SetFill, строка 17); QuotaPlateUI.cs:12–20 не проверяет _icon/_text; ShopItemView.cs:25–31 в Awake валидирует только _backgroundImage, а _contentImage/_lockImage/_selectedMark не проверяются (NRE в Initialize); UpgradeItemView.cs:21–31 не проверяет ни одно из 5 полей; CameraPullAnimator.cs:73 и CameraShakeAnimator.cs:61 читают item.Definition.Tier без проверки Definition, хотя ItemAttractor такую проверку делает — несогласованность.",
+      "criteria": 46
+    },
+    {
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/CameraSystem/Data/CameraConfig.cs",
+      "class": "CameraConfig",
+      "line": 50,
+      "quote": "[SerializeField, Range(0f, 1f)] private Vector2 _shakeAxes = Vector2.one;",
+      "problem": "Атрибут Range не действует на Vector2: инспектор рисует обычное поле Vector2 и никак не ограничивает компоненты диапазоном 0..1, заявленным в тултипе («0 = ось выключена» — отрицательные значения не отсекаются).",
+      "criteria": 45
+    },
+    {
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/Ads/Logic/AdScheduler.cs",
+      "class": "AdScheduler",
+      "line": 57,
+      "quote": "public void TryShowInterstitial()",
+      "problem": "Метод с префиксом Try не возвращает bool и не сообщает об успехе — по критерию Try-методы должны возвращать bool; единственный вызов (ShapeFill/Logic/FillSceneOrchestrator.cs:263) результат всё равно игнорирует.",
+      "criteria": 52
+    },
+    {
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/Quota/Logic/QuotaCounter.cs",
+      "class": "QuotaCounter",
+      "line": 10,
+      "quote": "private const float MaxFillPercent = 1f;",
+      "problem": "Константа объявлена, но нигде в проекте не читается — GetFillPercent ограничивает значение через Mathf.Clamp01. Мёртвый код.",
+      "criteria": 48
+    },
+    {
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/DI/GameLifetimeScope.cs",
+      "class": "GameLifetimeScope",
+      "line": 1,
+      "quote": "using Audio;",
+      "problem": "Агрегат неиспользуемых using: единственное вхождение «Audio» в файле — сама директива; также UI/Menu/MenuNavigation.cs:4 `using Shop;` (типы Shop в файле не используются, MenuContent — из UI.Shop), DI/MenuLifetimeScope.cs:8 `using System;` (типов System нет), Audio/View/PlayerPickupSound.cs:2 `using Items;` (Item используется только квалифицированно как Items.Item на строке 80).",
+      "criteria": 54
+    },
+    {
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/Items/Editor/ItemPropFactory.Icons.cs",
+      "class": "ItemPropFactory",
+      "line": 84,
+      "quote": "private static Texture2D RenderModelToTexture(GameObject modelPrefab, int iconLayer)",
+      "problem": "Агрегат дублирования editor-инструментов: RenderModelToTexture, SetLayerRecursively, ResolveFreeLayer, FitCameraToBounds (Icons.cs:61–171), GetFolderPath/EnsureFolder (Generation.cs:209–233) почти дословно скопированы в Skins/Editor/SkinItemFactory.cs:393–516, и копии уже разъехались: поворот света Quaternion.Euler(45,-30,0) против Euler(35,210,0), IconOrthographicPadding 1.15 против 1, в SkinItemFactory границы слоёв 9/31 зашиты числами вместо констант LowestFreeLayer/HighestFreeLayer.",
+      "criteria": 19
+    },
+    {
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/UI/Leaderboards/LeaderboardMenu.cs",
+      "class": "LeaderboardMenu",
+      "line": 71,
+      "quote": "                                throw new InvalidOperationException($\"{name}: show the leaderboard through \"",
+      "problem": "Агрегат съехавших отступов строк-продолжений (продолжение строки исключения/тултипа выбивается из общего стиля на 8+ пробелов): LeaderboardMenu.cs:71–72, LanguageSwitcher.cs:72–73, SkinRarityGroupView.cs:25–26, GrowthBarView.cs:37–45, RouletteWinPopup.cs:73–75, GameplayUIFabric.cs:30–32 и 50–52, UiSpawner.cs:18–19 и 88–89, ModelPlacer.cs:15–20 и 105–106, RouletteWheel.cs:25–26, CameraConfig.cs:24–25, AdScheduler.cs:29–30 и 36–37, GameplayOrchestrator.cs:106–108/134–136/141–143, ItemPropFactory.cs:51–57, ItemPropFactory.Generation.cs:34–35, PlayerDataResetTool.cs:69–70 и 117–119.",
+      "criteria": 45
+    },
+    {
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/Game/Logic/Timer.cs",
+      "class": "Timer",
+      "line": 36,
+      "quote": "throw new InvalidOperationException(\"Timer.Start called before Setup. Call Setup(duration) first.\");",
+      "problem": "Текст исключения называет метод Timer.Start, которого не существует — метод называется StartCount; сообщение уводит отладчика не туда.",
+      "criteria": 45
+    },
+    {
+      "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/Skins/Data/RaritySettings.cs",
+      "class": "RaritySettings",
+      "line": 4,
+      "quote": "[Serializable]\npublic class RaritySettings\n{",
+      "problem": "Агрегат стилевых несоответствий: фигурные скобки класса в нулевой колонке (RaritySettings.cs:4, RouletteSector.cs:4, PropVariant.cs:5, LocaleEntry.cs:4 — в остальном проекте скобки с отступом); полное квалифицирование `throw new System.InvalidOperationException` при наличии using System — Items/Logic/ItemFactory.cs:15 и ResponsiveUI/Runtime/ResponsiveSkinGrid.cs:22; бессмысленная приватная обёртка Destroy поверх UnityEngine.Object.Destroy — UI/Spawning/UiSpawner.cs:121–124; ArgumentException без nameof(param) при том, что соседние проверки в том же конструкторе используют nameof — Audio/Logic/MusicChannel.cs:26; в сообщении об ошибке RouletteWinPopup.cs:63 двойной пробел («PrizeFrame,  ») и смесь стилей конкатенации (+ $\" и + \").",
+      "criteria": 45
+    }
+  ]
+}

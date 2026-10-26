@@ -1,6 +1,5 @@
 using System;
-
-namespace Core
+namespace Game
 {
     public interface IGameVisibility
     {

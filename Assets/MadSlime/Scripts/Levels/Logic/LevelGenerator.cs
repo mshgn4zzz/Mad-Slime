@@ -1,17 +1,15 @@
+using Collectables;
+using Cysharp.Threading.Tasks;
+using Items;
+using Player;
+using Quota;
+using Saves;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Cysharp.Threading.Tasks;
-using Collectables;
-using Items;
-using Quota;
-using Saves;
-using Scriptables;
-using Skills;
 using UnityEngine;
 using VContainer;
-
-namespace Game
+namespace Levels
 {
     public class LevelGenerator : MonoBehaviour
     {
@@ -28,7 +26,7 @@ namespace Game
         private QuotaGenerator _quotaGenerator;
         private TierTable _tierTable;
         private LayoutsLibrary _layoutsLibrary;
-        private Movement.Clamper _clamper;
+        private Clamper _clamper;
         private ItemCollector _itemCollector;
         private LevelSurface _surface;
         private LevelEnvironment _environment;
@@ -38,7 +36,7 @@ namespace Game
         [Inject]
         public void Construct(LevelConfigResolver configResolver, ILevelStorage levelStorage,
             QuotaBoard quotaBoard, QuotaGenerator quotaGenerator, TierTable tierTable,
-            LayoutsLibrary layoutsLibrary, Movement.Clamper clamper, ItemCollector itemCollector)
+            LayoutsLibrary layoutsLibrary, Clamper clamper, ItemCollector itemCollector)
         {
             _configResolver = configResolver;
             _levelStorage = levelStorage;
@@ -61,7 +59,8 @@ namespace Game
             if (_configResolver == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: dependencies were not injected. GameLifetimeScope must be the first object in the scene hierarchy.");
+                    $"{name}: dependencies were not injected. GameLifetimeScope must be the "
+                        + $"first object in the scene hierarchy.");
             }
 
             if (_floorRenderer == null)
@@ -73,19 +72,22 @@ namespace Game
             if (_clamper == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: Clamper was not injected. Check that GameLifetimeScope registers Clamper and LevelGenerator.");
+                    $"{name}: Clamper was not injected. Check that GameLifetimeScope registers "
+                        + $"Clamper and LevelGenerator.");
             }
 
             if (_quotaBoard == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: QuotaBoard was not injected. Check that ProjectLifetimeScope registers QuotaBoard and LevelGenerator.");
+                    $"{name}: QuotaBoard was not injected. Check that ProjectLifetimeScope "
+                        + $"registers QuotaBoard and LevelGenerator.");
             }
 
             if (_itemCollector == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: ItemCollector was not injected. Check that GameLifetimeScope registers ItemCollector and LevelGenerator.");
+                    $"{name}: ItemCollector was not injected. Check that GameLifetimeScope "
+                        + $"registers ItemCollector and LevelGenerator.");
             }
 
             _itemsSpawner = new LevelItemsSpawner(new ItemFactory(), _itemsRoot);
@@ -152,9 +154,22 @@ namespace Game
 
         private void ApplyTheme(LevelConfig config)
         {
-            if (_floorRenderer == null || config.Theme == null || config.Theme.FloorMaterial == null)
+            if (config.Theme == null)
             {
-                return;
+                throw new InvalidOperationException(
+                    $"{config.name}: LevelTheme is not assigned. Assign a theme asset in the level config.");
+            }
+
+            if (config.Theme.FloorMaterial == null)
+            {
+                throw new InvalidOperationException(
+                    $"{config.Theme.name}: floor material is required. Assign it in the LevelTheme asset.");
+            }
+
+            if (_floorRenderer == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: floor renderer is not assigned. Drag the floor MeshRenderer into LevelGenerator.");
             }
 
             _floorRenderer.sharedMaterial = config.Theme.FloorMaterial;

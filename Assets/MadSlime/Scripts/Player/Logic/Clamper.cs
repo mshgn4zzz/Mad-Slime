@@ -1,8 +1,6 @@
 using System;
-using Player;
 using UnityEngine;
-
-namespace Movement
+namespace Player
 {
     public class Clamper : MonoBehaviour, IRadiusRecipient
     {

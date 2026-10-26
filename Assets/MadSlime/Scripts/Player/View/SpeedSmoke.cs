@@ -1,9 +1,6 @@
-using Movement;
-using Scriptables;
 using System;
 using UnityEngine;
 using VContainer;
-
 namespace Player
 {
     public class SpeedSmoke : MonoBehaviour
@@ -17,11 +14,11 @@ namespace Player
         private Vector3 _baseSmokeScale;
         private Vector3 _baseSmokePosition;
         private PlayerConfig _config;
-        private Movement.Movement _movement;
+        private Movement _movement;
         private bool _isSmoking;
 
         [Inject]
-        public void Construct(PlayerConfig config, Movement.Movement movement)
+        public void Construct(PlayerConfig config, Movement movement)
         {
             _config = config;
             _movement = movement;
@@ -32,19 +29,22 @@ namespace Player
             if (_smoke == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: Smoke is not assigned. Place a looping smoke ParticleSystem in the scene and drag it into the _smoke field.");
+                    $"{name}: Smoke is not assigned. Place a looping smoke ParticleSystem in "
+                        + $"the scene and drag it into the _smoke field.");
             }
 
             if (_config == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: PlayerConfig was not injected. Check that GameLifetimeScope registers PlayerConfig and SpeedSmoke.");
+                    $"{name}: PlayerConfig was not injected. Check that GameLifetimeScope "
+                        + $"registers PlayerConfig and SpeedSmoke.");
             }
 
             if (_movement == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: Movement was not injected. Check that GameLifetimeScope registers Movement and SpeedSmoke.");
+                    $"{name}: Movement was not injected. Check that GameLifetimeScope registers "
+                        + $"Movement and SpeedSmoke.");
             }
 
             if (_playerScaler == null)

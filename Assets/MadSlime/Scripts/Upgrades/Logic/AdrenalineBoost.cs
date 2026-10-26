@@ -1,23 +1,20 @@
-using Movement;
-using Scriptables;
+using Player;
 using System;
 using UnityEngine;
-using Upgrades;
 using VContainer;
-
-namespace Player
+namespace Upgrades
 {
     public class AdrenalineBoost : MonoBehaviour
     {
         private PlayerUpgrades _upgrades;
-        private Movement.Movement _movement;
+        private Movement _movement;
         private bool _isBoosted;
 
         public event Action BoostStarted;
         public event Action BoostEnded;
 
         [Inject]
-        public void Construct(PlayerUpgrades upgrades, Movement.Movement movement)
+        public void Construct(PlayerUpgrades upgrades, Movement movement)
         {
             _upgrades = upgrades;
             _movement = movement;
@@ -28,13 +25,15 @@ namespace Player
             if (_upgrades == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: PlayerUpgrades was not injected. Check that ProjectLifetimeScope registers PlayerUpgrades.");
+                    $"{name}: PlayerUpgrades was not injected. Check that ProjectLifetimeScope "
+                        + $"registers PlayerUpgrades.");
             }
 
             if (_movement == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: Movement was not injected. Check that GameLifetimeScope registers Movement and AdrenalineBoost.");
+                    $"{name}: Movement was not injected. Check that GameLifetimeScope registers "
+                        + $"Movement and AdrenalineBoost.");
             }
 
         }

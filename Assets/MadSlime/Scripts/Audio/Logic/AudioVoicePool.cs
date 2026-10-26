@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
-
 namespace Audio
 {
     internal class AudioVoicePool
     {
+        private const int MaxSourceCount = 24;
+
         private List<AudioSource> _sources = new List<AudioSource>();
         private List<float> _sourceEndTimes = new List<float>();
         private AudioMixerGroup _mixerGroup;
@@ -28,7 +29,9 @@ namespace Audio
 
             if (freeIndex < 0)
             {
-                freeIndex = AddSource();
+                freeIndex = _sources.Count < MaxSourceCount
+                    ? AddSource()
+                    : FindSoonestSourceIndex();
             }
 
             AudioSource source = _sources[freeIndex];
@@ -63,6 +66,21 @@ namespace Audio
             }
 
             return -1;
+        }
+
+        private int FindSoonestSourceIndex()
+        {
+            int soonestIndex = 0;
+
+            for (int index = 1; index < _sourceEndTimes.Count; index++)
+            {
+                if (_sourceEndTimes[index] < _sourceEndTimes[soonestIndex])
+                {
+                    soonestIndex = index;
+                }
+            }
+
+            return soonestIndex;
         }
     }
 }

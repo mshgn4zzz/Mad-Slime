@@ -1,4 +1,3 @@
-using Scriptables;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -188,7 +187,8 @@ namespace Audio
             if (clip.IsRandomPitch && clip.MinPitch > clip.MaxPitch)
             {
                 throw new InvalidOperationException(
-                    $"{name}: SfxClip '{clip.name}' has MinPitch {clip.MinPitch} greater than MaxPitch {clip.MaxPitch}.");
+                    $"{name}: SfxClip '{clip.name}' has MinPitch {clip.MinPitch} greater than "
+                        + $"MaxPitch {clip.MaxPitch}.");
             }
         }
 

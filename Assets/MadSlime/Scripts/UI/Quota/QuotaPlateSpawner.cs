@@ -1,7 +1,7 @@
+using Quota;
 using System;
 using UnityEngine;
-
-namespace Quota
+namespace UI.Quota
 {
     public class QuotaPlateSpawner
     {

@@ -1,4 +1,4 @@
-namespace Skills
+namespace Items
 {
     public enum SizeTier
     {

@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-
-namespace Scriptables
+namespace Localization
 {
     [CreateAssetMenu(menuName = "Mad Slime/Localization Table", fileName = "Localization")]
     public class LocalizationTable : ScriptableObject
     {
+        public const string Russian = "ru";
+        public const string English = "en";
+        public const string Turkish = "tr";
+
         [Tooltip("Строки локализации: ключ + переводы по языкам.")]
         [SerializeField] private List<LocaleEntry> _entries = new List<LocaleEntry>();
 
@@ -28,51 +31,4 @@ namespace Scriptables
         public IEnumerable<LocaleEntry> Entries => _entries;
     }
 
-    [Serializable]
-    public class LocaleEntry
-    {
-        [Tooltip("Ключ, по которому код запрашивает строку через Localization.Get.")]
-        [SerializeField, InspectorName("Ключ")] private string _key;
-
-        [Tooltip("Русская строка.")]
-        [SerializeField, InspectorName("Русский (ru)")] private string _ru;
-
-        [Tooltip("Английская строка. Пусто — фолбэк на русскую.")]
-        [SerializeField, InspectorName("English (en)")] private string _en;
-
-        [Tooltip("Турецкая строка. Пусто — фолбэк на английскую.")]
-        [SerializeField, InspectorName("Türkçe (tr)")] private string _tr;
-
-        public string Key => _key;
-
-        public string Get(string language)
-        {
-            if (language == "en")
-            {
-                return Pick(_en, _ru);
-            }
-
-            if (language == "tr")
-            {
-                return Pick(_tr, _en);
-            }
-
-            return Pick(_ru, _en);
-        }
-
-        private static string Pick(string preferred, string fallback)
-        {
-            if (string.IsNullOrEmpty(preferred) == false)
-            {
-                return preferred;
-            }
-
-            if (string.IsNullOrEmpty(fallback) == false)
-            {
-                return fallback;
-            }
-
-            return string.Empty;
-        }
-    }
 }

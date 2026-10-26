@@ -1,9 +1,8 @@
 using System;
-using Scriptables;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Game
+namespace Levels
 {
     public class LevelEnvironment
     {

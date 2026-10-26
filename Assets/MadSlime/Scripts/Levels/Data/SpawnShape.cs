@@ -1,4 +1,4 @@
-namespace Scriptables
+namespace Levels
 {
     public enum SpawnShape
     {

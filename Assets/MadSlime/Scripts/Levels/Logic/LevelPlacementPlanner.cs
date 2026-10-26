@@ -1,12 +1,10 @@
+using Items;
 using System;
 using System.Collections.Generic;
-using Items;
-using Scriptables;
-using Skills;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Game
+namespace Levels
 {
     public class LevelPlacementPlanner
     {
@@ -25,7 +23,8 @@ namespace Game
         {
             if (library == null || library.Layouts.Count == 0)
             {
-                throw new InvalidOperationException("LevelPlacementPlanner: layouts library is required and cannot be empty.");
+                                throw new InvalidOperationException("LevelPlacementPlanner: layouts library is "
+                                        + "required and cannot be empty.");
             }
 
             for (int i = 0; i < library.Layouts.Count; i++)
@@ -51,6 +50,13 @@ namespace Game
             _bossCount = 0;
             bool mirrorX = layout.AllowMirroring == true && Random.value > 0.5f;
             bool mirrorZ = layout.AllowMirroring == true && Random.value > 0.5f;
+
+            if (config.MinTier > config.MaxTier)
+            {
+                throw new InvalidOperationException(
+                    $"{layout.name}: level config '{config.name}' has MinTier {config.MinTier} above MaxTier "
+                        + $"{config.MaxTier}, so no tier loop can run. Fix the tier bounds of the level config.");
+            }
 
             for (int tierIndex = (int)config.MaxTier; tierIndex >= (int)config.MinTier; tierIndex--)
             {
@@ -92,7 +98,8 @@ namespace Game
 
             if (_placements.Count == 0)
             {
-                throw new InvalidOperationException($"{layout.name}: no zones match the item tiers of level config '{config.name}'.");
+                                throw new InvalidOperationException($"{layout.name}: no zones match the item tiers "
+                                        + $"of level config '{config.name}'.");
             }
 
             return _placements;

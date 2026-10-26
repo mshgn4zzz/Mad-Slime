@@ -13,28 +13,28 @@ MonoBehaviour:
   m_Name: RouletteConfig
   m_EditorClassIdentifier: 
   _sectors:
-  - _rewardKind: 0
+  - _rewardType: 0
     _coins: 50
     _dropChance: 31.818182
-  - _rewardKind: 0
+  - _rewardType: 0
     _coins: 150
     _dropChance: 22.727273
-  - _rewardKind: 0
+  - _rewardType: 0
     _coins: 300
     _dropChance: 13.636364
-  - _rewardKind: 0
+  - _rewardType: 0
     _coins: 600
     _dropChance: 9.090909
-  - _rewardKind: 0
+  - _rewardType: 0
     _coins: 1000
     _dropChance: 6.363636
-  - _rewardKind: 0
+  - _rewardType: 0
     _coins: 1500
     _dropChance: 3.636364
-  - _rewardKind: 0
+  - _rewardType: 0
     _coins: 3000
     _dropChance: 2.727272
-  - _rewardKind: 1
+  - _rewardType: 1
     _coins: 0
     _dropChance: 10
   _exclusiveSkins:

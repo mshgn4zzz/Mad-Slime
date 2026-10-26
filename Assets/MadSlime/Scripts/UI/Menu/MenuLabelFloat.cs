@@ -1,6 +1,5 @@
 using UnityEngine;
-
-namespace UI
+namespace UI.Menu
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(RectTransform))]
@@ -33,7 +32,7 @@ namespace UI
             }
 
             _elapsed += deltaTime;
-            float offset = Mathf.Sin(_elapsed * (Mathf.PI * 2f / Mathf.Max(0.1f, _period))) * _amplitude;
+            float offset = Mathf.Sin(_elapsed * (Mathf.PI * 2f / _period)) * _amplitude;
             _rect.anchoredPosition = _restPosition + Vector2.up * offset;
         }
 

@@ -1,0 +1,62 @@
+[
+  {
+    "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/Game/Logic/SceneNavigator.cs",
+    "line": 313,
+    "summary": "TransitionAsync waits forever for the incoming scene to register its session: `await UniTask.WaitUntil(IsIncomingSessionRegistered, ...)` has no timeout and no cancellation path other than navigator destruction. If the new scene fails to register (an exception in its DI initialization or PrepareSession, e.g. a missing inspector reference throws in an injected component), the loading screen stays up permanently and _isTransitioning stays true, so every later LoadMenuAsync/LoadGameAsync call silently early-returns.",
+    "failure_scenario": "Any unhandled exception while a scene initializes after LoadAsync (bad prefab reference, save-data edge, config error): the loading screen never hides, the game soft-locks until page reload, and the error is easy to miss because navigation keeps no-oping afterwards."
+  },
+  {
+    "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/UI/Localization/LocalizedText.cs",
+    "line": 36,
+    "summary": "OnLanguageChanged throws InvalidOperationException when _key is empty, and it runs inside the static Localization.LanguageChanged multicast delegate (Localization.cs:54). An exception in one subscriber aborts the whole invocation, so every LocalizedText (and any other subscriber) registered after the faulty one never receives the change, and the exception escapes SetLanguage into the caller (e.g. the language-switch click handler).",
+    "failure_scenario": "One LocalizedText in any prefab/scene is left with an empty key (easy with hand-edited YAML): switching language updates only the texts that come before that component in the delegate list, the rest keep the old language, and the switch handler dies with a logged error mid-update."
+  },
+  {
+    "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/Saves/Adapters/Saver.cs",
+    "line": 154,
+    "summary": "ToVolumePercent treats any stored value <= 1 as a legacy 0..1 fraction and multiplies it by 100, but the current format already stores integer percents and SetVolumes clamps to 0..100, so a legitimate saved volume of exactly 1 (one percent) is read back as 100 percent.",
+    "failure_scenario": "Player sets music or sfx volume to 1%: on the next launch the saved 1 is interpreted as legacy 1.0, the mixer and settings slider jump to 100%, and if the settings panel then commits, the 1% value is permanently overwritten with 100."
+  },
+  {
+    "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/UI/Fill/FillUIFabric.cs",
+    "line": 315,
+    "summary": "The double-reward path calls SetDoubleRewardAvailable(false) and then _adScheduler.ShowDoubleReward(OnDoubleRewardGranted) with no rejected/error/completed-without-reward callbacks. AdScheduler.ShowRewarded only invokes onGranted when a reward arrives; on RewardedError, no-fill or close-without-reward nothing fires, so the button stays dead for the rest of the win window and the extra reward is silently lost. The rescue flow and RoulettePresenter both pass not-granted callbacks and recover the buttons, so this is inconsistent with the project's own convention.",
+    "failure_scenario": "Player wins, taps x2, and Yandex fails to show the ad (no fill or an error, common on WebGL): the ad never shows, no message appears, the x2 button is permanently disabled, and the player unknowingly continues with only the base reward."
+  },
+  {
+    "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/UI/Roulette/RoulettePresenter.cs",
+    "line": 332,
+    "summary": "ShowPrizeAsync waits WinDwellSeconds after the wheel stops and then invokes _onComplete to show the prize popup; if the presentation token is cancelled during that dwell, the OperationCanceledException path returns without invoking onComplete. The prize itself was already committed and save-confirmed by RouletteModel.Spin before the wheel spun, so the reward exists but the popup is never shown.",
+    "failure_scenario": "The roulette view is hidden or the popup stack closes while the win-dwell delay is running: coins/skin were granted and saved, but the player sees no prize popup, only a balance that grew for no visible reason."
+  },
+  {
+    "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/Audio/Logic/AudioMixerController.cs",
+    "line": 103,
+    "summary": "ApplyFromSaves snaps the loaded volume to the 5-step grid (_musicVolume = SnapToStep(...)) and applies it, but leaves _hasUnsavedChanges false, so the snapped value is displayed and used while the save keeps the un-snapped number. The mismatch never converges by itself.",
+    "failure_scenario": "A save holds musicVolume 97 (from an older slider granularity): every session the panel shows 95 and the mixer plays at 95, while the save still says 97; only touching the slider persists the value, otherwise the phantom 97 is loaded and re-snapped forever."
+  },
+  {
+    "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/Camera/Logic/CameraFollow.cs",
+    "line": 70,
+    "summary": "The shake offset is added after SmoothDamp and written into transform.position; next frame that contaminated position is passed back as SmoothDamp's current value, so perlin noise becomes part of the damping state. The camera reacts to its own shake as if the target moved, and a residual offset decays slowly after the shake ends instead of disappearing.",
+    "failure_scenario": "During tier-up/final-countdown shake the follow motion gets extra jitter on top of the intended shake, and after the shake stops the camera glides back from a displaced position over several frames, visible as a small slow drift right at a dramatic moment."
+  },
+  {
+    "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/Collectables/Data/AttractConfig.cs",
+    "line": 23,
+    "summary": "The OrbitStrength property (backing _orbitStrength) is declared but never read anywhere in the project (project-wide grep finds only the declaration). ItemAttractor does not use it, so tuning the field in the asset has no effect.",
+    "failure_scenario": "Anyone balancing the magnet effect edits OrbitStrength in the AttractConfig asset, sees no change in game, and wastes time hunting for the bug; the dead field also misleads readers into thinking orbit behavior exists."
+  },
+  {
+    "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/Levels/Planner/LevelItemsSpawner.cs",
+    "line": 179,
+    "summary": "OnItemCollected does _activeItems.Remove(item), an O(n) linear search and shift on the active-items list, once per collected item, making total removal cost O(n^2) over a level (plus the per-frame scan in other systems that iterate the same list).",
+    "failure_scenario": "On the largest new levels with hundreds of spawned items, each collect triggers a full list scan; during cascade absorptions with the magnet pulling many items per second this adds avoidable per-frame work and list churn exactly when the frame is busiest."
+  },
+  {
+    "file": "/home/mshgn4zzz/Repos/Unity/MadSlime/Assets/MadSlime/Scripts/Game/Logic/SceneNavigator.cs",
+    "line": 90,
+    "summary": "RegisterSession checks preparation == null || sessionStart == null || sessionFinish == null but always throws ArgumentNullException naming nameof(preparation), so a null sessionStart or sessionFinish is reported as a preparation problem.",
+    "failure_scenario": "A future caller passes a null sessionFinish: the exception message points at 'preparation', sending debugging toward the wrong argument."
+  }
+]

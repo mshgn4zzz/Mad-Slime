@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
-
-namespace UI
+namespace UI.Spawning
 {
     public class UiSpawner
     {
@@ -16,7 +15,8 @@ namespace UI
             if (resolver == null)
             {
                 throw new InvalidOperationException(
-                    "UiSpawner: IObjectResolver was not injected. Check that the scene LifetimeScope registers UiSpawner.");
+                    "UiSpawner: IObjectResolver was not injected. Check that the scene "
+                        + "LifetimeScope registers UiSpawner.");
             }
 
             _resolver = resolver;
@@ -37,7 +37,7 @@ namespace UI
         {
             if (prefab == null)
             {
-                throw new ArgumentOutOfRangeException(nameof(prefab),
+                throw new ArgumentNullException(nameof(prefab),
                     "UiSpawner: the spawned prefab is null. Drag a prefab into the caller's serialized field.");
             }
 
@@ -61,19 +61,19 @@ namespace UI
         {
             if (window == null)
             {
-                throw new ArgumentOutOfRangeException(nameof(window),
+                throw new ArgumentNullException(nameof(window),
                     "UiSpawner.Release: the released window is null.");
             }
 
             window.gameObject.SetActive(false);
-            Destroy(window.gameObject);
+            UnityEngine.Object.Destroy(window.gameObject);
         }
 
         public void Show(IShowable showable)
         {
             if (showable == null)
             {
-                throw new ArgumentOutOfRangeException(nameof(showable),
+                throw new ArgumentNullException(nameof(showable),
                     "UiSpawner: the shown element is null. Assign the element in the caller's serialized field.");
             }
 
@@ -85,7 +85,8 @@ namespace UI
             if (showable.TryGetComponent(out Canvas canvas) == false)
             {
                 throw new InvalidOperationException(
-                    $"{showable.name}: no Canvas on the shown object root. Add a root Canvas so UiSpawner can apply the {layer} layer.");
+                    $"{showable.name}: no Canvas on the shown object root. Add a root Canvas so "
+                        + $"UiSpawner can apply the {layer} layer.");
             }
 
             canvas.overrideSorting = true;
@@ -115,11 +116,6 @@ namespace UI
             }
 
             return order;
-        }
-
-        private void Destroy(GameObject gameObject)
-        {
-            UnityEngine.Object.Destroy(gameObject);
         }
 
     }

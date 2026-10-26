@@ -1,4 +1,4 @@
-namespace Core
+namespace Leaderboards
 {
     public struct LeaderboardEntryData
     {

@@ -1,5 +1,5 @@
 using Collectables;
-using Scriptables;
+using Player;
 using System;
 using UnityEngine;
 using VContainer;
@@ -27,7 +27,8 @@ namespace Audio
             if (_soundPlayer == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: IGameSoundPlayer was not injected. GameLifetimeScope must be the first object in the scene hierarchy.");
+                    $"{name}: IGameSoundPlayer was not injected. GameLifetimeScope must be the "
+                        + $"first object in the scene hierarchy.");
             }
 
             if (_config == null)
@@ -39,7 +40,8 @@ namespace Audio
             if (_itemCollector == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: ItemCollector was not injected. Check that GameLifetimeScope registers ItemCollector and PlayerPickupSound.");
+                    $"{name}: ItemCollector was not injected. Check that GameLifetimeScope "
+                        + $"registers ItemCollector and PlayerPickupSound.");
             }
 
             if (_sfxClip == null)
@@ -52,7 +54,8 @@ namespace Audio
             {
                 throw new InvalidOperationException(
                     $"{name}: PlayerConfig has PickupSoundMinInterval "
-                        + $"{_config.PickupSoundMinInterval} greater than PickupSoundMaxInterval {_config.PickupSoundMaxInterval}.");
+                        + $"{_config.PickupSoundMinInterval} greater than "
+                        + $"PickupSoundMaxInterval {_config.PickupSoundMaxInterval}.");
             }
 
             if (_config.PickupSoundMinPitch > _config.PickupSoundMaxPitch)

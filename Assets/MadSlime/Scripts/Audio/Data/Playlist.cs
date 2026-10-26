@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-
-namespace Scriptables
+namespace Audio
 {
     [CreateAssetMenu(menuName = "Mad Slime/Playlist", fileName = "NewPlaylist")]
     public class Playlist : ScriptableObject

@@ -1,14 +1,17 @@
-using System;
 using Cysharp.Threading.Tasks;
 using Game;
 using Roulette;
-using Shop;
+using System;
+using UI.Leaderboards;
+using UI.Roulette;
+using UI.Shop;
+using UI.Spawning;
+using UI.Windows;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using VContainer;
-
-namespace UI
+namespace UI.Menu
 {
     public class MenuNavigation : MonoBehaviour
     {
@@ -41,14 +44,11 @@ namespace UI
 
         private WindowState _state;
         private MenuPopupStack _popups;
-        private RoulettePresenter _dailyRoulette;
-        private RoulettePresenter _skinRoulette;
+        private MenuRouletteFlow _rouletteFlow;
         private UiSpawner _spawner;
         private SceneNavigator _sceneNavigator;
         private PauseMenu _settings;
         private LeaderboardMenu _leaderboard;
-        private RouletteWinPopup _prize;
-        private string _rewardSkinId;
         private bool _isSubscribed;
 
         public event Action PlayRequested;
@@ -62,12 +62,12 @@ namespace UI
 
         private void Awake()
         {
-            if (_uiRoot == null || _mainWindow == null || _skinsWindow == null
-                || _upgradesWindow == null
+            if (_uiRoot == null || _mainWindow == null || _skinsWindow == null || _upgradesWindow == null
                 || _previewCamera == null || _playButton == null || _skinsButton == null || _upgradesButton == null
                 || _leaderboardButton == null || _settingsButton == null || _dailyButton == null
                 || _skinsCloseButton == null || _upgradesCloseButton == null || _openSkinButton == null
-                || _settingsMenuPrefab == null || _leaderboardMenuPrefab == null || _roulettePreparation == null || _content == null)
+                || _settingsMenuPrefab == null || _leaderboardMenuPrefab == null
+                || _roulettePreparation == null || _content == null)
             {
                 throw new InvalidOperationException($"{name}: assign all menu navigation references.");
             }
@@ -77,7 +77,8 @@ namespace UI
                 throw new InvalidOperationException($"{name}: menu navigation dependencies were not injected.");
             }
 
-            _popups = new MenuPopupStack(_mainWindow, _skinsWindow, _upgradesWindow);
+            _popups = new MenuPopupStack(_spawner, _mainWindow, _skinsWindow, _upgradesWindow);
+            _rouletteFlow = new MenuRouletteFlow(_spawner, _roulettePreparation, _popups, _content);
         }
 
         private void OnDisable()
@@ -103,7 +104,7 @@ namespace UI
 
             if (_sceneNavigator.TryMarkDailyShown() == true)
             {
-                OpenDailyRoulette();
+                _rouletteFlow.OpenDaily();
             }
         }
 
@@ -113,9 +114,7 @@ namespace UI
             SetWindow(WindowState.Stopped);
             ReleaseSettings();
             ReleaseLeaderboard();
-            ReleasePrize();
-            ReleaseDailyRoulette();
-            ReleaseSkinRoulette();
+            _rouletteFlow?.ReleaseAll();
             _popups?.Clear();
         }
 
@@ -272,31 +271,8 @@ namespace UI
         {
             if (CanOpenFromMain() == true)
             {
-                OpenDailyRoulette();
+                _rouletteFlow.OpenDaily();
             }
-        }
-
-        private void OpenDailyRoulette()
-        {
-            _dailyRoulette = _roulettePreparation.SpawnDaily();
-            _dailyRoulette.CloseRequested += OnDailyCloseRequested;
-            _dailyRoulette.Closed += OnDailyClosed;
-            _dailyRoulette.Show(OnDailySpinCompleted);
-            _popups.Push(_dailyRoulette);
-        }
-
-        private void OnDailyCloseRequested()
-        {
-            if (_popups.IsTop(_dailyRoulette))
-            {
-                _dailyRoulette.Hide();
-            }
-        }
-
-        private void OnDailyClosed()
-        {
-            _popups.Pop(_dailyRoulette);
-            ReleaseDailyRoulette();
         }
 
         private void OnOpenSkinClicked()
@@ -306,81 +282,7 @@ namespace UI
                 return;
             }
 
-            _roulettePreparation.SkinModel.RefreshSlots();
-            if (_roulettePreparation.SkinModel.CanSpin(false) == false)
-            {
-                return;
-            }
-
-            _rewardSkinId = null;
-            _skinRoulette = _roulettePreparation.SpawnSkins();
-            _skinRoulette.Closed += OnSkinRouletteClosed;
-            if (_skinRoulette.ShowAndSpin(OnSkinSpinCompleted))
-            {
-                _popups.Push(_skinRoulette);
-            }
-            else
-            {
-                ReleaseSkinRoulette();
-                _content.RefreshSkins(null);
-            }
-        }
-
-        private void OnSkinRouletteClosed()
-        {
-            _popups.Pop(_skinRoulette);
-            ReleaseSkinRoulette();
-            _content.RefreshSkins(_rewardSkinId);
-        }
-
-        private void OnDailySpinCompleted(RoulettePrize prize)
-        {
-            ShowPrize(_dailyRoulette.View, prize);
-        }
-
-        private void OnSkinSpinCompleted(RoulettePrize prize)
-        {
-            if (prize.Skin != null)
-            {
-                _rewardSkinId = prize.Skin.Id;
-            }
-
-            ShowPrize(_skinRoulette.View, prize);
-        }
-
-        private void ShowPrize(RouletteView source, RoulettePrize prize)
-        {
-            _prize = _spawner.Spawn(source.WinPopupPrefab, UiLayer.Popup);
-
-            _prize.Initialize(prize, source);
-
-            _prize.CloseRequested += OnPrizeCloseRequested;
-            _prize.Closed += OnPrizeClosed;
-            _spawner.Show(_prize);
-            _popups.Push(_prize);
-        }
-
-        private void OnPrizeCloseRequested()
-        {
-            if (_popups.IsTop(_prize))
-            {
-                _prize.BeginClose();
-            }
-        }
-
-        private void OnPrizeClosed()
-        {
-            _popups.Pop(_prize);
-            ReleasePrize();
-
-            if (_dailyRoulette != null)
-            {
-                _dailyRoulette.ResumeAfterPrize();
-            }
-            else if (_skinRoulette != null)
-            {
-                _skinRoulette.Hide();
-            }
+            _rouletteFlow.OpenSkin();
         }
 
         private void SetWindow(WindowState state)
@@ -403,69 +305,25 @@ namespace UI
             }
         }
 
-        private void ReleaseDailyRoulette()
-        {
-            if (_dailyRoulette == null)
-            {
-                return;
-            }
-
-            _dailyRoulette.CloseRequested -= OnDailyCloseRequested;
-            _dailyRoulette.Closed -= OnDailyClosed;
-            _spawner.Release(_dailyRoulette);
-            _dailyRoulette = null;
-        }
-
-        private void ReleaseSkinRoulette()
-        {
-            if (_skinRoulette == null)
-            {
-                return;
-            }
-
-            _skinRoulette.Closed -= OnSkinRouletteClosed;
-            _spawner.Release(_skinRoulette);
-            _skinRoulette = null;
-        }
-
         private void ReleaseSettings()
         {
-            if (_settings == null)
+            _popups.Release(_settings, popup =>
             {
-                return;
-            }
-
-            _settings.CloseButtonClicked -= OnSettingsCloseRequested;
-            _settings.ResetConfirmed -= OnResetConfirmed;
-            _settings.Closed -= OnSettingsClosed;
-            _spawner.Release(_settings);
+                popup.CloseButtonClicked -= OnSettingsCloseRequested;
+                popup.ResetConfirmed -= OnResetConfirmed;
+                popup.Closed -= OnSettingsClosed;
+            });
             _settings = null;
         }
 
         private void ReleaseLeaderboard()
         {
-            if (_leaderboard == null)
+            _popups.Release(_leaderboard, popup =>
             {
-                return;
-            }
-
-            _leaderboard.CloseRequested -= OnLeaderboardCloseRequested;
-            _leaderboard.Closed -= OnLeaderboardClosed;
-            _spawner.Release(_leaderboard);
+                popup.CloseRequested -= OnLeaderboardCloseRequested;
+                popup.Closed -= OnLeaderboardClosed;
+            });
             _leaderboard = null;
-        }
-
-        private void ReleasePrize()
-        {
-            if (_prize == null)
-            {
-                return;
-            }
-
-            _prize.CloseRequested -= OnPrizeCloseRequested;
-            _prize.Closed -= OnPrizeClosed;
-            _spawner.Release(_prize);
-            _prize = null;
         }
     }
 }

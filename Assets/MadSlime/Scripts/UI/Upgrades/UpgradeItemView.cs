@@ -2,8 +2,8 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
-namespace Shop
+using Game;
+namespace UI.Upgrades
 {
     [RequireComponent(typeof(Image), typeof(Button))]
     public class UpgradeItemView : MonoBehaviour
@@ -21,6 +21,14 @@ namespace Shop
         private void Awake()
         {
             TryGetComponent(out _button);
+
+            if (_button == null || _icon == null || _stepText == null || _titleText == null || _effectText == null
+                || _priceText == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: assign all upgrade item references (_icon, _stepText, _titleText, _effectText, "
+                        + $"_priceText) and keep a Button on the same object.");
+            }
         }
 
         private void OnEnable()

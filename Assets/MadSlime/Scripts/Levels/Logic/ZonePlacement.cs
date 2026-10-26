@@ -1,6 +1,5 @@
 using UnityEngine;
-
-namespace Game
+namespace Levels
 {
     public struct ZonePlacement
     {

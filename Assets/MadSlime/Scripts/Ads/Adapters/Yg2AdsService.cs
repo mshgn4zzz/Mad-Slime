@@ -1,8 +1,6 @@
 using System;
-using Core;
 using YG;
-
-namespace Adapters
+namespace Ads
 {
     public class Yg2AdsService : IAdsService, IDisposable
     {
@@ -14,6 +12,8 @@ namespace Adapters
 
         public event Action RewardedError;
 
+        public event Action<bool> PauseGameChanged;
+
         public bool IsAdShowing => YG2.nowAdsShow;
 
         public bool IsPauseGame => YG2.isPauseGame;
@@ -24,6 +24,7 @@ namespace Adapters
             YG2.onRewardAdv += OnRewardReceived;
             YG2.onCloseRewardedAdv += OnRewardedClosed;
             YG2.onErrorRewardedAdv += OnRewardedError;
+            YG2.onPauseGame += OnPauseGame;
         }
 
         public void Dispose()
@@ -32,6 +33,7 @@ namespace Adapters
             YG2.onRewardAdv -= OnRewardReceived;
             YG2.onCloseRewardedAdv -= OnRewardedClosed;
             YG2.onErrorRewardedAdv -= OnRewardedError;
+            YG2.onPauseGame -= OnPauseGame;
         }
 
         public void ShowRewarded(string rewardId)
@@ -62,6 +64,11 @@ namespace Adapters
         private void OnRewardedError()
         {
             RewardedError?.Invoke();
+        }
+
+        private void OnPauseGame(bool isPaused)
+        {
+            PauseGameChanged?.Invoke(isPaused);
         }
     }
 }

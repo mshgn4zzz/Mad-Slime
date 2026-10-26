@@ -1,21 +1,21 @@
+using Items;
+using Levels;
 using System;
 using System.Collections.Generic;
-using Items;
-using Quota;
-using Scriptables;
-using Skills;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Game
+namespace Quota
 {
     public class QuotaGenerator
     {
+        private const SizeTier LargestQuotaTier = SizeTier.Giant;
+
         private List<ItemDefinition> _candidates = new List<ItemDefinition>();
         private Dictionary<SizeTier, int> _tierEntryCounts = new Dictionary<SizeTier, int>();
         private HashSet<ItemDefinition> _selected = new HashSet<ItemDefinition>();
 
-        public List<QuotaEntry> Generate(Dictionary<ItemDefinition, int> spawnedCounts, LevelConfig config)
+        public List<QuotaEntry> Generate(IReadOnlyDictionary<ItemDefinition, int> spawnedCounts, LevelConfig config)
         {
             Validate(config);
             CollectCandidates(spawnedCounts);
@@ -48,6 +48,8 @@ namespace Game
                 _tierEntryCounts[definition.Tier] = tierCount + 1;
             }
 
+            // The top-up loop skips the same-tier cap on purpose: the quota is short of entries at this
+            // point, so repeating a tier a little is better than leaving the quota under-filled.
             for (int i = 0; i < _candidates.Count && entries.Count < typesTarget; i++)
             {
                 ItemDefinition definition = _candidates[i];
@@ -68,13 +70,13 @@ namespace Game
             _selected.Add(definition);
         }
 
-        private void CollectCandidates(Dictionary<ItemDefinition, int> spawnedCounts)
+        private void CollectCandidates(IReadOnlyDictionary<ItemDefinition, int> spawnedCounts)
         {
             _candidates.Clear();
 
             foreach (KeyValuePair<ItemDefinition, int> pair in spawnedCounts)
             {
-                if (pair.Key != null && pair.Value > 0 && pair.Key.Tier <= SizeTier.Giant)
+                if (pair.Key != null && pair.Value > 0 && pair.Key.Tier <= LargestQuotaTier)
                 {
                     _candidates.Add(pair.Key);
                 }
@@ -96,7 +98,8 @@ namespace Game
                 || config.QuotaTargetMin <= 0 || config.QuotaTargetMax < config.QuotaTargetMin
                 || config.QuotaMaxSameTier <= 0)
             {
-                throw new InvalidOperationException($"{config.name}: quota ranges and preferred tier limit must be positive and ordered.");
+                                throw new InvalidOperationException($"{config.name}: quota ranges and preferred "
+                                        + $"tier limit must be positive and ordered.");
             }
         }
     }

@@ -1,20 +1,20 @@
-using Adapters;
+using Ads;
 using Audio;
-using Core;
 using Game;
+using Items;
+using Leaderboards;
+using Levels;
+using Localization;
 using Quota;
 using Saves;
-using Skins;
-using Scriptables;
 using System;
 using UnityEngine;
 using Upgrades;
 using VContainer;
 using VContainer.Unity;
-
 namespace DI
 {
-    public class ProjectLifetimeScope : LifetimeScope
+    public class ProjectLifetimeScope : ValidatedLifetimeScope
     {
         [SerializeField] private PlayerUpgrades _playerUpgrades;
         [SerializeField] private SaveConfirmation _saveConfirmation;
@@ -29,85 +29,36 @@ namespace DI
 
         protected override void Configure(IContainerBuilder builder)
         {
-            if (_leaderboardService == null)
-            {
-                throw new InvalidOperationException("ProjectLifetimeScope: leaderboard service is not assigned.");
-            }
-
-            if (_playerUpgrades == null)
-            {
-                throw new InvalidOperationException(
-                    "ProjectLifetimeScope: PlayerUpgrades is not assigned. Open the ProjectScope "
-                        + "prefab and drag the PlayerUpgrades component into the Player Upgrades field.");
-            }
-
-            if (_levelsCatalog == null)
-            {
-                throw new InvalidOperationException(
-                    "ProjectLifetimeScope: LevelsCatalog is not assigned. Open the ProjectScope "
-                        + "prefab and drag the LevelsCatalog asset into the Levels Catalog field.");
-            }
-
-            if (_localizationService == null)
-            {
-                throw new InvalidOperationException(
-                    "ProjectLifetimeScope: LocalizationService is not assigned. Open the "
-                        + "ProjectScope prefab and drag the LocalizationService component into the Localization Service field.");
-            }
-
-            if (_tierTable == null)
-            {
-                throw new InvalidOperationException(
-                    "ProjectLifetimeScope: TierTable is not assigned. Open the ProjectScope prefab "
-                        + "and drag the TierTable asset into the Tier Table field.");
-            }
-
-            if (_layoutsLibrary == null)
-            {
-                throw new InvalidOperationException(
-                    "ProjectLifetimeScope: LayoutsLibrary is not assigned. Open the ProjectScope "
-                        + "prefab and drag the LayoutsLibrary asset into the Layouts Library field.");
-            }
-
-            if (_audioPlayer == null)
-            {
-                throw new InvalidOperationException(
-                    "ProjectLifetimeScope: AudioPlayer is not assigned. Open the ProjectScope "
-                        + "prefab and drag the AudioPlayer component into the Audio Player field.");
-            }
-
-            if (_audioMixerController == null)
-            {
-                throw new InvalidOperationException(
-                    "ProjectLifetimeScope: AudioMixerController is not assigned. Open the "
-                        + "ProjectScope prefab and drag the AudioMixerController component into the Audio Mixer Controller field.");
-            }
-
-            if (_sceneNavigator == null)
-            {
-                throw new InvalidOperationException(
-                    "ProjectLifetimeScope: SceneNavigator is not assigned. Open the ProjectScope "
-                        + "prefab and drag the SceneNavigator component into the Scene Navigator field.");
-            }
+            ValidateAssigned(_playerUpgrades, nameof(_playerUpgrades));
+            ValidateAssigned(_saveConfirmation, nameof(_saveConfirmation));
+            ValidateAssigned(_leaderboardService, nameof(_leaderboardService));
+            ValidateAssigned(_levelsCatalog, nameof(_levelsCatalog));
+            ValidateAssigned(_localizationService, nameof(_localizationService));
+            ValidateAssigned(_tierTable, nameof(_tierTable));
+            ValidateAssigned(_layoutsLibrary, nameof(_layoutsLibrary));
+            ValidateAssigned(_audioPlayer, nameof(_audioPlayer));
+            ValidateAssigned(_audioMixerController, nameof(_audioMixerController));
+            ValidateAssigned(_sceneNavigator, nameof(_sceneNavigator));
 
             Yg2SavesAccess savesAccess = new Yg2SavesAccess(_saveConfirmation);
-            Saver saver = new Saver(savesAccess);
+            SavesCore core = new SavesCore(savesAccess);
+            BalanceStorage balanceStorage = new BalanceStorage(core);
+            CollectedItemsStorage collectedItemsStorage = new CollectedItemsStorage(core);
+            ProgressStorage progressStorage = new ProgressStorage(core, collectedItemsStorage);
 
             builder.RegisterInstance(savesAccess);
-            builder.RegisterInstance(saver);
-            builder.RegisterInstance<ISaveConfirmation>(saver);
-            builder.RegisterInstance<IPlayerProgressStorage>(saver);
-            builder.RegisterInstance<Action<Action>>(saver.ExecuteTransaction);
-            builder.Register<SkinInventory>(Lifetime.Singleton);
-            builder.RegisterInstance<Saves.ISavesReadiness>(saver);
-            builder.RegisterInstance<Saves.IBalanceStorage>(saver);
-            builder.RegisterInstance<Saves.ILevelStorage>(saver);
-            builder.RegisterInstance<Saves.IAudioStorage>(saver);
-            builder.RegisterInstance<Saves.IUpgradesStorage>(saver);
-            builder.RegisterInstance<Saves.ISkinStorage>(saver);
-            builder.RegisterInstance<Saves.IRouletteStorage>(saver);
-            builder.RegisterInstance<Saves.ILanguageStorage>(saver);
-            builder.RegisterInstance<Saves.ICollectedItemsStorage>(saver);
+            builder.RegisterInstance(core);
+            builder.RegisterInstance<ISaveConfirmation>(core);
+            builder.RegisterInstance<Saves.ISavesReadiness>(core);
+            builder.RegisterInstance<IBalanceStorage>(balanceStorage);
+            builder.RegisterInstance<ICollectedItemsStorage>(collectedItemsStorage);
+            builder.RegisterInstance<IAudioStorage>(new AudioStorage(core));
+            builder.RegisterInstance<IUpgradesStorage>(new UpgradesStorage(core));
+            builder.RegisterInstance<ISkinStorage>(new SkinsStorage(core));
+            builder.RegisterInstance<IRouletteStorage>(new RouletteStorage(core));
+            builder.RegisterInstance<ILanguageStorage>(new LanguageStorage(core));
+            builder.RegisterInstance<ILevelStorage>(progressStorage);
+            builder.RegisterInstance<IPlayerProgressStorage>(progressStorage);
 
             builder.RegisterComponent(_playerUpgrades);
             builder.RegisterComponent(_localizationService);

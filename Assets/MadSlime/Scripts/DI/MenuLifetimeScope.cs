@@ -1,19 +1,20 @@
-using Audio;
+using Ads;
+using Economy;
 using Game;
-using Shop;
-using Saves;
-using Skins;
-using Scriptables;
 using Roulette;
-using System;
-using UI;
+using Saves;
+using Shop;
+using Skins;
+using UI.Menu;
+using UI.Shop;
+using UI.Spawning;
+using UI.Upgrades;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
-
 namespace DI
 {
-    public class MenuLifetimeScope : LifetimeScope
+    public class MenuLifetimeScope : ValidatedLifetimeScope
     {
         [SerializeField] private MenuNavigation _navigation;
         [SerializeField] private MenuContent _content;
@@ -52,8 +53,9 @@ namespace DI
             builder.RegisterComponent(_upgradeFactory);
             builder.RegisterComponent(_menuOrchestrator);
             builder.Register<RouletteFactory>(resolver => new RouletteFactory(_rouletteConfig,
-                resolver.Resolve<IRouletteStorage>(), resolver.Resolve<ISkinStorage>(), resolver.Resolve<SkinInventory>(),
-                resolver.Resolve<Wallet>(), resolver.Resolve<Saver>().ExecuteTransaction), Lifetime.Scoped);
+                resolver.Resolve<IRouletteStorage>(), resolver.Resolve<ISkinStorage>(),
+                resolver.Resolve<SkinInventory>(), resolver.Resolve<Wallet>(),
+                resolver.Resolve<SavesTransaction>()), Lifetime.Scoped);
             builder.RegisterComponent(_roulettePreparation);
             builder.RegisterInstance(_shopContent);
             builder.RegisterInstance(_rouletteConfig);
@@ -75,13 +77,5 @@ namespace DI
             SceneButtonSoundInjector.Inject(container, gameObject.scene);
         }
 
-        private void ValidateAssigned(object dependency, string fieldName)
-        {
-            if (dependency == null)
-            {
-                throw new InvalidOperationException(
-                    $"MenuLifetimeScope: '{fieldName}' is not assigned. Select MenuScope in the scene and drag the missing reference.");
-            }
-        }
     }
 }

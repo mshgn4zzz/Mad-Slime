@@ -1,8 +1,7 @@
+using Items;
 using System;
 using System.Collections.Generic;
-using Items;
 using UnityEngine;
-
 namespace Quota
 {
     public class QuotaBoard

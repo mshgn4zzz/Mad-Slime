@@ -1,9 +1,8 @@
-using Skills;
+using Items;
 using System;
 using UnityEngine;
 using Upgrades;
 using VContainer;
-
 namespace Player
 {
     public class CollectAvailability : MonoBehaviour
@@ -25,7 +24,8 @@ namespace Player
             if (_playerTier == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: PlayerTier was not injected. Check that GameLifetimeScope registers PlayerTier and CollectAvailability.");
+                    $"{name}: PlayerTier was not injected. Check that GameLifetimeScope "
+                        + $"registers PlayerTier and CollectAvailability.");
             }
 
             if (_upgrades == null)

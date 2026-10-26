@@ -1,15 +1,13 @@
-using System;
-using System.Threading;
 using Audio;
 using Cysharp.Threading.Tasks;
 using Game;
 using Roulette;
-using Scriptables;
-using Shop;
+using System;
+using System.Threading;
+using UI.Shop;
 using UnityEngine;
 using VContainer;
-
-namespace UI
+namespace UI.Menu
 {
     public class MenuOrchestrator : MonoBehaviour
     {

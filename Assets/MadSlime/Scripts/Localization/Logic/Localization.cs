@@ -1,14 +1,12 @@
 using System;
-using Scriptables;
 using UnityEngine;
-
-namespace Game
+namespace Localization
 {
     public static class Localization
     {
-        public const string Russian = "ru";
-        public const string English = "en";
-        public const string Turkish = "tr";
+        public const string Russian = LocalizationTable.Russian;
+        public const string English = LocalizationTable.English;
+        public const string Turkish = LocalizationTable.Turkish;
 
         private static string[] s_languageOrder = { Russian, English, Turkish };
 

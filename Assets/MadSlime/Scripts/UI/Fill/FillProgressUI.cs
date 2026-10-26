@@ -1,11 +1,11 @@
-using System;
 using ShapeFill;
+using System;
 using TMPro;
+using UI.Common;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
-
-namespace UI
+namespace UI.Fill
 {
     public class FillProgressUI : MonoBehaviour
     {
@@ -15,6 +15,7 @@ namespace UI
         private const float FullPercent = 100f;
 
         private ShapeFiller _shapeFiller;
+        private BarFiller _barFiller;
 
         [Inject]
         public void Construct(ShapeFiller shapeFiller)
@@ -27,7 +28,8 @@ namespace UI
             if (_shapeFiller == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: ShapeFiller was not injected. Check that FillLifetimeScope registers ShapeFiller and FillProgressUI.");
+                    $"{name}: ShapeFiller was not injected. Check that FillLifetimeScope "
+                        + $"registers ShapeFiller and FillProgressUI.");
             }
 
             if (_percentText == null)
@@ -39,6 +41,8 @@ namespace UI
             {
                 throw new InvalidOperationException($"{name}: assign the fill progress image.");
             }
+
+            _barFiller = new BarFiller(_progressBar);
         }
 
         private void OnEnable()
@@ -54,9 +58,9 @@ namespace UI
             _shapeFiller.FillCompleted -= OnFillCompleted;
         }
 
-        private void OnFillCompleted(float percent)
+        private void OnFillCompleted(float fraction)
         {
-            ApplyProgress(percent);
+            ApplyProgress(fraction);
         }
 
         private void OnCubeArrived(CubeFlightAnimator cube)
@@ -67,18 +71,9 @@ namespace UI
         private void ApplyProgress(float fraction)
         {
             float fillAmount = Mathf.Clamp01(fraction);
-            _progressBar.fillAmount = fillAmount;
+            _barFiller.SetFill(fillAmount);
             int percent = Mathf.RoundToInt(fillAmount * FullPercent);
             _percentText.SetText("{0}%", percent);
-
-            if (_progressBar.type == Image.Type.Sliced)
-            {
-                RectTransform fill = _progressBar.rectTransform;
-                fill.anchorMax = new Vector2(fillAmount, 1f);
-                fill.offsetMin = Vector2.zero;
-                fill.offsetMax = Vector2.zero;
-                _progressBar.enabled = fillAmount > 0f;
-            }
         }
     }
 }

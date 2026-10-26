@@ -1,8 +1,6 @@
-using System;
 using DG.Tweening;
-using Scriptables;
+using System;
 using UnityEngine;
-
 namespace Player
 {
     public class ScalePunch : MonoBehaviour

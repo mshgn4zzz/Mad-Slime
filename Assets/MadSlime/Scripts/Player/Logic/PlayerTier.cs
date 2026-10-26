@@ -1,14 +1,13 @@
-using Scriptables;
-using Skills;
+using Items;
 using System;
 using UnityEngine;
 using VContainer;
-
 namespace Player
 {
     public class PlayerTier : MonoBehaviour
     {
         private int _mass;
+        private SizeTier _currentTier = SizeTier.Small;
         private PlayerConfig _config;
         private TierResolver _tierResolver;
 
@@ -16,7 +15,6 @@ namespace Player
         public event Action<int, int> MassChanged;
 
         public int Mass => _mass;
-        private SizeTier _currentTier = SizeTier.Small;
 
         public SizeTier CurrentTier => _currentTier;
 
@@ -32,13 +30,15 @@ namespace Player
             if (_tierResolver == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: TierResolver was not injected. Check that GameLifetimeScope registers TierResolver and PlayerTier.");
+                    $"{name}: TierResolver was not injected. Check that GameLifetimeScope "
+                        + $"registers TierResolver and PlayerTier.");
             }
 
             if (_config == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: PlayerConfig was not injected. Check that GameLifetimeScope is configured and PlayerTier is registered.");
+                    $"{name}: PlayerConfig was not injected. Check that GameLifetimeScope is "
+                        + $"configured and PlayerTier is registered.");
             }
 
         }

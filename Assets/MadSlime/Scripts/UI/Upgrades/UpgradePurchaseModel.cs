@@ -1,17 +1,22 @@
-using Game;
+using Economy;
+using Saves;
 using System;
 using Upgrades;
-
-namespace Shop
+using Game;
+namespace UI.Upgrades
 {
     public class UpgradePurchaseModel
     {
         private PlayerUpgrades _upgrades;
         private Wallet _wallet;
-        private Action<Action> _transaction;
+        private SavesTransaction _transaction;
 
-        public UpgradePurchaseModel(PlayerUpgrades upgrades, Wallet wallet, Action<Action> transaction)
+        public UpgradePurchaseModel(PlayerUpgrades upgrades, Wallet wallet, SavesTransaction transaction)
         {
+            ArgumentGuard.CheckNotNull(upgrades, nameof(upgrades));
+            ArgumentGuard.CheckNotNull(wallet, nameof(wallet));
+            ArgumentGuard.CheckNotNull(transaction, nameof(transaction));
+
             _upgrades = upgrades;
             _wallet = wallet;
             _transaction = transaction;
@@ -34,18 +39,7 @@ namespace Shop
                 return false;
             }
 
-            int cost = _upgrades.GetNextCost(type);
-
-            _transaction.Invoke(() =>
-            {
-                if (cost > 0)
-                {
-                    _wallet.Spend(cost);
-                }
-
-                _upgrades.PurchaseStepped(type);
-            });
-            return true;
+            return PurchaseChecked(_upgrades.GetNextCost(type), () => _upgrades.PurchaseStepped(type));
         }
 
         public bool Purchase(PerkType type)
@@ -55,8 +49,11 @@ namespace Shop
                 return false;
             }
 
-            int cost = _upgrades.GetPerkCost(type);
+            return PurchaseChecked(_upgrades.GetPerkCost(type), () => _upgrades.PurchasePerk(type));
+        }
 
+        private bool PurchaseChecked(int cost, Action purchaseStep)
+        {
             _transaction.Invoke(() =>
             {
                 if (cost > 0)
@@ -64,8 +61,9 @@ namespace Shop
                     _wallet.Spend(cost);
                 }
 
-                _upgrades.PurchasePerk(type);
+                purchaseStep();
             });
+
             return true;
         }
     }

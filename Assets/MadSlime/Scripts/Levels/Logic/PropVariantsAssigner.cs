@@ -1,12 +1,10 @@
+using Items;
 using System;
 using System.Collections.Generic;
-using Items;
-using Scriptables;
-using Skills;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Game
+namespace Levels
 {
     public class PropVariantsAssigner
     {
@@ -33,7 +31,8 @@ namespace Game
             if (variants.Count == 0)
             {
                 throw new InvalidOperationException(
-                    $"PropVariantsAssigner: PropSet '{config.PropSet.name}' has no baked variants. Run Mad Slime → Prop Factory.");
+                    $"PropVariantsAssigner: PropSet '{config.PropSet.name}' has no baked "
+                        + $"variants. Run Mad Slime → Prop Factory.");
             }
 
             CollectVariantsInRange(variants, config);

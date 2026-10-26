@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using Skins;
+using System.Collections.Generic;
 using UnityEngine;
-
 namespace Shop
 {
     [CreateAssetMenu(menuName = "Mad Slime/Shop Content", fileName = "NewShopContent")]

@@ -1,5 +1,4 @@
 using System;
-
 namespace Saves
 {
     public interface ISavesReadiness

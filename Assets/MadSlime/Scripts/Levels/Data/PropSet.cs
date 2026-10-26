@@ -1,9 +1,8 @@
+using Items;
 using System;
 using System.Collections.Generic;
-using Items;
 using UnityEngine;
-
-namespace Scriptables
+namespace Levels
 {
     [CreateAssetMenu(menuName = "Mad Slime/Prop Set", fileName = "NewPropSet")]
     public class PropSet : ScriptableObject
@@ -18,22 +17,4 @@ namespace Scriptables
         public IReadOnlyList<PropVariant> Variants => _variants;
     }
 
-    [Serializable]
-    public class PropVariant
-    {
-        [Tooltip("Префаб предмета.")]
-        [SerializeField] private Item _prefab;
-
-        [Tooltip("Определение, присваиваемое варианту: иконка и тир.")]
-        [SerializeField] private ItemDefinition _definition;
-
-        public PropVariant(Item prefab, ItemDefinition definition)
-        {
-            _prefab = prefab;
-            _definition = definition;
-        }
-
-        public Item Prefab => _prefab;
-        public ItemDefinition Definition => _definition;
-    }
 }

@@ -1,10 +1,8 @@
+using Saves;
 using System;
 using System.Collections.Generic;
-using Game;
-using Saves;
 using UnityEngine;
 using VContainer;
-
 namespace Upgrades
 {
     public class PlayerUpgrades : MonoBehaviour
@@ -65,7 +63,8 @@ namespace Upgrades
             if (_storage == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: IUpgradesStorage was not injected. Check that ProjectLifetimeScope registers Saver and PlayerUpgrades.");
+                    $"{name}: IUpgradesStorage was not injected. Check that "
+                        + $"ProjectLifetimeScope registers UpgradesStorage and PlayerUpgrades.");
             }
 
             for (int i = 0; i < _config.Upgrades.Count; i++)
@@ -82,7 +81,7 @@ namespace Upgrades
 
             for (int i = 0; i < _config.Perks.Count; i++)
             {
-                GetPerkCost(_config.Perks[i].Type);
+                ValidatePerkExists(_config.Perks[i].Type);
             }
         }
 
@@ -145,7 +144,7 @@ namespace Upgrades
                     $"PlayerUpgrades: perk '{type}' is already purchased.");
             }
 
-            GetPerk(type);
+            ValidatePerkExists(type);
 
             _storage.PurchasePerk(type);
         }
@@ -181,6 +180,12 @@ namespace Upgrades
 
             return 1f + SumValues(entry, GetLevel(type));
         }
+
+        private void ValidatePerkExists(PerkType type)
+        {
+            GetPerk(type);
+        }
+
         public UpgradeEntry GetUpgrade(UpgradeType type)
         {
             for (int i = 0; i < _config.Upgrades.Count; i++)
@@ -208,6 +213,7 @@ namespace Upgrades
             throw new InvalidOperationException(
                 $"UpgradesConfig '{_config.name}': no entry for perk '{type}'. Add a row for it.");
         }
+
         private float SumValues(UpgradeEntry entry, int level)
         {
             float total = 0f;

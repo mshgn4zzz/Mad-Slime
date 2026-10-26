@@ -1,15 +1,13 @@
 using Audio;
-using Core;
 using Cysharp.Threading.Tasks;
+using Economy;
+using Game;
 using Saves;
-using Scriptables;
-using ShapeFill;
 using System;
 using System.Threading;
 using UnityEngine;
 using VContainer;
-
-namespace Game
+namespace ShapeFill
 {
     public class FillSceneOrchestrator : MonoBehaviour
     {
@@ -21,15 +19,13 @@ namespace Game
 
         private FillConfig _config;
         private IMusicPlayer _musicPlayer;
-        private ILevelStorage _levelStorage;
-        private LevelConfigResolver _configResolver;
+        private LevelThemeApplier _themeApplier;
         private ShapeFillOrchestrator _fillOrchestrator;
         private GridCameraFitter _cameraFitter;
         private SceneNavigator _sceneNavigator;
+        private FillExitFlow _exitFlow;
         private Rewarder _rewarder;
         private Pauser _pauser;
-        private AdScheduler _adScheduler;
-        private LeaderboardReporter _leaderboardReporter;
         private IGameplayReporter _gameplayReporter;
         private bool _isGameplayStarted;
         private bool _isPreparing;
@@ -37,12 +33,10 @@ namespace Game
         private bool _isFinished;
         private bool _isCompletionHandled;
         private bool _isRescueCommitted;
-        private bool _isLevelProgressCommitted;
         private bool _canRescue;
         private FillResult _result;
-        private Action<Action> _transaction;
+        private FillSessionSaver _saver;
         private CancellationTokenSource _sessionCancellation;
-        private ISaveConfirmation _saveConfirmation;
 
         public event Action<int> Win;
         public event Action<int> Failed;
@@ -54,26 +48,22 @@ namespace Game
         public bool IsFinished => _isFinished;
 
         [Inject]
-        public void Construct(ILevelStorage levelStorage, LevelConfigResolver configResolver, IMusicPlayer musicPlayer,
+        public void Construct(LevelThemeApplier themeApplier, IMusicPlayer musicPlayer,
             ShapeFillOrchestrator fillOrchestrator, GridCameraFitter cameraFitter, SceneNavigator sceneNavigator,
-            Rewarder rewarder, Pauser pauser, AdScheduler adScheduler, LeaderboardReporter leaderboardReporter,
-            IGameplayReporter gameplayReporter, FillConfig config, ISaveConfirmation saveConfirmation,
-            Action<Action> transaction)
+            FillExitFlow exitFlow, Rewarder rewarder, Pauser pauser, IGameplayReporter gameplayReporter,
+            FillConfig config, FillSessionSaver saver)
         {
-            _levelStorage = levelStorage;
-            _saveConfirmation = saveConfirmation;
-            _transaction = transaction;
-            _configResolver = configResolver;
+            _themeApplier = themeApplier;
             _config = config;
             _musicPlayer = musicPlayer;
             _fillOrchestrator = fillOrchestrator;
             _cameraFitter = cameraFitter;
             _sceneNavigator = sceneNavigator;
+            _exitFlow = exitFlow;
             _rewarder = rewarder;
             _pauser = pauser;
-            _adScheduler = adScheduler;
-            _leaderboardReporter = leaderboardReporter;
             _gameplayReporter = gameplayReporter;
+            _saver = saver;
         }
 
         private void Awake()
@@ -81,7 +71,8 @@ namespace Game
             if (_floorRenderer == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: FloorRenderer is not assigned. Drag the floor MeshRenderer into the _floorRenderer field.");
+                    $"{name}: FloorRenderer is not assigned. Drag the floor MeshRenderer into "
+                        + $"the _floorRenderer field.");
             }
 
             if (_config == null)
@@ -96,17 +87,46 @@ namespace Game
                     $"{name}: Music playlist is not assigned. Drag a Playlist asset into the _musicPlaylist field.");
             }
 
-            if (_adScheduler == null)
+            if (_themeApplier == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: AdScheduler was not injected. Check that FillLifetimeScope registers AdScheduler and FillSceneOrchestrator.");
+                    $"{name}: LevelThemeApplier was not injected. Check that FillLifetimeScope "
+                        + $"registers LevelThemeApplier and FillSceneOrchestrator.");
             }
 
-            if (_leaderboardReporter == null)
+            if (_exitFlow == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: LeaderboardReporter was not injected. Check that FillLifetimeScope "
-                        + $"registers LeaderboardReporter and FillSceneOrchestrator.");
+                    $"{name}: FillExitFlow was not injected. Check that FillLifetimeScope "
+                        + $"registers FillExitFlow and FillSceneOrchestrator.");
+            }
+
+            if (_musicPlayer == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: IMusicPlayer was not injected. Check that ProjectLifetimeScope "
+                        + $"registers the audio players.");
+            }
+
+            if (_rewarder == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: Rewarder was not injected. Check that FillLifetimeScope "
+                        + $"registers Rewarder and FillSceneOrchestrator.");
+            }
+
+            if (_pauser == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: Pauser was not injected. Check that FillLifetimeScope "
+                        + $"registers Pauser and FillSceneOrchestrator.");
+            }
+
+            if (_saver == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: FillSessionSaver was not injected. Check that FillLifetimeScope "
+                        + $"registers FillSessionSaver and FillSceneOrchestrator.");
             }
 
             if (_fillOrchestrator == null)
@@ -116,16 +136,11 @@ namespace Game
                         + $"registers ShapeFillOrchestrator and FillSceneOrchestrator.");
             }
 
-            if (_rewarder == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Rewarder was not injected. Check that FillLifetimeScope registers Rewarder and FillSceneOrchestrator.");
-            }
-
             if (_gameplayReporter == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: IGameplayReporter was not injected. Check that ProjectLifetimeScope registers the YG2 gameplay adapter.");
+                    $"{name}: IGameplayReporter was not injected. Check that "
+                        + $"ProjectLifetimeScope registers the YG2 gameplay adapter.");
             }
 
             if (_sceneNavigator == null)
@@ -150,15 +165,19 @@ namespace Game
                 return;
             }
 
-            _sessionCancellation = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
+            _sessionCancellation = CancellationTokenSource.CreateLinkedTokenSource(
+                this.GetCancellationTokenOnDestroy());
             _fillOrchestrator.FillCompleted += OnFillCompleted;
         }
 
         private void OnDisable()
         {
-            _sceneNavigator.UnregisterSession(StartSession);
+            if (_sceneNavigator != null)
+            {
+                _sceneNavigator.UnregisterSession(StartSession);
+            }
 
-            if (_hasStarted == true)
+            if (_hasStarted == true && _fillOrchestrator != null)
             {
                 Finish();
             }
@@ -182,20 +201,21 @@ namespace Game
             }
 
             _isPreparing = true;
-            ApplyTheme();
-            _fillOrchestrator.Prepare(_floorRenderer.bounds);
-            _result = _fillOrchestrator.CalculateResult();
-            _fillOrchestrator.FitCamera(_cameraFitter);
-            _rewarder.ResetLevelResult();
-            _transaction(CommitResult);
 
-            if (_rewarder.IsWin == true)
+            try
             {
-                _leaderboardReporter.Report();
+                _themeApplier.Apply(_floorRenderer, _fillOrchestrator);
+                _fillOrchestrator.Prepare(_floorRenderer.bounds);
+                _result = _fillOrchestrator.CalculateResult();
+                _fillOrchestrator.FitCamera(_cameraFitter);
+                await _saver.CommitFillAndSave(_result, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
             }
-
-            await _saveConfirmation.ConfirmSavedAsync(cancellationToken);
-            cancellationToken.ThrowIfCancellationRequested();
+            catch
+            {
+                _isPreparing = false;
+                throw;
+            }
         }
 
         private void StartSession()
@@ -212,48 +232,25 @@ namespace Game
             StartGameplay();
         }
 
-        private void CommitResult()
+        public void ReloadLevel()
         {
-            _rewarder.CommitLevelResult(_result.Percent);
-
-            if (_rewarder.IsWin == true)
-            {
-                CommitLevelCompletion();
-            }
-        }
-
-        public void LoadNextLevel()
-        {
-            NavigateToAfterStop(SceneId.Game);
-        }
-
-        public void RestartLevel()
-        {
-            NavigateToAfterStop(SceneId.Game);
-        }
-
-        public void ExitToMenuAfterWin()
-        {
-            NavigateToAfterStop(SceneId.Menu);
+            ExitTo(SceneId.Game);
         }
 
         public void ExitToMenu()
         {
-            NavigateToAfterStop(SceneId.Menu);
+            ExitTo(SceneId.Menu);
         }
 
-        private void CommitLevelCompletion()
+        private void ExitTo(SceneId targetSceneId)
         {
-            if (_isLevelProgressCommitted == true)
+            if (_isFinished == true)
             {
                 return;
             }
 
-            _isLevelProgressCommitted = true;
-            int nextLevel = _levelStorage.CurrentLevel + 1;
-            int maxLevel = Mathf.Max(_levelStorage.MaxLevel, nextLevel);
-
-            _levelStorage.SetLevelProgress(nextLevel, maxLevel);
+            Finish();
+            _exitFlow.Exit(targetSceneId);
         }
 
         public void RescueFill()
@@ -275,9 +272,7 @@ namespace Game
 
             try
             {
-                _transaction(CommitRescue);
-                _leaderboardReporter.Report();
-                await _saveConfirmation.ConfirmSavedAsync(cancellationToken);
+                await _saver.CommitRescueAndSave(cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
                 _isCompletionHandled = false;
                 _isPreparing = false;
@@ -288,12 +283,6 @@ namespace Game
             {
                 return;
             }
-        }
-
-        private void CommitRescue()
-        {
-            _rewarder.CommitRescueTopUp();
-            CommitLevelCompletion();
         }
 
         public void PauseByRequest()
@@ -307,34 +296,6 @@ namespace Game
         public void ResumeByRequest()
         {
             _pauser.RequestResume();
-        }
-
-        private void NavigateToAfterStop(SceneId targetSceneId)
-        {
-            if (_isFinished == true || _sceneNavigator.IsTransitioning == true)
-            {
-                return;
-            }
-
-            Finish();
-            _adScheduler.TryShowInterstitial();
-            NavigateTo(targetSceneId).Forget();
-        }
-
-        private async UniTaskVoid NavigateTo(SceneId targetSceneId)
-        {
-            if (_sceneNavigator.IsTransitioning == true)
-            {
-                return;
-            }
-
-            if (targetSceneId == SceneId.Game)
-            {
-                await _sceneNavigator.LoadGameAsync();
-                return;
-            }
-
-            await _sceneNavigator.LoadMenuAsync();
         }
 
         private void StartGameplay()
@@ -422,28 +383,5 @@ namespace Game
             Finished?.Invoke();
         }
 
-        private void ApplyTheme()
-        {
-            LevelConfig config = _configResolver.GetConfigFor(_levelStorage.CurrentLevel);
-
-            if (config.Theme == null)
-            {
-                return;
-            }
-
-            if (config.Theme.FloorMaterial != null)
-            {
-                _floorRenderer.sharedMaterial = config.Theme.FloorMaterial;
-            }
-
-            Texture2D shapeTexture = config.Theme.PickFillShapeTexture();
-
-            if (shapeTexture == null)
-            {
-                throw new InvalidOperationException($"{config.Theme.name}: fill shape texture is missing.");
-            }
-
-            _fillOrchestrator.SetShapeTexture(shapeTexture);
-        }
     }
 }

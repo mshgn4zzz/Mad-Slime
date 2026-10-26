@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
+using UI.Spawning;
 using UnityEngine;
-
-namespace UI
+namespace UI.Menu
 {
     public class MenuPopupStack
     {
-
+        private UiSpawner _spawner;
         private GameObject[] _screens;
         private List<Component> _windows = new List<Component>();
         private List<MenuPopupInputState> _popupInput = new List<MenuPopupInputState>();
@@ -17,9 +17,39 @@ namespace UI
             return _windows.Count > 0;
         }
 
-        public MenuPopupStack(params GameObject[] screens)
+        public MenuPopupStack(UiSpawner spawner, params GameObject[] screens)
         {
+            if (spawner == null)
+            {
+                throw new ArgumentNullException(nameof(spawner));
+            }
+
+            if (screens == null)
+            {
+                throw new ArgumentNullException(nameof(screens));
+            }
+
+            for (int i = 0; i < screens.Length; i++)
+            {
+                if (screens[i] == null)
+                {
+                    throw new ArgumentNullException(nameof(screens), $"Screen #{i} is not assigned.");
+                }
+            }
+
+            _spawner = spawner;
             _screens = screens;
+        }
+
+        public void Release<T>(T popup, Action<T> detach) where T : Component
+        {
+            if (popup == null)
+            {
+                return;
+            }
+
+            detach(popup);
+            _spawner.Release(popup);
         }
 
         public bool IsTop(Component window)

@@ -1,8 +1,7 @@
-using Skills;
+using Items;
 using System.Collections.Generic;
 using UnityEngine;
-
-namespace Scriptables
+namespace Levels
 {
     [CreateAssetMenu(menuName = "Mad Slime/Level Config", fileName = "NewLevelConfig")]
     public class LevelConfig : ScriptableObject
@@ -35,7 +34,8 @@ namespace Scriptables
         [Tooltip("Максимальное количество предметов по одному типу квоты.")]
         [SerializeField, Min(1)] private int _quotaTargetMax = 8;
 
-        [Tooltip("Предпочтительный максимум типов одного тира. При нехватке разнообразия минимум типов квоты имеет приоритет.")]
+                [Tooltip("Предпочтительный максимум типов одного тира. При нехватке разнообразия минимум типов "
+                    + "квоты имеет приоритет.")]
         [SerializeField, Min(1)] private int _quotaMaxSameTier = 2;
 
         public LevelTheme Theme => _theme;

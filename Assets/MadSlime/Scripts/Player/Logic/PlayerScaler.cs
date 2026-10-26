@@ -1,10 +1,9 @@
 using CameraSystem;
+using Items;
 using System;
 using System.Collections.Generic;
-using Skills;
 using UnityEngine;
 using VContainer;
-
 namespace Player
 {
     public class PlayerScaler : MonoBehaviour
@@ -40,7 +39,8 @@ namespace Player
             if (_playerTier == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: PlayerTier was not injected. Check that GameLifetimeScope registers PlayerTier and PlayerScaler.");
+                    $"{name}: PlayerTier was not injected. Check that GameLifetimeScope "
+                        + $"registers PlayerTier and PlayerScaler.");
             }
 
             if (_modelTransform == null)
@@ -61,13 +61,15 @@ namespace Player
             if (_cameraFollow == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: CameraFollow is not assigned. Drag the camera's CameraFollow component into the _cameraFollow field.");
+                    $"{name}: CameraFollow is not assigned. Drag the camera's CameraFollow "
+                        + $"component into the _cameraFollow field.");
             }
 
             if (_growthAnimator == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: GrowthAnimator is not assigned. Drag the GrowthAnimator component into the _growthAnimator field.");
+                    $"{name}: GrowthAnimator is not assigned. Drag the GrowthAnimator component "
+                        + $"into the _growthAnimator field.");
             }
 
             for (int i = 0; i < _radiusRecipients.Count; i++)

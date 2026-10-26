@@ -1,11 +1,10 @@
-using Scriptables;
+using Levels;
 using UnityEditor;
 using UnityEngine;
-
-namespace Game
+namespace Levels.Editor
 {
     [CustomEditor(typeof(LayoutPreviewDrawer))]
-    public class LayoutPreviewDrawerEditor : Editor
+    public class LayoutPreviewDrawerEditor : global::UnityEditor.Editor
     {
         private int _handleLayoutIndex;
 
@@ -19,7 +18,7 @@ namespace Game
             {
                 EditorGUILayout.HelpBox(
                     $"Scene handles edit Custom Layout ('{drawer.CustomLayout.name}'). Clear the "
-                        + $"Custom Layout field to edit library layouts by index.",
+                            + $"Custom Layout field to edit library layouts by index.",
                     MessageType.Info);
                 return;
             }
@@ -39,7 +38,8 @@ namespace Game
             if (selected != null)
             {
                 EditorGUILayout.HelpBox(
-                    $"Scene handles edit layout #{_handleLayoutIndex} ('{selected.name}'). Assign a Custom Layout to edit it directly.",
+                                        $"Scene handles edit layout #{_handleLayoutIndex} ('{selected.name}'). "
+                                                + $"Assign a Custom Layout to edit it directly.",
                     MessageType.Info);
             }
         }

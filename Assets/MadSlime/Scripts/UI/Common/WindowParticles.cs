@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
-
-namespace UI
+namespace UI.Common
 {
     public class WindowParticles : MonoBehaviour
     {

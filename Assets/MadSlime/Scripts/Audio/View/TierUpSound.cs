@@ -1,10 +1,8 @@
+using Items;
 using Player;
-using Scriptables;
-using Skills;
 using System;
 using UnityEngine;
 using VContainer;
-
 namespace Audio
 {
     public class TierUpSound : MonoBehaviour
@@ -26,13 +24,15 @@ namespace Audio
             if (_soundPlayer == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: IGameSoundPlayer was not injected. GameLifetimeScope must be the first object in the scene hierarchy.");
+                    $"{name}: IGameSoundPlayer was not injected. GameLifetimeScope must be the "
+                        + $"first object in the scene hierarchy.");
             }
 
             if (_playerTier == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: PlayerTier was not injected. Check that GameLifetimeScope registers PlayerTier and TierUpSound.");
+                    $"{name}: PlayerTier was not injected. Check that GameLifetimeScope "
+                        + $"registers PlayerTier and TierUpSound.");
             }
 
             if (_sfxClip == null)

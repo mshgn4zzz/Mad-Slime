@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-
-namespace Scriptables
+namespace Player
 {
     [CreateAssetMenu(menuName = "Mad Slime/Player Config", fileName = "NewPlayerConfig")]
     public class PlayerConfig : ScriptableObject
@@ -13,13 +12,15 @@ namespace Scriptables
         [Tooltip("Максимальное время полёта предмета (с). Дальние предметы не едут дольше.")]
         [SerializeField, Min(0.05f)] private float _maxAbsorbDuration = 0.45f;
 
-        [Tooltip("Скорость втягивания (юнитов/с). Длительность = дистанция/скорость, зажатая между min и max. Больше = быстрее сбор.")]
+                [Tooltip("Скорость втягивания (юнитов/с). Длительность = дистанция/скорость, зажатая между min и "
+                    + "max. Больше = быстрее сбор.")]
         [SerializeField, Min(0.5f)] private float _absorbSpeed = 9f;
 
         [Tooltip("Минимальная дуга траектории, доля дистанции. 0 = предметы летят по прямой.")]
         [SerializeField, Range(0f, 0.5f)] private float _minArcFraction = 0.1f;
 
-        [Tooltip("Максимальная дуга траектории, доля дистанции. Больше = сильнее завихрение; выше ~0.5 предмет залетает за спину.")]
+                [Tooltip("Максимальная дуга траектории, доля дистанции. Больше = сильнее завихрение; выше ~0.5 "
+                    + "предмет залетает за спину.")]
         [SerializeField, Range(0f, 0.5f)] private float _maxArcFraction = 0.3f;
 
         [Tooltip("Минимальная скорость вращения предмета в полёте (град/с).")]
@@ -28,14 +29,16 @@ namespace Scriptables
         [Tooltip("Максимальная скорость вращения предмета (град/с). Оба поля в 0 = без вращения.")]
         [SerializeField, Min(0f)] private float _maxSpinSpeed = 540f;
 
-        [Tooltip("Порог скорости (юниты/с), выше которого слайм дымит. На поздних тирах скорость переваливает за порог. 0 = без дыма.")]
+                [Tooltip("Порог скорости (юниты/с), выше которого слайм дымит. На поздних тирах скорость "
+                    + "переваливает за порог. 0 = без дыма.")]
         [SerializeField, Min(0f)] private float _smokeSpeedThreshold;
 
         [Tooltip("С какой доли пути предмет начинает сжиматься в ноль. 0.6 = последние 40% пути; "
             + "0.8 = доезжает целым и схлопывается у пасти.")]
         [SerializeField, Range(0.1f, 0.95f)] private float _shrinkStart = 0.6f;
 
-        [Tooltip("Крутость разгона ease-in. 1 = линейно, 2 = мягкий отрыв и разгон, 3+ = предмет зависает и резко всасывается.")]
+                [Tooltip("Крутость разгона ease-in. 1 = линейно, 2 = мягкий отрыв и разгон, 3+ = предмет зависает и "
+                    + "резко всасывается.")]
         [SerializeField, Range(1f, 5f)] private float _absorbEasePower = 2f;
 
         [Header("Collect Squash")]
@@ -68,7 +71,8 @@ namespace Scriptables
 
         [Header("Movement Cycle")]
         [Tooltip("Форма сжатия: X — фаза шага (0–1), Y — глубина сжатия (0–1). 0 — исходный "
-            + "размер, 1 — максимальное сжатие. Значение в нуле должно совпадать со значением в единице, иначе цикл щёлкает на стыке.")]
+            + "размер, 1 — максимальное сжатие. Значение в нуле должно совпадать со значением в "
+                    + "единице, иначе цикл щёлкает на стыке.")]
         [SerializeField] private AnimationCurve _crawlStretchCurve = new AnimationCurve(
             new Keyframe(0f, 0f),
             new Keyframe(0.35f, 1f),
@@ -114,5 +118,18 @@ namespace Scriptables
         public float CrawlRampTime => _crawlRampTime;
         public int StartMass => _startMass;
         public IReadOnlyList<PlayerTierThreshold> Thresholds => _thresholds;
+
+        private void OnValidate()
+        {
+            for (int i = 0; i < _thresholds.Count; i++)
+            {
+                if (_thresholds[i] != null && _thresholds[i].ScaleMultiplier <= 0f)
+                {
+                    Debug.LogError(
+                        $"{name}: threshold #{i} has ScaleMultiplier {_thresholds[i].ScaleMultiplier}. "
+                                + $"Set it above zero or the slime would collapse on that tier.");
+                }
+            }
+        }
     }
 }

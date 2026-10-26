@@ -1,4 +1,4 @@
-namespace UI
+namespace UI.Spawning
 {
     public enum UiLayer
     {

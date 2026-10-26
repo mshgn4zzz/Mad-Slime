@@ -1,6 +1,5 @@
 using System;
-
-namespace Adapters
+namespace Leaderboards
 {
     [Serializable]
     public class LeaderboardResponse

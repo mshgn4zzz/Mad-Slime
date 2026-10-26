@@ -1,12 +1,10 @@
 using Audio;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using Scriptables;
 using System;
 using System.Threading;
 using UnityEngine;
 using VContainer;
-
 namespace ShapeFill
 {
     [RequireComponent(typeof(FillCompleteSound))]
@@ -41,7 +39,8 @@ namespace ShapeFill
             if (_gridBuilder == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: GridBuilder was not injected. Check that FillLifetimeScope registers GridBuilder and FillCompleteAnimator.");
+                    $"{name}: GridBuilder was not injected. Check that FillLifetimeScope "
+                        + $"registers GridBuilder and FillCompleteAnimator.");
             }
 
             if (_config == null)
@@ -60,7 +59,8 @@ namespace ShapeFill
             if (_confetti.gameObject.scene.IsValid() == false)
             {
                 throw new InvalidOperationException(
-                    $"{name}: Confetti must be a scene instance, not a prefab asset. Drag the scene object into the _confetti field.");
+                    $"{name}: Confetti must be a scene instance, not a prefab asset. Drag the "
+                        + $"scene object into the _confetti field.");
             }
 
             if (TryGetComponent(out _completeSound) == false)

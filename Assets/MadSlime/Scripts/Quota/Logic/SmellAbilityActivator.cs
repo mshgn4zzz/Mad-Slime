@@ -1,14 +1,13 @@
+using Collectables;
+using Cysharp.Threading.Tasks;
+using Items;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Cysharp.Threading.Tasks;
-using Items;
-using Collectables;
 using UnityEngine;
 using Upgrades;
 using VContainer;
-
-namespace Game
+namespace Quota
 {
     public class SmellAbilityActivator : MonoBehaviour
     {
@@ -34,7 +33,8 @@ namespace Game
             if (_highlighter == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: Highlighter is not assigned. Drag the QuotaItemHighlighter component into the _highlighter field.");
+                    $"{name}: Highlighter is not assigned. Drag the QuotaItemHighlighter "
+                        + $"component into the _highlighter field.");
             }
 
             if (_upgrades == null)
@@ -42,6 +42,20 @@ namespace Game
                 throw new InvalidOperationException(
                     $"{name}: PlayerUpgrades was not injected. Check that ProjectLifetimeScope "
                         + $"registers PlayerUpgrades and SmellAbilityActivator.");
+            }
+
+            if (_detector == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: QuotaItemDetector was not injected. Check that GameLifetimeScope "
+                        + $"registers QuotaItemDetector and SmellAbilityActivator.");
+            }
+
+            if (_outlineInitializer == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: QuotaOutlineInitializer was not injected. Check that GameLifetimeScope "
+                        + $"registers QuotaOutlineInitializer and SmellAbilityActivator.");
             }
         }
 

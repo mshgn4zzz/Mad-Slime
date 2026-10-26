@@ -1,8 +1,7 @@
 using Audio;
-using Scriptables;
+using Roulette;
 using UnityEngine;
-
-namespace Roulette
+namespace UI.Roulette
 {
     public class RouletteSoundFeedback
     {

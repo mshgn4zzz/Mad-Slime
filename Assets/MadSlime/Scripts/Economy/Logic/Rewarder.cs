@@ -1,10 +1,8 @@
-using Scriptables;
 using Saves;
 using System;
 using UnityEngine;
 using VContainer;
-
-namespace Game
+namespace Economy
 {
     public class Rewarder : MonoBehaviour
     {
@@ -15,10 +13,9 @@ namespace Game
         private int _levelReward;
         private int _grantedAmount;
         private bool _isLevelResultCommitted;
+        private bool _isWin;
 
         public int GrantedTotal => _grantedAmount;
-
-        private bool _isWin;
 
         public bool IsWin => _isWin;
 
@@ -34,13 +31,15 @@ namespace Game
             if (_config == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: RewardConfig is not assigned. Create a RewardConfig asset and drag it into the _config field.");
+                    $"{name}: RewardConfig is not assigned. Create a RewardConfig asset and "
+                        + $"drag it into the _config field.");
             }
 
             if (_config.LoseRewardDivisor <= 0)
             {
                 throw new InvalidOperationException(
-                    $"{name}: RewardConfig '{_config.name}' has LoseRewardDivisor <= 0. Set a positive divisor in the asset.");
+                    $"{name}: RewardConfig '{_config.name}' has LoseRewardDivisor <= 0. Set a "
+                        + $"positive divisor in the asset.");
             }
 
             if (_wallet == null)

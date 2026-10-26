@@ -1,14 +1,12 @@
-using System;
 using Collectables;
 using Items;
+using System;
 using UnityEngine;
 using Upgrades;
-
 namespace Quota
 {
     public class QuotaCounter
     {
-        private const float MaxFillPercent = 1f;
         private const float QuotaFillWeight = 1f;
         private const float ForeignFillWeight = 0.1f;
 

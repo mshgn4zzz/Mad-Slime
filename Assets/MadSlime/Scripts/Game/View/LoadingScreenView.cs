@@ -1,12 +1,11 @@
-using System;
-using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Shop;
 using Skins;
+using System;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
-
 namespace Game
 {
     public class LoadingScreenView : MonoBehaviour
@@ -43,7 +42,8 @@ namespace Game
 
             if (skin == null || skin.Icon == null)
             {
-                throw new InvalidOperationException($"{name}: the initial Slime icon must exist in the loading skin catalog.");
+                                throw new InvalidOperationException($"{name}: the initial Slime icon must exist in "
+                                        + $"the loading skin catalog.");
             }
 
             _outline.sprite = skin.Icon;

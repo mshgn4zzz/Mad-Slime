@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-
 namespace Roulette
 {
     public class LootRoller

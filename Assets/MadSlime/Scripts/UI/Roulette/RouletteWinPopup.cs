@@ -1,14 +1,15 @@
-using System;
-using Game;
+using Roulette;
 using Skins;
+using System;
 using TMPro;
-using UI;
 using UI.Animations;
+using UI.Windows;
 using UnityEngine;
 using UnityEngine.UI;
-
-namespace Roulette
+namespace UI.Roulette
 {
+    using Localization = global::Localization.Localization;
+
     [RequireComponent(typeof(UiScaleAnimator))]
     public class RouletteWinPopup : BaseWindow
     {
@@ -41,6 +42,14 @@ namespace Roulette
         private Sprite _legendaryPlate;
         [SerializeField] private TMP_Text _plateText;
         [SerializeField] private Button _takeButton;
+        [SerializeField, Tooltip("Цвет рамки обычных призов.")]
+        private Color _normalFrameColor = new Color32(113, 198, 221, 255);
+        [SerializeField, Tooltip("Цвет рамки редких скинов.")]
+        private Color _rareFrameColor = new Color32(167, 228, 90, 255);
+        [SerializeField, Tooltip("Цвет рамки эпических скинов.")]
+        private Color _epicFrameColor = new Color32(197, 165, 232, 255);
+        [SerializeField, Tooltip("Цвет рамки легендарных скинов.")]
+        private Color _legendaryFrameColor = new Color32(246, 198, 75, 255);
 
         protected override void Awake()
         {
@@ -50,8 +59,8 @@ namespace Roulette
                 || _plate == null || _plateText == null || _takeButton == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: a win popup part is not assigned. Drag the Panel, Fade, SkinIcon, CoinIcon, PrizeFrame, " +
-                    "Plate, PlateText and TakeButton into the fields.");
+                    $"{name}: a win popup part is not assigned. Drag the Panel, Fade, SkinIcon, CoinIcon, "
+                        + $"PrizeFrame, Plate, PlateText and TakeButton into the fields.");
             }
 
             if (_normalFrame == null || _rareFrame == null || _epicFrame == null || _legendaryFrame == null)
@@ -89,9 +98,14 @@ namespace Roulette
 
         public void Initialize(RoulettePrize prize, RouletteView source)
         {
-            if (prize == null || source == null)
+            if (prize == null)
             {
-                throw new ArgumentNullException(nameof(prize), "Assign the roulette prize and its source view.");
+                throw new ArgumentNullException(nameof(prize));
+            }
+
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
             }
 
             if (prize.Skin != null)
@@ -153,13 +167,16 @@ namespace Roulette
             switch (rarity)
             {
                 case SkinRarity.Rare:
-                    return new Color32(167, 228, 90, 255);
+                    return _rareFrameColor;
+
                 case SkinRarity.Epic:
-                    return new Color32(197, 165, 232, 255);
+                    return _epicFrameColor;
+
                 case SkinRarity.Legendary:
-                    return new Color32(246, 198, 75, 255);
+                    return _legendaryFrameColor;
+
                 default:
-                    return new Color32(113, 198, 221, 255);
+                    return _normalFrameColor;
             }
         }
 

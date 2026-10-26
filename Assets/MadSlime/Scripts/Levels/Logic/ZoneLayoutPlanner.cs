@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Scriptables;
 using UnityEngine;
-
-namespace Game
+namespace Levels
 {
     public class ZoneLayoutPlanner
     {
@@ -24,8 +22,6 @@ namespace Game
                 _random = new System.Random();
             }
         }
-
-        public IReadOnlyList<Vector3> Positions => _positions;
 
         public IReadOnlyList<ZonePlacement> Placements => _placements;
 

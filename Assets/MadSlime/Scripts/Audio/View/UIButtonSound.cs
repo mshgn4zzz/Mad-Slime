@@ -1,9 +1,7 @@
-using Scriptables;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
-
 namespace Audio
 {
     [RequireComponent(typeof(Button))]
@@ -25,7 +23,8 @@ namespace Audio
             if (TryGetComponent(out _button) == false)
             {
                 throw new InvalidOperationException(
-                    $"{name}: Button component is missing. UIButtonSound requires the Button component on the same object.");
+                    $"{name}: Button component is missing. UIButtonSound requires the Button "
+                        + $"component on the same object.");
             }
 
             if (_soundPlayer == null)
@@ -44,18 +43,18 @@ namespace Audio
 
         private void OnEnable()
         {
-            _button.onClick.AddListener(PlayClick);
+            _button.onClick.AddListener(OnClick);
         }
 
         private void OnDisable()
         {
             if (_button != null)
             {
-                _button.onClick.RemoveListener(PlayClick);
+                _button.onClick.RemoveListener(OnClick);
             }
         }
 
-        private void PlayClick()
+        private void OnClick()
         {
             _soundPlayer.Play(_sfxClip);
         }

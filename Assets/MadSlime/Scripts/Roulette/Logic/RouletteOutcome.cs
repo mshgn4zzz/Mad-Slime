@@ -2,16 +2,13 @@ namespace Roulette
 {
     public class RouletteOutcome
     {
-        private int _slotIndex;
-        private RoulettePrize _prize;
-
-        public int SlotIndex => _slotIndex;
-        public RoulettePrize Prize => _prize;
+        public int SlotIndex { get; }
+        public RoulettePrize Prize { get; }
 
         public RouletteOutcome(int slotIndex, RoulettePrize prize)
         {
-            _slotIndex = slotIndex;
-            _prize = prize;
+            SlotIndex = slotIndex;
+            Prize = prize;
         }
     }
 }

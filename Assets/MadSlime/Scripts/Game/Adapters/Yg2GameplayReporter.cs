@@ -1,7 +1,6 @@
-using Core;
 using YG;
 
-namespace Adapters
+namespace Game
 {
     public class Yg2GameplayReporter : IGameplayReporter
     {

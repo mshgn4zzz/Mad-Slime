@@ -1,19 +1,20 @@
+using Cysharp.Threading.Tasks;
+using Game;
+using Leaderboards;
+using Saves;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Core;
-using Cysharp.Threading.Tasks;
-using Game;
-using Saves;
-using Scriptables;
 using TMPro;
+using UI.Windows;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 using VContainer;
-
-namespace UI
+namespace UI.Leaderboards
 {
+    using Localization = global::Localization.Localization;
+
     public class LeaderboardMenu : BaseWindow
     {
         private const int TopCount = 10;
@@ -54,7 +55,7 @@ namespace UI
             _leaderboardService = leaderboardService;
         }
 
-        public void Initialize()
+        private void Awake()
         {
             if (_closeButton == null || _authButton == null || _retryButton == null
                 || _rowFactory == null || _scroll == null || _scroll.content == null || _scroll.viewport == null
@@ -66,14 +67,22 @@ namespace UI
 
             if (_savesReadiness == null || _leaderboardService == null)
             {
-                throw new InvalidOperationException($"{name}: show the leaderboard through UiSpawner with injected dependencies.");
+                                throw new InvalidOperationException($"{name}: show the leaderboard through "
+                                        + $"UiSpawner with injected dependencies.");
             }
+        }
 
+        private void OnEnable()
+        {
             _closeButton.onClick.AddListener(OnCloseClicked);
             _authButton.onClick.AddListener(OnAuthClicked);
             _retryButton.onClick.AddListener(OnRetryClicked);
             _savesReadiness.Ready += OnSdkDataReceived;
             Localization.LanguageChanged += OnLanguageChanged;
+        }
+
+        public void Initialize()
+        {
             RememberPanelHeight();
             RequestLeaderboard();
         }

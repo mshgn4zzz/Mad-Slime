@@ -1,39 +1,30 @@
-using System;
-using System.Threading;
+using Cysharp.Threading.Tasks;
 using Saves;
 using Skins;
-using VContainer;
-using Cysharp.Threading.Tasks;
+using System;
+using System.Threading;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-
+using VContainer;
 namespace Game
 {
     public class SceneNavigator : MonoBehaviour
     {
-        private const float ActivationProgressThreshold = 0.9f;
+        private const float SessionRegistrationTimeoutSeconds = 10f;
+        private const float SaveReadinessTimeoutSeconds = 10f;
 
         [Tooltip("Экран загрузки: полноэкранный Canvas, показывается на время перехода между сценами.")]
         [SerializeField] private Canvas _loadingScreenPrefab;
 
         private SceneId _currentSceneId;
-        private SceneId _previousSceneId;
         private bool _isInitialized;
         private bool _isTransitioning;
         private bool _isDailyShownThisSession;
-        private Func<CancellationToken, UniTask> _pendingPreparation;
-        private Action _pendingSceneStart;
-        private Action _pendingSceneFinish;
-        private CancellationToken _pendingSessionToken;
-        private Action _currentSessionStart;
-        private Action _currentSessionFinish;
-        private Canvas _loadingScreenInstance;
-        private LoadingScreenView _loadingView;
+        private SceneSessionRegistry _registry = new SceneSessionRegistry();
+        private LoadingScreenController _loading;
+        private SceneTransitionRunner _transitionRunner = new SceneTransitionRunner();
 
         public SceneId CurrentSceneId => _currentSceneId;
-
-        public SceneId PreviousSceneId => _previousSceneId;
 
         private ISavesReadiness _readiness;
         private SkinInventory _skinInventory;
@@ -78,24 +69,31 @@ namespace Game
             }
 
             _currentSceneId = bootSceneId;
-            _previousSceneId = _currentSceneId;
+            _loading = new LoadingScreenController(_loadingScreenPrefab);
             _isInitialized = true;
         }
 
         public void RegisterSession(Func<CancellationToken, UniTask> preparation, Action sessionStart,
             Action sessionFinish, CancellationToken sessionToken)
         {
-            if (preparation == null || sessionStart == null || sessionFinish == null)
+            if (preparation == null)
             {
-                throw new ArgumentNullException(nameof(preparation), "Scene session lifecycle callbacks are required.");
+                throw new ArgumentNullException(nameof(preparation));
+            }
+
+            if (sessionStart == null)
+            {
+                throw new ArgumentNullException(nameof(sessionStart));
+            }
+
+            if (sessionFinish == null)
+            {
+                throw new ArgumentNullException(nameof(sessionFinish));
             }
 
             if (_isTransitioning)
             {
-                _pendingPreparation = preparation;
-                _pendingSceneStart = sessionStart;
-                _pendingSceneFinish = sessionFinish;
-                _pendingSessionToken = sessionToken;
+                _registry.RegisterPending(preparation, sessionStart, sessionFinish, sessionToken);
                 return;
             }
 
@@ -104,16 +102,7 @@ namespace Game
 
         public void UnregisterSession(Action sessionStart)
         {
-            if (_currentSessionStart == sessionStart)
-            {
-                _currentSessionStart = null;
-                _currentSessionFinish = null;
-            }
-
-            if (_pendingSceneStart == sessionStart)
-            {
-                ClearPendingSession();
-            }
+            _registry.Unregister(sessionStart);
         }
 
         private async UniTaskVoid StartInitialSessionAsync(Func<CancellationToken, UniTask> preparation,
@@ -121,17 +110,17 @@ namespace Game
         {
             try
             {
-                ShowLoadingScreen();
-                await UniTask.WaitUntil(IsSaveReady, cancellationToken: sessionToken);
-                _skinInventory.Initialize();
-                _loadingView.SetSkin(_skinInventory.SelectedSkinId);
-                await UniTask.NextFrame(cancellationToken: sessionToken);
                 EnsureInitialized();
+                _loading.Show(transform);
+                ApplyLoadingSkin();
+                await WaitForSaveReadinessAsync(sessionToken);
+                _skinInventory.Initialize();
+                _loading.SetSkin(_skinInventory.SelectedSkinId);
+                await UniTask.NextFrame(cancellationToken: sessionToken);
                 await preparation.Invoke(sessionToken);
-                await _loadingView.CompleteAsync(sessionToken);
+                await _loading.CompleteAsync(sessionToken);
                 sessionToken.ThrowIfCancellationRequested();
-                _currentSessionStart = sessionStart;
-                _currentSessionFinish = sessionFinish;
+                _registry.SetCurrentSession(sessionStart, sessionFinish);
                 sessionStart.Invoke();
             }
             catch (OperationCanceledException)
@@ -140,7 +129,7 @@ namespace Game
             }
             finally
             {
-                HideLoadingScreen();
+                _loading.Hide();
             }
         }
 
@@ -149,16 +138,22 @@ namespace Game
             return _readiness.IsReady;
         }
 
-        private bool IsIncomingSessionRegistered()
+        private async UniTask WaitForSaveReadinessAsync(CancellationToken cancellationToken)
         {
-            return _pendingPreparation != null;
-        }
+            float waitStart = Time.realtimeSinceStartup;
 
-        private void ClearPendingSession()
-        {
-            _pendingPreparation = null;
-            _pendingSceneStart = null;
-            _pendingSceneFinish = null;
+            while (IsSaveReady() == false)
+            {
+                if (Time.realtimeSinceStartup - waitStart > SaveReadinessTimeoutSeconds)
+                {
+                    throw new InvalidOperationException(
+                        "SceneNavigator: saves did not become ready within "
+                            + $"{SaveReadinessTimeoutSeconds} seconds. The Yandex Games SDK probably "
+                            + $"failed to initialize.");
+                }
+
+                await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
+            }
         }
 
         public UniTask LoadMenuAsync()
@@ -174,13 +169,12 @@ namespace Game
             }
 
             _isTransitioning = true;
+            EnsureInitialized();
 
             try
             {
-                ShowLoadingScreen();
-                _currentSessionFinish?.Invoke();
-                _progressStorage.ResetProgress();
-                _skinInventory.Initialize();
+                _loading.Show(transform);
+                ApplyLoadingSkin();
                 CancellationToken cancellationToken = this.GetCancellationTokenOnDestroy();
 
                 try
@@ -191,14 +185,17 @@ namespace Game
                 {
                     if (cancellationToken.IsCancellationRequested == false)
                     {
+                        _registry.FinishCurrentSession();
+                        _progressStorage.ResetProgress();
+                        _skinInventory.Initialize();
                         await TransitionAsync(SceneId.Menu);
                     }
                 }
             }
             finally
             {
-                ClearPendingSession();
-                HideLoadingScreen();
+                _registry.ClearPending();
+                _loading.Hide();
                 _isTransitioning = false;
             }
         }
@@ -238,132 +235,55 @@ namespace Game
             }
             finally
             {
-                ClearPendingSession();
-                HideLoadingScreen();
+                _registry.ClearPending();
+                _loading.Hide();
                 _isTransitioning = false;
             }
         }
 
         private async UniTask TransitionAsync(SceneId targetSceneId)
         {
-            ShowLoadingScreen();
-            _currentSessionFinish?.Invoke();
+            EnsureInitialized();
+            _loading.Show(transform);
+            ApplyLoadingSkin();
+            _registry.FinishCurrentSession();
             CancellationToken cancellationToken = this.GetCancellationTokenOnDestroy();
 
             await UniTask.NextFrame(cancellationToken: cancellationToken);
             SceneId sourceSceneId = _currentSceneId;
-            Scene sourceScene = SceneManager.GetSceneByName(GetSceneName(sourceSceneId));
+            Scene targetScene = await _transitionRunner.LoadAdditiveAsync(sourceSceneId, targetSceneId,
+                cancellationToken);
+            float registrationWaitStart = Time.realtimeSinceStartup;
 
-            if (sourceScene.isLoaded == true)
+            while (_registry.HasPendingSession == false)
             {
-                DisableOutgoingSystems(sourceScene);
-            }
-
-            string targetSceneName = GetSceneName(targetSceneId);
-            void OnTargetSceneLoaded(Scene loadedScene, LoadSceneMode mode)
-            {
-                if (loadedScene.name == targetSceneName && sourceScene.isLoaded)
-                {
-                    GameObject[] roots = sourceScene.GetRootGameObjects();
-
-                    for (int i = 0; i < roots.Length; i++)
-                    {
-                        DisableAll<AudioListener>(roots[i]);
-                    }
-                }
-            }
-
-            SceneManager.sceneLoaded += OnTargetSceneLoaded;
-
-            try
-            {
-                AsyncOperation loadOperation = SceneManager.LoadSceneAsync(targetSceneName, LoadSceneMode.Additive);
-
-                if (loadOperation == null)
+                if (Time.realtimeSinceStartup - registrationWaitStart > SessionRegistrationTimeoutSeconds)
                 {
                     throw new InvalidOperationException(
-                        $"SceneNavigator: failed to start loading scene '{targetSceneName}'. Check that "
-                            + $"it is present in the build settings.");
+                        $"SceneNavigator: scene '{SceneTransitionRunner.GetSceneName(targetSceneId)}' did not "
+                            + $"register a session within {SessionRegistrationTimeoutSeconds} seconds. Its "
+                            + $"lifetime scope or orchestrator probably failed during initialization.");
                 }
 
-                loadOperation.allowSceneActivation = false;
-
-                while (loadOperation.progress < ActivationProgressThreshold)
-                {
-                    await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
-                }
-
-                loadOperation.allowSceneActivation = true;
-                await loadOperation.ToUniTask(cancellationToken: cancellationToken);
-            }
-            finally
-            {
-                SceneManager.sceneLoaded -= OnTargetSceneLoaded;
+                await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
             }
 
-            Scene targetScene = SceneManager.GetSceneByName(targetSceneName);
+            await _registry.PendingPreparation.Invoke(_registry.PendingSessionToken);
+            await _loading.CompleteAsync(cancellationToken);
+            _registry.PendingSessionToken.ThrowIfCancellationRequested();
+            await _transitionRunner.UnloadOutgoingAsync(sourceSceneId, targetScene);
 
-            if (targetScene.isLoaded == false)
-            {
-                throw new InvalidOperationException(
-                    $"SceneNavigator: scene '{targetSceneName}' did not finish loading.");
-            }
-
-            SceneManager.SetActiveScene(targetScene);
-            await UniTask.WaitUntil(IsIncomingSessionRegistered, cancellationToken: cancellationToken);
-            await _pendingPreparation.Invoke(_pendingSessionToken);
-            await _loadingView.CompleteAsync(cancellationToken);
-            _pendingSessionToken.ThrowIfCancellationRequested();
-
-            if (sourceScene.isLoaded)
-            {
-                await SceneManager.UnloadSceneAsync(sourceScene).ToUniTask();
-            }
-
-            RestoreIncomingEventSystem(targetScene);
-
-            Action sessionStart = _pendingSceneStart;
-
-            _currentSessionStart = _pendingSceneStart;
-            _currentSessionFinish = _pendingSceneFinish;
-            ClearPendingSession();
-            _previousSceneId = sourceSceneId;
+            Action sessionStart = _registry.PendingSceneStart;
+            _registry.PromotePendingToCurrent();
             _currentSceneId = targetSceneId;
 
             sessionStart?.Invoke();
 
-            HideLoadingScreen();
+            _loading.Hide();
         }
 
-        public void ReportPreparationProgress(float progress)
+        private void ApplyLoadingSkin()
         {
-            if (_loadingView != null)
-            {
-                _loadingView.SetProgress(progress);
-            }
-        }
-
-        private void ShowLoadingScreen()
-        {
-            if (_loadingScreenPrefab == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Loading screen prefab is not assigned. Drag a loading screen Canvas "
-                        + $"prefab into the _loadingScreenPrefab field.");
-            }
-
-            if (_loadingScreenInstance != null)
-            {
-                Destroy(_loadingScreenInstance.gameObject);
-            }
-
-            _loadingScreenInstance = Instantiate(_loadingScreenPrefab, transform);
-
-            if (_loadingScreenInstance.TryGetComponent(out _loadingView) == false)
-            {
-                throw new InvalidOperationException($"{name}: the loading prefab must contain LoadingScreenView.");
-            }
-
             string skinId = SkinInventory.InitialSkinId;
 
             if (_readiness.IsReady == true)
@@ -371,86 +291,14 @@ namespace Game
                 skinId = _skinInventory.SelectedSkinId;
             }
 
-            _loadingView.SetSkin(skinId);
+            _loading.SetSkin(skinId);
         }
 
-        private void HideLoadingScreen()
+        public void ReportPreparationProgress(float progress)
         {
-            if (_loadingScreenInstance == null)
+            if (_loading != null)
             {
-                return;
-            }
-
-            Destroy(_loadingScreenInstance.gameObject);
-            _loadingScreenInstance = null;
-            _loadingView = null;
-        }
-
-        private static void DisableOutgoingSystems(Scene sourceScene)
-        {
-            GameObject[] roots = sourceScene.GetRootGameObjects();
-
-            for (int rootIndex = 0; rootIndex < roots.Length; rootIndex++)
-            {
-                DisableAll<EventSystem>(roots[rootIndex]);
-                DisableAll<Canvas>(roots[rootIndex]);
-            }
-        }
-
-        private static void DisableAll<TComponent>(GameObject root)
-        {
-            TComponent[] components = root.GetComponentsInChildren<TComponent>(true);
-
-            for (int componentIndex = 0; componentIndex < components.Length; componentIndex++)
-            {
-                Behaviour behaviour = components[componentIndex] as Behaviour;
-
-                if (behaviour != null)
-                {
-                    behaviour.enabled = false;
-                }
-            }
-        }
-
-        private static void RestoreIncomingEventSystem(Scene targetScene)
-        {
-            if (EventSystem.current != null)
-            {
-                return;
-            }
-
-            GameObject[] roots = targetScene.GetRootGameObjects();
-
-            for (int rootIndex = 0; rootIndex < roots.Length; rootIndex++)
-            {
-                EventSystem[] eventSystems = roots[rootIndex].GetComponentsInChildren<EventSystem>(true);
-
-                if (eventSystems.Length > 0)
-                {
-                    eventSystems[0].enabled = true;
-                    return;
-                }
-            }
-        }
-
-        private static string GetSceneName(SceneId sceneId)
-        {
-            switch (sceneId)
-            {
-                case SceneId.Menu:
-                    return "Menu";
-
-                case SceneId.Game:
-                    return "Game";
-
-                case SceneId.Fill:
-                    return "Fill";
-
-                default:
-                    throw new ArgumentOutOfRangeException(
-                        nameof(sceneId),
-                        sceneId,
-                        "SceneNavigator: unknown scene id.");
+                _loading.SetProgress(progress);
             }
         }
 

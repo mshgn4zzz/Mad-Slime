@@ -1,6 +1,5 @@
 using UnityEngine;
-
-namespace Scriptables
+namespace ShapeFill
 {
     [CreateAssetMenu(menuName = "Mad Slime/Fill Config", fileName = "NewFillConfig")]
     public class FillConfig : ScriptableObject
@@ -28,7 +27,8 @@ namespace Scriptables
         [SerializeField, Min(0.01f)] private float _boostedFlightDuration = 0.25f;
 
         [Header("Tap Instant")]
-        [Tooltip("Общее окно вылета оставшихся кубов после второго тапа (с). «Моментально» условно: 0.25 = короткий залп.")]
+                [Tooltip("Общее окно вылета оставшихся кубов после второго тапа (с). «Моментально» условно: 0.25 = "
+                    + "короткий залп.")]
         [SerializeField, Min(0.05f)] private float _instantFillDuration = 0.25f;
 
         [Tooltip("Время полёта каждого куба залпа (с). Финал наступит после долёта последнего куба.")]
@@ -69,7 +69,8 @@ namespace Scriptables
         [SerializeField, Range(0f, 1f)] private float _shapePunchElasticity = 0.3f;
 
         [Header("Camera Kick")]
-        [Tooltip("Насколько отъезжает камера при полном заполнении (градусы поля зрения). 0 = камера остаётся на месте.")]
+                [Tooltip("Насколько отъезжает камера при полном заполнении (градусы поля зрения). 0 = камера "
+                    + "остаётся на месте.")]
         [SerializeField, Min(0f)] private float _fovKick = 9f;
 
         [Tooltip("Длительность отъезда камеры (с). Столько же камера возвращается обратно — суммарный цикл 2x.")]

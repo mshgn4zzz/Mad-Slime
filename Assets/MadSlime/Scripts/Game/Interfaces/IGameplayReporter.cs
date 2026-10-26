@@ -1,4 +1,4 @@
-namespace Core
+namespace Game
 {
     public interface IGameplayReporter
     {

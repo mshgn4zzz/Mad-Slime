@@ -1,15 +1,15 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
-
-namespace Adapters
+namespace Saves
 {
     public class SaveConfirmation : MonoBehaviour
     {
         private const int TimeoutSeconds = 15;
+        private const char ResultSeparator = '|';
 
         private Queue<SaveConfirmationRequest> _requests = new Queue<SaveConfirmationRequest>();
         private SaveConfirmationRequest _activeRequest;
@@ -77,7 +77,7 @@ namespace Adapters
 
         public void OnSaveFailed(string result)
         {
-            int separatorIndex = result.IndexOf('|');
+            int separatorIndex = result.IndexOf(ResultSeparator);
 
             if (_activeRequest == null || separatorIndex < 0
                 || int.TryParse(result.Substring(0, separatorIndex), out int id) == false || id != _activeRequest.Id)
@@ -86,7 +86,8 @@ namespace Adapters
             }
 
             string reason = result.Substring(separatorIndex + 1);
-            _activeRequest.Completion.TrySetException(new InvalidOperationException("Cloud save was not confirmed: " + reason));
+            _activeRequest.Completion.TrySetException(new InvalidOperationException(
+                "Cloud save was not confirmed: " + reason));
         }
 
         private void OnDestroy()
