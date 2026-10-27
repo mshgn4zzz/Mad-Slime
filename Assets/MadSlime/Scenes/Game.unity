@@ -673,7 +673,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 036c883773164fec087ead24c0d6271d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _radius: 16.560123
+  DetectionRadius: 16.560123
   _layerMask:
     serializedVersion: 2
     m_Bits: 512
@@ -871,7 +871,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33b155ede189101b49d9a48de29c2750, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _radius: 0.42937404
+  DetectionRadius: 0.42937404
   _layerMask:
     serializedVersion: 2
     m_Bits: 776
@@ -1419,7 +1419,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5578e80fc521b554ca7c3632ca463950, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _controlPath: <Gamepad>/leftStick
   _canvas: {fileID: 456849530}
   _background: {fileID: 630991966}
   _handle: {fileID: 1600959884}
@@ -1958,6 +1957,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
+  - component: {fileID: 910000000000000101}
   - component: {fileID: 1684454172}
   - component: {fileID: 1684454171}
   m_Layer: 0
@@ -2000,6 +2000,8 @@ MonoBehaviour:
   _adrenalineBoost: {fileID: 7992803093969525696}
   _adrenalineSound: {fileID: 292377145}
   _finalCountdownVignette: {fileID: 812539637}
+  _leaderboardReporter: {fileID: 910000000000000101}
+  _wallet: {fileID: 292377143}
   _gameplayOrchestrator: {fileID: 292377134}
   _quotaUI: {fileID: 1306941302}
   _cameraPullAnimator: {fileID: 1809261854}
@@ -7950,7 +7952,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d079e1e756155944b820a8893b2d20e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _radius: 0.7
+  DetectionRadius: 0.7
   _layerMask:
     serializedVersion: 2
     m_Bits: 520
@@ -8163,7 +8165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67c2c4d75d8f488ba4d14d3db828e1b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _radius: 1.3205123
+  DetectionRadius: 1.3205123
   _layerMask:
     serializedVersion: 2
     m_Bits: 520
@@ -9141,3 +9143,17 @@ SceneRoots:
   - {fileID: 5850846105485772491}
   - {fileID: 1784792494}
   - {fileID: 812539640}
+
+--- !u!114 &910000000000000101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1684454170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c966f3bb1184cc54fb8104b3fffda38e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  _config: {fileID: 11400000, guid: 8523d7049496a3ee69d341d0a78ea84c, type: 2}
