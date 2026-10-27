@@ -37,7 +37,7 @@ MonoBehaviour:
   - _rewardType: 1
     _coins: 0
     _dropChance: 10
-  _exclusiveSkins:
+  _rouletteSkins:
   - {fileID: 11400000, guid: 82671d3ec500bdb07894301d5ce80736, type: 2}
   - {fileID: 11400000, guid: 3e381ab6fe2dd0d3fbdbb3eedd543d26, type: 2}
   - {fileID: 11400000, guid: 6e1bd2df4e6c06e03ac529c0efdb4dc6, type: 2}
@@ -50,7 +50,7 @@ MonoBehaviour:
   _skinSpinMinCost: 300
   _skinSpinMaxCost: 3000
   _skinSpinCostStep: 150
-  _duplicateCoinsCompensation: 100
+  _duplicateCoins: 100
   _showcaseLegendaryCount: 1
   _showcaseEpicCount: 2
   _showcaseRareCount: 2
@@ -59,14 +59,14 @@ MonoBehaviour:
   _adSpinsPerWindow: 3
   _freeSpinCooldownSeconds: 1800
   _idleRotationSpeed: 12
-  _windBackDegrees: 45
-  _windBackDuration: 0.3
+  _pullBackDegrees: 45
+  _pullBackTime: 0.3
   _minTurns: 5
   _maxTurns: 25
   _spinDuration: 6
-  _spinEasePower: 8
-  _settleMaxDeviationDegrees: 10
-  _winDwellSeconds: 0.7
+  _brakePower: 8
+  _maxMissDegrees: 10
+  _winPauseSeconds: 0.7
   _stepClip: {fileID: 11400000, guid: d2ed719930b13b41b820abb33e340ce0, type: 2}
   _spinStartClip: {fileID: 0}
   _winClip: {fileID: 0}

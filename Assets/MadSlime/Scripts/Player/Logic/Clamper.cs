@@ -4,7 +4,6 @@ namespace Player
 {
     public class Clamper : MonoBehaviour, IRadiusRecipient
     {
-        [Tooltip("Радиус тела слайма для отступа от границ уровня; скейлер масштабирует его вместе с тиром.")]
         [SerializeField, Min(0f)] private float _radius = 0.5f;
 
         private Bounds _bounds;

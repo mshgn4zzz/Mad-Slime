@@ -13,7 +13,6 @@ namespace Game
         private const float SessionRegistrationTimeoutSeconds = 10f;
         private const float SaveReadinessTimeoutSeconds = 10f;
 
-        [Tooltip("Экран загрузки: полноэкранный Canvas, показывается на время перехода между сценами.")]
         [SerializeField] private Canvas _loadingScreenPrefab;
 
         private SceneId _currentSceneId;

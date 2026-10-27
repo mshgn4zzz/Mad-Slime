@@ -26,12 +26,9 @@ namespace Game
 
         [SerializeField] private Playlist _musicPlaylist;
 
-        [Tooltip("Пауза перед переходом в Fill после конца сессии: игрок видит, что игра закончилась.")]
-        [SerializeField, Min(0f)] private float _sessionEndDelay = 1f;
+        [SerializeField, Min(0f)] private float _endDelay = 1f;
 
-                [Tooltip("Сколько последних секунд уровня считается финальным отсчётом: на нём включаются "
-                    + "адреналин, виньетка и тик.")]
-        [SerializeField, Min(0.1f)] private float _finalCountdownSeconds = 20f;
+        [SerializeField, Min(0.1f)] private float _finalSeconds = 20f;
 
         private LevelConfigResolver _configResolver;
         private LevelGenerator _levelGenerator;
@@ -338,9 +335,9 @@ namespace Game
 
             float urgency = 0f;
 
-            if (_finalCountdownSeconds > 0f)
+            if (_finalSeconds > 0f)
             {
-                urgency = 1f - Mathf.Clamp01(remainingSeconds / _finalCountdownSeconds);
+                urgency = 1f - Mathf.Clamp01(remainingSeconds / _finalSeconds);
             }
 
             _finalCountdownEffects.SetUrgency(urgency);
@@ -350,7 +347,7 @@ namespace Game
                 return;
             }
 
-            if (remainingSeconds > _finalCountdownSeconds)
+            if (remainingSeconds > _finalSeconds)
             {
                 return;
             }
@@ -397,11 +394,11 @@ namespace Game
         {
             try
             {
-                if (_sessionEndDelay > 0f)
+                if (_endDelay > 0f)
                 {
                     await UniTask.Delay
                     (
-                        (int)(_sessionEndDelay * 1000f),
+                        (int)(_endDelay * 1000f),
                         DelayType.Realtime,
                         cancellationToken: cancellationToken
                     );

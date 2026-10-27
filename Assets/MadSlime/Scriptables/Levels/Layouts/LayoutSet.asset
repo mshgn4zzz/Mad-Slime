@@ -1355,8 +1355,8 @@ MonoBehaviour:
     _maxTier: 3
     _singleType: 0
   _allowMirroring: 1
-  _autoSpacingFactor: 2.3
-  _scatterDistanceFactor: 0.9
+  _autoGapTimes: 2.3
+  _scatterGapTimes: 0.9
   _startClearRadius: 10
   _smallItemStartClearRadius: 2
   _largeItemGap: 0.75

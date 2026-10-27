@@ -6,11 +6,9 @@ namespace Player
 {
     public class GrowthAnimator : MonoBehaviour
     {
-        [Tooltip("Длительность роста модели до нового тира (с).")]
         [SerializeField, Min(0.01f)] private float _growDuration = 0.55f;
 
-        [Tooltip("Сила перелёта: 0 = без перелёта, 1.7 = классический овершут.")]
-        [SerializeField, Min(0f)] private float _overshoot = 1.7f;
+        [SerializeField, Min(0f)] private float _bounce = 1.7f;
 
         private CancellationTokenSource _growCancellationTokenSource;
 
@@ -68,8 +66,8 @@ namespace Player
             float shiftedProgress = progress - 1f;
 
             return 1f
-                + (_overshoot + 1f) * shiftedProgress * shiftedProgress * shiftedProgress
-                + _overshoot * shiftedProgress * shiftedProgress;
+                + (_bounce + 1f) * shiftedProgress * shiftedProgress * shiftedProgress
+                + _bounce * shiftedProgress * shiftedProgress;
         }
 
         public void Stop()

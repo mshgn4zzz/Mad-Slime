@@ -5,8 +5,6 @@ namespace Player
     [Serializable]
     public class RadiusRecipientEntry
     {
-        [Tooltip("Получатель радиуса: детектор, клампер и т.п. — реализует IRadiusRecipient. "
-            + "Базовый радиус берётся из компонента получателя на старте и умножается на масштаб тира.")]
         [SerializeField] private MonoBehaviour _recipient;
 
         private IRadiusRecipient _radiusRecipient;

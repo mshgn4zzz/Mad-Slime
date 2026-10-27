@@ -13,7 +13,6 @@ namespace UI.Windows
         [SerializeField] private Button _doubleRewardButton;
         [SerializeField] private Button _menuButton;
 
-        [Tooltip("Длительность отсчёта показанной награды от предыдущей суммы до итоговой (с).")]
         [SerializeField, Min(0.01f)] private float _countUpDuration = 0.8f;
 
         public event Action NextLevelRequested;

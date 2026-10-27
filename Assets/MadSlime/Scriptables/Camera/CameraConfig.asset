@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aefd73765f024ca9bb1801e155e788b9, type: 3}
   m_Name: CameraConfig
   m_EditorClassIdentifier: 
-  _positionSmoothTime: 0.25
-  _maxPositionSpeed: 500
+  _catchUpTime: 0.25
+  _maxSpeed: 500
   _minDistance: 1
   _baseFov: 75
-  _massToPullStrength:
+  _pullByMass:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
@@ -41,14 +41,14 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _maxPull: 10
-  _tierPushStrength: 6
+  _tierPush: 6
   _maxPush: 10
-  _recoverSpeed: 5
-  _shakeFrequency: 40
+  _returnSpeed: 5
+  _shakeSpeed: 40
   _shakeAxes: {x: 1, y: 1}
-  _shakeMassThreshold: 2000
-  _shakeStrength: 0.3
+  _shakeFromMass: 2000
+  _shakeStep: 0.3
   _maxShake: 0.48
-  _shakeRecoverSpeed: 6
+  _shakeFadeSpeed: 6
   _tierFovKick: 10
-  _fovRecoverSpeed: 5
+  _fovReturnSpeed: 5

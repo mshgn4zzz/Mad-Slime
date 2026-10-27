@@ -12,8 +12,7 @@ namespace UI.Quota
         [SerializeField] private QuotaPlateUI _platePrefab;
         [SerializeField] private RectTransform _container;
         [SerializeField, Min(1f)] private float _verticalSpacing = 60f;
-        [Tooltip("Задержка перед выездом каждой следующей плашки (с).")]
-        [SerializeField, Min(0f)] private float _plateIntroDurationStep = 0.1f;
+        [SerializeField, Min(0f)] private float _plateIntroDelay = 0.1f;
         [SerializeField, Min(0f)] private float _removalSlideOffset = 90f;
         [SerializeField, Min(0.01f)] private float _shiftDuration = 0.25f;
         [SerializeField, Min(0.01f)] private float _removeDuration = 0.2f;
@@ -96,7 +95,7 @@ namespace UI.Quota
 
                 if (_introAnimations.Count > 1)
                 {
-                    delay = _plateIntroDurationStep;
+                    delay = _plateIntroDelay;
                 }
 
                 _introDelays.Add(delay);

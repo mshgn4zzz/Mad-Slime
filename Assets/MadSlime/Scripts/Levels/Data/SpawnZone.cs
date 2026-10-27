@@ -6,33 +6,22 @@ namespace Levels
     [Serializable]
     public class SpawnZone
     {
-        [Tooltip("Форма зоны раскладки: Grid (сетка), Circle (круг), Scatter (хаотичный "
-            + "россыпь), CircleGrid (концентрические ряды), SquareRing (периметр квадрата), "
-                    + "SquareScatter (хаос в квадрате).")]
         [SerializeField] private SpawnShape _shape = SpawnShape.Circle;
 
-        [Tooltip("Центр зоны в координатах комнаты.")]
         [SerializeField] private Vector2 _center = Vector2.zero;
 
-        [Tooltip("Радиус зоны (юниты).")]
         [SerializeField] private float _radius = 3f;
 
-        [Tooltip("Сколько предметов спавнится в зоне.")]
         [SerializeField] private int _count = 8;
 
-        [Tooltip("Вкл — предметы расставляются равномерно автоматически; выкл — используется ручной шаг ниже.")]
         [SerializeField] private bool _autoSpacing = true;
 
-        [Tooltip("Ручной шаг между предметами (юниты), если авторасстояние выключено. 0 = авто.")]
         [SerializeField] private float _spacing = 0f;
 
-        [Tooltip("Минимальный тир предметов в зоне.")]
         [SerializeField] private SizeTier _minTier = SizeTier.Small;
 
-        [Tooltip("Максимальный тир предметов в зоне.")]
         [SerializeField] private SizeTier _maxTier = SizeTier.Small;
 
-        [Tooltip("Вкл — вся зона заполняется одним случайным предметом из пула зоны.")]
         [SerializeField] private bool _singleType = false;
 
         public SpawnShape Shape => _shape;

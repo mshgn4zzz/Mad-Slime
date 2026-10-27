@@ -6,19 +6,17 @@ namespace Levels
     [Serializable]
     public class PropVariant
     {
-        [Tooltip("Префаб предмета.")]
         [SerializeField] private Item _prefab;
 
-        [Tooltip("Определение, присваиваемое варианту: иконка и тир.")]
-        [SerializeField] private ItemDefinition _definition;
+        [SerializeField] private ItemDefinition _item;
 
         public PropVariant(Item prefab, ItemDefinition definition)
         {
             _prefab = prefab;
-            _definition = definition;
+            _item = definition;
         }
 
         public Item Prefab => _prefab;
-        public ItemDefinition Definition => _definition;
+        public ItemDefinition Definition => _item;
     }
 }

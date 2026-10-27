@@ -17,38 +17,38 @@ namespace UI.Roulette
 
         [SerializeField] private RectTransform _panel;
         [SerializeField] private Image _fade;
-        [SerializeField, Tooltip("Иконка скина: спрайт подставляется из скина при выигрыше.")]
+        [SerializeField]
         private Image _skinIcon;
-        [SerializeField, Tooltip("Иконка монет: спрайт подставляется по сумме денежного выигрыша.")]
+        [SerializeField]
         private Image _coinIcon;
-        [SerializeField, Tooltip("Фон-подложка под призом: спрайт переключается по редкости.")]
+        [SerializeField]
         private Image _prizeFrame;
-        [SerializeField, Tooltip("Голубой фон: монеты и обычные скины.")]
+        [SerializeField]
         private Sprite _normalFrame;
-        [SerializeField, Tooltip("Зелёный фон редких скинов.")]
+        [SerializeField]
         private Sprite _rareFrame;
-        [SerializeField, Tooltip("Фиолетовый фон эпических скинов.")]
+        [SerializeField]
         private Sprite _epicFrame;
-        [SerializeField, Tooltip("Оранжевый фон легендарных скинов.")]
+        [SerializeField]
         private Sprite _legendaryFrame;
         [SerializeField] private Image _plate;
-        [SerializeField, Tooltip("Голубая плашка: денежные призы и скины обычной редкости.")]
+        [SerializeField]
         private Sprite _normalPlate;
-        [SerializeField, Tooltip("Зелёная плашка редких скинов.")]
+        [SerializeField]
         private Sprite _rarePlate;
-        [SerializeField, Tooltip("Фиолетовая плашка эпических скинов.")]
+        [SerializeField]
         private Sprite _epicPlate;
-        [SerializeField, Tooltip("Оранжевая плашка легендарных скинов.")]
+        [SerializeField]
         private Sprite _legendaryPlate;
         [SerializeField] private TMP_Text _plateText;
         [SerializeField] private Button _takeButton;
-        [SerializeField, Tooltip("Цвет рамки обычных призов.")]
+        [SerializeField]
         private Color _normalFrameColor = new Color32(113, 198, 221, 255);
-        [SerializeField, Tooltip("Цвет рамки редких скинов.")]
+        [SerializeField]
         private Color _rareFrameColor = new Color32(167, 228, 90, 255);
-        [SerializeField, Tooltip("Цвет рамки эпических скинов.")]
+        [SerializeField]
         private Color _epicFrameColor = new Color32(197, 165, 232, 255);
-        [SerializeField, Tooltip("Цвет рамки легендарных скинов.")]
+        [SerializeField]
         private Color _legendaryFrameColor = new Color32(246, 198, 75, 255);
 
         protected override void Awake()

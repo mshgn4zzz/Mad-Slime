@@ -15,13 +15,13 @@ MonoBehaviour:
   _minAbsorbDuration: 0.4
   _maxAbsorbDuration: 0.6
   _absorbSpeed: 10
-  _minArcFraction: 0.2
-  _maxArcFraction: 0.325
+  _arcLow: 0.2
+  _arcHigh: 0.325
   _minSpinSpeed: 520
   _maxSpinSpeed: 1080
-  _smokeSpeedThreshold: 20
+  _smokeSpeed: 20
   _shrinkStart: 0.5
-  _absorbEasePower: 2.5
+  _absorbPower: 2.5
   _squashDuration: 0.3
   _squashCurve:
     serializedVersion: 2
@@ -60,8 +60,8 @@ MonoBehaviour:
   _pickupSoundMaxInterval: 0.1
   _pickupSoundMinPitch: 0.95
   _pickupSoundMaxPitch: 1.15
-  _deformMaxStretch: 0.3
-  _crawlStretchCurve:
+  _crawlSquash: 0.3
+  _crawlCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
@@ -103,38 +103,38 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _movementSquashFrequency: 1.6
-  _finalSquashFrequencyMultiplier: 2
-  _crawlRampTime: 0.15
+  _crawlRate: 1.6
+  _finalCrawlTimes: 2
+  _crawlSoftness: 0.15
   _startMass: 6
-  _thresholds:
+  _tiers:
   - _tier: 0
-    _requiredMass: 0
-    _scaleMultiplier: 2
+    _mass: 0
+    _growTimes: 2
     _speed: 6
-    _cameraOffsetMultiplier: 0.6
+    _cameraZoom: 0.6
   - _tier: 1
-    _requiredMass: 30
-    _scaleMultiplier: 8
+    _mass: 30
+    _growTimes: 8
     _speed: 12
-    _cameraOffsetMultiplier: 2
+    _cameraZoom: 2
   - _tier: 2
-    _requiredMass: 7000
-    _scaleMultiplier: 15
+    _mass: 7000
+    _growTimes: 15
     _speed: 20
-    _cameraOffsetMultiplier: 3.5
+    _cameraZoom: 3.5
   - _tier: 3
-    _requiredMass: 42000
-    _scaleMultiplier: 25
+    _mass: 42000
+    _growTimes: 25
     _speed: 40
-    _cameraOffsetMultiplier: 5
+    _cameraZoom: 5
   - _tier: 4
-    _requiredMass: 150000
-    _scaleMultiplier: 60
+    _mass: 150000
+    _growTimes: 60
     _speed: 60
-    _cameraOffsetMultiplier: 8
+    _cameraZoom: 8
   - _tier: 5
-    _requiredMass: 360000
-    _scaleMultiplier: 150
+    _mass: 360000
+    _growTimes: 150
     _speed: 100
-    _cameraOffsetMultiplier: 16
+    _cameraZoom: 16

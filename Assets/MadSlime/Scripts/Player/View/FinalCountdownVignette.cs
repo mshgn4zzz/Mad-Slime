@@ -8,11 +8,9 @@ namespace Player
     {
         [SerializeField] private Image _vignetteImage;
 
-        [Tooltip("Длительность одного полупериода пульсации (с).")]
         [SerializeField, Min(0.05f)] private float _pulseDuration = 0.4f;
 
-        [Tooltip("Максимальная яркость мигания.")]
-        [SerializeField, Range(0f, 1f)] private float _maxIntensity = 0.8f;
+        [SerializeField, Range(0f, 1f)] private float _maxAlpha = 0.8f;
 
         private Tween _pulseTween;
 
@@ -42,7 +40,7 @@ namespace Player
 
             _vignetteImage.enabled = true;
 
-            _pulseTween = DOTween.To(ReadIntensity, ApplyIntensity, _maxIntensity, _pulseDuration)
+            _pulseTween = DOTween.To(ReadIntensity, ApplyIntensity, _maxAlpha, _pulseDuration)
                 .SetLoops(-1, LoopType.Yoyo)
                 .SetEase(Ease.InOutSine)
                 .SetTarget(this)

@@ -8,25 +8,18 @@ namespace Audio
 {
     public class AudioPlayer : MonoBehaviour, IMusicPlayer, IGameSoundPlayer, IUISoundPlayer
     {
-        [Tooltip("Группа микшера, в которую отправляются звуки интерфейса и игры")]
         [SerializeField] private AudioMixerGroup _sfxGroup;
 
-        [Tooltip("Группа микшера, в которую отправляется музыка")]
         [SerializeField] private AudioMixerGroup _musicGroup;
 
-        [Tooltip("Голосов пула UI: сколько звуков интерфейса может играть одновременно на старте")]
-        [SerializeField, Min(1)] private int _uiSourceCount = 2;
+        [SerializeField, Min(1)] private int _uiVoices = 2;
 
-        [Tooltip("Голосов пула игры: сколько игровых звуков может играть одновременно на старте")]
-        [SerializeField, Min(1)] private int _gameSourceCount = 5;
+        [SerializeField, Min(1)] private int _gameVoices = 5;
 
-        [Tooltip("Длительность нарастания громкости музыки от нуля (с).")]
-        [SerializeField, Min(0.01f)] private float _musicFadeInDuration = 1f;
+        [SerializeField, Min(0.01f)] private float _musicFadeIn = 1f;
 
-        [Tooltip("Длительность затухания уходящего трека (с).")]
-        [SerializeField, Min(0.01f)] private float _musicFadeOutDuration = 1.5f;
+        [SerializeField, Min(0.01f)] private float _musicFadeOut = 1.5f;
 
-        [Tooltip("За сколько до конца трека начинается перекрытие со следующим (с).")]
         [SerializeField, Min(0.01f)] private float _musicOverlapDuration = 2.5f;
 
         private AudioVoicePool _uiPool;
@@ -51,8 +44,8 @@ namespace Audio
                         + $"drag the Music group of the MasterMixer into the Music Group field.");
             }
 
-            _uiPool = new AudioVoicePool(_uiSourceCount, _sfxGroup, transform);
-            _gamePool = new AudioVoicePool(_gameSourceCount, _sfxGroup, transform);
+            _uiPool = new AudioVoicePool(_uiVoices, _sfxGroup, transform);
+            _gamePool = new AudioVoicePool(_gameVoices, _sfxGroup, transform);
 
             _loopSource = CreateSource(_sfxGroup);
             _loopSource.loop = true;
@@ -63,8 +56,8 @@ namespace Audio
             _musicChannel = new MusicChannel(
                 firstMusicSource,
                 secondMusicSource,
-                _musicFadeInDuration,
-                _musicFadeOutDuration,
+                _musicFadeIn,
+                _musicFadeOut,
                 _musicOverlapDuration);
         }
 

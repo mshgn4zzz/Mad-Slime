@@ -11,13 +11,11 @@ namespace Shop
         private const float HalfFactor = 0.5f;
 
         [SerializeField] private PreviewRotator _rotator;
-        [SerializeField] private float _padding = 0.85f;
-                [SerializeField, Min(0.1f), Tooltip("Общий масштаб после нормализации размеров моделей. 1 — "
-                        + "стандартный размер.")]
+        [SerializeField] private float _frameFill = 0.85f;
+                [SerializeField,Min(0.1f)]
         private float _previewZoom = 1f;
-                [SerializeField, Min(0.1f), Tooltip("Размер модели до применения общего масштаба: максимальная "
-                        + "высота или диаметр при вращении.")]
-        private float _normalizedSize = 2f;
+                [SerializeField,Min(0.1f)]
+        private float _modelSize = 2f;
         [SerializeField] private Transform _modelsParent;
         [SerializeField] private Camera _camera;
 
@@ -147,7 +145,7 @@ namespace Shop
                 throw new InvalidOperationException($"{name}: preview model '{skinModel.name}' has empty bounds.");
             }
 
-            float targetSize = Mathf.Max(0.1f, _normalizedSize);
+            float targetSize = Mathf.Max(0.1f, _modelSize);
             float scale = targetSize / originalSize * Mathf.Max(0.1f, _previewZoom);
             Transform modelTransform = _currentModel.transform;
             Vector3 originalPosition = modelTransform.position;
@@ -183,7 +181,7 @@ namespace Shop
             float horizontalExtent = ProjectCylinder(radius, halfHeight, _camera.transform.right);
             float verticalExtent = ProjectCylinder(radius, halfHeight, _camera.transform.up);
             float requiredSize = Mathf.Max(verticalExtent, horizontalExtent / _camera.aspect);
-            float fill = Mathf.Clamp(_padding, 0.1f, 0.95f);
+            float fill = Mathf.Clamp(_frameFill, 0.1f, 0.95f);
             return requiredSize / fill;
         }
 

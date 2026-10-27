@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: RewardConfig
   m_EditorClassIdentifier: 
   _baseReward: 32
-  _growthExponent: 1.65
-  _loseMultiplierThreshold: 0.25
-  _loseRewardDivisor: 4
+  _growPower: 1.65
+  _minPayFill: 0.25
+  _loseDivideBy: 4

@@ -17,20 +17,20 @@ MonoBehaviour:
   _maxFillDuration: 8
   _flightDuration: 0.5
   _boostedSpawnInterval: 0.015
-  _maxBoostedFillDuration: 3
+  _maxBoostedTime: 3
   _boostedFlightDuration: 0.25
   _instantFillDuration: 0.25
   _instantFlightDuration: 0.1
   _bonusWaveDelay: 0.35
-  _bonusTintColor: {r: 1, g: 1, b: 1, a: 1}
-  _bonusTintStrength: 0.3
-  _borderCascadeDuration: 0.5
+  _bonusColor: {r: 1, g: 1, b: 1, a: 1}
+  _bonusColorMix: 0.3
+  _borderSpawnTime: 0.5
   _borderColor: {r: 0, g: 0, b: 0, a: 1}
-  _ghostOpacity: 0.5
-  _shapePunchStrength: 0.081
+  _ghostAlpha: 0.5
+  _shapePunch: 0.081
   _shapePunchDuration: 0.5
-  _shapePunchVibrato: 10
-  _shapePunchElasticity: 0.3
+  _shapePunchShakes: 10
+  _shapePunchSpring: 0.3
   _fovKick: 7
   _fovDuration: 0.3
   _winDelay: 3

@@ -6,8 +6,6 @@ namespace Player
 {
     public class TierUpFx : MonoBehaviour
     {
-                [Tooltip("Разовая (не Loop) партикл-система сцены: мини-взрыв при смене тира. Код только включает "
-                    + "проигрывание.")]
         [SerializeField] private ParticleSystem _burst;
 
         private PlayerTier _playerTier;

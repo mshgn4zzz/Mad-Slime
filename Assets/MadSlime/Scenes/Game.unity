@@ -362,8 +362,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _musicPlaylist: {fileID: 11400000, guid: 33cb4df0ab97be58aad08656eb054c4a, type: 2}
-  _sessionEndDelay: 1
-  _finalCountdownSeconds: 20
+  _endDelay: 1
+  _finalSeconds: 20
 --- !u!4 &292377135
 Transform:
   m_ObjectHideFlags: 0
@@ -1287,7 +1287,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _vignetteImage: {fileID: 1347091793}
   _pulseDuration: 0.4
-  _maxIntensity: 0.8
+  _maxAlpha: 0.8
 --- !u!114 &812539638
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1593,7 +1593,7 @@ MonoBehaviour:
   _platePrefab: {fileID: 5153659263850431688, guid: b9f1b5ac829400249bec41ad444cdb6c, type: 3}
   _container: {fileID: 1734931096}
   _verticalSpacing: 155
-  _plateIntroDurationStep: 0.1
+  _plateIntroDelay: 0.1
   _removalSlideOffset: 90
   _shiftDuration: 0.25
   _removeDuration: 0.2
@@ -8635,7 +8635,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _growDuration: 0.55
-  _overshoot: 1.7
+  _bounce: 1.7
 --- !u!114 &6575316736882405105
 MonoBehaviour:
   m_ObjectHideFlags: 0

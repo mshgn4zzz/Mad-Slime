@@ -4,18 +4,14 @@ namespace Collectables
     [CreateAssetMenu(fileName = "NewAttractConfig", menuName = "Mad Slime/Attract Config")]
     public class AttractConfig : ScriptableObject
     {
-        [Tooltip("Базовая скорость притяжения предметов магнитом (юнитов/с) в точке первого контакта.")]
-        [SerializeField] private float _attractionForce = 6f;
+        [SerializeField] private float _pullSpeed = 6f;
 
-        [Tooltip("Во сколько раз разгоняется притяжение у точки захвата по сравнению с краем радиуса.")]
-        [SerializeField] private float _approachMultiplier = 3f;
+        [SerializeField] private float _catchBoost = 3f;
 
-                [Tooltip("Крутизна кривой разгона. 1 = линейный разгон по всему радиусу, 2+ = разгон сосредоточен "
-                    + "ближе к захвату.")]
-        [SerializeField] private float _approachPower = 2f;
+        [SerializeField] private float _boostPower = 2f;
 
-        public float AttractionForce => _attractionForce;
-        public float ApproachMultiplier => _approachMultiplier;
-        public float ApproachPower => _approachPower;
+        public float AttractionForce => _pullSpeed;
+        public float ApproachMultiplier => _catchBoost;
+        public float ApproachPower => _boostPower;
     }
 }

@@ -14,7 +14,6 @@ namespace ShapeFill
         [SerializeField] private Playlist _musicPlaylist;
         [SerializeField] private MeshRenderer _floorRenderer;
 
-        [Tooltip("Пауза перед показом окна победы после финала заливки: игрок видит конфетти и пунш формы (с).")]
         [SerializeField, Min(0f)] private float _winWindowDelay = 1f;
 
         private FillConfig _config;

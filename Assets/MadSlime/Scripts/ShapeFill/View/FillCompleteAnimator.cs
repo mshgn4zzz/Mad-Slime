@@ -10,8 +10,6 @@ namespace ShapeFill
     [RequireComponent(typeof(FillCompleteSound))]
     public class FillCompleteAnimator : MonoBehaviour
     {
-        [Tooltip("Система конфетти на сцене Fill (не префаб-ассет): настраивается в редакторе. "
-            + "На Awake гасится, играет только по FillCompleted.")]
         [SerializeField] private ParticleSystem _confetti;
 
         private FillConfig _config;

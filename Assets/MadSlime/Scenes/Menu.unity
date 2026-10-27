@@ -4182,7 +4182,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecfcf23d79c869683b254f79b92fe54b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _amplitude: 10
+  _swing: 10
   _period: 4.5
   _useUnscaledTime: 1
 --- !u!114 &990000000000004
@@ -5461,9 +5461,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rotator: {fileID: 900000000000970167}
-  _padding: 0.85
+  _frameFill: 0.85
   _previewZoom: 1
-  _normalizedSize: 2
+  _modelSize: 2
   _modelsParent: {fileID: 900000000000970039}
   _camera: {fileID: 900000000000970059}
 --- !u!1 &900000000000970122

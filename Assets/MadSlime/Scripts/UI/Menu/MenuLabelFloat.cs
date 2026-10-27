@@ -5,9 +5,7 @@ namespace UI.Menu
     [RequireComponent(typeof(RectTransform))]
     public class MenuLabelFloat : MonoBehaviour
     {
-        [Tooltip("Отклонение вверх и вниз от исходной позиции, в единицах Canvas.")]
-        [SerializeField, Min(0f)] private float _amplitude = 10f;
-        [Tooltip("Длительность полного движения вверх-вниз, в секундах.")]
+        [SerializeField, Min(0f)] private float _swing = 10f;
         [SerializeField, Min(0.1f)] private float _period = 4.5f;
         [SerializeField] private bool _useUnscaledTime = true;
 
@@ -32,7 +30,7 @@ namespace UI.Menu
             }
 
             _elapsed += deltaTime;
-            float offset = Mathf.Sin(_elapsed * (Mathf.PI * 2f / _period)) * _amplitude;
+            float offset = Mathf.Sin(_elapsed * (Mathf.PI * 2f / _period)) * _swing;
             _rect.anchoredPosition = _restPosition + Vector2.up * offset;
         }
 

@@ -18,14 +18,13 @@ namespace UI.Roulette
         private const int WinPunchVibrato = 4;
         private const float WinPunchElasticity = 0.5f;
 
-        [SerializeField, Tooltip("Вращающийся контейнер колеса: диск и слоты иконок — его дети.")]
+        [SerializeField]
         private RectTransform _spinContainer;
-        [SerializeField, Tooltip("Стрелка-указатель: её направление задаёт выигрышную позицию колеса.")]
+        [SerializeField]
         private RectTransform _arrow;
-                [SerializeField, Tooltip("Слоты иконок — прямые дети SpinContainer, по часовой стрелке. Порядок "
-                        + "списка = порядок секторов.")]
+                [SerializeField]
         private List<Image> _sectorIcons = new List<Image>();
-        [SerializeField, Tooltip("Лейблы секторов — по одному на слот иконки, порядок совпадает со слотами.")]
+        [SerializeField]
         private List<TMP_Text> _sectorLabels = new List<TMP_Text>();
 
         private RouletteConfig _config;

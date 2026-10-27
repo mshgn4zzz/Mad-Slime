@@ -10,7 +10,6 @@ namespace Localization
         public const string English = "en";
         public const string Turkish = "tr";
 
-        [Tooltip("Строки локализации: ключ + переводы по языкам.")]
         [SerializeField] private List<LocaleEntry> _entries = new List<LocaleEntry>();
 
         public string Get(string key, string language)
