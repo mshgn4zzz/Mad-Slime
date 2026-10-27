@@ -1,12 +1,10 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 
-namespace Game.Interfaces
+namespace Game
 {
-    public interface ISceneFsmState
+    public interface ISceneState : IState
     {
-         UniTask PrepareAsync(CancellationToken cancellationToken);
-        void Enter();
-        void Exit();
+        UniTask PrepareAsync(CancellationToken cancellationToken);
     }
 }

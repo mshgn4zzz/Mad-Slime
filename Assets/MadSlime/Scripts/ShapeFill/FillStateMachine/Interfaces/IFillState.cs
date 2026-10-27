@@ -1,7 +1,8 @@
-namespace MadSlime.Scripts.ShapeFill.FillStateMachine.Interfaces
+using Game;
+
+namespace ShapeFill
 {
-    public interface IFillState
+    public interface IFillState : IState
     {
-        
     }
 }

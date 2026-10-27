@@ -1,121 +1,100 @@
 using System;
-using System.Threading;
 using Audio;
-using Cysharp.Threading.Tasks;
-using Game.Interfaces;
 using UnityEngine;
 using VContainer;
 
 namespace Game
 {
-    public class GameSceneState : MonoBehaviour, ISceneState
+    public class GameSceneState : SceneState<GameplayStateMachine>
     {
         [SerializeField] private Playlist _musicPlaylist;
         [SerializeField, Min(0f)] private float _endDelay = 1f;
         [SerializeField, Min(0.1f)] private float _finalSeconds = 20f;
 
-        private GameplayStateMachine _stateMachine;
-        private bool _isEntered;
-        private CancellationTokenSource _preparationSource;
+        private SceneNavigator _navigator;
+        private Pauser _pauser;
 
-        public event Action SceneSessionPrepared;
-        public event Action SceneSessionStarted;
         public event Action GameplayStarted;
         public event Action SessionFinished;
-        public event Action<float> PreparationProgressChanged;
         public event Action MenuRequested;
         public event Action FillRequested;
 
-        private void Awake()
-        {
-            if (_stateMachine == null || _musicPlaylist == null)
-            {
-                throw new InvalidOperationException($"{name}: assign the music playlist and inject GameplayStateMachine.");
-            }
-        }
-
         [Inject]
-        public void Construct(GameplayStateMachine stateMachine)
+        public void Construct(GameplayStateMachine machine, SceneNavigator navigator, SceneStateMachine sceneMachine, Pauser pauser)
         {
-            _stateMachine = stateMachine;
-        }
+            ArgumentGuard.CheckNotNull(pauser, nameof(pauser));
 
-        public async UniTask PrepareAsync(CancellationToken cancellationToken)
-        {
-            _stateMachine.PreparationProgressChanged += OnPreparationProgressChanged;
-            try
-            {
-                using (CancellationTokenSource preparationSource = CancellationTokenSource.CreateLinkedTokenSource(
-                    cancellationToken, this.GetCancellationTokenOnDestroy()))
-                {
-                    _preparationSource = preparationSource;
-                    await _stateMachine.PrepareAsync(_musicPlaylist, _endDelay, _finalSeconds,
-                        preparationSource.Token);
-                }
-                SceneSessionPrepared?.Invoke();
-            }
-            finally
-            {
-                _preparationSource = null;
-                _stateMachine.PreparationProgressChanged -= OnPreparationProgressChanged;
-            }
-        }
-
-        public void Enter()
-        {
-            if (_isEntered)
-            {
-                return;
-            }
-
-            _isEntered = true;
-            _stateMachine.GameplayStarted += OnGameplayStarted;
-            _stateMachine.SessionFinished += OnSessionFinished;
-            _stateMachine.FillRequested += OnFillRequested;
-            _stateMachine.Start();
-            SceneSessionStarted?.Invoke();
-        }
-
-        public void Exit()
-        {
-            _isEntered = false;
-            _preparationSource?.Cancel();
-            _stateMachine.Stop();
-            _stateMachine.GameplayStarted -= OnGameplayStarted;
-            _stateMachine.SessionFinished -= OnSessionFinished;
-            _stateMachine.FillRequested -= OnFillRequested;
+            Initialize(machine, navigator, sceneMachine);
+            _navigator = navigator;
+            _pauser = pauser;
         }
 
         public void ExitToMenu()
         {
-            if (_isEntered)
-            {
-                MenuRequested?.Invoke();
-            }
+            MenuRequested?.Invoke();
+            _pauser.ResetToPlay();
+            RequestTransition(SceneId.Menu);
         }
 
-        public void PauseByRequest() => _stateMachine.PauseByRequest();
-        public void ResumeByRequest() => _stateMachine.ResumeByRequest();
-
-        private void OnDisable()
+        public void PauseByRequest()
         {
-            if (_isEntered)
-            {
-                Exit();
-            }
+            Machine.PauseByRequest();
         }
 
-        private void OnDestroy()
+        public void ResumeByRequest()
         {
-            if (_stateMachine != null)
+            Machine.ResumeByRequest();
+        }
+
+        protected override void ValidateConfiguration()
+        {
+            if (_musicPlaylist == null)
             {
-                Exit();
+                throw new InvalidOperationException($"{name}: assign the game music playlist.");
             }
         }
 
-        private void OnGameplayStarted() => GameplayStarted?.Invoke();
-        private void OnSessionFinished() => SessionFinished?.Invoke();
-        private void OnFillRequested() => FillRequested?.Invoke();
-        private void OnPreparationProgressChanged(float progress) => PreparationProgressChanged?.Invoke(progress);
+        protected override void ConfigureMachine()
+        {
+            Machine.Configure(_musicPlaylist, _endDelay, _finalSeconds);
+        }
+
+        protected override void SubscribeMachineEvents()
+        {
+            Machine.GameplayStarted += OnGameplayStarted;
+            Machine.SessionFinished += OnSessionFinished;
+            Machine.FillRequested += OnFillRequested;
+            Machine.PreparationProgressChanged += OnPreparationProgressChanged;
+        }
+
+        protected override void UnsubscribeMachineEvents()
+        {
+            Machine.GameplayStarted -= OnGameplayStarted;
+            Machine.SessionFinished -= OnSessionFinished;
+            Machine.FillRequested -= OnFillRequested;
+            Machine.PreparationProgressChanged -= OnPreparationProgressChanged;
+        }
+
+        private void OnGameplayStarted()
+        {
+            GameplayStarted?.Invoke();
+        }
+
+        private void OnSessionFinished()
+        {
+            SessionFinished?.Invoke();
+        }
+
+        private void OnFillRequested()
+        {
+            FillRequested?.Invoke();
+            _pauser.ResetToPlay();
+            RequestTransition(SceneId.Fill);
+        }
+
+        private void OnPreparationProgressChanged(float progress)
+        {
+            _navigator.ReportPreparationProgress(progress);
+        }
     }
 }

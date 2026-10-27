@@ -1,7 +1,6 @@
-namespace MadSlime.Scripts.Game.GameplayStateMachine.Interfaces
+namespace Game
 {
-    public interface IGameplayState
+    public interface IGameplayState : IState
     {
-        
     }
 }

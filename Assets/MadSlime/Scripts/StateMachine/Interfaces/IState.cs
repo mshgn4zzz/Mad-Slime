@@ -1,7 +1,9 @@
-namespace MadSlime.Scripts.StateMachine.Interfaces
+namespace Game
 {
     public interface IState
     {
-        
+        void Enter();
+
+        void Exit();
     }
 }
