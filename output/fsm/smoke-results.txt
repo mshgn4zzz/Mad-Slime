@@ -1,0 +1,12 @@
+Passed: 11; Exit code: 0
+PASS: Rescue requires prepared session
+PASS: Null initial result rejected
+PASS: Continuation requires marked rescue
+PASS: Second rescue rejected
+PASS: Duplicate continuation rejected
+PASS: New session resets rescue data
+PASS: Winning session rejects rescue
+PASS: Menu enters MenuRunningState
+PASS: Game prepares and waits for movement
+PASS: Movement enters PlayingState
+PASS: Real adapters reach losing Fill result
