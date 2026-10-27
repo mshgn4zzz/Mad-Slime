@@ -1,4 +1,5 @@
 using UnityEngine;
+
 namespace UI.Menu
 {
     internal class MenuPopupInputState

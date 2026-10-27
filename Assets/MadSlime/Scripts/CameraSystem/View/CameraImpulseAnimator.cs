@@ -1,5 +1,6 @@
 using DG.Tweening;
 using UnityEngine;
+
 namespace CameraSystem
 {
     public abstract class CameraImpulseAnimator : MonoBehaviour

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+
 namespace UI.Common
 {
     public class WindowParticles : MonoBehaviour
@@ -27,6 +28,7 @@ namespace UI.Common
             foreach (ParticleSystem system in _systems)
             {
                 ParticleSystem.MainModule main = system.main;
+
                 main.useUnscaledTime = true;
                 system.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
                 system.Play(true);

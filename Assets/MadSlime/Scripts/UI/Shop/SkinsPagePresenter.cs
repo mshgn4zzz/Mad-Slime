@@ -1,8 +1,9 @@
+using System.Collections.Generic;
 using Shop;
 using Skins;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
 namespace UI.Shop
 {
     public class SkinsPagePresenter : MonoBehaviour
@@ -23,8 +24,12 @@ namespace UI.Shop
         private int _scrollLayoutFrames;
         private Vector2 _pendingScrollPosition;
 
-        public void Setup(SkinInventory inventory, IEnumerable<SkinItem> skins, IEnumerable<SkinItem> exclusiveSkins,
-            SkinRarityTable rarityTable, ModelPlacer preview)
+        public void Setup(
+            SkinInventory inventory,
+            IEnumerable<SkinItem> skins,
+            IEnumerable<SkinItem> exclusiveSkins,
+            SkinRarityTable rarityTable,
+            ModelPlacer preview)
         {
             Clear();
             _inventory = inventory;
@@ -114,6 +119,7 @@ namespace UI.Shop
                 }
 
                 SkinRarityGroupView group = _factory.CreateRarityGroup(_itemsParent);
+
                 group.Initialize(rarity, _rarityLookup.Get(rarity).PlateColor);
                 _groups.Add(group);
                 SpawnGroup(group.ItemsParent, index, end, true);
@@ -146,8 +152,13 @@ namespace UI.Shop
                 }
 
                 ShopItemView view = _factory.Create(parent);
-                view.Initialize(skin.Id, skin.Icon, _rarityLookup.Get(skin.Rarity).PlateColor,
-                    isOpen, _inventory.SelectedSkinId == skin.Id);
+
+                view.Initialize(
+                    skin.Id,
+                    skin.Icon,
+                    _rarityLookup.Get(skin.Rarity).PlateColor,
+                    isOpen,
+                    _inventory.SelectedSkinId == skin.Id);
                 view.Click += OnClicked;
                 _views.Add(view);
             }
@@ -183,6 +194,7 @@ namespace UI.Shop
         private void OnClicked(ShopItemView view)
         {
             SkinItem skin = FindSkin(view.SkinId);
+
             _preview.SetModel(skin.Model);
 
             if (_inventory.Select(skin.Id) == false)

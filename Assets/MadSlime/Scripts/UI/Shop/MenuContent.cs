@@ -1,9 +1,9 @@
+using System;
 using Economy;
 using Roulette;
 using Saves;
 using Shop;
 using Skins;
-using System;
 using TMPro;
 using UI.HUD;
 using UI.Upgrades;
@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Upgrades;
 using VContainer;
+
 namespace UI.Shop
 {
     using Localization = global::Localization.Localization;
@@ -41,8 +42,14 @@ namespace UI.Shop
         private bool _isPrepared;
 
         [Inject]
-        public void Construct(SkinInventory inventory, ShopContent content, PlayerUpgrades upgrades,
-            Wallet wallet, RouletteConfig config, ILevelStorage levelStorage, SavesTransaction transaction)
+        public void Construct(
+            SkinInventory inventory,
+            ShopContent content,
+            PlayerUpgrades upgrades,
+            Wallet wallet,
+            RouletteConfig config,
+            ILevelStorage levelStorage,
+            SavesTransaction transaction)
         {
             _inventory = inventory;
             _content = content;
@@ -128,6 +135,7 @@ namespace UI.Shop
             }
 
             bool hasSkins = roulette.HasAvailableSkin();
+
             _openSkinButton.gameObject.SetActive(hasSkins);
 
             if (hasSkins == false)

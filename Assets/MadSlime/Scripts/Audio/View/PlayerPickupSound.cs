@@ -1,6 +1,6 @@
+using System;
 using Collectables;
 using Player;
-using System;
 using UnityEngine;
 using VContainer;
 using Random = UnityEngine.Random;

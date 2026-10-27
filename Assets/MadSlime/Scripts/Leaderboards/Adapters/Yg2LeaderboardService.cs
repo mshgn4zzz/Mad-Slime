@@ -1,11 +1,12 @@
-using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using YG;
 using YG.Utils.LB;
+
 namespace Leaderboards
 {
     public class Yg2LeaderboardService : MonoBehaviour, ILeaderboardService
@@ -107,9 +108,11 @@ namespace Leaderboards
                 cancellationToken, this.GetCancellationTokenOnDestroy()))
             {
                 _nextRequestId = checked(_nextRequestId + 1);
+
                 int requestId = _nextRequestId;
                 UniTaskCompletionSource<LeaderboardResponse> completion =
                     new UniTaskCompletionSource<LeaderboardResponse>();
+
                 _requests.Add(requestId, completion);
 
                 try
@@ -121,6 +124,7 @@ namespace Leaderboards
 #else
                     completion.TrySetException(new PlatformNotSupportedException("Leaderboards require Yandex WebGL."));
 #endif
+
                     LeaderboardResponse response = await completion.Task
                         .Timeout(TimeSpan.FromSeconds(EntriesTimeoutSeconds), DelayType.Realtime)
                         .AttachExternalCancellation(requestSource.Token);
@@ -229,6 +233,7 @@ namespace Leaderboards
                 for (int playerIndex = 0; playerIndex < players.Count; playerIndex++)
                 {
                     LeaderboardPlayerResponse player = players[playerIndex];
+
                     player.rank = playerIndex + 1;
 
                     if (currentPlayer == true && player.id == PlayerId)

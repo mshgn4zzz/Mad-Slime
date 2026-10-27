@@ -1,8 +1,9 @@
+using System;
 using Items;
 using Player;
-using System;
 using UnityEngine;
 using VContainer;
+
 namespace Collectables
 {
     public class ItemAttractor : MonoBehaviour
@@ -16,8 +17,7 @@ namespace Collectables
         private ItemDetector _collectDetector;
 
         [Inject]
-        public void Construct(CollectAvailability collectAvailability, AttractableDetector detector,
-            ItemDetector collectDetector)
+        public void Construct(CollectAvailability collectAvailability, AttractableDetector detector, ItemDetector collectDetector)
         {
             _collectAvailability = collectAvailability;
             _detector = detector;
@@ -102,6 +102,7 @@ namespace Collectables
 
             Transform target = attractable.transform;
             Vector3 toPlayer = transform.position - target.position;
+
             toPlayer.y = 0f;
 
             float sqrDistance = toPlayer.sqrMagnitude;
@@ -114,7 +115,7 @@ namespace Collectables
             float distance = Mathf.Sqrt(sqrDistance);
             float approach = 1f - Mathf.Clamp01(
                 (distance - _collectDetector.Radius) / (_detector.Radius - _collectDetector.Radius));
-            float multiplier = 1f + (_config.ApproachMultiplier - 1f) * Mathf.Pow(approach, _config.ApproachPower);
+            float multiplier = 1f + ((_config.ApproachMultiplier - 1f) * Mathf.Pow(approach, _config.ApproachPower));
             float speed = _config.AttractionForce * multiplier;
 
             Vector3 radial = toPlayer / distance;

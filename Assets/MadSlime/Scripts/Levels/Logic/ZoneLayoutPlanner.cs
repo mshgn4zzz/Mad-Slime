@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Levels
 {
     public class ZoneLayoutPlanner
@@ -70,8 +71,13 @@ namespace Levels
             }
         }
 
-        public void CollectPlacements(SpawnZone zone, Vector2 center, float spacing, LayoutSet layout,
-            IReadOnlyList<float> poolRadii, bool singleType)
+        public void CollectPlacements(
+            SpawnZone zone,
+            Vector2 center,
+            float spacing,
+            LayoutSet layout,
+            IReadOnlyList<float> poolRadii,
+            bool singleType)
         {
             float largestRadius = 0f;
 
@@ -140,7 +146,7 @@ namespace Levels
         {
             float offsetX = position.x - center.x;
             float offsetZ = position.z - center.y;
-            float distance = Mathf.Sqrt(offsetX * offsetX + offsetZ * offsetZ);
+            float distance = Mathf.Sqrt((offsetX * offsetX) + (offsetZ * offsetZ));
 
             return distance + itemRadius <= zone.Radius;
         }
@@ -168,7 +174,7 @@ namespace Levels
                         break;
                     }
 
-                    Vector3 offset = new Vector3(column * spacing - halfWidth, 0f, row * spacing - halfDepth);
+                    Vector3 offset = new Vector3((column * spacing) - halfWidth, 0f, (row * spacing) - halfDepth);
 
                     _positions.Add(new Vector3(center.x, 0f, center.y) + offset);
                     placedCount++;
@@ -198,8 +204,8 @@ namespace Levels
                 for (int i = 0; i < pointsOnRing; i++)
                 {
                     float angle = angleStep * i;
-                    float offsetX = center.x + Mathf.Cos(angle) * ringRadius;
-                    float offsetZ = center.y + Mathf.Sin(angle) * ringRadius;
+                    float offsetX = center.x + (Mathf.Cos(angle) * ringRadius);
+                    float offsetZ = center.y + (Mathf.Sin(angle) * ringRadius);
 
                     _positions.Add(new Vector3(offsetX, 0f, offsetZ));
                     placedCount++;
@@ -221,8 +227,8 @@ namespace Levels
             for (int i = 0; i < count; i++)
             {
                 float angle = angleStep * i;
-                float offsetX = center.x + Mathf.Cos(angle) * radius;
-                float offsetZ = center.y + Mathf.Sin(angle) * radius;
+                float offsetX = center.x + (Mathf.Cos(angle) * radius);
+                float offsetZ = center.y + (Mathf.Sin(angle) * radius);
 
                 _positions.Add(new Vector3(offsetX, 0f, offsetZ));
             }
@@ -234,7 +240,7 @@ namespace Levels
             {
                 float perimeterPosition = i * 4f / count;
                 int edge = Mathf.FloorToInt(perimeterPosition);
-                float edgeOffset = (perimeterPosition - edge) * radius * 2f - radius;
+                float edgeOffset = ((perimeterPosition - edge) * radius * 2f) - radius;
                 Vector3 position;
 
                 switch (edge)
@@ -286,16 +292,16 @@ namespace Levels
                 if (zone.Shape == SpawnShape.SquareScatter)
                 {
                     candidate = new Vector3(
-                        center.x + ((float)_random.NextDouble() * 2f - 1f) * usableRadius,
+                        center.x + ((((float)_random.NextDouble() * 2f) - 1f) * usableRadius),
                         0f,
-                        center.y + ((float)_random.NextDouble() * 2f - 1f) * usableRadius);
+                        center.y + ((((float)_random.NextDouble() * 2f) - 1f) * usableRadius));
                 }
                 else
                 {
                     candidate = new Vector3(
-                        center.x + Mathf.Cos((float)angle) * (float)distance,
+                        center.x + (Mathf.Cos((float)angle) * (float)distance),
                         0f,
-                        center.y + Mathf.Sin((float)angle) * (float)distance);
+                        center.y + (Mathf.Sin((float)angle) * (float)distance));
                 }
 
                 if (IsFarEnough(candidate, minDistanceSqr) == true)
@@ -310,6 +316,7 @@ namespace Levels
             for (int i = 0; i < _positions.Count; i++)
             {
                 Vector3 delta = candidate - _positions[i];
+
                 delta.y = 0f;
 
                 if (delta.sqrMagnitude < minDistanceSqr)

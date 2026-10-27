@@ -1,11 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
 using CameraSystem;
 using Cysharp.Threading.Tasks;
 using Items;
 using Player;
 using Quota;
-using System;
-using System.Collections.Generic;
-using System.Threading;
+
 namespace Game
 {
     public class GameplayPlayerSetup
@@ -17,8 +18,13 @@ namespace Game
         private GrowthAnimator _growthAnimator;
         private CameraFollow _cameraFollow;
 
-        public GameplayPlayerSetup(Movement movement, PlayerTier playerTier, PlayerScaler playerScaler,
-            SmellAbilityActivator smellAbility, GrowthAnimator growthAnimator, CameraFollow cameraFollow)
+        public GameplayPlayerSetup(
+            Movement movement,
+            PlayerTier playerTier,
+            PlayerScaler playerScaler,
+            SmellAbilityActivator smellAbility,
+            GrowthAnimator growthAnimator,
+            CameraFollow cameraFollow)
         {
             if (movement == null)
             {
@@ -66,8 +72,7 @@ namespace Game
             _smellAbility.SetPaused(true);
         }
 
-        public UniTask PrepareOutlineAsync(IReadOnlyList<Item> items, Action<float> onProgress,
-            CancellationToken cancellationToken)
+        public UniTask PrepareOutlineAsync(IReadOnlyList<Item> items, Action<float> onProgress, CancellationToken cancellationToken)
         {
             return _smellAbility.PrepareAsync(items, onProgress, cancellationToken);
         }

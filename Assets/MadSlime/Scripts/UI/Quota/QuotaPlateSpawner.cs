@@ -1,6 +1,7 @@
-using Quota;
 using System;
+using Quota;
 using UnityEngine;
+
 namespace UI.Quota
 {
     public class QuotaPlateSpawner
@@ -12,14 +13,12 @@ namespace UI.Quota
         {
             if (platePrefab == null)
             {
-                throw new ArgumentNullException(nameof(platePrefab),
-                    "QuotaPlateSpawner requires a plate prefab.");
+                throw new ArgumentNullException(nameof(platePrefab), "QuotaPlateSpawner requires a plate prefab.");
             }
 
             if (container == null)
             {
-                throw new ArgumentNullException(nameof(container),
-                    "QuotaPlateSpawner requires a container.");
+                throw new ArgumentNullException(nameof(container), "QuotaPlateSpawner requires a container.");
             }
 
             _platePrefab = platePrefab;

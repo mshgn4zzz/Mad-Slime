@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using YG;
+
 namespace Saves
 {
     public class ProgressStorage : ILevelStorage, IPlayerProgressStorage
@@ -41,6 +42,7 @@ namespace Saves
             }
 
             SavesYG data = _core.LoadData();
+
             data.CurrentLevel = currentLevel;
             data.MaxLevel = maxLevel;
             _core.SaveChanges();
@@ -56,6 +58,7 @@ namespace Saves
         {
             SavesYG data = _core.LoadData();
             SavesYG initialData = new SavesYG();
+
             initialData.idSave = data.idSave;
             initialData.Language = data.Language;
             initialData.musicVolume = data.musicVolume;

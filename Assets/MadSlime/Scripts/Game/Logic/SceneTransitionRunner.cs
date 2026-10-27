@@ -1,17 +1,17 @@
-using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+
 namespace Game
 {
     public class SceneTransitionRunner
     {
         private const float ActivationProgressThreshold = 0.9f;
 
-        public async UniTask<Scene> LoadAdditiveAsync(SceneId sourceSceneId, SceneId targetSceneId,
-            CancellationToken cancellationToken)
+        public async UniTask<Scene> LoadAdditiveAsync(SceneId sourceSceneId, SceneId targetSceneId, CancellationToken cancellationToken)
         {
             Scene sourceScene = SceneManager.GetSceneByName(GetSceneName(sourceSceneId));
 
@@ -21,45 +21,17 @@ namespace Game
             }
 
             string targetSceneName = GetSceneName(targetSceneId);
-            void OnTargetSceneLoaded(Scene loadedScene, LoadSceneMode mode)
-            {
-                if (loadedScene.name == targetSceneName && sourceScene.isLoaded)
-                {
-                    GameObject[] roots = sourceScene.GetRootGameObjects();
+            SceneLoadHandler loadHandler = new SceneLoadHandler(sourceScene, targetSceneName);
 
-                    for (int i = 0; i < roots.Length; i++)
-                    {
-                        DisableAll<AudioListener>(roots[i]);
-                    }
-                }
-            }
-
-            SceneManager.sceneLoaded += OnTargetSceneLoaded;
+            SceneManager.sceneLoaded += loadHandler.OnSceneLoaded;
 
             try
             {
-                AsyncOperation loadOperation = SceneManager.LoadSceneAsync(targetSceneName, LoadSceneMode.Additive);
-
-                if (loadOperation == null)
-                {
-                    throw new InvalidOperationException(
-                        $"SceneTransitionRunner: failed to start loading scene '{targetSceneName}'. Check that "
-                            + $"it is present in the build settings.");
-                }
-
-                loadOperation.allowSceneActivation = false;
-
-                while (loadOperation.progress < ActivationProgressThreshold)
-                {
-                    await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
-                }
-
-                loadOperation.allowSceneActivation = true;
-                await loadOperation.ToUniTask(cancellationToken: cancellationToken);
+                await LoadSceneAsync(targetSceneName, cancellationToken);
             }
             finally
             {
-                SceneManager.sceneLoaded -= OnTargetSceneLoaded;
+                SceneManager.sceneLoaded -= loadHandler.OnSceneLoaded;
             }
 
             Scene targetScene = SceneManager.GetSceneByName(targetSceneName);
@@ -107,6 +79,28 @@ namespace Game
             }
         }
 
+        private static async UniTask LoadSceneAsync(string sceneName, CancellationToken cancellationToken)
+        {
+            AsyncOperation loadOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+
+            if (loadOperation == null)
+            {
+                throw new InvalidOperationException(
+                    $"SceneTransitionRunner: failed to start loading scene '{sceneName}'. Check that "
+                        + "it is present in the build settings.");
+            }
+
+            loadOperation.allowSceneActivation = false;
+
+            while (loadOperation.progress < ActivationProgressThreshold)
+            {
+                await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
+            }
+
+            loadOperation.allowSceneActivation = true;
+            await loadOperation.ToUniTask(cancellationToken: cancellationToken);
+        }
+
         private static void DisableOutgoingSystems(Scene sourceScene)
         {
             GameObject[] roots = sourceScene.GetRootGameObjects();
@@ -150,6 +144,33 @@ namespace Game
                 {
                     eventSystems[0].enabled = true;
                     return;
+                }
+            }
+        }
+
+        private sealed class SceneLoadHandler
+        {
+            private Scene _sourceScene;
+            private string _targetSceneName;
+
+            public SceneLoadHandler(Scene sourceScene, string targetSceneName)
+            {
+                _sourceScene = sourceScene;
+                _targetSceneName = targetSceneName;
+            }
+
+            public void OnSceneLoaded(Scene loadedScene, LoadSceneMode mode)
+            {
+                if (loadedScene.name != _targetSceneName || _sourceScene.isLoaded == false)
+                {
+                    return;
+                }
+
+                GameObject[] roots = _sourceScene.GetRootGameObjects();
+
+                for (int rootIndex = 0; rootIndex < roots.Length; rootIndex++)
+                {
+                    DisableAll<AudioListener>(roots[rootIndex]);
                 }
             }
         }

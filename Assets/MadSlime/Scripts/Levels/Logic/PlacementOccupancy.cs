@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Levels
 {
     public class PlacementOccupancy
@@ -44,7 +45,9 @@ namespace Levels
                     {
                         int occupantIndex = occupants[i];
                         Vector3 offset = position - _positions[occupantIndex];
+
                         offset.y = 0f;
+
                         float clearance = radius + _radii[occupantIndex] + Mathf.Max(gap, _gaps[occupantIndex]);
 
                         if (offset.sqrMagnitude < clearance * clearance)
@@ -61,6 +64,7 @@ namespace Levels
         public void Add(Vector3 position, float radius, float gap)
         {
             int occupantIndex = _positions.Count;
+
             _positions.Add(position);
             _radii.Add(radius);
             _gaps.Add(gap);

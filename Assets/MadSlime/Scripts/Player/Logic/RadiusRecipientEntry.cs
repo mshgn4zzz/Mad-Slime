@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+
 namespace Player
 {
     [Serializable]
@@ -11,6 +12,7 @@ namespace Player
         private float _baseRadius;
 
         public IRadiusRecipient Recipient => _radiusRecipient;
+
         public float BaseRadius => _baseRadius;
 
         public void Initialize(string ownerName)

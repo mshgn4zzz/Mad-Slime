@@ -1,4 +1,5 @@
 using UnityEngine;
+
 namespace Items.Editor
 {
     public class IconRenderSettings

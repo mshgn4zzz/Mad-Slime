@@ -1,6 +1,7 @@
 using Items;
 using Roulette;
 using UnityEngine;
+
 namespace Skins
 {
     [CreateAssetMenu(menuName = "Mad Slime/Shop Item", fileName = "NewShopItem")]
@@ -21,6 +22,5 @@ namespace Skins
         public SkinRarity Rarity => _rarity;
 
         public string Id => _id;
-
     }
 }

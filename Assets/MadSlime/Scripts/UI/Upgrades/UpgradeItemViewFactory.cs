@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+
 namespace UI.Upgrades
 {
     public class UpgradeItemViewFactory : MonoBehaviour

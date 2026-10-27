@@ -1,7 +1,8 @@
-using Quota;
 using System;
+using Quota;
 using UnityEngine;
 using VContainer;
+
 namespace ShapeFill
 {
     public class FillResultCalculator : MonoBehaviour

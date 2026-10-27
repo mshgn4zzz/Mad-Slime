@@ -1,11 +1,12 @@
+using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Shop;
 using Skins;
-using System;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
+
 namespace Game
 {
     public class LoadingScreenView : MonoBehaviour

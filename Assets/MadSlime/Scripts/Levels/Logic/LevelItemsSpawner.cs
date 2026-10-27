@@ -1,11 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
 using Collectables;
 using Cysharp.Threading.Tasks;
 using Items;
 using Quota;
-using System;
-using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
+
 namespace Levels
 {
     public class LevelItemsSpawner
@@ -20,20 +21,19 @@ namespace Levels
         private Dictionary<ItemDefinition, int> _spawnedCounts = new Dictionary<ItemDefinition, int>();
 
         public IReadOnlyList<Item> ActiveItems => _activeItems;
+
         public IReadOnlyDictionary<ItemDefinition, int> SpawnedCounts => _spawnedCounts;
 
         public LevelItemsSpawner(ItemFactory itemFactory, Transform itemsRoot)
         {
             if (itemFactory == null)
             {
-                throw new ArgumentNullException(nameof(itemFactory),
-                    "LevelItemsSpawner requires an ItemFactory.");
+                throw new ArgumentNullException(nameof(itemFactory), "LevelItemsSpawner requires an ItemFactory.");
             }
 
             if (itemsRoot == null)
             {
-                throw new ArgumentNullException(nameof(itemsRoot),
-                    "LevelItemsSpawner requires an items root transform.");
+                throw new ArgumentNullException(nameof(itemsRoot), "LevelItemsSpawner requires an items root transform.");
             }
 
             _itemFactory = itemFactory;
@@ -44,8 +44,7 @@ namespace Levels
         {
             if (prefab == null)
             {
-                throw new ArgumentNullException(nameof(prefab),
-                    "LevelItemsSpawner: Item prefab is not assigned.");
+                throw new ArgumentNullException(nameof(prefab), "LevelItemsSpawner: Item prefab is not assigned.");
             }
 
             if (prefab.TryGetComponent(out ItemBody body) == false
@@ -104,7 +103,9 @@ namespace Levels
             _spawnedCounts.Clear();
         }
 
-        public async UniTask SpawnAsync(IReadOnlyList<LevelPlacement> placements, Action<float> progress,
+        public async UniTask SpawnAsync(
+            IReadOnlyList<LevelPlacement> placements,
+            Action<float> progress,
             CancellationToken cancellationToken)
         {
             float frameStart = Time.realtimeSinceStartup;
@@ -112,9 +113,10 @@ namespace Levels
             for (int i = 0; i < placements.Count; i++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
+
                 LevelPlacement placement = placements[i];
-                Item item = _itemFactory.Create(placement.Prefab, placement.Definition,
-                    placement.Position, placement.Scale, _itemsRoot);
+                Item item = _itemFactory.Create(placement.Prefab, placement.Definition, placement.Position, placement.Scale, _itemsRoot);
+
                 _activeItems.Add(item);
                 _activeIndexes.Add(item, _activeItems.Count - 1);
                 CountSpawned(placement.Definition);
@@ -122,6 +124,7 @@ namespace Levels
                 if (Time.realtimeSinceStartup - frameStart >= SpawnFrameBudgetSeconds)
                 {
                     float completed = (i + 1) / (float)placements.Count;
+
                     progress?.Invoke(completed);
                     await UniTask.NextFrame(cancellationToken: cancellationToken);
                     frameStart = Time.realtimeSinceStartup;
@@ -181,6 +184,7 @@ namespace Levels
         {
             int index = _activeIndexes[item];
             Item last = _activeItems[_activeItems.Count - 1];
+
             _activeItems[index] = last;
             _activeIndexes[last] = index;
             _activeItems.RemoveAt(_activeItems.Count - 1);

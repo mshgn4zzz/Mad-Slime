@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+
 namespace Audio
 {
     internal class AudioVoicePool
@@ -29,21 +30,28 @@ namespace Audio
 
             if (freeIndex < 0)
             {
-                freeIndex = _sources.Count < MaxSourceCount
-                    ? AddSource()
-                    : FindSoonestSourceIndex();
+                if (_sources.Count < MaxSourceCount)
+                {
+                    freeIndex = AddSource();
+                }
+                else
+                {
+                    freeIndex = FindSoonestSourceIndex();
+                }
             }
 
             AudioSource source = _sources[freeIndex];
+
             source.pitch = pitch;
             source.volume = volume;
             source.PlayOneShot(clip);
-            _sourceEndTimes[freeIndex] = Time.unscaledTime + clip.length / pitch;
+            _sourceEndTimes[freeIndex] = Time.unscaledTime + (clip.length / pitch);
         }
 
         private int AddSource()
         {
             AudioSource source = _ownerTransform.gameObject.AddComponent<AudioSource>();
+
             source.outputAudioMixerGroup = _mixerGroup;
             source.playOnAwake = false;
             source.loop = false;

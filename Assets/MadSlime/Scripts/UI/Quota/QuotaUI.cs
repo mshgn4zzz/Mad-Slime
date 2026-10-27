@@ -1,9 +1,10 @@
-using Quota;
 using System;
 using System.Collections.Generic;
+using Quota;
 using UI.Animations;
 using UnityEngine;
 using VContainer;
+
 namespace UI.Quota
 {
     [RequireComponent(typeof(AnimationScheduler))]
@@ -69,6 +70,7 @@ namespace UI.Quota
         private void OnQuotaResetCompleted()
         {
             Clear();
+
             IReadOnlyList<QuotaEntry> entries = _board.Entries;
 
             for (int i = 0; i < entries.Count; i++)
@@ -91,6 +93,7 @@ namespace UI.Quota
                 plate.transform.localPosition = new Vector3(0f, -_plates.Count * _verticalSpacing, 0f);
                 animator.PrepareIntro();
                 _introAnimations.Add(animator.PlayIntro);
+
                 float delay = 0f;
 
                 if (_introAnimations.Count > 1)

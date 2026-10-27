@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Localization
 {
     [CreateAssetMenu(menuName = "Mad Slime/Localization Table", fileName = "Localization")]
@@ -29,5 +30,4 @@ namespace Localization
 
         public IEnumerable<LocaleEntry> Entries => _entries;
     }
-
 }

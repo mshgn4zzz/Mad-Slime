@@ -1,6 +1,7 @@
-using Items;
 using System.Collections.Generic;
+using Items;
 using UnityEngine;
+
 namespace Levels
 {
     [CreateAssetMenu(menuName = "Mad Slime/Layout Set", fileName = "NewLayoutSet")]
@@ -22,11 +23,17 @@ namespace Levels
         [SerializeField, Min(0f)] private float _largeItemGap = 1f;
 
         public float StartClearRadius => _startClearRadius;
+
         public float SmallItemStartClearRadius => _smallItemStartClearRadius;
+
         public float LargeItemGap => _largeItemGap;
+
         public IReadOnlyList<SpawnZone> Zones => _zones;
+
         public bool AllowMirroring => _allowMirroring;
+
         public float AutoSpacingFactor => _autoGapTimes;
+
         public float ScatterDistanceFactor => _scatterGapTimes;
     }
 }

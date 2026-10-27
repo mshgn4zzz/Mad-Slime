@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+
 namespace UI.Common
 {
     [ExecuteAlways, RequireComponent(typeof(RectTransform)), DisallowMultipleComponent]
@@ -51,8 +52,8 @@ namespace UI.Common
                 return;
             }
 
-            float availableWidth = size.x - iconSize.x - _spacing - _padding * 2f;
-            float availableHeight = size.y - _verticalPadding * 2f;
+            float availableWidth = size.x - iconSize.x - _spacing - (_padding * 2f);
+            float availableHeight = size.y - (_verticalPadding * 2f);
 
             if (availableWidth <= 0f || availableHeight <= 0f)
             {
@@ -60,6 +61,7 @@ namespace UI.Common
             }
 
             RectTransform amountRect = _amount.rectTransform;
+
             amountRect.anchorMin = Vector2.one * 0.5f;
             amountRect.anchorMax = Vector2.one * 0.5f;
             amountRect.pivot = new Vector2(0f, 0.5f);
@@ -71,15 +73,15 @@ namespace UI.Common
             float textPadding = _amount.margin.x + _amount.margin.z;
             float textWidth = Mathf.Min(availableWidth, _amount.textBounds.size.x + textPadding);
             float groupWidth = iconSize.x + _spacing + textWidth;
-            float offsetLimit = Mathf.Max(0f, (size.x - groupWidth) * 0.5f - _padding);
+            float offsetLimit = Mathf.Max(0f, ((size.x - groupWidth) * 0.5f) - _padding);
             float offset = Mathf.Clamp(size.x * _centerOffset, -offsetLimit, offsetLimit);
-            float left = offset - groupWidth * 0.5f;
+            float left = offset - (groupWidth * 0.5f);
 
             _icon.anchorMin = Vector2.one * 0.5f;
             _icon.anchorMax = Vector2.one * 0.5f;
             _icon.pivot = Vector2.one * 0.5f;
             _icon.sizeDelta = iconSize;
-            _icon.anchoredPosition = new Vector2(left + iconSize.x * 0.5f, 0f);
+            _icon.anchoredPosition = new Vector2(left + (iconSize.x * 0.5f), 0f);
             amountRect.sizeDelta = new Vector2(textWidth, availableHeight);
             amountRect.anchoredPosition = new Vector2(left + iconSize.x + _spacing, 0f);
 

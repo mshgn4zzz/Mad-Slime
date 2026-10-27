@@ -9,11 +9,11 @@ namespace UI.ResponsiveUI
     [InitializeOnLoad]
     internal static class SceneLayoutPreview
     {
-        private static List<ResponsiveCanvasLayout> _layouts = new List<ResponsiveCanvasLayout>();
-        private static List<ResponsiveCanvasLayout> _removedLayouts = new List<ResponsiveCanvasLayout>();
-        private static Dictionary<ResponsiveCanvasLayout, bool> _orientations =
+        private static List<ResponsiveCanvasLayout> s_layouts = new List<ResponsiveCanvasLayout>();
+        private static List<ResponsiveCanvasLayout> s_removedLayouts = new List<ResponsiveCanvasLayout>();
+        private static Dictionary<ResponsiveCanvasLayout, bool> s_orientations =
             new Dictionary<ResponsiveCanvasLayout, bool>();
-        private static bool _isHierarchyDirty = true;
+        private static bool s_isHierarchyDirty = true;
 
         static SceneLayoutPreview()
         {
@@ -43,29 +43,29 @@ namespace UI.ResponsiveUI
                 return;
             }
 
-            if (_isHierarchyDirty)
+            if (s_isHierarchyDirty)
             {
                 CollectLayouts();
-                _isHierarchyDirty = false;
+                s_isHierarchyDirty = false;
             }
 
             bool isLandscape = size.x > size.y;
             bool isChanged = false;
 
-            foreach (ResponsiveCanvasLayout layout in _layouts)
+            foreach (ResponsiveCanvasLayout layout in s_layouts)
             {
                 if (layout == null)
                 {
                     continue;
                 }
 
-                if (_orientations.TryGetValue(layout, out bool wasLandscape) && wasLandscape == isLandscape)
+                if (s_orientations.TryGetValue(layout, out bool wasLandscape) && wasLandscape == isLandscape)
                 {
                     continue;
                 }
 
                 ApplyProfile(layout, isLandscape);
-                _orientations[layout] = isLandscape;
+                s_orientations[layout] = isLandscape;
                 isChanged = true;
             }
 
@@ -79,7 +79,8 @@ namespace UI.ResponsiveUI
 
         private static void CollectLayouts()
         {
-            _layouts.Clear();
+            s_layouts.Clear();
+
             PrefabStage prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
 
             for (int i = 0; i < SceneManager.sceneCount; i++)
@@ -100,7 +101,7 @@ namespace UI.ResponsiveUI
 
                 foreach (GameObject root in roots)
                 {
-                    _layouts.AddRange(root.GetComponentsInChildren<ResponsiveCanvasLayout>(true));
+                    s_layouts.AddRange(root.GetComponentsInChildren<ResponsiveCanvasLayout>(true));
                 }
             }
 
@@ -109,22 +110,22 @@ namespace UI.ResponsiveUI
 
         private static void RemoveClosedLayouts()
         {
-            _removedLayouts.Clear();
+            s_removedLayouts.Clear();
 
-            foreach (KeyValuePair<ResponsiveCanvasLayout, bool> entry in _orientations)
+            foreach (KeyValuePair<ResponsiveCanvasLayout, bool> entry in s_orientations)
             {
-                if (entry.Key == null || _layouts.Contains(entry.Key) == false)
+                if (entry.Key == null || s_layouts.Contains(entry.Key) == false)
                 {
-                    _removedLayouts.Add(entry.Key);
+                    s_removedLayouts.Add(entry.Key);
                 }
             }
 
-            foreach (ResponsiveCanvasLayout layout in _removedLayouts)
+            foreach (ResponsiveCanvasLayout layout in s_removedLayouts)
             {
-                _orientations.Remove(layout);
+                s_orientations.Remove(layout);
             }
 
-            _removedLayouts.Clear();
+            s_removedLayouts.Clear();
         }
 
         private static void ApplyProfile(ResponsiveCanvasLayout layout, bool isLandscape)
@@ -140,12 +141,12 @@ namespace UI.ResponsiveUI
 
         private static void OnHierarchyChanged()
         {
-            _isHierarchyDirty = true;
+            s_isHierarchyDirty = true;
         }
 
         private static void OnSceneOpened(Scene scene, OpenSceneMode mode)
         {
-            _isHierarchyDirty = true;
+            s_isHierarchyDirty = true;
         }
 
         private static void OnPlayModeChanged(PlayModeStateChange state)
@@ -155,8 +156,8 @@ namespace UI.ResponsiveUI
                 return;
             }
 
-            _orientations.Clear();
-            _isHierarchyDirty = true;
+            s_orientations.Clear();
+            s_isHierarchyDirty = true;
         }
 
         private static void OnBeforeAssemblyReload()
@@ -166,9 +167,9 @@ namespace UI.ResponsiveUI
             EditorApplication.playModeStateChanged -= OnPlayModeChanged;
             EditorSceneManager.sceneOpened -= OnSceneOpened;
             AssemblyReloadEvents.beforeAssemblyReload -= OnBeforeAssemblyReload;
-            _layouts.Clear();
-            _removedLayouts.Clear();
-            _orientations.Clear();
+            s_layouts.Clear();
+            s_removedLayouts.Clear();
+            s_orientations.Clear();
         }
     }
 }

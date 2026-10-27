@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace ShapeFill
 {
     public class GridBuilder : MonoBehaviour
@@ -15,7 +16,6 @@ namespace ShapeFill
 
         [SerializeField, Min(4)] private int _gridResolution = 96;
 
-        private float _builtCellSize;
         private Bounds? _playArea;
         private Vector2 _gridCenter;
 
@@ -27,22 +27,30 @@ namespace ShapeFill
         private List<Vector2Int> _fillCells = new List<Vector2Int>();
 
         public IReadOnlyList<Vector2Int> BorderCells => _borderCells;
-        public IReadOnlyList<Vector2Int> FillCells => _fillCells;
-        public int Width => _gridWidth;
-        public int Height => _gridHeight;
-        public Texture2D ShapeTexture => _shapeTexture;
-        public float CellSize => _builtCellSize > 0f ? _builtCellSize : _cellSize;
 
-        public Vector3 TextureCenter => transform.TransformPoint(new Vector3(
-            ((_gridWidth - 1) * 0.5f - _gridCenter.x) * CellSize,
-            ((_gridHeight - 1) * 0.5f - _gridCenter.y) * CellSize, 0f));
+        public IReadOnlyList<Vector2Int> FillCells => _fillCells;
+
+        public int Width => _gridWidth;
+
+        public int Height => _gridHeight;
+
+        public Texture2D ShapeTexture => _shapeTexture;
+
+        public float CellSize { get; private set; }
+
+        public Vector3 GetTextureCenter()
+        {
+            return transform.TransformPoint(new Vector3(
+                (((_gridWidth - 1) * 0.5f) - _gridCenter.x) * CellSize,
+                (((_gridHeight - 1) * 0.5f) - _gridCenter.y) * CellSize,
+                0f));
+        }
 
         public void SetShapeTexture(Texture2D shapeTexture)
         {
             if (shapeTexture == null)
             {
-                throw new ArgumentNullException(nameof(shapeTexture),
-                    "GridBuilder.SetShapeTexture requires a non-null texture.");
+                throw new ArgumentNullException(nameof(shapeTexture), "GridBuilder.SetShapeTexture requires a non-null texture.");
             }
 
             _shapeTexture = shapeTexture;
@@ -69,11 +77,13 @@ namespace ShapeFill
 
         public void Build()
         {
-            _builtCellSize = _cellSize;
+            CellSize = _cellSize;
             ReadPixels();
             ClassifyBorder();
+
             Vector2 min = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
             Vector2 max = new Vector2(float.NegativeInfinity, float.NegativeInfinity);
+
             ExpandBounds(_borderCells, ref min, ref max);
             ExpandBounds(_fillCells, ref min, ref max);
             _gridCenter = (min + max) * 0.5f;
@@ -86,13 +96,14 @@ namespace ShapeFill
             return GetFormBounds().size;
         }
 
-        // Bounds of occupied cells, including the world-aligned cube geometry, not transparent texture margins.
         public Bounds GetFormBounds()
         {
             bool hasCell = false;
             Bounds bounds = new Bounds(transform.position, Vector3.zero);
+
             EncapsulateCells(_borderCells, ref bounds, ref hasCell);
             EncapsulateCells(_fillCells, ref bounds, ref hasCell);
+
             if (hasCell == false)
             {
                 throw new InvalidOperationException($"{name}: the shape has no opaque cells.");
@@ -107,6 +118,7 @@ namespace ShapeFill
             foreach (Vector2Int cell in cells)
             {
                 Vector3 position = GridToWorld(cell.x, cell.y);
+
                 if (hasCell == false)
                 {
                     bounds = new Bounds(position, Vector3.zero);
@@ -128,12 +140,13 @@ namespace ShapeFill
 
             Bounds area = _playArea.Value;
             Bounds form = GetFormBounds();
-            // Keep the completion pulse within the floor as well as within the camera view.
-            float scale = Mathf.Min(1f, area.size.x * 0.95f / (form.size.x * 1.1f),
-                area.size.z * 0.95f / (form.size.z * 1.1f));
-            _builtCellSize *= scale;
+            float scale = Mathf.Min(1f, area.size.x * 0.95f / (form.size.x * 1.1f), area.size.z * 0.95f / (form.size.z * 1.1f));
+
+            CellSize *= scale;
             form = GetFormBounds();
+
             Vector3 position = transform.position;
+
             position.x += area.center.x - form.center.x;
             position.z += area.center.z - form.center.z;
             transform.position = position;
@@ -164,6 +177,7 @@ namespace ShapeFill
 
             int longestSide = Mathf.Max(textureWidth, textureHeight);
             float ratio = Mathf.Min(_gridResolution, longestSide) / (float)longestSide;
+
             _gridWidth = Mathf.Max(1, Mathf.RoundToInt(textureWidth * ratio));
             _gridHeight = Mathf.Max(1, Mathf.RoundToInt(textureHeight * ratio));
 

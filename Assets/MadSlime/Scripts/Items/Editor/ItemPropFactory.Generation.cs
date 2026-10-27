@@ -1,9 +1,10 @@
-using Items;
-using Levels;
 using System.Collections.Generic;
 using System.IO;
+using Items;
+using Levels;
 using UnityEditor;
 using UnityEngine;
+
 namespace Items.Editor
 {
     public partial class ItemPropFactory
@@ -192,6 +193,7 @@ namespace Items.Editor
                 nameToPath.Add(model.name, modelPath);
 
                 ItemPropJob job = new ItemPropJob(model, prefabsPath, iconsPath);
+
                 jobs.Add(job);
             }
 

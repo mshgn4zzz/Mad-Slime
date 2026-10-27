@@ -1,16 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using Game;
 using Leaderboards;
 using Saves;
-using System;
-using System.Collections.Generic;
-using System.Threading;
 using TMPro;
 using UI.Windows;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 using VContainer;
+
 namespace UI.Leaderboards
 {
     using Localization = global::Localization.Localization;
@@ -31,7 +32,6 @@ namespace UI.Leaderboards
 
         [SerializeField] private Button _closeButton;
         [SerializeField] private Button _authButton;
-        [FormerlySerializedAs("_entriesText")]
         [SerializeField] private TMP_Text _statusText;
         [SerializeField] private Button _retryButton;
         [SerializeField] private LeaderboardRowViewFactory _rowFactory;
@@ -55,8 +55,10 @@ namespace UI.Leaderboards
             _leaderboardService = leaderboardService;
         }
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             if (_closeButton == null || _authButton == null || _retryButton == null
                 || _rowFactory == null || _scroll == null || _scroll.content == null || _scroll.viewport == null
                 || _panel == null || _config == null
@@ -111,8 +113,7 @@ namespace UI.Leaderboards
                 return;
             }
 
-            float height = Mathf.Min(_maximumPanelHeight,
-                _panel.rect.height + contentHeight - _scroll.viewport.rect.height);
+            float height = Mathf.Min(_maximumPanelHeight, _panel.rect.height + contentHeight - _scroll.viewport.rect.height);
 
             if (Mathf.Abs(height - _panel.rect.height) > 1f)
             {
@@ -179,6 +180,7 @@ namespace UI.Leaderboards
 
                 LeaderboardData snapshot = await _leaderboardService.RequestEntriesAsync(
                     _config.LeaderboardName, TopCount, cancellationToken);
+
                 cancellationToken.ThrowIfCancellationRequested();
                 Render(snapshot);
                 await ScrollToPlayerAsync(cancellationToken);
@@ -209,6 +211,7 @@ namespace UI.Leaderboards
             {
                 LeaderboardEntryData entry = snapshot.Players[i];
                 bool isOwn = _leaderboardService.IsAuthorized == true && entry.Id == _leaderboardService.PlayerId;
+
                 AddRow(entry, isOwn);
             }
 
@@ -235,6 +238,7 @@ namespace UI.Leaderboards
         private void AddRow(LeaderboardEntryData entry, bool isOwn)
         {
             LeaderboardRowView row = _rowFactory.Create(_scroll.content, entry, isOwn);
+
             _rows.Add(row);
 
             if (isOwn == true)
@@ -275,7 +279,8 @@ namespace UI.Leaderboards
                 row.TransformPoint(new Vector3(row.rect.center.x, row.rect.yMin, 0f)));
             float targetOffset = content.rect.yMax - rowBottom.y - viewportHeight;
             float clampedOffset = Mathf.Clamp(targetOffset, 0f, scrollableHeight);
-            _scroll.verticalNormalizedPosition = 1f - clampedOffset / scrollableHeight;
+
+            _scroll.verticalNormalizedPosition = 1f - (clampedOffset / scrollableHeight);
         }
 
         private void SetState(State state)
@@ -302,15 +307,19 @@ namespace UI.Leaderboards
                 case State.AuthRequired:
                     _statusText.text = Localization.Get("leaderboard_login_hint");
                     break;
+
                 case State.Loading:
                     _statusText.text = Localization.Get("leaderboard_loading");
                     break;
+
                 case State.Empty:
                     _statusText.text = Localization.Get("leaderboard_empty");
                     break;
+
                 case State.Error:
                     _statusText.text = Localization.Get("leaderboard_error");
                     break;
+
                 case State.Ready:
                     _statusText.text = string.Empty;
                     break;

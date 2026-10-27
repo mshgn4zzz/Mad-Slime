@@ -1,12 +1,13 @@
-using Saves;
-using Shop;
-using Skins;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Saves;
+using Shop;
+using Skins;
 using UnityEditor;
 using UnityEngine;
 using YG;
+
 namespace Saves.Editor
 {
     public class PlayerDataResetTool
@@ -73,6 +74,7 @@ namespace Saves.Editor
             if (File.Exists(EditorSavesPath) == false)
             {
                 SavesYG defaultData = new SavesYG();
+
                 Reset(defaultData.Balance, CollectSkinIds());
                 return;
             }
@@ -101,6 +103,7 @@ namespace Saves.Editor
         private static void Reset(int balance, List<string> openSkinIds)
         {
             SavesYG data = new SavesYG();
+
             data.Balance = balance;
 
             if (openSkinIds != null)

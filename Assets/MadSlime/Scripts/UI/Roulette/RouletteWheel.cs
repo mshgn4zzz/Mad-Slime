@@ -1,7 +1,7 @@
-using DG.Tweening;
-using Roulette;
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
+using Roulette;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -40,6 +40,7 @@ namespace UI.Roulette
         private Vector3 _iconScaleBeforePunch;
 
         public event Action Tick;
+
         public event Action Completed;
 
         public int SectorCount => _sectorIcons.Count;
@@ -184,9 +185,10 @@ namespace UI.Roulette
             float targetAngle = Mod(_arrowAngle - _sectorAngles[targetIndex], FullCircleDegrees);
             float windBackRotation = _rotation + _config.WindBackDegrees;
             float delta = Mod(windBackRotation - targetAngle, FullCircleDegrees);
-            float targetRotation = windBackRotation - (turns * FullCircleDegrees + delta);
+            float targetRotation = windBackRotation - ((turns * FullCircleDegrees) + delta);
 
             Sequence sequence = DOTween.Sequence();
+
             sequence.SetTarget(this);
             sequence.SetUpdate(true);
             sequence.SetLink(gameObject, LinkBehaviour.KillOnDisable);
@@ -233,7 +235,7 @@ namespace UI.Roulette
                 _lastTickIndex = Mathf.FloorToInt((_arrowAngle - _rotation) / _averageSectorAngle);
             }
 
-            ApplyRotation(_rotation - _config.IdleRotationSpeed * Time.unscaledDeltaTime);
+            ApplyRotation(_rotation - (_config.IdleRotationSpeed * Time.unscaledDeltaTime));
         }
 
         private void ApplySectorLabel(TMP_Text label, string labelText)
@@ -286,7 +288,7 @@ namespace UI.Roulette
             float targetAngle = Mod(_arrowAngle - _sectorAngles[_pendingTargetIndex], FullCircleDegrees);
 
             _rotation = targetAngle
-                + FullCircleDegrees * Mathf.RoundToInt((_rotation - targetAngle) / FullCircleDegrees);
+                + (FullCircleDegrees * Mathf.RoundToInt((_rotation - targetAngle) / FullCircleDegrees));
 
             ApplyRotation(_rotation);
             PunchWinningIcon();

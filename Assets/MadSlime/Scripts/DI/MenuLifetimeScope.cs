@@ -12,6 +12,7 @@ using UI.Upgrades;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+
 namespace DI
 {
     public class MenuLifetimeScope : ValidatedLifetimeScope
@@ -21,7 +22,7 @@ namespace DI
         [SerializeField] private ModelPlacer _modelPlacer;
         [SerializeField] private ShopItemViewFactory _skinFactory;
         [SerializeField] private UpgradeItemViewFactory _upgradeFactory;
-        [SerializeField] private MenuOrchestrator _menuOrchestrator;
+        [SerializeField] private MenuSceneState _menuOrchestrator;
         [SerializeField] private RouletteConfig _rouletteConfig;
         [SerializeField] private ShopContent _shopContent;
         [SerializeField] private RoulettePreparation _roulettePreparation;
@@ -52,6 +53,8 @@ namespace DI
             builder.RegisterComponent(_skinFactory);
             builder.RegisterComponent(_upgradeFactory);
             builder.RegisterComponent(_menuOrchestrator);
+            builder.Register<MenuRunningState>(Lifetime.Scoped);
+            builder.Register<MenuStateMachine>(Lifetime.Scoped);
             builder.Register<RouletteFactory>(resolver => new RouletteFactory(_rouletteConfig,
                 resolver.Resolve<IRouletteStorage>(), resolver.Resolve<ISkinStorage>(),
                 resolver.Resolve<SkinInventory>(), resolver.Resolve<Wallet>(),

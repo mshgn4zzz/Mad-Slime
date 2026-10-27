@@ -1,9 +1,10 @@
-using Game;
 using System;
 using System.Collections.Generic;
+using Game;
 using UI.Animations;
 using UnityEngine;
 using VContainer;
+
 namespace UI.HUD
 {
     public class GameplayHud : MonoBehaviour
@@ -13,7 +14,7 @@ namespace UI.HUD
         [SerializeField] private AnimationScheduler _sceneScheduler;
         [SerializeField] private AnimationScheduler _gameplayScheduler;
 
-        private GameplayOrchestrator _session;
+        private GameSceneState _session;
         private List<ReactiveUIView> _views = new List<ReactiveUIView>();
         private List<Action> _sceneAnimations = new List<Action>();
         private List<Action> _gameplayAnimations = new List<Action>();
@@ -22,7 +23,7 @@ namespace UI.HUD
         private bool _isGameplayShown;
 
         [Inject]
-        public void Construct(GameplayOrchestrator session)
+        public void Construct(GameSceneState session)
         {
             _session = session;
         }

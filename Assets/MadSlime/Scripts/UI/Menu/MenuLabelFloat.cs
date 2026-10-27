@@ -1,4 +1,5 @@
 using UnityEngine;
+
 namespace UI.Menu
 {
     [DisallowMultipleComponent]
@@ -30,8 +31,10 @@ namespace UI.Menu
             }
 
             _elapsed += deltaTime;
+
             float offset = Mathf.Sin(_elapsed * (Mathf.PI * 2f / _period)) * _swing;
-            _rect.anchoredPosition = _restPosition + Vector2.up * offset;
+
+            _rect.anchoredPosition = _restPosition + (Vector2.up * offset);
         }
 
         private void OnDisable()

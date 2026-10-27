@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Skins
 {
     [CreateAssetMenu(menuName = "Mad Slime/Skin Rarity Table", fileName = "SkinRarityTable")]
@@ -9,7 +10,5 @@ namespace Skins
         [SerializeField] private List<RaritySettings> _settings = new List<RaritySettings>();
 
         public IReadOnlyList<RaritySettings> Settings => _settings;
-
     }
-
 }

@@ -1,3 +1,4 @@
+using System;
 using Ads;
 using Audio;
 using Game;
@@ -7,11 +8,12 @@ using Levels;
 using Localization;
 using Quota;
 using Saves;
-using System;
+using Skins;
 using UnityEngine;
 using Upgrades;
 using VContainer;
 using VContainer.Unity;
+
 namespace DI
 {
     public class ProjectLifetimeScope : ValidatedLifetimeScope
@@ -48,6 +50,7 @@ namespace DI
 
             builder.RegisterInstance(savesAccess);
             builder.RegisterInstance(core);
+            builder.RegisterInstance<SavesTransaction>(core.ExecuteTransaction);
             builder.RegisterInstance<ISaveConfirmation>(core);
             builder.RegisterInstance<Saves.ISavesReadiness>(core);
             builder.RegisterInstance<IBalanceStorage>(balanceStorage);
@@ -71,12 +74,15 @@ namespace DI
             builder.RegisterInstance(_levelsCatalog);
             builder.RegisterInstance(_tierTable);
             builder.RegisterInstance(_layoutsLibrary);
+
             QuotaBoard quotaBoard = new QuotaBoard();
             QuotaCounter quotaCounter = new QuotaCounter(quotaBoard, _playerUpgrades);
 
             builder.RegisterInstance(quotaBoard);
             builder.RegisterInstance(quotaCounter);
             builder.Register<LevelConfigResolver>(Lifetime.Singleton);
+            builder.Register<SceneStateMachine>(Lifetime.Singleton);
+            builder.Register<SkinInventory>(Lifetime.Singleton);
             builder.Register<IAdsService>(resolver => new Yg2AdsService(), Lifetime.Singleton);
             builder.RegisterComponent(_leaderboardService).As<ILeaderboardService>();
             builder.Register<ILanguageProvider>(resolver => new Yg2LanguageProvider(), Lifetime.Singleton);

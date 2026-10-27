@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+
 namespace CameraSystem
 {
     public class CameraFollow : MonoBehaviour
@@ -63,7 +64,7 @@ namespace CameraSystem
             }
 
             float offsetLength = Mathf.Max(_config.MinDistance, _currentOffset.magnitude - _pullAnimator.Pull);
-            Vector3 desiredPosition = _target.position + _currentOffset.normalized * offsetLength;
+            Vector3 desiredPosition = _target.position + (_currentOffset.normalized * offsetLength);
 
             Vector3 shakeOffset = GetShakeOffset();
             Vector3 smoothedPosition = Vector3.SmoothDamp(
@@ -72,6 +73,7 @@ namespace CameraSystem
                 ref _positionVelocity,
                 _config.PositionSmoothTime,
                 _config.MaxPositionSpeed);
+
             transform.position = smoothedPosition + shakeOffset;
 
             _camera.fieldOfView = _config.BaseFov + _fovKickAnimator.FovKick;
@@ -106,10 +108,10 @@ namespace CameraSystem
             }
 
             float noiseTime = Time.time * _config.ShakeFrequency;
-            float noiseX = Mathf.PerlinNoise(noiseTime, 0f) * 2f - 1f;
-            float noiseY = Mathf.PerlinNoise(0f, noiseTime) * 2f - 1f;
+            float noiseX = (Mathf.PerlinNoise(noiseTime, 0f) * 2f) - 1f;
+            float noiseY = (Mathf.PerlinNoise(0f, noiseTime) * 2f) - 1f;
 
-            return (transform.right * (noiseX * _config.ShakeAxes.x) + transform.up * (noiseY * _config.ShakeAxes.y))
+            return ((transform.right * (noiseX * _config.ShakeAxes.x)) + (transform.up * (noiseY * _config.ShakeAxes.y)))
                 * _shakeAnimator.Shake;
         }
     }

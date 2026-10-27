@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Player
 {
     [CreateAssetMenu(menuName = "Mad Slime/Player Config", fileName = "NewPlayerConfig")]
@@ -65,27 +66,49 @@ namespace Player
         [SerializeField] private List<PlayerTierThreshold> _tiers = new List<PlayerTierThreshold>();
 
         public float MinAbsorbDuration => _minAbsorbDuration;
+
         public float MaxAbsorbDuration => _maxAbsorbDuration;
+
         public float AbsorbSpeed => _absorbSpeed;
+
         public float MinArcFraction => _arcLow;
+
         public float MaxArcFraction => _arcHigh;
+
         public float MinSpinSpeed => _minSpinSpeed;
+
         public float MaxSpinSpeed => _maxSpinSpeed;
+
         public float SmokeSpeedThreshold => _smokeSpeed;
+
         public float ShrinkStart => _shrinkStart;
+
         public float AbsorbEasePower => _absorbPower;
+
         public float SquashDuration => _squashDuration;
+
         public AnimationCurve SquashCurve => _squashCurve;
+
         public float PickupSoundMinInterval => _pickupSoundMinInterval;
+
         public float PickupSoundMaxInterval => _pickupSoundMaxInterval;
+
         public float PickupSoundMinPitch => _pickupSoundMinPitch;
+
         public float PickupSoundMaxPitch => _pickupSoundMaxPitch;
+
         public float DeformMaxStretch => _crawlSquash;
+
         public AnimationCurve CrawlStretchCurve => _crawlCurve;
+
         public float MovementSquashFrequency => _crawlRate;
+
         public float FinalSquashFrequencyMultiplier => _finalCrawlTimes;
+
         public float CrawlRampTime => _crawlSoftness;
+
         public int StartMass => _startMass;
+
         public IReadOnlyList<PlayerTierThreshold> Thresholds => _tiers;
 
         private void OnValidate()

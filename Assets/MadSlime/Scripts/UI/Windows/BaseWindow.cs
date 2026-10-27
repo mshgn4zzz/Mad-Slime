@@ -2,6 +2,7 @@ using System;
 using UI.Animations;
 using UI.Spawning;
 using UnityEngine;
+
 namespace UI.Windows
 {
     [RequireComponent(typeof(ReactiveUIView))]
@@ -50,7 +51,9 @@ namespace UI.Windows
             }
 
             _isCloseRequested = true;
+
             Action closeRequested = CloseRequested;
+
             closeRequested?.Invoke();
         }
 
@@ -91,6 +94,7 @@ namespace UI.Windows
             _view.DisableCompleted -= OnDisableCompleted;
 
             Action closed = Closed;
+
             closed?.Invoke();
         }
     }

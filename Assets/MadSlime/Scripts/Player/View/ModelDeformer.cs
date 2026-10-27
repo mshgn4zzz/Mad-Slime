@@ -1,6 +1,7 @@
-using Skins;
 using System;
+using Skins;
 using UnityEngine;
+
 namespace Player
 {
     public class ModelDeformer : MonoBehaviour
@@ -73,12 +74,15 @@ namespace Player
             _originalMaterials = new Material[_renderers.Length][];
             _ownedMaterials = new Material[_renderers.Length][];
             _blocks = new MaterialPropertyBlock[_renderers.Length];
+
             Bounds modelBounds = CalculateBounds();
-            Vector3 colliderBottom = _playerCollider.center + Vector3.down * (_playerCollider.height * 0.5f);
+            Vector3 colliderBottom = _playerCollider.center + (Vector3.down * (_playerCollider.height * 0.5f));
             Vector3 worldBottom = _playerCollider.transform.TransformPoint(colliderBottom);
             float anchorBottom = _deformationRoot.InverseTransformPoint(worldBottom).y;
             float offset = anchorBottom - modelBounds.min.y;
+
             model.transform.position += _deformationRoot.TransformVector(Vector3.up * offset);
+
             float height = Mathf.Max(MinimumHeight, modelBounds.size.y);
 
             for (int i = 0; i < _renderers.Length; i++)
@@ -86,6 +90,7 @@ namespace Player
                 Renderer renderer = _renderers[i];
                 Material[] originals = renderer.sharedMaterials;
                 Material[] materials = new Material[originals.Length];
+
                 _originalMaterials[i] = originals;
                 _ownedMaterials[i] = materials;
 
@@ -96,9 +101,11 @@ namespace Player
                 }
 
                 renderer.sharedMaterials = materials;
+
                 Matrix4x4 toModel = _deformationRoot.worldToLocalMatrix * renderer.transform.localToWorldMatrix;
                 Matrix4x4 toObject = toModel.inverse;
                 MaterialPropertyBlock block = new MaterialPropertyBlock();
+
                 renderer.GetPropertyBlock(block);
                 block.SetMatrix("_SquashToModel", toModel);
                 block.SetMatrix("_SquashToObject", toObject);
@@ -167,8 +174,9 @@ namespace Player
 
         private void ApplyCompression()
         {
-            float combined = 1f - (1f - _movementCompression) * (1f - _collectCompression);
+            float combined = 1f - ((1f - _movementCompression) * (1f - _collectCompression));
             float maximum = (1f - _pinnedFraction) * MaximumCompressionPerHeight;
+
             _compression = Mathf.Clamp(combined, 0f, maximum);
 
             if (_renderers == null)

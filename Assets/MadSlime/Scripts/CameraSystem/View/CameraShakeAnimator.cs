@@ -1,8 +1,9 @@
+using System;
 using Collectables;
 using Items;
-using System;
 using UnityEngine;
 using VContainer;
+
 namespace CameraSystem
 {
     public class CameraShakeAnimator : CameraImpulseAnimator

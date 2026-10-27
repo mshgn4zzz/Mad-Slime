@@ -1,74 +1,56 @@
 using System;
-using System.Threading;
 using Audio;
-using Cysharp.Threading.Tasks;
 using Game;
-using Game.Interfaces;
-using Roulette;
-using UI.Shop;
 using UnityEngine;
 using VContainer;
 
 namespace UI.Menu
 {
-    public class MenuSceneFsmState : MonoBehaviour, ISceneFsmState
+    public class MenuSceneState : SceneState<MenuStateMachine>
     {
-        [SerializeField] private MenuNavigation _navigation;
-        [SerializeField] private RoulettePreparation _roulettePreparation;
-        [SerializeField] private MenuContent _content;
         [SerializeField] private Playlist _musicPlaylist;
 
-        private IMusicPlayer _musicPlayer;
+        private Pauser _pauser;
 
         public event Action PlayRequested;
 
-        private void Awake()
+        [Inject]
+        public void Construct(MenuStateMachine machine, SceneNavigator navigator, SceneStateMachine sceneMachine, Pauser pauser)
         {
-            if (_navigation == null || _roulettePreparation == null || _content == null || _musicPlaylist == null)
+            ArgumentGuard.CheckNotNull(pauser, nameof(pauser));
+
+            Initialize(machine, navigator, sceneMachine);
+            _pauser = pauser;
+        }
+
+        protected override void ValidateConfiguration()
+        {
+            if (_musicPlaylist == null)
             {
-                throw new InvalidOperationException($"{name}: assign the menu subsystems and music playlist.");
-            }
-
-            if (_musicPlayer == null)
-            {
-                throw new InvalidOperationException($"{name}: menu dependencies were not injected.");
+                throw new InvalidOperationException($"{name}: assign the menu music playlist.");
             }
         }
 
-        public UniTask PrepareAsync(CancellationToken cancellationToken)
+        protected override void ConfigureMachine()
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            _navigation.Prepare();
-            _roulettePreparation.Prepare();
-            _content.Prepare();
-
-            return UniTask.CompletedTask;
+            Machine.Configure(_musicPlaylist);
         }
 
-        public void Enter()
+        protected override void SubscribeMachineEvents()
         {
-            _navigation.PlayRequested += OnPlayRequested;
-
-            _musicPlayer.Play(_musicPlaylist);
-            _navigation.Run();
+            Machine.PlayRequested += OnPlayRequested;
         }
 
-        public void Exit()
+        protected override void UnsubscribeMachineEvents()
         {
-            _navigation.PlayRequested -= OnPlayRequested;
-
-            _navigation.Stop();
+            Machine.PlayRequested -= OnPlayRequested;
         }
 
         private void OnPlayRequested()
         {
             PlayRequested?.Invoke();
-        }
-
-        [Inject]
-        public void Construct(IMusicPlayer musicPlayer)
-        {
-            _musicPlayer = musicPlayer;
+            _pauser.ResetToPlay();
+            RequestTransition(SceneId.Game);
         }
     }
 }

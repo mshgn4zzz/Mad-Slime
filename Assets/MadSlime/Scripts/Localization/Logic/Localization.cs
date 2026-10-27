@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+
 namespace Localization
 {
     public static class Localization
@@ -55,6 +56,7 @@ namespace Localization
         public static void CycleLanguage()
         {
             int next = (Array.IndexOf(s_languageOrder, s_language) + 1) % s_languageOrder.Length;
+
             SetLanguage(s_languageOrder[next]);
         }
 

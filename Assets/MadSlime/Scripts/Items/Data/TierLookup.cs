@@ -1,4 +1,5 @@
 using System;
+
 namespace Items
 {
     public class TierLookup

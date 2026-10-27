@@ -1,7 +1,8 @@
-using Saves;
 using System;
+using Saves;
 using UnityEngine;
 using VContainer;
+
 namespace Economy
 {
     public class Wallet : MonoBehaviour
@@ -32,8 +33,7 @@ namespace Economy
         {
             if (amount <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(amount),
-                    "Wallet.Add requires a positive amount.");
+                throw new ArgumentOutOfRangeException(nameof(amount), "Wallet.Add requires a positive amount.");
             }
 
             SetBalance(_balanceStorage.Balance + amount);
@@ -43,8 +43,7 @@ namespace Economy
         {
             if (amount <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(amount),
-                    "Wallet.Spend requires a positive amount.");
+                throw new ArgumentOutOfRangeException(nameof(amount), "Wallet.Spend requires a positive amount.");
             }
 
             if (_balanceStorage.Balance < amount)

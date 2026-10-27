@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Upgrades
 {
 [Serializable]
@@ -19,11 +20,15 @@ public class UpgradeEntry
     [SerializeField, Min(1)] private int _maxSteps = 5;
 
     public UpgradeType Type => _type;
-    public Sprite Icon => _icon;
-    public int BaseCost => _baseCost;
-    public int CostMultiplier => _costTimes;
-    public IReadOnlyList<float> StepValues => _stepValues;
-    public int MaxSteps => _maxSteps;
 
+    public Sprite Icon => _icon;
+
+    public int BaseCost => _baseCost;
+
+    public int CostMultiplier => _costTimes;
+
+    public IReadOnlyList<float> StepValues => _stepValues;
+
+    public int MaxSteps => _maxSteps;
 }
 }

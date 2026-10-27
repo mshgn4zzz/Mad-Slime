@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+
 namespace Shop
 {
     public class PreviewRotator : MonoBehaviour

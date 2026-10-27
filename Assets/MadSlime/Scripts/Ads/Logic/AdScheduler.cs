@@ -1,7 +1,8 @@
-using Game;
 using System;
+using Game;
 using UnityEngine;
 using VContainer;
+
 namespace Ads
 {
     public class AdScheduler : MonoBehaviour
@@ -15,6 +16,7 @@ namespace Ads
         private Action _pendingErrorAction;
         private bool _rewardedReceived;
         private bool _isRewardedRequestRunning;
+        private string _pendingRewardId;
 
         [Inject]
         public void Construct(IAdsService adsService)
@@ -73,8 +75,7 @@ namespace Ads
             ShowRewarded(_config.DoubleRewardId, onGranted, onNotGranted, onNotGranted, onNotGranted);
         }
 
-        public void ShowRewarded(string rewardId, Action onGranted, Action onCompletedWithoutReward,
-            Action onRejected, Action onError)
+        public void ShowRewarded(string rewardId, Action onGranted, Action onCompletedWithoutReward, Action onRejected, Action onError)
         {
             if (onGranted == null)
             {
@@ -89,6 +90,7 @@ namespace Ads
 
             _rewardedReceived = false;
             _isRewardedRequestRunning = true;
+            _pendingRewardId = rewardId;
             _pendingGrantedAction = onGranted;
             _pendingCompletedWithoutRewardAction = onCompletedWithoutReward;
             _pendingRejectedAction = onRejected;
@@ -103,7 +105,10 @@ namespace Ads
 
         private void OnRewardReceived(string rewardId)
         {
-            _rewardedReceived = true;
+            if (_isRewardedRequestRunning && rewardId == _pendingRewardId)
+            {
+                _rewardedReceived = true;
+            }
         }
 
         private void OnRewardedClosed()
@@ -114,8 +119,10 @@ namespace Ads
             }
 
             _isRewardedRequestRunning = false;
+
             Action granted = _pendingGrantedAction;
             Action completedWithoutReward = _pendingCompletedWithoutRewardAction;
+
             ClearPendingActions();
 
             if (_rewardedReceived == true)
@@ -135,7 +142,9 @@ namespace Ads
             }
 
             _isRewardedRequestRunning = false;
+
             Action error = _pendingErrorAction;
+
             ClearPendingActions();
 
             error?.Invoke();
@@ -147,6 +156,7 @@ namespace Ads
             _pendingCompletedWithoutRewardAction = null;
             _pendingRejectedAction = null;
             _pendingErrorAction = null;
+            _pendingRewardId = null;
         }
     }
 }

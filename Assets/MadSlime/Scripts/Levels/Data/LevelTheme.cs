@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Levels
 {
     [CreateAssetMenu(menuName = "Mad Slime/Level Theme", fileName = "NewLevelTheme")]
@@ -17,10 +18,15 @@ namespace Levels
         [SerializeField] private List<Texture2D> _fillShapeTextures = new List<Texture2D>();
 
         public Material FloorMaterial => _floorMaterial;
+
         public Material BackgroundMaterial => _backgroundMaterial;
+
         public Material EdgeMaterial => _edgeMaterial;
+
         public float PlatformDepth => _platformDepth;
+
         public GameObject EnvironmentPrefab => _environmentPrefab;
+
         public Texture2D FillShapeTexture => _fillShapeTexture;
 
         public Texture2D PickFillShapeTexture()

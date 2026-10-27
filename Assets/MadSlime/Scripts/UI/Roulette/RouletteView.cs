@@ -1,11 +1,12 @@
 using System;
+using Game;
 using TMPro;
 using UI.Animations;
 using UI.ResponsiveUI;
 using UI.Spawning;
 using UnityEngine;
 using UnityEngine.UI;
-using Game;
+
 namespace UI.Roulette
 {
     public class RouletteView : MonoBehaviour, IShowable
@@ -34,13 +35,19 @@ namespace UI.Roulette
         [SerializeField] private RoulettePopupLayout _layout;
 
         public event Action SpinRequested;
+
         public event Action AdRequested;
+
         public event Action CloseRequested;
+
         public event Action Closed;
+
         public event Action Disabled;
 
         public RouletteWheel Wheel => _wheel;
+
         public Sprite SecretIcon => _secretIcon;
+
         public RouletteWinPopup WinPopupPrefab => _winPopupPrefab;
 
         public Sprite GetCoinIcon(int amount)

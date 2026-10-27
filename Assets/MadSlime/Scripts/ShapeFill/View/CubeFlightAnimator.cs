@@ -1,5 +1,5 @@
-using DG.Tweening;
 using System;
+using DG.Tweening;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -53,6 +53,7 @@ namespace ShapeFill
         private void Awake()
         {
             enabled = false;
+
             if (_minRollSpeed > _maxRollSpeed)
             {
                 throw new InvalidOperationException(
@@ -97,11 +98,14 @@ namespace ShapeFill
         private void UpdateFlying()
         {
             _elapsedTime += Time.deltaTime;
+
             float progress = Mathf.Clamp01(_elapsedTime / _flightDuration);
-            float smoothedProgress = progress * progress * (3f - 2f * progress);
+            float smoothedProgress = progress * progress * (3f - (2f * progress));
 
             Vector3 previousPosition = transform.position;
+
             transform.position = GetBezierPoint(_startPosition, _controlPosition, _targetPosition, smoothedProgress);
+
             Vector3 velocity = transform.position - previousPosition;
 
             ApplyFlightOrientation(velocity, progress);
@@ -127,11 +131,12 @@ namespace ShapeFill
         {
             float punch = _landingPunch;
             Vector3 squashScale = new Vector3(
-                _targetScale.x * (1f + punch * _settleSquashSpread),
+                _targetScale.x * (1f + (punch * _settleSquashSpread)),
                 _targetScale.y * (1f - punch),
-                _targetScale.z * (1f + punch * _settleSquashSpread));
+                _targetScale.z * (1f + (punch * _settleSquashSpread)));
 
             Sequence settle = DOTween.Sequence().SetLink(gameObject);
+
             settle.Append(transform.DOScale(squashScale, _settleDuration * 0.3f).SetEase(Ease.InQuad));
             settle.Append(transform.DOScale(_targetScale, _settleDuration * 0.7f).SetEase(Ease.OutBack));
         }
@@ -156,7 +161,7 @@ namespace ShapeFill
         private void ApplyFlightStretch(float progress)
         {
             float stretch = Mathf.Sin(progress * Mathf.PI) * _maxStretch;
-            float squeeze = 1f - stretch * _stretchSqueeze;
+            float squeeze = 1f - (stretch * _stretchSqueeze);
 
             transform.localScale = new Vector3(
                 _targetScale.x * squeeze,
@@ -192,16 +197,16 @@ namespace ShapeFill
                 side = -1f;
             }
 
-            return Vector3.Lerp(startPosition, endPosition, 0.5f) + perpendicular * (distance * _arcFraction * side);
+            return Vector3.Lerp(startPosition, endPosition, 0.5f) + (perpendicular * (distance * _arcFraction * side));
         }
 
         private static Vector3 GetBezierPoint(Vector3 start, Vector3 control, Vector3 end, float progress)
         {
             float invertedProgress = 1f - progress;
 
-            return invertedProgress * invertedProgress * start
-                + 2f * invertedProgress * progress * control
-                + progress * progress * end;
+            return (invertedProgress * invertedProgress * start)
+                + (2f * invertedProgress * progress * control)
+                + (progress * progress * end);
         }
     }
 }

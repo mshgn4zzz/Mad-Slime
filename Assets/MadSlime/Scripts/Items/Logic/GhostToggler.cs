@@ -2,6 +2,7 @@ using Collectables;
 using Player;
 using UnityEngine;
 using VContainer;
+
 namespace Items
 {
     public class GhostToggler : MonoBehaviour

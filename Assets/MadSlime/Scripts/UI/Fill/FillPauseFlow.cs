@@ -1,22 +1,28 @@
-using ShapeFill;
 using System;
+using ShapeFill;
 using UI.Spawning;
 using UI.Windows;
+
 namespace UI.Fill
 {
     public class FillPauseFlow
     {
         private UiSpawner _uiSpawner;
         private PauseMenu _prefab;
-        private FillSceneOrchestrator _orchestrator;
+        private FillSceneState _orchestrator;
         private Func<bool> _canOpen;
         private Action<FillUiPresenter.WindowAction> _requestWindowAction;
         private Action _closeCompleted;
         private PauseMenu _activePauseMenu;
         private bool _hasPauseRequest;
 
-        public FillPauseFlow(UiSpawner uiSpawner, PauseMenu prefab, FillSceneOrchestrator orchestrator,
-            Func<bool> canOpen, Action<FillUiPresenter.WindowAction> requestWindowAction, Action closeCompleted)
+        public FillPauseFlow(
+            UiSpawner uiSpawner,
+            PauseMenu prefab,
+            FillSceneState orchestrator,
+            Func<bool> canOpen,
+            Action<FillUiPresenter.WindowAction> requestWindowAction,
+            Action closeCompleted)
         {
             if (uiSpawner == null)
             {
@@ -55,8 +61,6 @@ namespace UI.Fill
             _requestWindowAction = requestWindowAction;
             _closeCompleted = closeCompleted;
         }
-
-        public bool IsOpen => _activePauseMenu != null;
 
         public void Open()
         {

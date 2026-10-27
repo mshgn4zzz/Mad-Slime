@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Audio
 {
     [CreateAssetMenu(menuName = "Mad Slime/Playlist", fileName = "NewPlaylist")]
@@ -10,6 +11,7 @@ namespace Audio
         [SerializeField] private bool _randomStart;
 
         public IReadOnlyList<AudioClip> Tracks => _tracks;
+
         public bool RandomStart => _randomStart;
     }
 }

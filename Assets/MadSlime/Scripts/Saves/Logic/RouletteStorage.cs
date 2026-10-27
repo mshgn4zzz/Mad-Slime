@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using YG;
+
 namespace Saves
 {
     public class RouletteStorage : IRouletteStorage

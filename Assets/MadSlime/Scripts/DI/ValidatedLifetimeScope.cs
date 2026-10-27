@@ -1,5 +1,6 @@
 using System;
 using VContainer.Unity;
+
 namespace DI
 {
     public abstract class ValidatedLifetimeScope : LifetimeScope

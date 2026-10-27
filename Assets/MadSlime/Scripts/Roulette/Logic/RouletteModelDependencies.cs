@@ -1,8 +1,9 @@
+using System;
+using System.Collections.Generic;
 using Economy;
 using Saves;
 using Skins;
-using System;
-using System.Collections.Generic;
+
 namespace Roulette
 {
     public class RouletteModelDependencies

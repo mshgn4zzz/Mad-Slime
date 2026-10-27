@@ -1,7 +1,8 @@
+using System;
 using Collectables;
 using Player;
 using Quota;
-using System;
+
 namespace Game
 {
     public class GameplayActivityController
@@ -14,9 +15,14 @@ namespace Game
         private Movement _movement;
         private ItemCollector _itemCollector;
 
-        public GameplayActivityController(ItemDetector itemDetector, AttractableDetector attractableDetector,
-            CameraObstacleDetector obstacleDetector, CrawlAnimator crawlAnimator, SmellAbilityActivator smellAbility,
-            Movement movement, ItemCollector itemCollector)
+        public GameplayActivityController(
+            ItemDetector itemDetector,
+            AttractableDetector attractableDetector,
+            CameraObstacleDetector obstacleDetector,
+            CrawlAnimator crawlAnimator,
+            SmellAbilityActivator smellAbility,
+            Movement movement,
+            ItemCollector itemCollector)
         {
             ArgumentGuard.CheckNotNull(itemDetector, nameof(itemDetector));
 

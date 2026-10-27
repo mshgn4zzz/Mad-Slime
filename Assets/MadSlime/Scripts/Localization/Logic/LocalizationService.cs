@@ -1,7 +1,8 @@
-using Saves;
 using System;
+using Saves;
 using UnityEngine;
 using VContainer;
+
 namespace Localization
 {
     public class LocalizationService : MonoBehaviour
@@ -14,8 +15,7 @@ namespace Localization
         private bool _suppressPersist;
 
         [Inject]
-        public void Construct(ILanguageStorage languageStorage, ISavesReadiness savesReadiness,
-            ILanguageProvider languageProvider)
+        public void Construct(ILanguageStorage languageStorage, ISavesReadiness savesReadiness, ILanguageProvider languageProvider)
         {
             _languageStorage = languageStorage;
             _savesReadiness = savesReadiness;

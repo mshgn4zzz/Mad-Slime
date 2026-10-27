@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+
 namespace UI.Animations
 {
     [Serializable]
@@ -10,6 +11,7 @@ namespace UI.Animations
         [SerializeField, Min(0f)] private float _delay;
 
         public ReactiveUIView View => _view;
+
         public float Delay => _delay;
     }
 }

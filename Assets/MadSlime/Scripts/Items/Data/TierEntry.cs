@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+
 namespace Items
 {
 [Serializable]
@@ -12,7 +13,9 @@ public class TierEntry
     [SerializeField] private int _mass = 1;
 
     public SizeTier Tier => _tier;
+
     public float Scale => _scale;
+
     public int Mass => _mass;
 }
 }

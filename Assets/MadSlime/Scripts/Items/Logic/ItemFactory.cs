@@ -11,6 +11,7 @@ namespace Items
             Item item = Object.Instantiate(prefab, position, Quaternion.identity, parent);
 
             item.SetDefinition(definition);
+
             if (item.TryGetComponent(out ItemBody body) == false)
             {
                 throw new InvalidOperationException($"{prefab.name}: ItemBody is missing.");

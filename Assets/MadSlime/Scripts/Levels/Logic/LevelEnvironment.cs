@@ -38,6 +38,7 @@ namespace Levels
             }
 
             Vector3 position = floorBounds.center;
+
             position.y = floorBounds.max.y;
 
             if (_instance == null)

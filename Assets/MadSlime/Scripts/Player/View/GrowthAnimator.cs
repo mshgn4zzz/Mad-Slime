@@ -1,7 +1,8 @@
-using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+
 namespace Player
 {
     public class GrowthAnimator : MonoBehaviour
@@ -16,8 +17,7 @@ namespace Player
         {
             if (onValueChanged == null)
             {
-                throw new ArgumentNullException(nameof(onValueChanged),
-                    "GrowthAnimator.Play requires a value listener.");
+                throw new ArgumentNullException(nameof(onValueChanged), "GrowthAnimator.Play requires a value listener.");
             }
 
             CancelGrowth();
@@ -33,7 +33,10 @@ namespace Player
             CancelGrowth();
         }
 
-        private async UniTaskVoid GrowAsync(float fromValue, float targetValue, Action<float> onValueChanged,
+        private async UniTaskVoid GrowAsync(
+            float fromValue,
+            float targetValue,
+            Action<float> onValueChanged,
             CancellationToken cancellationToken)
         {
             float elapsedTime = 0f;
@@ -45,6 +48,7 @@ namespace Player
                     cancellationToken.ThrowIfCancellationRequested();
 
                     elapsedTime += Time.deltaTime;
+
                     float progress = Mathf.Clamp01(elapsedTime / _growDuration);
 
                     onValueChanged.Invoke(
@@ -66,8 +70,8 @@ namespace Player
             float shiftedProgress = progress - 1f;
 
             return 1f
-                + (_bounce + 1f) * shiftedProgress * shiftedProgress * shiftedProgress
-                + _bounce * shiftedProgress * shiftedProgress;
+                + ((_bounce + 1f) * shiftedProgress * shiftedProgress * shiftedProgress)
+                + (_bounce * shiftedProgress * shiftedProgress);
         }
 
         public void Stop()

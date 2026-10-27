@@ -1,7 +1,8 @@
-using Items;
 using System;
+using Items;
 using UnityEngine;
 using VContainer;
+
 namespace Player
 {
     public class TierUpFx : MonoBehaviour

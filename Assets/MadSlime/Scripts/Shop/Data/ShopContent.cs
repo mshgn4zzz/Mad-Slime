@@ -1,6 +1,7 @@
-using Skins;
 using System.Collections.Generic;
+using Skins;
 using UnityEngine;
+
 namespace Shop
 {
     [CreateAssetMenu(menuName = "Mad Slime/Shop Content", fileName = "NewShopContent")]
@@ -9,6 +10,5 @@ namespace Shop
         [SerializeField] private List<SkinItem> _skinItems;
 
         public IReadOnlyList<SkinItem> SkinItems => _skinItems;
-
     }
 }

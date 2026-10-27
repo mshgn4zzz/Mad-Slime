@@ -1,4 +1,5 @@
 using UnityEngine;
+
 namespace ShapeFill
 {
     public static class CubeSpawnSchedule

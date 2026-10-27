@@ -1,8 +1,9 @@
+using System;
 using Game;
 using Saves;
-using System;
 using UnityEngine;
 using VContainer;
+
 namespace Leaderboards
 {
     public class LeaderboardReporter : MonoBehaviour

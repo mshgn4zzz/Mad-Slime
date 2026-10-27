@@ -1,5 +1,6 @@
 using System;
 using YG;
+
 namespace Saves
 {
     public class CollectedItemsStorage : ICollectedItemsStorage
@@ -23,6 +24,7 @@ namespace Saves
         public void RegisterCollectedItem()
         {
             SavesYG data = _core.LoadData();
+
             data.CollectedItemsCount = checked(data.CollectedItemsCount + 1);
             _isCountDirty = true;
         }

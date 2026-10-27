@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+
 namespace Player
 {
     public class Clamper : MonoBehaviour, IRadiusRecipient
@@ -15,8 +16,7 @@ namespace Player
         {
             if (bounds.size.x <= 0f || bounds.size.z <= 0f)
             {
-                throw new ArgumentOutOfRangeException(nameof(bounds),
-                    "Clamper.SetBounds requires positive XZ size.");
+                throw new ArgumentOutOfRangeException(nameof(bounds), "Clamper.SetBounds requires positive XZ size.");
             }
 
             _bounds = bounds;
@@ -27,8 +27,7 @@ namespace Player
         {
             if (radius < 0f)
             {
-                throw new ArgumentOutOfRangeException(nameof(radius),
-                    "Clamper.SetRadius requires a non-negative radius.");
+                throw new ArgumentOutOfRangeException(nameof(radius), "Clamper.SetRadius requires a non-negative radius.");
             }
 
             _radius = radius;
@@ -46,6 +45,7 @@ namespace Player
 
             float allowedRadiusX = Mathf.Min(_radius, _bounds.extents.x);
             float allowedRadiusZ = Mathf.Min(_radius, _bounds.extents.z);
+
             clamped.x = Mathf.Clamp(clamped.x, _bounds.min.x + allowedRadiusX, _bounds.max.x - allowedRadiusX);
             clamped.z = Mathf.Clamp(clamped.z, _bounds.min.z + allowedRadiusZ, _bounds.max.z - allowedRadiusZ);
 

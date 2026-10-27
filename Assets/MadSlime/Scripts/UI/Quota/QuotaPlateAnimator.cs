@@ -1,6 +1,7 @@
-using DG.Tweening;
 using System;
+using DG.Tweening;
 using UnityEngine;
+
 namespace UI.Quota
 {
     public class QuotaPlateAnimator : MonoBehaviour
@@ -43,7 +44,7 @@ namespace UI.Quota
         {
             Cancel();
             _introPosition = transform.localPosition;
-            transform.localPosition = _introPosition + Vector3.left * _introSlideOffset;
+            transform.localPosition = _introPosition + (Vector3.left * _introSlideOffset);
         }
 
         public void PlayIntro()
@@ -77,7 +78,9 @@ namespace UI.Quota
         public void PlayRemoval(float duration, float slideOffset)
         {
             Cancel();
-            Vector3 destination = transform.localPosition + Vector3.left * slideOffset;
+
+            Vector3 destination = transform.localPosition + (Vector3.left * slideOffset);
+
             _removalTween = DOTween.Sequence();
             _removalTween.Join(transform.DOLocalMove(destination, duration).SetEase(_removeMoveEase));
             _removalTween.Join(transform.DOScale(Vector3.zero, duration).SetEase(_removeScaleEase));

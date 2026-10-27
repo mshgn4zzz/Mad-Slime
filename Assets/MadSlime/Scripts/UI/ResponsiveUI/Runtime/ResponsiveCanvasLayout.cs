@@ -27,6 +27,7 @@ namespace UI.ResponsiveUI
                 target.pivot = Pivot;
                 target.sizeDelta = Size;
                 target.anchoredPosition = Position;
+
                 float scale = 1f;
 
                 if (Scale > 0f)
@@ -105,6 +106,7 @@ namespace UI.ResponsiveUI
             {
                 _scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
                 _scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
+
                 Vector2 referenceResolution = new Vector2(PortraitWidth, PortraitHeight);
 
                 if (landscape)

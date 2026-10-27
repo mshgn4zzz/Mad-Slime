@@ -1,7 +1,7 @@
-using Cysharp.Threading.Tasks;
-using Player;
 using System;
 using System.Threading;
+using Cysharp.Threading.Tasks;
+using Player;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -56,6 +56,7 @@ namespace Collectables
                 cancellationToken.ThrowIfCancellationRequested();
 
                 elapsedTime += Time.deltaTime;
+
                 float progress = Mathf.Clamp01(elapsedTime / duration);
                 float easedProgress = Mathf.Pow(progress, _config.AbsorbEasePower);
 
@@ -64,6 +65,7 @@ namespace Collectables
                 itemTransform.Rotate(spinAxis, spinSpeed * Time.deltaTime, Space.World);
 
                 float shrink = Mathf.Clamp01(Mathf.InverseLerp(_config.ShrinkStart, 1f, progress));
+
                 itemTransform.localScale = startScale * (1f - shrink);
 
                 await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
@@ -107,16 +109,16 @@ namespace Collectables
 
             float arcMagnitude = distance * Random.Range(_config.MinArcFraction, _config.MaxArcFraction) * side;
 
-            return Vector3.Lerp(startPosition, endPosition, 0.5f) + perpendicular * arcMagnitude;
+            return Vector3.Lerp(startPosition, endPosition, 0.5f) + (perpendicular * arcMagnitude);
         }
 
         private static Vector3 GetBezierPoint(Vector3 start, Vector3 control, Vector3 end, float progress)
         {
             float invertedProgress = 1f - progress;
 
-            return invertedProgress * invertedProgress * start
-                + 2f * invertedProgress * progress * control
-                + progress * progress * end;
+            return (invertedProgress * invertedProgress * start)
+                + (2f * invertedProgress * progress * control)
+                + (progress * progress * end);
         }
     }
 }

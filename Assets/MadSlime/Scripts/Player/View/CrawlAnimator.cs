@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using VContainer;
+
 namespace Player
 {
     public class CrawlAnimator : MonoBehaviour
@@ -54,6 +55,7 @@ namespace Player
         {
             float clampedUrgency = Mathf.Clamp01(urgency);
             float multiplier = Mathf.Lerp(1f, _config.FinalSquashFrequencyMultiplier, clampedUrgency);
+
             _frequency = _config.MovementSquashFrequency * multiplier;
         }
 
@@ -94,27 +96,25 @@ namespace Player
 
             _crawlStrength = Mathf.Clamp01
             (
-                Mathf.SmoothDamp
-                (
+                Mathf.SmoothDamp(
                     _crawlStrength,
                     targetStrength,
                     ref _crawlStrengthVelocityRef,
                     _config.CrawlRampTime,
                     Mathf.Infinity,
-                    deltaTime
-                )
-            );
+                    deltaTime));
         }
 
         private void AdvanceCrawlPhase()
         {
-            _crawlPhase = (_crawlPhase + Time.deltaTime * _frequency) % 1f;
+            _crawlPhase = (_crawlPhase + (Time.deltaTime * _frequency)) % 1f;
         }
 
         private void ApplyDeform()
         {
             float cycleCompression = Mathf.Clamp01(_config.CrawlStretchCurve.Evaluate(_crawlPhase));
             float compression = _crawlStrength * _config.DeformMaxStretch * cycleCompression;
+
             _deformer.SetMovementCompression(compression);
         }
     }

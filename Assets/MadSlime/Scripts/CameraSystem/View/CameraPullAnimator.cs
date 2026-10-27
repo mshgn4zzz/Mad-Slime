@@ -1,9 +1,10 @@
+using System;
 using Collectables;
 using Items;
 using Player;
-using System;
 using UnityEngine;
 using VContainer;
+
 namespace CameraSystem
 {
     public class CameraPullAnimator : CameraImpulseAnimator

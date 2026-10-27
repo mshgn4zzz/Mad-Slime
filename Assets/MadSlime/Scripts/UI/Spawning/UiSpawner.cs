@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+
 namespace UI.Spawning
 {
     public class UiSpawner
@@ -37,7 +38,8 @@ namespace UI.Spawning
         {
             if (prefab == null)
             {
-                throw new ArgumentNullException(nameof(prefab),
+                throw new ArgumentNullException(
+                    nameof(prefab),
                     "UiSpawner: the spawned prefab is null. Drag a prefab into the caller's serialized field.");
             }
 
@@ -61,8 +63,7 @@ namespace UI.Spawning
         {
             if (window == null)
             {
-                throw new ArgumentNullException(nameof(window),
-                    "UiSpawner.Release: the released window is null.");
+                throw new ArgumentNullException(nameof(window), "UiSpawner.Release: the released window is null.");
             }
 
             window.gameObject.SetActive(false);
@@ -73,7 +74,8 @@ namespace UI.Spawning
         {
             if (showable == null)
             {
-                throw new ArgumentNullException(nameof(showable),
+                throw new ArgumentNullException(
+                    nameof(showable),
                     "UiSpawner: the shown element is null. Assign the element in the caller's serialized field.");
             }
 
@@ -117,6 +119,5 @@ namespace UI.Spawning
 
             return order;
         }
-
     }
 }

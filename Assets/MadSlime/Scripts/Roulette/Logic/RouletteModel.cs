@@ -1,8 +1,9 @@
+using System;
+using System.Collections.Generic;
 using Economy;
 using Saves;
 using Skins;
-using System;
-using System.Collections.Generic;
+
 namespace Roulette
 {
     public class RouletteModel
@@ -21,7 +22,9 @@ namespace Roulette
         private RouletteOutcome _outcome;
 
         public RouletteConfig Config => _config;
+
         public IReadOnlyList<RouletteSlot> Slots => _slots;
+
         public bool HasAdvertising => _access.HasAdvertising;
 
         public RouletteModel(RouletteModelDependencies dependencies)
@@ -146,6 +149,7 @@ namespace Roulette
         private void ExecuteSpin()
         {
             _access.Pay(_advertisementGranted);
+
             int slotIndex = _roller.Roll(_slots);
             RoulettePrize prize = _resolvePrize(_slots[slotIndex]);
 

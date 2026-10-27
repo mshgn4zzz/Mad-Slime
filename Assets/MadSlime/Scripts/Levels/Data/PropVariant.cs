@@ -1,6 +1,7 @@
-using Items;
 using System;
+using Items;
 using UnityEngine;
+
 namespace Levels
 {
     [Serializable]
@@ -17,6 +18,7 @@ namespace Levels
         }
 
         public Item Prefab => _prefab;
+
         public ItemDefinition Definition => _item;
     }
 }

@@ -1,9 +1,10 @@
-using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+
 namespace Saves
 {
     public class SaveConfirmation : MonoBehaviour
@@ -25,7 +26,9 @@ namespace Saves
         {
             cancellationToken.ThrowIfCancellationRequested();
             _nextId = checked(_nextId + 1);
+
             SaveConfirmationRequest request = new SaveConfirmationRequest(_nextId, json);
+
             _requests.Enqueue(request);
 
             if (_isProcessing == false)
@@ -43,6 +46,7 @@ namespace Saves
             while (_requests.Count > 0)
             {
                 _activeRequest = _requests.Dequeue();
+
                 SaveConfirmationRequest request = _activeRequest;
 
                 try
@@ -86,6 +90,7 @@ namespace Saves
             }
 
             string reason = result.Substring(separatorIndex + 1);
+
             _activeRequest.Completion.TrySetException(new InvalidOperationException(
                 "Cloud save was not confirmed: " + reason));
         }

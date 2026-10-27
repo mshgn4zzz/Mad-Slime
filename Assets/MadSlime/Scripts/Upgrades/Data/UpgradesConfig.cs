@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Upgrades
 {
     [CreateAssetMenu(menuName = "Mad Slime/Upgrades Config", fileName = "NewUpgradesConfig")]
@@ -16,10 +17,11 @@ namespace Upgrades
         [SerializeField, Min(0f)] private float _outlineWidth = 4f;
 
         public IReadOnlyList<UpgradeEntry> Upgrades => _upgrades;
+
         public IReadOnlyList<PerkEntry> Perks => _perks;
+
         public Color HighlightColor => _highlightColor;
+
         public float OutlineWidth => _outlineWidth;
-
     }
-
 }

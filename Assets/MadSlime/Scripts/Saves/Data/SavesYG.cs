@@ -1,9 +1,7 @@
-using Skins;
 using System.Collections.Generic;
+using Skins;
 using Upgrades;
 
-// Namespace YG is required by the plugin: SavesYG is a partial class merged
-// with PluginYourGames' own partial, and YG2.saves is typed as YG.SavesYG.
 namespace YG
 {
     public partial class SavesYG
@@ -13,7 +11,6 @@ namespace YG
         public int CollectedItemsCount;
         public string Language = "";
 
-        // Volumes are 0..100 percents; legacy saves stored 0..1 fractions (migrated on read).
         public float musicVolume = 50f;
         public float sfxVolume = 35f;
 

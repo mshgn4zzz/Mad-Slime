@@ -1,5 +1,6 @@
-using Skins;
 using System;
+using Skins;
+
 namespace Roulette
 {
     public class RouletteProbabilityRules
@@ -51,6 +52,5 @@ namespace Roulette
                     return 0;
             }
         }
-
     }
 }

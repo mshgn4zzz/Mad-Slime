@@ -1,7 +1,7 @@
-using Items;
-using Levels;
 using System;
 using System.Collections.Generic;
+using Items;
+using Levels;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -29,14 +29,17 @@ namespace Quota
 
             int maximumTypes = Mathf.Min(config.QuotaTypesMax, _candidates.Count);
             int typesTarget = Random.Range(config.QuotaTypesMin, maximumTypes + 1);
+
             ShuffleCandidates();
             _tierEntryCounts.Clear();
             _selected.Clear();
+
             List<QuotaEntry> entries = new List<QuotaEntry>(typesTarget);
 
             for (int i = 0; i < _candidates.Count && entries.Count < typesTarget; i++)
             {
                 ItemDefinition definition = _candidates[i];
+
                 _tierEntryCounts.TryGetValue(definition.Tier, out int tierCount);
 
                 if (tierCount >= config.QuotaMaxSameTier)
@@ -48,8 +51,6 @@ namespace Quota
                 _tierEntryCounts[definition.Tier] = tierCount + 1;
             }
 
-            // The top-up loop skips the same-tier cap on purpose: the quota is short of entries at this
-            // point, so repeating a tier a little is better than leaving the quota under-filled.
             for (int i = 0; i < _candidates.Count && entries.Count < typesTarget; i++)
             {
                 ItemDefinition definition = _candidates[i];
@@ -66,6 +67,7 @@ namespace Quota
         private void AddEntry(List<QuotaEntry> entries, ItemDefinition definition, int spawned, LevelConfig config)
         {
             int target = Random.Range(config.QuotaTargetMin, config.QuotaTargetMax + 1);
+
             entries.Add(new QuotaEntry(definition, Mathf.Min(target, spawned)));
             _selected.Add(definition);
         }
@@ -88,6 +90,7 @@ namespace Quota
             for (int i = _candidates.Count - 1; i > 0; i--)
             {
                 int swapIndex = Random.Range(0, i + 1);
+
                 (_candidates[i], _candidates[swapIndex]) = (_candidates[swapIndex], _candidates[i]);
             }
         }

@@ -1,6 +1,7 @@
-using Items;
 using System;
+using Items;
 using UnityEngine;
+
 namespace Levels
 {
     [Serializable]
@@ -25,13 +26,21 @@ namespace Levels
         [SerializeField] private bool _singleType = false;
 
         public SpawnShape Shape => _shape;
+
         public Vector2 Center => _center;
+
         public float Radius => _radius;
+
         public int Count => _count;
+
         public bool AutoSpacing => _autoSpacing;
+
         public float Spacing => _spacing;
+
         public SizeTier MinTier => _minTier;
+
         public SizeTier MaxTier => _maxTier;
+
         public bool SingleType => _singleType;
     }
 }

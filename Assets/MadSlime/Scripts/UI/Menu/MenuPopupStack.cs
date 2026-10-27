@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UI.Spawning;
 using UnityEngine;
+
 namespace UI.Menu
 {
     public class MenuPopupStack
@@ -73,6 +74,7 @@ namespace UI.Menu
                 foreach (GameObject screen in _screens)
                 {
                     MenuPopupInputState input = new MenuPopupInputState(screen);
+
                     _screenInput.Add(input);
                     input.Block();
                 }
@@ -90,6 +92,7 @@ namespace UI.Menu
             }
 
             int last = _windows.Count - 1;
+
             _windows.RemoveAt(last);
             _popupInput.RemoveAt(last);
 

@@ -1,7 +1,8 @@
 using System;
+using Game;
 using UnityEngine;
 using UnityEngine.UI;
-using Game;
+
 namespace UI.Shop
 {
     [RequireComponent(typeof(Image), typeof(Button))]
@@ -19,6 +20,7 @@ namespace UI.Shop
         private string _skinId;
 
         public event Action<ShopItemView> Click;
+
         public string SkinId => _skinId;
 
         private void Awake()

@@ -1,12 +1,13 @@
+using System;
 using Ads;
 using Audio;
 using Saves;
 using Shop;
-using System;
 using UI.Roulette;
 using UI.Spawning;
 using UnityEngine;
 using VContainer;
+
 namespace Roulette
 {
     public class RoulettePreparation : MonoBehaviour
@@ -28,8 +29,14 @@ namespace Roulette
         public RouletteModel SkinModel => _skinModel;
 
         [Inject]
-        public void Construct(RouletteConfig config, ShopContent content, RouletteFactory factory,
-            AdScheduler ads, IUISoundPlayer sound, ISaveConfirmation saveConfirmation, UiSpawner spawner)
+        public void Construct(
+            RouletteConfig config,
+            ShopContent content,
+            RouletteFactory factory,
+            AdScheduler ads,
+            IUISoundPlayer sound,
+            ISaveConfirmation saveConfirmation,
+            UiSpawner spawner)
         {
             _config = config;
             _content = content;
@@ -50,6 +57,7 @@ namespace Roulette
             int dailySectorCount = _dailyRoulettePrefab.Wheel.SectorCount;
             int skinSectorCount = _skinRoulettePrefab.Wheel.SectorCount;
             RouletteConfigValidator validator = new RouletteConfigValidator();
+
             validator.Validate(_config, _content.SkinItems, dailySectorCount, skinSectorCount);
             _dailyModel = _factory.CreateDaily(dailySectorCount);
             _skinModel = _factory.CreateSkins(_content.SkinItems, skinSectorCount);
@@ -75,6 +83,7 @@ namespace Roulette
             }
 
             RouletteView view = _spawner.Spawn(prefab, UiLayer.Popup);
+
             if (view.TryGetComponent(out RoulettePresenter presenter) == false)
             {
                 throw new InvalidOperationException($"{view.name}: RoulettePresenter is required.");

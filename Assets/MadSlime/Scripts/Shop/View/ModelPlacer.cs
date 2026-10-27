@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Shop
 {
     public class ModelPlacer : MonoBehaviour
@@ -12,9 +13,9 @@ namespace Shop
 
         [SerializeField] private PreviewRotator _rotator;
         [SerializeField] private float _frameFill = 0.85f;
-                [SerializeField,Min(0.1f)]
+        [SerializeField, Min(0.1f)]
         private float _previewZoom = 1f;
-                [SerializeField,Min(0.1f)]
+        [SerializeField, Min(0.1f)]
         private float _modelSize = 2f;
         [SerializeField] private Transform _modelsParent;
         [SerializeField] private Camera _camera;
@@ -59,8 +60,7 @@ namespace Shop
         {
             if (model == null)
             {
-                throw new ArgumentNullException(nameof(model),
-                    $"{name}: SetModel requires a non-null model.");
+                throw new ArgumentNullException(nameof(model), $"{name}: SetModel requires a non-null model.");
             }
 
             if (_currentModel != null)
@@ -115,6 +115,7 @@ namespace Shop
         private void FaceCamera(Quaternion baseRotation)
         {
             Vector3 toCamera = _camera.transform.position - _currentModel.transform.position;
+
             toCamera.y = 0f;
 
             if (toCamera.sqrMagnitude <= 0f)
@@ -125,6 +126,7 @@ namespace Shop
             }
 
             float yaw = Mathf.Atan2(toCamera.x, toCamera.z) * Mathf.Rad2Deg;
+
             _currentModel.transform.rotation =
                 Quaternion.Euler(0f, yaw + FaceTurnDegrees, 0f) * baseRotation;
         }
@@ -133,13 +135,16 @@ namespace Shop
         {
             Bounds worldBounds = GetWorldBounds(skinModel);
             float radius = 0f;
+
             foreach (Vector3 corner in _worldCorners)
             {
                 Vector3 offset = corner - worldBounds.center;
+
                 radius = Mathf.Max(radius, new Vector2(offset.x, offset.z).magnitude);
             }
 
             float originalSize = Mathf.Max(worldBounds.size.y, radius * 2f);
+
             if (originalSize <= Mathf.Epsilon)
             {
                 throw new InvalidOperationException($"{name}: preview model '{skinModel.name}' has empty bounds.");
@@ -149,6 +154,7 @@ namespace Shop
             float scale = targetSize / originalSize * Mathf.Max(0.1f, _previewZoom);
             Transform modelTransform = _currentModel.transform;
             Vector3 originalPosition = modelTransform.position;
+
             _modelCorners.Clear();
 
             for (int i = 0; i < _worldCorners.Count; i++)
@@ -157,21 +163,28 @@ namespace Shop
             }
 
             modelTransform.localScale *= scale;
-            Vector3 scaledCenter = originalPosition + (worldBounds.center - originalPosition) * scale;
+
+            Vector3 scaledCenter = originalPosition + ((worldBounds.center - originalPosition) * scale);
             float halfHeight = worldBounds.extents.y * scale;
+
             radius *= scale;
+
             float normalizedExtent = targetSize * HalfFactor;
             float commonSize = CalculateCameraSize(normalizedExtent, normalizedExtent);
             float requiredSize = CalculateCameraSize(radius, halfHeight);
+
             _camera.orthographicSize = Mathf.Max(commonSize, requiredSize);
 
             Vector3 forward = _camera.transform.forward;
             float depthExtent = ProjectCylinder(radius, halfHeight, forward);
             float minimumDepth = _camera.nearClipPlane + depthExtent + ClipMargin;
             Vector3 anchor = GetViewCenter(worldBounds.center, minimumDepth);
+
             modelTransform.position += anchor - scaledCenter;
             _rotationAnchor = anchor;
+
             float farthestDepth = Vector3.Dot(anchor - _camera.transform.position, forward) + depthExtent;
+
             _camera.farClipPlane = Mathf.Max(_camera.farClipPlane, farthestDepth + ClipMargin);
             AlignToCameraBottom();
         }
@@ -182,6 +195,7 @@ namespace Shop
             float verticalExtent = ProjectCylinder(radius, halfHeight, _camera.transform.up);
             float requiredSize = Mathf.Max(verticalExtent, horizontalExtent / _camera.aspect);
             float fill = Mathf.Clamp(_frameFill, 0.1f, 0.95f);
+
             return requiredSize / fill;
         }
 
@@ -206,10 +220,12 @@ namespace Shop
             {
                 Vector3 corner = modelTransform.TransformPoint(_modelCorners[i]);
                 float height = Vector3.Dot(corner - cameraPosition, cameraUp);
+
                 minimumHeight = Mathf.Min(minimumHeight, height);
             }
 
             Vector3 offset = cameraUp * (-_camera.orthographicSize - minimumHeight);
+
             modelTransform.position += offset;
             _rotationAnchor += offset;
             _rotator.Setup(modelTransform, _rotationAnchor);
@@ -217,7 +233,7 @@ namespace Shop
 
         private static float ProjectCylinder(float radius, float halfHeight, Vector3 axis)
         {
-            return radius * new Vector2(axis.x, axis.z).magnitude + halfHeight * Mathf.Abs(axis.y);
+            return (radius * new Vector2(axis.x, axis.z).magnitude) + (halfHeight * Mathf.Abs(axis.y));
         }
 
         private Vector3 GetViewCenter(Vector3 position, float minimumDepth)
@@ -225,12 +241,13 @@ namespace Shop
             Vector3 forward = _camera.transform.forward;
             float depth = Mathf.Max(minimumDepth, Vector3.Dot(position - _camera.transform.position, forward));
 
-            return _camera.transform.position + forward * depth;
+            return _camera.transform.position + (forward * depth);
         }
 
         private Bounds GetWorldBounds(SkinModel skinModel)
         {
             _worldCorners.Clear();
+
             foreach (MeshFilter meshFilter in skinModel.GetComponentsInChildren<MeshFilter>())
             {
                 if (meshFilter.sharedMesh != null)
@@ -238,6 +255,7 @@ namespace Shop
                     AddWorldCorners(meshFilter.transform, meshFilter.sharedMesh.bounds);
                 }
             }
+
             foreach (SkinnedMeshRenderer renderer in skinModel.GetComponentsInChildren<SkinnedMeshRenderer>())
             {
                 if (renderer.sharedMesh != null)
@@ -245,15 +263,19 @@ namespace Shop
                     AddWorldCorners(renderer.transform, renderer.localBounds);
                 }
             }
+
             if (_worldCorners.Count == 0)
             {
                 throw new InvalidOperationException($"{name}: SkinModel '{skinModel.name}' has no preview mesh.");
             }
+
             Bounds worldBounds = new Bounds(_worldCorners[0], Vector3.zero);
+
             foreach (Vector3 corner in _worldCorners)
             {
                 worldBounds.Encapsulate(corner);
             }
+
             return worldBounds;
         }
 
@@ -267,6 +289,7 @@ namespace Shop
                     {
                         Vector3 direction = new Vector3(cornerX, cornerY, cornerZ);
                         Vector3 corner = bounds.center + Vector3.Scale(bounds.extents, direction);
+
                         _worldCorners.Add(sourceTransform.TransformPoint(corner));
                     }
                 }

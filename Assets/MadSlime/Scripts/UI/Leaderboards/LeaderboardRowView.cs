@@ -1,8 +1,9 @@
-using Leaderboards;
 using System;
+using Leaderboards;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
 namespace UI.Leaderboards
 {
     using Localization = global::Localization.Localization;
@@ -60,6 +61,7 @@ namespace UI.Leaderboards
             if (string.IsNullOrEmpty(_entry.Name) == true || _entry.Name == AnonymousNameMarker)
             {
                 string anonymousName = Localization.Get("leaderboard_anonymous");
+
                 _nameText.text = $"{anonymousName} #{_entry.Id}";
                 return;
             }

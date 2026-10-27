@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+
 namespace UI.Windows
 {
     public class ResetProgressConfirmation : MonoBehaviour
@@ -9,6 +10,7 @@ namespace UI.Windows
         [SerializeField] private Button _cancelButton;
 
         public event Action Confirmed;
+
         public event Action Canceled;
 
         private void Awake()

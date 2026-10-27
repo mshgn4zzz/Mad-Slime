@@ -1,6 +1,7 @@
-using DG.Tweening;
 using System;
+using DG.Tweening;
 using UnityEngine;
+
 namespace Items
 {
     public class GhostAnimator : MonoBehaviour

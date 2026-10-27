@@ -1,4 +1,5 @@
 using UnityEngine;
+
 namespace Items
 {
     [CreateAssetMenu(menuName = "Mad Slime/Item Definition", fileName = "NewItemDefinition")]
@@ -9,6 +10,7 @@ namespace Items
         [SerializeField] private SizeTier _tier = SizeTier.Small;
 
         public Sprite Icon => _icon;
+
         public SizeTier Tier => _tier;
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using YG;
+
 namespace Saves
 {
     public class BalanceStorage : IBalanceStorage
@@ -29,6 +30,7 @@ namespace Saves
             }
 
             SavesYG data = _core.LoadData();
+
             data.Balance = balance;
             _core.SaveChanges();
         }

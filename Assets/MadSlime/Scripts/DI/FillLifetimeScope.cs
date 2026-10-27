@@ -1,21 +1,23 @@
+using System;
 using Ads;
 using Audio;
 using Economy;
 using Game;
 using Leaderboards;
 using ShapeFill;
-using System;
 using UI.Fill;
 using UI.Spawning;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 using VContainer.Unity;
+
 namespace DI
 {
     public class FillLifetimeScope : ValidatedLifetimeScope
     {
         [SerializeField] private FillConfig _fillConfig;
-        [SerializeField] private FillSceneOrchestrator _fillSceneOrchestrator;
+        [SerializeField] private FillSceneState _fillSceneOrchestrator;
         [SerializeField] private ShapeFillOrchestrator _fillOrchestrator;
         [SerializeField] private GridCameraFitter _cameraFitter;
         [SerializeField] private GridBuilder _gridBuilder;
@@ -28,9 +30,9 @@ namespace DI
         [SerializeField] private FillProgressUI _fillProgressUI;
         [SerializeField] private Rewarder _rewarder;
         [SerializeField] private AdScheduler _adScheduler;
-        [SerializeField] private LeaderboardReporter _leaderboardReporter;
         [SerializeField] private Wallet _wallet;
         [SerializeField] private Pauser _pauser;
+        [FormerlySerializedAs("_fillUIFabric")]
         [SerializeField] private FillUiPresenter _fillUiPresenter;
         [SerializeField] private FlyingCubeArrivalSound _flyingCubeArrivalSound;
 
@@ -50,7 +52,6 @@ namespace DI
             ValidateAssigned(_fillProgressUI, nameof(_fillProgressUI));
             ValidateAssigned(_rewarder, nameof(_rewarder));
             ValidateAssigned(_adScheduler, nameof(_adScheduler));
-            ValidateAssigned(_leaderboardReporter, nameof(_leaderboardReporter));
             ValidateAssigned(_wallet, nameof(_wallet));
             ValidateAssigned(_pauser, nameof(_pauser));
             ValidateAssigned(_fillUiPresenter, nameof(_fillUiPresenter));
@@ -58,6 +59,11 @@ namespace DI
 
             builder.RegisterInstance(_fillConfig);
             builder.Register<UiSpawner>(Lifetime.Scoped);
+            builder.Register<FillSessionData>(Lifetime.Scoped);
+            builder.Register<FillingState>(Lifetime.Scoped);
+            builder.Register<ResultState>(Lifetime.Scoped);
+            builder.Register<RescuingPrepareState>(Lifetime.Scoped);
+            builder.Register<FillStateMachine>(Lifetime.Scoped);
             builder.RegisterComponent(_fillSceneOrchestrator);
             builder.RegisterComponent(_fillOrchestrator);
             builder.RegisterComponent(_cameraFitter);
@@ -71,7 +77,6 @@ namespace DI
             builder.RegisterComponent(_fillProgressUI);
             builder.RegisterComponent(_rewarder);
             builder.RegisterComponent(_adScheduler);
-            builder.RegisterComponent(_leaderboardReporter);
             builder.Register<FillSessionSaver>(Lifetime.Scoped);
             builder.Register<LevelThemeApplier>(Lifetime.Scoped);
             builder.Register<FillExitFlow>(Lifetime.Scoped);

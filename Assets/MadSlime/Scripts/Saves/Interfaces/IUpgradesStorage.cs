@@ -1,4 +1,5 @@
 using Upgrades;
+
 namespace Saves
 {
     public interface IUpgradesStorage

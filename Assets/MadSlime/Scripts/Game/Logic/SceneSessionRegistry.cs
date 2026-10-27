@@ -1,6 +1,7 @@
-using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
+using Cysharp.Threading.Tasks;
+
 namespace Game
 {
     public class SceneSessionRegistry
@@ -12,7 +13,7 @@ namespace Game
         private Action _currentSessionStart;
         private Action _currentSessionFinish;
 
-        public bool HasPendingSession => _pendingPreparation != null;
+        public bool HasPendingSession { get; private set; }
 
         public Func<CancellationToken, UniTask> PendingPreparation => _pendingPreparation;
 
@@ -20,13 +21,17 @@ namespace Game
 
         public Action PendingSceneStart => _pendingSceneStart;
 
-        public void RegisterPending(Func<CancellationToken, UniTask> preparation, Action sessionStart,
-            Action sessionFinish, CancellationToken sessionToken)
+        public void RegisterPending(
+            Func<CancellationToken, UniTask> preparation,
+            Action sessionStart,
+            Action sessionFinish,
+            CancellationToken sessionToken)
         {
             _pendingPreparation = preparation;
             _pendingSceneStart = sessionStart;
             _pendingSceneFinish = sessionFinish;
             _pendingSessionToken = sessionToken;
+            HasPendingSession = preparation != null;
         }
 
         public void Unregister(Action sessionStart)
@@ -48,6 +53,7 @@ namespace Game
             _pendingPreparation = null;
             _pendingSceneStart = null;
             _pendingSceneFinish = null;
+            HasPendingSession = false;
         }
 
         public void FinishCurrentSession()
@@ -65,6 +71,7 @@ namespace Game
         {
             Action pendingStart = _pendingSceneStart;
             Action pendingFinish = _pendingSceneFinish;
+
             ClearPending();
             SetCurrentSession(pendingStart, pendingFinish);
         }

@@ -1,7 +1,8 @@
-using Ads;
-using Game;
 using System;
+using Ads;
 using Cysharp.Threading.Tasks;
+using Game;
+
 namespace ShapeFill
 {
     public class FillExitFlow

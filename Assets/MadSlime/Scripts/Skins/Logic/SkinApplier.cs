@@ -1,8 +1,9 @@
+using System;
 using Saves;
 using Shop;
-using System;
 using UnityEngine;
 using VContainer;
+
 namespace Skins
 {
     public class SkinApplier : MonoBehaviour
@@ -86,6 +87,7 @@ namespace Skins
             }
 
             _inventory.Initialize();
+
             string selectedId = _skinStorage.SelectedSkinId;
 
             SkinItem matchingItem = FindItem(selectedId);

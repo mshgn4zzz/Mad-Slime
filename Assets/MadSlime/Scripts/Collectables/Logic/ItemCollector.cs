@@ -1,11 +1,12 @@
-using Cysharp.Threading.Tasks;
-using Items;
-using Player;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Cysharp.Threading.Tasks;
+using Items;
+using Player;
 using UnityEngine;
 using VContainer;
+
 namespace Collectables
 {
     public class ItemCollector : MonoBehaviour
@@ -134,6 +135,7 @@ namespace Collectables
             }
 
             body.Capture();
+
             CancellationToken cancellationToken = _absorptionSource.Token;
 
             ItemCollected?.Invoke(item);

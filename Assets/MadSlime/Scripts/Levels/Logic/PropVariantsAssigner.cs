@@ -1,6 +1,6 @@
-using Items;
 using System;
 using System.Collections.Generic;
+using Items;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -45,6 +45,7 @@ namespace Levels
             }
 
             List<Item> prefabs = new List<Item>(_variantsByPrefab.Keys);
+
             Shuffle(prefabs);
 
             List<SizeTier> tiers = TiersInRange(config);
@@ -101,6 +102,7 @@ namespace Levels
             for (int i = list.Count - 1; i > 0; i--)
             {
                 int swapIndex = Random.Range(0, i + 1);
+
                 (list[i], list[swapIndex]) = (list[swapIndex], list[i]);
             }
         }

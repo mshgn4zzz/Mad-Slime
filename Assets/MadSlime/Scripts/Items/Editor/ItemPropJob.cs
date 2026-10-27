@@ -1,6 +1,7 @@
-using Items;
 using System.Collections.Generic;
+using Items;
 using UnityEngine;
+
 namespace Items.Editor
 {
     internal class ItemPropJob

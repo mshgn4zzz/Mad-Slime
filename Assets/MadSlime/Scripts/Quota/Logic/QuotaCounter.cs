@@ -1,8 +1,9 @@
+using System;
 using Collectables;
 using Items;
-using System;
 using UnityEngine;
 using Upgrades;
+
 namespace Quota
 {
     public class QuotaCounter
@@ -31,7 +32,8 @@ namespace Quota
                 return 0f;
             }
 
-            float percent = (_collectedQuotaCount * QuotaFillWeight + _collectedForeignFill) / _board.TotalTarget;
+            float percent = ((_collectedQuotaCount * QuotaFillWeight) + _collectedForeignFill) / _board.TotalTarget;
+
             return Mathf.Clamp01(percent);
         }
 
@@ -39,14 +41,12 @@ namespace Quota
         {
             if (board == null)
             {
-                throw new ArgumentNullException(nameof(board),
-                    "QuotaCounter requires a QuotaBoard.");
+                throw new ArgumentNullException(nameof(board), "QuotaCounter requires a QuotaBoard.");
             }
 
             if (upgrades == null)
             {
-                throw new ArgumentNullException(nameof(upgrades),
-                    "QuotaCounter requires PlayerUpgrades.");
+                throw new ArgumentNullException(nameof(upgrades), "QuotaCounter requires PlayerUpgrades.");
             }
 
             _board = board;
@@ -57,8 +57,7 @@ namespace Quota
         {
             if (collector == null)
             {
-                throw new ArgumentNullException(nameof(collector),
-                    "QuotaCounter.Attach requires an ItemCollector.");
+                throw new ArgumentNullException(nameof(collector), "QuotaCounter.Attach requires an ItemCollector.");
             }
 
             if (_attachedCollector != null)

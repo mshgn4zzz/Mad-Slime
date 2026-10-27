@@ -1,9 +1,10 @@
-using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
 namespace UI.Windows
 {
     public class WinMenu : BaseWindow
@@ -75,6 +76,7 @@ namespace UI.Windows
             {
                 return;
             }
+
             if (targetAmount <= _moneyCountShown)
             {
                 _moneyCountShown = targetAmount;
@@ -96,8 +98,10 @@ namespace UI.Windows
                 while (elapsedTime < _countUpDuration)
                 {
                     elapsedTime += Time.unscaledDeltaTime;
+
                     float progress = Mathf.Clamp01(elapsedTime / _countUpDuration);
                     int shownAmount = Mathf.RoundToInt(Mathf.Lerp(fromAmount, toAmount, progress));
+
                     _moneyCountShown = shownAmount;
                     _moneyCount.text = shownAmount.ToString();
                     await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
@@ -156,7 +160,9 @@ namespace UI.Windows
             }
 
             _isNavigationRequested = true;
+
             Action nextLevelRequested = NextLevelRequested;
+
             nextLevelRequested?.Invoke();
         }
 
@@ -173,6 +179,7 @@ namespace UI.Windows
             }
 
             Action doubleRewardRequested = DoubleRewardRequested;
+
             doubleRewardRequested?.Invoke();
         }
 
@@ -184,7 +191,9 @@ namespace UI.Windows
             }
 
             _isNavigationRequested = true;
+
             Action menuRequested = MenuRequested;
+
             menuRequested?.Invoke();
         }
     }

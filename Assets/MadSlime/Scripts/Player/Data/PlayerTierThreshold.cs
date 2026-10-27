@@ -1,6 +1,7 @@
-using Items;
 using System;
+using Items;
 using UnityEngine;
+
 namespace Player
 {
     [Serializable]
@@ -17,9 +18,13 @@ namespace Player
         [SerializeField] private float _cameraZoom = 1f;
 
         public SizeTier Tier => _tier;
+
         public int RequiredMass => _mass;
+
         public float ScaleMultiplier => _growTimes;
+
         public float CameraOffsetMultiplier => _cameraZoom;
+
         public float Speed => _speed;
     }
 }

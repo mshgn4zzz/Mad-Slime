@@ -1,16 +1,17 @@
-using Cysharp.Threading.Tasks;
-using Items;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Cysharp.Threading.Tasks;
+using Items;
 using Unity.Profiling;
 using UnityEngine;
+
 namespace Quota
 {
     public class QuotaOutlineInitializer
     {
         private const float FrameBudgetSeconds = 0.006f;
-        private static ProfilerMarker _prepareItemMarker =
+        private static ProfilerMarker s_prepareItemMarker =
             new ProfilerMarker("QuotaOutlineInitializer.PrepareItem");
 
         private QuotaBoard _board;
@@ -25,8 +26,12 @@ namespace Quota
             _board = board;
         }
 
-        public async UniTask PrepareAsync(IReadOnlyList<Item> items, Color color, float width,
-            Action<float> progress, CancellationToken cancellationToken)
+        public async UniTask PrepareAsync(
+            IReadOnlyList<Item> items,
+            Color color,
+            float width,
+            Action<float> progress,
+            CancellationToken cancellationToken)
         {
             if (items == null)
             {
@@ -34,6 +39,7 @@ namespace Quota
             }
 
             cancellationToken.ThrowIfCancellationRequested();
+
             HashSet<ItemDefinition> quotaTypes = new HashSet<ItemDefinition>();
 
             foreach (QuotaEntry entry in _board.Entries)
@@ -52,6 +58,7 @@ namespace Quota
             for (int i = 0; i < items.Count; i++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
+
                 Item item = items[i];
 
                 if (item != null && quotaTypes.Contains(item.Definition))
@@ -73,7 +80,7 @@ namespace Quota
 
         private void PrepareItem(Item item, Color color, float width)
         {
-            using ProfilerMarker.AutoScope prepareItemScope = _prepareItemMarker.Auto();
+            using ProfilerMarker.AutoScope prepareItemScope = s_prepareItemMarker.Auto();
 
             if (item.TryGetComponent(out GhostAnimator animator) == false)
             {

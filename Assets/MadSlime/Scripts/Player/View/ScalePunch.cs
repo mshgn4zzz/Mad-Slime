@@ -1,6 +1,7 @@
-using DG.Tweening;
 using System;
+using DG.Tweening;
 using UnityEngine;
+
 namespace Player
 {
     public class ScalePunch : MonoBehaviour
@@ -33,7 +34,6 @@ namespace Player
                 throw new InvalidOperationException(
                     $"{name}: ModelDeformer is not assigned.");
             }
-
         }
 
         private void OnDisable()
@@ -75,6 +75,7 @@ namespace Player
             _progress = progress;
 
             float compression = 1f - Mathf.Clamp01(_config.SquashCurve.Evaluate(progress));
+
             _deformer.SetCollectCompression(compression);
         }
 

@@ -1,7 +1,8 @@
-using Items;
 using System;
+using Items;
 using UnityEngine;
 using VContainer;
+
 namespace Player
 {
     public class PlayerTier : MonoBehaviour
@@ -12,6 +13,7 @@ namespace Player
         private TierResolver _tierResolver;
 
         public event Action<SizeTier, SizeTier> TierChanged;
+
         public event Action<int, int> MassChanged;
 
         public int Mass => _mass;
@@ -40,7 +42,6 @@ namespace Player
                     $"{name}: PlayerConfig was not injected. Check that GameLifetimeScope is "
                         + $"configured and PlayerTier is registered.");
             }
-
         }
 
         public void Initialize()
@@ -53,7 +54,8 @@ namespace Player
         {
             if (amount < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(amount),
+                throw new ArgumentOutOfRangeException(
+                    nameof(amount),
                     "PlayerTier.Add requires amount to be non-negative. The provided value was negative.");
             }
 

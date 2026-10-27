@@ -1,4 +1,5 @@
 using UnityEngine;
+
 namespace Player
 {
     public class Rotator : MonoBehaviour

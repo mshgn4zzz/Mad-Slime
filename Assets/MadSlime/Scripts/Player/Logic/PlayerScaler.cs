@@ -1,9 +1,10 @@
-using CameraSystem;
-using Items;
 using System;
 using System.Collections.Generic;
+using CameraSystem;
+using Items;
 using UnityEngine;
 using VContainer;
+
 namespace Player
 {
     public class PlayerScaler : MonoBehaviour
@@ -85,7 +86,6 @@ namespace Player
         private void OnEnable()
         {
             _playerTier.TierChanged += OnTierChanged;
-
         }
 
         private void OnDisable()

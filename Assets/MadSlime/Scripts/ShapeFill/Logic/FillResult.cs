@@ -1,22 +1,30 @@
 using System;
 using UnityEngine;
+
 namespace ShapeFill
 {
     public class FillResult
     {
         public int QuotaCubes { get; }
+
         public int BonusCubes { get; }
+
         public int TargetCubes { get; }
+
         public float Percent { get; }
+
         public bool IsWin { get; }
+
         public Vector3 FormCenter { get; }
+
         public Vector3 FormSize { get; }
 
         public FillResult(int quotaCubes, int bonusCubes, int requiredCubes, Vector3 formCenter, Vector3 formSize)
         {
             if (quotaCubes < 0 || bonusCubes < 0 || requiredCubes <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(requiredCubes),
+                throw new ArgumentOutOfRangeException(
+                    nameof(requiredCubes),
                     "Fill result requires a built nonempty shape and "
                         + "nonnegative counts.");
             }

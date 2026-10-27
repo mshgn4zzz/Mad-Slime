@@ -1,6 +1,7 @@
-using DG.Tweening;
 using System;
+using DG.Tweening;
 using UnityEngine;
+
 namespace UI.Animations
 {
     public class UiScaleAnimator : TweenAnimatorBase
@@ -78,6 +79,7 @@ namespace UI.Animations
             float horizontalFit = _bounds.rect.width * BoundsFillRatio / width;
             float verticalFit = _bounds.rect.height * BoundsFillRatio / height;
             float fit = Mathf.Min(1f, Mathf.Min(horizontalFit, verticalFit));
+
             return scale * fit;
         }
 

@@ -1,7 +1,8 @@
-using Saves;
 using System;
+using Saves;
 using UnityEngine;
 using VContainer;
+
 namespace Economy
 {
     public class Rewarder : MonoBehaviour
@@ -64,8 +65,7 @@ namespace Economy
 
             if (percent < 0f || percent > 1f)
             {
-                throw new ArgumentOutOfRangeException(nameof(percent),
-                    "CommitLevelResult requires a fill percent within 0..1.");
+                throw new ArgumentOutOfRangeException(nameof(percent), "CommitLevelResult requires a fill percent within 0..1.");
             }
 
             _levelReward = _config.GetReward(_levelStorage.CurrentLevel);

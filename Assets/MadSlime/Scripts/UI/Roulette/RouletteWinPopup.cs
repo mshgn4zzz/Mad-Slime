@@ -1,11 +1,12 @@
+using System;
 using Roulette;
 using Skins;
-using System;
 using TMPro;
 using UI.Animations;
 using UI.Windows;
 using UnityEngine;
 using UnityEngine.UI;
+
 namespace UI.Roulette
 {
     using Localization = global::Localization.Localization;
@@ -75,7 +76,6 @@ namespace UI.Roulette
                     $"{name}: a plate sprite is not assigned. Drag the GUI Kit grade label sprites "
                         + $"(blue, green, purple, orange) into the fields.");
             }
-
         }
 
         private void OnEnable()
@@ -122,8 +122,7 @@ namespace UI.Roulette
         {
             if (skin == null)
             {
-                throw new ArgumentNullException(nameof(skin),
-                    $"{name}: ShowSkin requires a skin.");
+                throw new ArgumentNullException(nameof(skin), $"{name}: ShowSkin requires a skin.");
             }
 
             if (skin.Icon == null)
@@ -222,10 +221,13 @@ namespace UI.Roulette
             {
                 case SkinRarity.Rare:
                     return "rarity_rare";
+
                 case SkinRarity.Epic:
                     return "rarity_epic";
+
                 case SkinRarity.Legendary:
                     return "rarity_legendary";
+
                 default:
                     return "rarity_common";
             }

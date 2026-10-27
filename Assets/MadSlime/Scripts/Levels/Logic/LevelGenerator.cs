@@ -1,14 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
 using Collectables;
 using Cysharp.Threading.Tasks;
 using Items;
 using Player;
 using Quota;
 using Saves;
-using System;
-using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 using VContainer;
+
 namespace Levels
 {
     public class LevelGenerator : MonoBehaviour
@@ -34,9 +35,15 @@ namespace Levels
         public IReadOnlyList<Item> SpawnedItems => _itemsSpawner.ActiveItems;
 
         [Inject]
-        public void Construct(LevelConfigResolver configResolver, ILevelStorage levelStorage,
-            QuotaBoard quotaBoard, QuotaGenerator quotaGenerator, TierTable tierTable,
-            LayoutsLibrary layoutsLibrary, Clamper clamper, ItemCollector itemCollector)
+        public void Construct(
+            LevelConfigResolver configResolver,
+            ILevelStorage levelStorage,
+            QuotaBoard quotaBoard,
+            QuotaGenerator quotaGenerator,
+            TierTable tierTable,
+            LayoutsLibrary layoutsLibrary,
+            Clamper clamper,
+            ItemCollector itemCollector)
         {
             _configResolver = configResolver;
             _levelStorage = levelStorage;
@@ -148,6 +155,7 @@ namespace Levels
             Physics.SyncTransforms();
 
             List<QuotaEntry> quota = _quotaGenerator.Generate(_itemsSpawner.SpawnedCounts, config);
+
             _quotaBoard.Reset(quota);
             _itemsSpawner.AssignQuotaLayers(quota);
         }

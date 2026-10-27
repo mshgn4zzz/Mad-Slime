@@ -1,9 +1,11 @@
-using Items;
 using System;
 using System.Collections.Generic;
+using Items;
 using UnityEditor;
 using UnityEngine;
+
 #if UNITY_EDITOR
+
 #endif
 
 namespace Levels
@@ -24,10 +26,15 @@ namespace Levels
         private List<Vector3> _zonePoints = new List<Vector3>(64);
 
         public LevelGenerator LevelGenerator => _levelGenerator;
+
         public LayoutsLibrary Library => _library;
+
         public PropSet PropSet => _propSet;
+
         public bool MirrorX => _mirrorX;
+
         public bool MirrorZ => _mirrorZ;
+
         public LayoutSet CustomLayout => _customLayout;
 
 #if UNITY_EDITOR
@@ -110,6 +117,7 @@ namespace Levels
                 }
 
                 float maxScale = MaxTierScale(zone);
+
                 _zoneRadii.Clear();
 
                 for (int propIndex = 0; propIndex < _propSet.Props.Count; propIndex++)
@@ -126,7 +134,8 @@ namespace Levels
                 }
 
                 float spacing = ZoneLayoutPlanner.ResolveSpacing(zone, layout, _zoneRadii);
-                ZoneLayoutPlanner planner = new ZoneLayoutPlanner(new System.Random(layoutIndex * 7919 + i * 17 + 3));
+                ZoneLayoutPlanner planner = new ZoneLayoutPlanner(new System.Random((layoutIndex * 7919) + (i * 17) + 3));
+
                 planner.CollectPlacements(zone, center, spacing, layout, _zoneRadii, zone.SingleType);
 
                 _zonePoints.Clear();
@@ -147,6 +156,7 @@ namespace Levels
                     if (_zonePoints.Count > 0)
                     {
                         float outerRadius = GetMaxRadialDistance(_zonePoints, worldCenter);
+
                         DrawZoneOutline(worldCenter, outerRadius, tierColor);
                     }
                 }
@@ -195,7 +205,8 @@ namespace Levels
             {
                 float deltaX = points[i].x - center.x;
                 float deltaZ = points[i].z - center.z;
-                maxDistance = Mathf.Max(maxDistance, Mathf.Sqrt(deltaX * deltaX + deltaZ * deltaZ));
+
+                maxDistance = Mathf.Max(maxDistance, Mathf.Sqrt((deltaX * deltaX) + (deltaZ * deltaZ)));
             }
 
             return maxDistance;
@@ -263,17 +274,21 @@ namespace Levels
             for (int i = 1; i <= segments; i++)
             {
                 float angle = 2f * Mathf.PI * i / segments;
-                float offsetX = center.x + Mathf.Cos(angle) * radius;
-                float offsetZ = center.z + Mathf.Sin(angle) * radius;
+                float offsetX = center.x + (Mathf.Cos(angle) * radius);
+                float offsetZ = center.z + (Mathf.Sin(angle) * radius);
 
                 Vector3 nextPoint = new Vector3(offsetX, center.y, offsetZ);
+
                 Gizmos.DrawLine(previousPoint, nextPoint);
                 previousPoint = nextPoint;
             }
         }
 
-        private void DrawZoneDots(IReadOnlyList<Vector3> points, IReadOnlyList<ZonePlacement> placements,
-            IReadOnlyList<float> poolRadii, Color tierColor)
+        private void DrawZoneDots(
+            IReadOnlyList<Vector3> points,
+            IReadOnlyList<ZonePlacement> placements,
+            IReadOnlyList<float> poolRadii,
+            Color tierColor)
         {
             Gizmos.color = tierColor;
 
@@ -314,14 +329,19 @@ namespace Levels
             {
                 case SizeTier.Small:
                     return Color.green;
+
                 case SizeTier.Medium:
                     return Color.yellow;
+
                 case SizeTier.Large:
                     return new Color(1f, 0.5f, 0f);
+
                 case SizeTier.Huge:
                     return new Color(1f, 0.2f, 0.2f);
+
                 case SizeTier.Giant:
                     return new Color(0.8f, 0.2f, 1f);
+
                 default:
                     return Color.magenta;
             }

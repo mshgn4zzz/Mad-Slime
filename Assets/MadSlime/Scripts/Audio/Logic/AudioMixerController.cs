@@ -1,8 +1,9 @@
-using Saves;
 using System;
+using Saves;
 using UnityEngine;
 using UnityEngine.Audio;
 using VContainer;
+
 namespace Audio
 {
     public class AudioMixerController : MonoBehaviour
@@ -38,7 +39,9 @@ namespace Audio
         }
 
         public int MusicVolume => _musicVolume;
+
         public int SfxVolume => _sfxVolume;
+
         public bool IsVolumesLoaded => _isVolumesLoaded;
 
         private void Awake()
@@ -99,8 +102,9 @@ namespace Audio
                 return;
             }
 
-            int savedMusicVolume = _audioStorage.MusicVolume;
-            int savedSfxVolume = _audioStorage.SfxVolume;
+            int savedMusicVolume = _audioStorage.GetMusicVolume();
+            int savedSfxVolume = _audioStorage.GetSfxVolume();
+
             _musicVolume = SnapToStep(savedMusicVolume);
             _sfxVolume = SnapToStep(savedSfxVolume);
 
@@ -159,17 +163,17 @@ namespace Audio
             }
 
             float decibels = LinearToDecibels(volume / (float)MaxVolume);
+
             _mixer.SetFloat(mixerParameter, decibels);
         }
 
         private static int SnapToStep(int volume)
         {
             int stepped = Mathf.RoundToInt(volume / (float)VolumeStep) * VolumeStep;
+
             return Mathf.Clamp(stepped, MinVolume, MaxVolume);
         }
 
-        // Slider is linear in dB (equal steps = equal perceived loudness change):
-        // right edge = 0 dB, below MuteZone01 the curve dives smoothly into silence.
         private static float LinearToDecibels(float volume01)
         {
             if (volume01 <= Mathf.Epsilon)
@@ -180,10 +184,12 @@ namespace Audio
             if (volume01 <= MuteZone01)
             {
                 float muteProgress = volume01 / MuteZone01;
+
                 return Mathf.Lerp(MutedDecibels, MinAudibleDecibels, muteProgress);
             }
 
             float audibleProgress = (volume01 - MuteZone01) / (1f - MuteZone01);
+
             return Mathf.Lerp(MinAudibleDecibels, 0f, audibleProgress);
         }
     }

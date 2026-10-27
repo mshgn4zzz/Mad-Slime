@@ -35,6 +35,7 @@ namespace UI.ResponsiveUI
             }
 
             RectTransform rect = (RectTransform)canvas.transform;
+
             _anchorMin = rect.anchorMin;
             _anchorMax = rect.anchorMax;
             _pivot = rect.pivot;
@@ -56,7 +57,9 @@ namespace UI.ResponsiveUI
             }
 
             _canvas.renderMode = RenderMode.WorldSpace;
+
             RectTransform rect = (RectTransform)_canvas.transform;
+
             rect.anchorMin = Vector2.one * 0.5f;
             rect.anchorMax = Vector2.one * 0.5f;
             rect.pivot = Vector2.one * 0.5f;
@@ -73,7 +76,9 @@ namespace UI.ResponsiveUI
             }
 
             _canvas.renderMode = _renderMode;
+
             RectTransform rect = (RectTransform)_canvas.transform;
+
             rect.anchorMin = _anchorMin;
             rect.anchorMax = _anchorMax;
             rect.pivot = _pivot;

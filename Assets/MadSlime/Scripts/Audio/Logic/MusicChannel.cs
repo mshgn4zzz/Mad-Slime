@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Audio
 {
     public class MusicChannel
@@ -18,8 +19,12 @@ namespace Audio
         private int _activeIndex;
         private bool _isLeadFadingIn;
 
-        public MusicChannel(AudioSource firstSource, AudioSource secondSource, float fadeInDuration,
-            float fadeOutDuration, float overlapDuration)
+        public MusicChannel(
+            AudioSource firstSource,
+            AudioSource secondSource,
+            float fadeInDuration,
+            float fadeOutDuration,
+            float overlapDuration)
         {
             if (firstSource == null)
             {
@@ -33,20 +38,17 @@ namespace Audio
 
             if (fadeInDuration <= 0f)
             {
-                throw new ArgumentOutOfRangeException(nameof(fadeInDuration),
-                    "MusicChannel requires a positive fade-in duration.");
+                throw new ArgumentOutOfRangeException(nameof(fadeInDuration), "MusicChannel requires a positive fade-in duration.");
             }
 
             if (fadeOutDuration <= 0f)
             {
-                throw new ArgumentOutOfRangeException(nameof(fadeOutDuration),
-                    "MusicChannel requires a positive fade-out duration.");
+                throw new ArgumentOutOfRangeException(nameof(fadeOutDuration), "MusicChannel requires a positive fade-out duration.");
             }
 
             if (overlapDuration <= 0f)
             {
-                throw new ArgumentOutOfRangeException(nameof(overlapDuration),
-                    "MusicChannel requires a positive overlap duration.");
+                throw new ArgumentOutOfRangeException(nameof(overlapDuration), "MusicChannel requires a positive overlap duration.");
             }
 
             _sources[0] = firstSource;
@@ -60,8 +62,7 @@ namespace Audio
         {
             if (playlist == null)
             {
-                throw new ArgumentNullException(nameof(playlist),
-                    "MusicChannel.Play requires a playlist.");
+                throw new ArgumentNullException(nameof(playlist), "MusicChannel.Play requires a playlist.");
             }
 
             if (playlist.Tracks.Count == 0)
@@ -193,6 +194,7 @@ namespace Audio
             _trackIndex = (_trackIndex + 1) % _tracks.Count;
 
             int incomingIndex = 1 - _activeIndex;
+
             _isSourceFadingOut[_activeIndex] = true;
             _activeIndex = incomingIndex;
             StartLeadTrack(_tracks[_trackIndex]);

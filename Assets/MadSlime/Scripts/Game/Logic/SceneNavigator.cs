@@ -1,11 +1,12 @@
+using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using Saves;
 using Skins;
-using System;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
+
 namespace Game
 {
     public class SceneNavigator : MonoBehaviour
@@ -31,8 +32,11 @@ namespace Game
         private ISaveConfirmation _saveConfirmation;
 
         [Inject]
-        public void Construct(ISavesReadiness readiness, SkinInventory skinInventory,
-            IPlayerProgressStorage progressStorage, ISaveConfirmation saveConfirmation)
+        public void Construct(
+            ISavesReadiness readiness,
+            SkinInventory skinInventory,
+            IPlayerProgressStorage progressStorage,
+            ISaveConfirmation saveConfirmation)
         {
             _readiness = readiness;
             _skinInventory = skinInventory;
@@ -72,8 +76,11 @@ namespace Game
             _isInitialized = true;
         }
 
-        public void RegisterSession(Func<CancellationToken, UniTask> preparation, Action sessionStart,
-            Action sessionFinish, CancellationToken sessionToken)
+        public void RegisterSession(
+            Func<CancellationToken, UniTask> preparation,
+            Action sessionStart,
+            Action sessionFinish,
+            CancellationToken sessionToken)
         {
             if (preparation == null)
             {
@@ -104,8 +111,11 @@ namespace Game
             _registry.Unregister(sessionStart);
         }
 
-        private async UniTaskVoid StartInitialSessionAsync(Func<CancellationToken, UniTask> preparation,
-            Action sessionStart, Action sessionFinish, CancellationToken sessionToken)
+        private async UniTaskVoid StartInitialSessionAsync(
+            Func<CancellationToken, UniTask> preparation,
+            Action sessionStart,
+            Action sessionFinish,
+            CancellationToken sessionToken)
         {
             try
             {
@@ -174,6 +184,7 @@ namespace Game
             {
                 _loading.Show(transform);
                 ApplyLoadingSkin();
+
                 CancellationToken cancellationToken = this.GetCancellationTokenOnDestroy();
 
                 try
@@ -246,12 +257,13 @@ namespace Game
             _loading.Show(transform);
             ApplyLoadingSkin();
             _registry.FinishCurrentSession();
+
             CancellationToken cancellationToken = this.GetCancellationTokenOnDestroy();
 
             await UniTask.NextFrame(cancellationToken: cancellationToken);
+
             SceneId sourceSceneId = _currentSceneId;
-            Scene targetScene = await _transitionRunner.LoadAdditiveAsync(sourceSceneId, targetSceneId,
-                cancellationToken);
+            Scene targetScene = await _transitionRunner.LoadAdditiveAsync(sourceSceneId, targetSceneId, cancellationToken);
             float registrationWaitStart = Time.realtimeSinceStartup;
 
             while (_registry.HasPendingSession == false)
@@ -273,6 +285,7 @@ namespace Game
             await _transitionRunner.UnloadOutgoingAsync(sourceSceneId, targetScene);
 
             Action sessionStart = _registry.PendingSceneStart;
+
             _registry.PromotePendingToCurrent();
             _currentSceneId = targetSceneId;
 

@@ -1,7 +1,8 @@
-using Player;
 using System;
+using Player;
 using UnityEngine;
 using VContainer;
+
 namespace Upgrades
 {
     public class AdrenalineBoost : MonoBehaviour
@@ -11,6 +12,7 @@ namespace Upgrades
         private bool _isBoosted;
 
         public event Action BoostStarted;
+
         public event Action BoostEnded;
 
         [Inject]
@@ -35,7 +37,6 @@ namespace Upgrades
                     $"{name}: Movement was not injected. Check that GameLifetimeScope registers "
                         + $"Movement and AdrenalineBoost.");
             }
-
         }
 
         public void Enable()

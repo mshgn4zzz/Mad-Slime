@@ -1,8 +1,9 @@
+using System;
 using Items;
 using Player;
-using System;
 using UnityEngine;
 using VContainer;
+
 namespace Audio
 {
     public class TierUpSound : MonoBehaviour

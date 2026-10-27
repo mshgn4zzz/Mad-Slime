@@ -1,16 +1,17 @@
+using System;
+using System.Threading;
 using Ads;
 using Cysharp.Threading.Tasks;
 using Economy;
 using Game;
 using Saves;
 using ShapeFill;
-using System;
-using System.Threading;
 using UI.Spawning;
 using UI.Windows;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
+
 namespace UI.Fill
 {
     public class FillUiPresenter : MonoBehaviour
@@ -31,15 +32,18 @@ namespace UI.Fill
         [SerializeField] private YandexConfig _yandexConfig;
 
         private UiSpawner _uiSpawner;
-        private FillSceneOrchestrator _orchestrator;
+        private FillSceneState _orchestrator;
         private Wallet _wallet;
         private AdScheduler _adScheduler;
         private ISaveConfirmation _saveConfirmation;
+        private FillTapButton _tapButton;
         private WinMenu _activeWinMenu;
         private FailMenu _activeFailMenu;
         private FillPauseFlow _pauseFlow;
         private FillRescueFlow _rescueFlow;
         private CancellationTokenSource _windowCancellation;
+        private CancellationTokenSource _resultCancellation;
+        private bool _isResultPending;
         private WindowAction _pendingAction;
         private bool _isActive;
         private bool _isClosingWindow;
@@ -49,22 +53,40 @@ namespace UI.Fill
         private int _lastFailRewardAmount;
 
         [Inject]
-        public void Construct(UiSpawner uiSpawner, FillSceneOrchestrator orchestrator, Wallet wallet,
-            AdScheduler adScheduler, ISaveConfirmation saveConfirmation)
+        public void Construct(
+            UiSpawner uiSpawner,
+            FillSceneState orchestrator,
+            Wallet wallet,
+            AdScheduler adScheduler,
+            ISaveConfirmation saveConfirmation,
+            FillTapButton tapButton)
         {
             _uiSpawner = uiSpawner;
             _orchestrator = orchestrator;
             _wallet = wallet;
             _adScheduler = adScheduler;
             _saveConfirmation = saveConfirmation;
-            _pauseFlow = new FillPauseFlow(uiSpawner, _pauseMenuPrefab, orchestrator,
-                CanOpenPauseMenu, CompleteWindowActionRequest, OnPauseCloseCompleted);
-            _rescueFlow = new FillRescueFlow(adScheduler, _yandexConfig, CanResolveRescue, OnRescueResolved);
+            ArgumentGuard.CheckNotNull(tapButton, nameof(tapButton));
+            _tapButton = tapButton;
+            _pauseFlow = new FillPauseFlow(
+                uiSpawner,
+                _pauseMenuPrefab,
+                orchestrator,
+                CanOpenPauseMenu,
+                CompleteWindowActionRequest,
+                OnPauseCloseCompleted);
+            _rescueFlow = new FillRescueFlow(
+                adScheduler,
+                _yandexConfig,
+                CanResolveRescue,
+                OnRescueResolved,
+                OnRescueNotGranted);
         }
 
         private bool CanOpenPauseMenu()
         {
-            return _isActive && _activeWinMenu == null && _activeFailMenu == null && _isClosingWindow == false;
+            return _isActive && _isResultPending == false && _activeWinMenu == null
+                && _activeFailMenu == null && _isClosingWindow == false;
         }
 
         private void CompleteWindowActionRequest(WindowAction action)
@@ -89,6 +111,14 @@ namespace UI.Fill
             CloseFailMenu(WindowAction.Rescue);
         }
 
+        private void OnRescueNotGranted()
+        {
+            if (CanResolveRescue())
+            {
+                _activeFailMenu.SetRescueAvailable(true);
+            }
+        }
+
         private void Awake()
         {
             if (_uiSpawner == null)
@@ -101,8 +131,8 @@ namespace UI.Fill
             if (_orchestrator == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: FillSceneOrchestrator was not injected. Check that FillLifetimeScope "
-                        + $"registers FillSceneOrchestrator and FillUiPresenter.");
+                    $"{name}: FillSceneState was not injected. Check that FillLifetimeScope "
+                        + $"registers FillSceneState and FillUiPresenter.");
             }
 
             if (_wallet == null)
@@ -151,6 +181,8 @@ namespace UI.Fill
             _orchestrator.Failed += OnGameFailed;
             _orchestrator.Win += OnGameWin;
             _orchestrator.Finished += OnSessionFinished;
+            _orchestrator.PreparationFailed += OnPreparationFailed;
+            _tapButton.Pressed += OnFillPressed;
             _pauseButton.onClick.AddListener(OnPauseButtonClick);
         }
 
@@ -159,6 +191,8 @@ namespace UI.Fill
             _orchestrator.Failed -= OnGameFailed;
             _orchestrator.Win -= OnGameWin;
             _orchestrator.Finished -= OnSessionFinished;
+            _orchestrator.PreparationFailed -= OnPreparationFailed;
+            _tapButton.Pressed -= OnFillPressed;
             _pauseButton.onClick.RemoveListener(OnPauseButtonClick);
             OnSessionFinished();
         }
@@ -168,6 +202,7 @@ namespace UI.Fill
             _isActive = false;
             _isDoubleRewardRequested = false;
             _pendingAction = WindowAction.None;
+            CancelResultDelay();
 
             if (_windowCancellation != null)
             {
@@ -182,6 +217,94 @@ namespace UI.Fill
         }
 
         private void OnGameWin(int rewardAmount)
+        {
+            ShowResultDelayedAsync(true, rewardAmount, false).Forget();
+        }
+
+        private void OnGameFailed(int rewardAmount, bool canRescue)
+        {
+            ShowResultDelayedAsync(false, rewardAmount, canRescue).Forget();
+        }
+
+        private void OnFillPressed()
+        {
+            if (_isActive && _isClosingWindow == false && _activeWinMenu == null && _activeFailMenu == null)
+            {
+                _orchestrator.Accelerate();
+            }
+        }
+
+        private void OnPreparationFailed(Exception exception)
+        {
+            OnGameFailed(_lastFailRewardAmount, false);
+        }
+
+        private async UniTask ShowResultDelayedAsync(bool isWin, int rewardAmount, bool canRescue)
+        {
+            if (_isActive == false)
+            {
+                return;
+            }
+
+            CancelResultDelay();
+
+            CancellationTokenSource source = CancellationTokenSource.CreateLinkedTokenSource(_windowCancellation.Token);
+
+            _resultCancellation = source;
+            _isResultPending = true;
+
+            CancellationToken token = source.Token;
+
+            try
+            {
+                if (_orchestrator.ResultWindowDelay > 0f)
+                {
+                    await UniTask.Delay(
+                        TimeSpan.FromSeconds(_orchestrator.ResultWindowDelay),
+                        DelayType.Realtime,
+                        cancellationToken: token);
+                }
+
+                token.ThrowIfCancellationRequested();
+
+                if (isWin)
+                {
+                    ShowWin(rewardAmount);
+                }
+                else
+                {
+                    ShowFailed(rewardAmount, canRescue);
+                }
+            }
+            catch (OperationCanceledException) when (token.IsCancellationRequested)
+            {
+            }
+            finally
+            {
+                if (ReferenceEquals(_resultCancellation, source))
+                {
+                    _resultCancellation = null;
+                    _isResultPending = false;
+                    source.Dispose();
+                }
+            }
+        }
+
+        private void CancelResultDelay()
+        {
+            CancellationTokenSource source = _resultCancellation;
+
+            _resultCancellation = null;
+            _isResultPending = false;
+
+            if (source != null)
+            {
+                source.Cancel();
+                source.Dispose();
+            }
+        }
+
+        private void ShowWin(int rewardAmount)
         {
             if (_isActive == false || _activeWinMenu != null)
             {
@@ -202,7 +325,7 @@ namespace UI.Fill
             _activeWinMenu.PlayRewardCountUp(rewardAmount);
         }
 
-        private void OnGameFailed(int rewardAmount)
+        private void ShowFailed(int rewardAmount, bool canRescue)
         {
             if (_isActive == false || _activeFailMenu != null)
             {
@@ -213,7 +336,7 @@ namespace UI.Fill
             _rescueFlow.Reset();
             _isClosingWindow = false;
             _activeFailMenu = _uiSpawner.Spawn(_failMenuPrefab, UiLayer.Popup);
-            _activeFailMenu.Initialize(rewardAmount, _orchestrator.CanRescueFill);
+            _activeFailMenu.Initialize(rewardAmount, canRescue);
             _activeFailMenu.RescueRequested += OnFailRescueRequested;
             _activeFailMenu.RestartRequested += OnFailRestartRequested;
             _activeFailMenu.MenuRequested += OnFailMenuRequested;
@@ -364,6 +487,7 @@ namespace UI.Fill
         private void CompleteWindowAction()
         {
             WindowAction action = _pendingAction;
+
             _pendingAction = WindowAction.None;
             _isClosingWindow = false;
 
@@ -378,9 +502,11 @@ namespace UI.Fill
                 case WindowAction.Restart:
                     _orchestrator.ReloadLevel();
                     break;
+
                 case WindowAction.Menu:
                     _orchestrator.ExitToMenu();
                     break;
+
                 case WindowAction.Rescue:
                     _orchestrator.RescueFill();
                     break;

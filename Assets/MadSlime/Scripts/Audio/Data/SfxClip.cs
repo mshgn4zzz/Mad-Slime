@@ -1,4 +1,5 @@
 using UnityEngine;
+
 namespace Audio
 {
     [CreateAssetMenu(menuName = "Mad Slime/Sfx Clip", fileName = "NewSfxClip")]
@@ -15,9 +16,13 @@ namespace Audio
         [SerializeField, Range(0.1f, 3f)] private float _maxPitch = 1f;
 
         public AudioClip Clip => _clip;
+
         public float Volume => _volume;
+
         public bool IsRandomPitch => _isRandomPitch;
+
         public float MinPitch => _minPitch;
+
         public float MaxPitch => _maxPitch;
     }
 }

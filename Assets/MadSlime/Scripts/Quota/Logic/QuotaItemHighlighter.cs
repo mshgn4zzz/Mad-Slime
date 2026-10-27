@@ -1,17 +1,18 @@
+using System.Collections.Generic;
 using Collectables;
 using Items;
 using Player;
-using System.Collections.Generic;
 using Unity.Profiling;
 using UnityEngine;
 using VContainer;
+
 namespace Quota
 {
     public class QuotaItemHighlighter : MonoBehaviour
     {
-        private static ProfilerMarker _refreshMarker = new ProfilerMarker("QuotaItemHighlighter.Refresh");
-        private static ProfilerMarker _evaluateTypesMarker = new ProfilerMarker("QuotaItemHighlighter.EvaluateTypes");
-        private static ProfilerMarker _applyChangesMarker = new ProfilerMarker("QuotaItemHighlighter.ApplyChanges");
+        private static ProfilerMarker s_refreshMarker = new ProfilerMarker("QuotaItemHighlighter.Refresh");
+        private static ProfilerMarker s_evaluateTypesMarker = new ProfilerMarker("QuotaItemHighlighter.EvaluateTypes");
+        private static ProfilerMarker s_applyChangesMarker = new ProfilerMarker("QuotaItemHighlighter.ApplyChanges");
 
         [SerializeField] private Color _highlightColor = new Color(1f, 0.85f, 0.2f, 1f);
         [SerializeField, Min(0f)] private float _outlineWidth = 4f;
@@ -22,16 +23,17 @@ namespace Quota
         private PlayerTier _playerTier;
         private Dictionary<ItemDefinition, QuotaTypeState> _quotaTypes =
             new Dictionary<ItemDefinition, QuotaTypeState>();
+
         private Dictionary<Item, QuotaTrackedItem> _items = new Dictionary<Item, QuotaTrackedItem>();
         private HashSet<Item> _pendingItems = new HashSet<Item>();
         private bool _hasDirtyTypes;
 
         public Color HighlightColor => _highlightColor;
+
         public float OutlineWidth => _outlineWidth;
 
         [Inject]
-        public void Construct(QuotaItemDetector detector, QuotaBoard board, CollectAvailability collectAvailability,
-            PlayerTier playerTier)
+        public void Construct(QuotaItemDetector detector, QuotaBoard board, CollectAvailability collectAvailability, PlayerTier playerTier)
         {
             _detector = detector;
             _board = board;
@@ -135,7 +137,7 @@ namespace Quota
                 return;
             }
 
-            using ProfilerMarker.AutoScope refreshScope = _refreshMarker.Auto();
+            using ProfilerMarker.AutoScope refreshScope = s_refreshMarker.Auto();
 
             EvaluateTypes();
             ApplyChanges();
@@ -144,7 +146,7 @@ namespace Quota
 
         private void EvaluateTypes()
         {
-            using ProfilerMarker.AutoScope evaluateTypesScope = _evaluateTypesMarker.Auto();
+            using ProfilerMarker.AutoScope evaluateTypesScope = s_evaluateTypesMarker.Auto();
 
             foreach (QuotaTypeState type in _quotaTypes.Values)
             {
@@ -154,13 +156,14 @@ namespace Quota
                 }
 
                 bool isHighlighted = IsHighlightable(type.Entry);
+
                 type.UpdateHighlight(isHighlighted);
             }
         }
 
         private void ApplyChanges()
         {
-            using ProfilerMarker.AutoScope applyChangesScope = _applyChangesMarker.Auto();
+            using ProfilerMarker.AutoScope applyChangesScope = s_applyChangesMarker.Auto();
 
             foreach (KeyValuePair<Item, QuotaTrackedItem> pair in _items)
             {
@@ -178,6 +181,7 @@ namespace Quota
 
                 bool isHighlighted = item.Type.IsHighlighted && item.Collider != null
                     && item.Collider.enabled && item.Animator.isActiveAndEnabled;
+
                 item.Animator.SetHighlighted(isHighlighted);
             }
         }

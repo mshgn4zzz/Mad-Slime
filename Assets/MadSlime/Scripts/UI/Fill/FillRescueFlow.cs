@@ -1,6 +1,7 @@
+using System;
 using Ads;
 using Game;
-using System;
+
 namespace UI.Fill
 {
     public class FillRescueFlow
@@ -9,11 +10,16 @@ namespace UI.Fill
         private YandexConfig _yandexConfig;
         private Func<bool> _canStart;
         private Action _resolved;
+        private Action _notGranted;
         private bool _isRequestRunning;
         private bool _isResolved;
 
-        public FillRescueFlow(AdScheduler adScheduler, YandexConfig yandexConfig,
-            Func<bool> canStart, Action resolved)
+        public FillRescueFlow(
+            AdScheduler adScheduler,
+            YandexConfig yandexConfig,
+            Func<bool> canStart,
+            Action resolved,
+            Action notGranted)
         {
             if (adScheduler == null)
             {
@@ -39,6 +45,8 @@ namespace UI.Fill
             _yandexConfig = yandexConfig;
             _canStart = canStart;
             _resolved = resolved;
+            ArgumentGuard.CheckNotNull(notGranted, nameof(notGranted));
+            _notGranted = notGranted;
         }
 
         public void Reset()
@@ -60,8 +68,12 @@ namespace UI.Fill
             }
 
             _isRequestRunning = true;
-            _adScheduler.ShowRewarded(_yandexConfig.FillRescueRewardId, Resolve, OnAdCompletedWithoutReward,
-                OnAdCompletedWithoutReward, Resolve);
+            _adScheduler.ShowRewarded(
+                _yandexConfig.FillRescueRewardId,
+                Resolve,
+                OnAdCompletedWithoutReward,
+                OnAdCompletedWithoutReward,
+                OnAdCompletedWithoutReward);
         }
 
         private void Resolve()
@@ -81,6 +93,7 @@ namespace UI.Fill
             if (_canStart() == true)
             {
                 _isRequestRunning = false;
+                _notGranted();
             }
         }
     }

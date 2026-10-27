@@ -1,6 +1,7 @@
 using System.IO;
 using UnityEditor;
 using UnityEngine;
+
 namespace Items.Editor
 {
     public static class ItemFactoryTools
@@ -86,16 +87,20 @@ namespace Items.Editor
             IconRenderSettings settings)
         {
             GameObject renderRoot = new GameObject("IconRenderRoot");
+
             renderRoot.layer = iconLayer;
 
             GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(modelPrefab, renderRoot.transform);
+
             SetLayerRecursively(instance, iconLayer);
 
             GameObject cameraGO = new GameObject("IconCamera");
+
             cameraGO.transform.SetParent(renderRoot.transform);
             cameraGO.layer = iconLayer;
 
             Camera cam = cameraGO.AddComponent<Camera>();
+
             cam.clearFlags = CameraClearFlags.SolidColor;
             cam.backgroundColor = new Color(0f, 0f, 0f, 0f);
             cam.orthographic = true;
@@ -105,10 +110,12 @@ namespace Items.Editor
             cam.cullingMask = 1 << iconLayer;
 
             GameObject lightGO = new GameObject("IconLight");
+
             lightGO.transform.SetParent(renderRoot.transform);
             lightGO.layer = iconLayer;
 
             Light light = lightGO.AddComponent<Light>();
+
             light.type = LightType.Directional;
             light.transform.rotation = Quaternion.Euler(settings.LightEuler);
             light.intensity = LightIntensity;
@@ -123,12 +130,14 @@ namespace Items.Editor
             }
 
             RenderTexture rt = new RenderTexture(iconSize, iconSize, 24, RenderTextureFormat.ARGB32);
+
             rt.antiAliasing = 4;
             cam.targetTexture = rt;
             RenderTexture.active = rt;
             cam.Render();
 
             Texture2D tex = new Texture2D(iconSize, iconSize, TextureFormat.RGBA32, false);
+
             tex.ReadPixels(new Rect(0f, 0f, iconSize, iconSize), 0, 0);
             tex.Apply();
 
@@ -172,6 +181,7 @@ namespace Items.Editor
                     + Mathf.Abs(right.y) * extents.y + Mathf.Abs(right.z) * extents.z;
                 float halfHeight = Mathf.Abs(up.x) * extents.x
                     + Mathf.Abs(up.y) * extents.y + Mathf.Abs(up.z) * extents.z;
+
                 cam.orthographicSize = Mathf.Max(halfHeight, halfWidth / cam.aspect) * settings.OrthographicPadding;
             }
             else

@@ -1,10 +1,11 @@
+using System;
+using System.Collections.Generic;
 using CameraSystem;
 using Items;
 using Player;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using VContainer;
+
 namespace Collectables
 {
     [DefaultExecutionOrder(100)]
@@ -54,6 +55,7 @@ namespace Collectables
             Vector3 origin = _cameraFollow.transform.position;
             Vector3 toPlayer = _playerScaler.WorldCenter - origin;
             float distance = toPlayer.magnitude;
+
             _currentTargets.Clear();
 
             if (distance > Mathf.Epsilon)
@@ -81,18 +83,19 @@ namespace Collectables
             }
 
             HashSet<GhostAnimator> reusableTargets = _previousTargets;
+
             _previousTargets = _currentTargets;
             _currentTargets = reusableTargets;
         }
 
         private int CollectHits(Vector3 origin, Vector3 direction, float distance)
         {
-            int hitsCount = Physics.SphereCastNonAlloc(origin, _radius, direction, _buffer, distance, _layerMask);
+            int hitsCount = Physics.SphereCastNonAlloc(origin, DetectionRadius, direction, _buffer, distance, _layerMask);
 
             while (hitsCount == _buffer.Length)
             {
                 Array.Resize(ref _buffer, _buffer.Length * 2);
-                hitsCount = Physics.SphereCastNonAlloc(origin, _radius, direction, _buffer, distance, _layerMask);
+                hitsCount = Physics.SphereCastNonAlloc(origin, DetectionRadius, direction, _buffer, distance, _layerMask);
             }
 
             return hitsCount;
@@ -121,10 +124,11 @@ namespace Collectables
 
             Vector3 origin = _cameraFollow.transform.position;
             Vector3 target = _playerScaler.WorldCenter;
+
             Gizmos.color = _gizmoColor;
             Gizmos.DrawLine(origin, target);
-            Gizmos.DrawWireSphere(origin, _radius);
-            Gizmos.DrawWireSphere(target, _radius);
+            Gizmos.DrawWireSphere(origin, DetectionRadius);
+            Gizmos.DrawWireSphere(target, DetectionRadius);
         }
     }
 }

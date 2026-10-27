@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+
 namespace UI.Animations
 {
     public class ReactiveUIView : MonoBehaviour
@@ -11,8 +12,11 @@ namespace UI.Animations
         private int _pendingAnimations;
 
         public event Action EnableRequested;
+
         public event Action DisableRequested;
+
         public event Action<bool> StateReset;
+
         public event Action<ReactiveUIView> DisableCompleted;
 
         public bool IsActive => _isActive;

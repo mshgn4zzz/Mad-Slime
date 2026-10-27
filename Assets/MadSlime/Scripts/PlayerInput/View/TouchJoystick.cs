@@ -4,13 +4,11 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Layouts;
 using UnityEngine.InputSystem.OnScreen;
+
 namespace PlayerInput
 {
     public class TouchJoystick : OnScreenControl, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
-        [InputControl(layout = "Vector2")]
-        [SerializeField] private string _controlPath = "<Gamepad>/leftStick";
-
         [SerializeField] private Canvas _canvas;
         [SerializeField] private RectTransform _background;
         [SerializeField] private RectTransform _handle;
@@ -131,18 +129,7 @@ namespace PlayerInput
             base.OnDisable();
         }
 
-        protected override string controlPathInternal
-        {
-            get
-            {
-                return _controlPath;
-            }
-
-            set
-            {
-                _controlPath = value;
-            }
-        }
+        protected override string controlPathInternal { get; set; } = "<Gamepad>/leftStick";
 
         private static bool IsTouchAvailable()
         {

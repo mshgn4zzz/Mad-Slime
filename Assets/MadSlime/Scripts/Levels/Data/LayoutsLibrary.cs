@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Levels
 {
     [CreateAssetMenu(menuName = "Mad Slime/Layouts Library", fileName = "NewLayoutsLibrary")]

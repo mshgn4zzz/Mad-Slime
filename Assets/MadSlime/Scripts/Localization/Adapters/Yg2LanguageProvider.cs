@@ -1,5 +1,6 @@
 using System;
 using YG;
+
 namespace Localization
 {
     public class Yg2LanguageProvider : ILanguageProvider

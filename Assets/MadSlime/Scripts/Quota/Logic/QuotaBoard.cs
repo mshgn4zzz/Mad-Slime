@@ -1,7 +1,8 @@
-using Items;
 using System;
 using System.Collections.Generic;
+using Items;
 using UnityEngine;
+
 namespace Quota
 {
     public class QuotaBoard
@@ -22,8 +23,7 @@ namespace Quota
         {
             if (quota == null)
             {
-                throw new ArgumentNullException(nameof(quota),
-                    "QuotaBoard.Reset requires a quota list.");
+                throw new ArgumentNullException(nameof(quota), "QuotaBoard.Reset requires a quota list.");
             }
 
             _entries.Clear();
@@ -32,6 +32,7 @@ namespace Quota
             for (int i = 0; i < quota.Count; i++)
             {
                 QuotaEntry entry = quota[i];
+
                 _entries.Add(new QuotaEntry(entry.Definition, entry.TargetCount));
                 _totalTarget += entry.TargetCount;
             }

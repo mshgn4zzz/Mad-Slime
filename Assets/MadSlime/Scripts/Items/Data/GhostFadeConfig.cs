@@ -1,5 +1,6 @@
 using DG.Tweening;
 using UnityEngine;
+
 namespace Items
 {
     [CreateAssetMenu(fileName = "NewGhostFadeConfig", menuName = "Mad Slime/Ghost Fade Config")]
@@ -10,6 +11,7 @@ namespace Items
         [SerializeField] private Ease _ease = Ease.InOutSine;
 
         public float FadeDuration => _fadeDuration;
+
         public Ease Ease => _ease;
     }
 }

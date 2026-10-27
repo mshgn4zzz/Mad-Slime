@@ -1,8 +1,9 @@
-using Leaderboards;
 using System;
+using Leaderboards;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+
 namespace UI.Leaderboards
 {
     public class LeaderboardRowViewFactory : MonoBehaviour
@@ -25,6 +26,7 @@ namespace UI.Leaderboards
             }
 
             LeaderboardRowView row = _resolver.Instantiate(_prefab, parent);
+
             row.Initialize(entry, isOwn);
             return row;
         }

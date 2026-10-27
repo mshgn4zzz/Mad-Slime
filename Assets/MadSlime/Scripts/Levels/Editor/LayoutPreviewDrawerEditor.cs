@@ -1,6 +1,7 @@
 using Levels;
 using UnityEditor;
 using UnityEngine;
+
 namespace Levels.Editor
 {
     [CustomEditor(typeof(LayoutPreviewDrawer))]
@@ -63,6 +64,7 @@ namespace Levels.Editor
                 }
 
                 int layoutIndex = Mathf.Clamp(_handleLayoutIndex, 0, drawer.Library.Layouts.Count - 1);
+
                 layout = drawer.Library.Layouts[layoutIndex];
 
                 if (layout == null)

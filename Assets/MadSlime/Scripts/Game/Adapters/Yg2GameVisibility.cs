@@ -1,5 +1,6 @@
 using System;
 using YG;
+
 namespace Game
 {
     public class Yg2GameVisibility : IGameVisibility

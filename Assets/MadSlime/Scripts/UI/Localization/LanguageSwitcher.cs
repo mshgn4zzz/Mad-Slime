@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
 namespace UI.Localization
 {
     using Localization = global::Localization.Localization;
@@ -62,12 +63,15 @@ namespace UI.Localization
                 case Localization.Russian:
                     _flag.sprite = _russianFlag;
                     break;
+
                 case Localization.English:
                     _flag.sprite = _englishFlag;
                     break;
+
                 case Localization.Turkish:
                     _flag.sprite = _turkishFlag;
                     break;
+
                 default:
                                         throw new InvalidOperationException($"{name}: Unsupported language "
                                                 + $"{Localization.CurrentLanguage}.");

@@ -120,6 +120,7 @@ namespace Audio
         private AudioSource CreateMusicSource()
         {
             AudioSource source = CreateSource(_musicGroup);
+
             source.loop = false;
 
             return source;
@@ -128,6 +129,7 @@ namespace Audio
         private AudioSource CreateSource(AudioMixerGroup mixerGroup)
         {
             AudioSource source = gameObject.AddComponent<AudioSource>();
+
             source.outputAudioMixerGroup = mixerGroup;
             source.playOnAwake = false;
             source.loop = false;
@@ -184,6 +186,5 @@ namespace Audio
                         + $"MaxPitch {clip.MaxPitch}.");
             }
         }
-
     }
 }

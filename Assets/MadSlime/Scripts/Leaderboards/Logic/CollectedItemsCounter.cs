@@ -1,7 +1,8 @@
+using System;
 using Collectables;
 using Items;
 using Saves;
-using System;
+
 namespace Leaderboards
 {
     public class CollectedItemsCounter : IDisposable
@@ -19,6 +20,11 @@ namespace Leaderboards
         public void Dispose()
         {
             _collector.ItemCollected -= OnItemCollected;
+            _storage.CommitCollectedItems();
+        }
+
+        public void CommitSession()
+        {
             _storage.CommitCollectedItems();
         }
 

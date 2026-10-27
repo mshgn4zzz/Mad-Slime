@@ -1,8 +1,9 @@
-using Game;
 using System;
+using Game;
 using TMPro;
 using UnityEngine;
 using VContainer;
+
 namespace UI.HUD
 {
     public class TimerUI : MonoBehaviour
@@ -45,6 +46,7 @@ namespace UI.HUD
         private void OnTimerTicked(float remaining)
         {
             float display = Mathf.Max(0f, remaining);
+
             _timerText.text = $"{display:0.0}";
         }
     }

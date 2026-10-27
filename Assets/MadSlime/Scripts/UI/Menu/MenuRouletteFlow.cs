@@ -1,10 +1,11 @@
-using Roulette;
 using System;
+using Game;
+using Roulette;
 using UI.Roulette;
 using UI.Shop;
 using UI.Spawning;
 using UnityEngine;
-using Game;
+
 namespace UI.Menu
 {
     public class MenuRouletteFlow
@@ -18,8 +19,7 @@ namespace UI.Menu
         private RouletteWinPopup _prize;
         private string _rewardSkinId;
 
-        public MenuRouletteFlow(UiSpawner spawner, RoulettePreparation roulettePreparation,
-            MenuPopupStack popups, MenuContent content)
+        public MenuRouletteFlow(UiSpawner spawner, RoulettePreparation roulettePreparation, MenuPopupStack popups, MenuContent content)
         {
             ArgumentGuard.CheckNotNull(spawner, nameof(spawner));
             ArgumentGuard.CheckNotNull(roulettePreparation, nameof(roulettePreparation));

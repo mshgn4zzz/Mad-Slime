@@ -1,7 +1,7 @@
+using System;
 using Cysharp.Threading.Tasks;
 using Game;
 using Roulette;
-using System;
 using UI.Leaderboards;
 using UI.Roulette;
 using UI.Shop;
@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using VContainer;
+
 namespace UI.Menu
 {
     public class MenuNavigation : MonoBehaviour
@@ -291,6 +292,7 @@ namespace UI.Menu
             SetActiveIfAlive(_mainWindow, state == WindowState.Main);
             SetActiveIfAlive(_skinsWindow, state == WindowState.Skins);
             SetActiveIfAlive(_upgradesWindow, state == WindowState.Upgrades);
+
             if (_previewCamera != null)
             {
                 SetActiveIfAlive(_previewCamera.gameObject, state == WindowState.Skins);

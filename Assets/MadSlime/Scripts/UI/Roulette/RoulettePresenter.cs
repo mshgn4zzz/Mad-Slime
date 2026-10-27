@@ -1,12 +1,13 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
 using Ads;
 using Audio;
 using Cysharp.Threading.Tasks;
 using Roulette;
 using Saves;
-using System;
-using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
+
 namespace UI.Roulette
 {
     using Localization = global::Localization.Localization;
@@ -45,8 +46,7 @@ namespace UI.Roulette
 
         public RouletteView View => _view;
 
-        public void Setup(RouletteModel model, AdScheduler adScheduler, IUISoundPlayer soundPlayer,
-            ISaveConfirmation saveConfirmation)
+        public void Setup(RouletteModel model, AdScheduler adScheduler, IUISoundPlayer soundPlayer, ISaveConfirmation saveConfirmation)
         {
             Unsubscribe();
             _model = model;
@@ -203,6 +203,7 @@ namespace UI.Roulette
         private void BuildWheel()
         {
             _model.RefreshSlots();
+
             List<RouletteSectorIcon> icons = new List<RouletteSectorIcon>();
 
             for (int i = 0; i < _model.Slots.Count; i++)
@@ -249,8 +250,7 @@ namespace UI.Roulette
 
             _state = RouletteState.WaitingForAd;
             RefreshButtons();
-            _adScheduler.ShowRewarded(_adScheduler.RouletteRewardId, OnAdGranted,
-                OnAdNotGranted, OnAdNotGranted, OnAdNotGranted);
+            _adScheduler.ShowRewarded(_adScheduler.RouletteRewardId, OnAdGranted, OnAdNotGranted, OnAdNotGranted, OnAdNotGranted);
         }
 
         private void OnAdGranted()
@@ -315,20 +315,22 @@ namespace UI.Roulette
         {
             RoulettePrize prize = _outcome.Prize;
             Action<RoulettePrize> onComplete = _onComplete;
+
             ShowPrizeAsync(prize, onComplete, this.GetCancellationTokenOnDestroy()).Forget();
         }
 
-        private async UniTaskVoid ShowPrizeAsync(RoulettePrize prize, Action<RoulettePrize> onComplete,
-            CancellationToken cancellationToken)
+        private async UniTaskVoid ShowPrizeAsync(RoulettePrize prize, Action<RoulettePrize> onComplete, CancellationToken cancellationToken)
         {
             try
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(_model.Config.WinDwellSeconds),
-                    DelayType.Realtime, PlayerLoopTiming.Update, cancellationToken);
+                await UniTask.Delay(
+                    TimeSpan.FromSeconds(_model.Config.WinDwellSeconds),
+                    DelayType.Realtime,
+                    PlayerLoopTiming.Update,
+                    cancellationToken);
             }
             catch (OperationCanceledException)
             {
-                // The prize is granted and saved, so the callback must run even if the popup never shows.
                 onComplete?.Invoke(prize);
                 return;
             }
@@ -362,6 +364,7 @@ namespace UI.Roulette
         {
             int minutes = totalSeconds / 60;
             int seconds = totalSeconds % 60;
+
             return $"{minutes}:{seconds:00}";
         }
 
@@ -373,7 +376,9 @@ namespace UI.Roulette
             if (_model.HasAdvertising == true)
             {
                 title = Localization.Get("daily_roulette_title");
+
                 int remaining = _model.GetFreeRemainSeconds();
+
                 spinText = Localization.Get("roulette_free_ready");
 
                 if (remaining > 0)
@@ -401,6 +406,7 @@ namespace UI.Roulette
                 ShowClose = _model.HasAdvertising,
                 CanClose = IsBusy() == false
             };
+
             _view.Display(data);
         }
     }

@@ -1,7 +1,8 @@
+using System;
 using Audio;
 using Player;
-using System;
 using Upgrades;
+
 namespace Game
 {
     public class FinalCountdownEffects
@@ -11,8 +12,11 @@ namespace Game
         private TimerTickSound _tickSound;
         private CrawlAnimator _crawlAnimator;
 
-        public FinalCountdownEffects(AdrenalineBoost adrenalineBoost, FinalCountdownVignette vignette,
-            TimerTickSound tickSound, CrawlAnimator crawlAnimator)
+        public FinalCountdownEffects(
+            AdrenalineBoost adrenalineBoost,
+            FinalCountdownVignette vignette,
+            TimerTickSound tickSound,
+            CrawlAnimator crawlAnimator)
         {
             ArgumentGuard.CheckNotNull(adrenalineBoost, nameof(adrenalineBoost));
 

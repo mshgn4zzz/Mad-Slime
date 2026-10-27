@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+
 namespace UI.Common
 {
     [ExecuteAlways]
@@ -115,6 +116,7 @@ namespace UI.Common
             for (int i = 0; i < _texts.Length; i++)
             {
                 TMP_Text text = _texts[i];
+
                 _contents[i] = text.text;
                 _sizes[i] = text.rectTransform.rect.size;
                 _visibility[i] = text.isActiveAndEnabled;

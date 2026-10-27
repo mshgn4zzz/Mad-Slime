@@ -1,5 +1,6 @@
-using Cysharp.Threading.Tasks;
 using System.Threading;
+using Cysharp.Threading.Tasks;
+
 namespace Leaderboards
 {
     public interface ILeaderboardService

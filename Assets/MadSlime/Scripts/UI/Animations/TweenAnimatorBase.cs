@@ -1,6 +1,7 @@
-using DG.Tweening;
 using System;
+using DG.Tweening;
 using UnityEngine;
+
 namespace UI.Animations
 {
     [RequireComponent(typeof(ReactiveUIView))]
@@ -17,8 +18,11 @@ namespace UI.Animations
         public event Action Completed;
 
         protected float ShowDuration => _showDuration;
+
         protected float HideDuration => _hideDuration;
+
         protected ReactiveUIView View => _reactiveView;
+
         protected bool IsAnimating()
         {
             return _currentTween != null;
@@ -49,8 +53,11 @@ namespace UI.Animations
         }
 
         protected abstract Tween CreateEnableTween();
+
         protected abstract Tween CreateDisableTween();
+
         protected abstract void ApplyEnabledState();
+
         protected abstract void ApplyDisabledState();
 
         private void OnEnableRequested()

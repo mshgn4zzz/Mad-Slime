@@ -1,6 +1,7 @@
-using Skins;
 using System;
 using System.Collections.Generic;
+using Skins;
+
 namespace Roulette
 {
     public class RouletteConfigValidator
@@ -8,8 +9,7 @@ namespace Roulette
         private const float FullChance = 100f;
         private const float ChanceTolerance = 0.01f;
 
-        public void Validate(RouletteConfig config, IReadOnlyList<SkinItem> catalog,
-            int dailySlotCount, int skinSlotCount)
+        public void Validate(RouletteConfig config, IReadOnlyList<SkinItem> catalog, int dailySlotCount, int skinSlotCount)
         {
             if (config == null || config.RarityTable == null)
             {
@@ -90,7 +90,9 @@ namespace Roulette
             for (int rarityIndex = 0; rarityIndex <= (int)SkinRarity.Legendary; rarityIndex++)
             {
                 SkinRarity rarity = (SkinRarity)rarityIndex;
+
                 ValidateRarityExists(rarityLookup, rarity);
+
                 float weight = probabilityRules.GetSkinDropChance(rarity);
                 int quota = probabilityRules.GetShowcaseQuota(rarity);
 
@@ -136,6 +138,7 @@ namespace Roulette
             for (int i = 0; i < config.ExclusiveSkins.Count; i++)
             {
                 SkinItem skin = config.ExclusiveSkins[i];
+
                 ValidateSkin(skin);
 
                 if (ids.Contains(skin.Id) == false || exclusiveIds.Add(skin.Id) == false)
@@ -144,7 +147,6 @@ namespace Roulette
                                                 + "from the skin catalog.");
                 }
             }
-
         }
 
         private bool IsWeightValid(float weight)

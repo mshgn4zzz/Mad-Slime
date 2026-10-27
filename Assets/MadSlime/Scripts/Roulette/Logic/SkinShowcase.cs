@@ -1,7 +1,8 @@
-using Saves;
-using Skins;
 using System;
 using System.Collections.Generic;
+using Saves;
+using Skins;
+
 namespace Roulette
 {
     public class SkinShowcase
@@ -14,8 +15,7 @@ namespace Roulette
         private SkinInventory _inventory;
         private IReadOnlyList<SkinItem> _catalog;
 
-        public SkinShowcase(RouletteConfig config, ISkinStorage storage, SkinInventory inventory,
-            IReadOnlyList<SkinItem> catalog)
+        public SkinShowcase(RouletteConfig config, ISkinStorage storage, SkinInventory inventory, IReadOnlyList<SkinItem> catalog)
         {
             _config = config;
             _probabilityRules = new RouletteProbabilityRules(config);
@@ -28,9 +28,8 @@ namespace Roulette
         {
             List<string> existing = _storage.ReadShowcaseSkinIds();
             List<string> formed = new List<string>();
-            AppendQuota(
-                formed, existing, SkinRarity.Legendary,
-                _probabilityRules.GetShowcaseQuota(SkinRarity.Legendary));
+
+            AppendQuota(formed, existing, SkinRarity.Legendary, _probabilityRules.GetShowcaseQuota(SkinRarity.Legendary));
             AppendQuota(formed, existing, SkinRarity.Epic, _probabilityRules.GetShowcaseQuota(SkinRarity.Epic));
             AppendQuota(formed, existing, SkinRarity.Rare, _probabilityRules.GetShowcaseQuota(SkinRarity.Rare));
 
@@ -39,6 +38,7 @@ namespace Roulette
                 int quota = _probabilityRules.GetShowcaseQuota(SkinRarity.Legendary)
                     + _probabilityRules.GetShowcaseQuota(SkinRarity.Epic)
                     + _probabilityRules.GetShowcaseQuota(SkinRarity.Rare);
+
                 AppendQuota(formed, existing, SkinRarity.Common, quota);
             }
 
@@ -67,6 +67,7 @@ namespace Roulette
         public List<RouletteSlot> CreateSlots(int slotCount)
         {
             Refresh();
+
             List<string> ids = _storage.ReadShowcaseSkinIds();
             List<SkinItem> skins = new List<SkinItem>();
 
@@ -120,6 +121,7 @@ namespace Roulette
             while (entries.Count < slotCount)
             {
                 int pickIndex = UnityEngine.Random.Range(0, remaining.Count);
+
                 entries.Add(remaining[pickIndex]);
                 remaining.RemoveAt(pickIndex);
 
@@ -153,6 +155,7 @@ namespace Roulette
                     weight = FullChance * _probabilityRules.GetSkinDropChance(skin.Rarity)
                         / availableChance / raritySlots;
                 }
+
                 slots.Add(new RouletteSlot(skin, 0, weight, false));
             }
 
@@ -251,6 +254,7 @@ namespace Roulette
             while (count < quota && candidates.Count > 0)
             {
                 int pickIndex = UnityEngine.Random.Range(0, candidates.Count);
+
                 formed.Add(candidates[pickIndex].Id);
                 candidates.RemoveAt(pickIndex);
                 count++;

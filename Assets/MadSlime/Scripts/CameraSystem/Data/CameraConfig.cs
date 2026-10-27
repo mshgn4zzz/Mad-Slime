@@ -1,5 +1,6 @@
 using Items;
 using UnityEngine;
+
 namespace CameraSystem
 {
     [CreateAssetMenu(menuName = "Mad Slime/Camera Config", fileName = "NewCameraConfig")]
@@ -56,21 +57,37 @@ namespace CameraSystem
         private float _fovReturnSpeed = 5f;
 
         public float PositionSmoothTime => _catchUpTime;
+
         public float MaxPositionSpeed => _maxSpeed;
+
         public float MinDistance => _minDistance;
+
         public float BaseFov => _baseFov;
+
         public AnimationCurve MassToPullStrength => _pullByMass;
+
         public float MaxPull => _maxPull;
+
         public float TierPushStrength => _tierPush;
+
         public float MaxPush => _maxPush;
+
         public float RecoverSpeed => _returnSpeed;
+
         public float ShakeFrequency => _shakeSpeed;
+
         public Vector2 ShakeAxes => _shakeAxes;
+
         public float ShakeMassThreshold => _shakeFromMass;
+
         public float ShakeStrength => _shakeStep;
+
         public float MaxShake => _maxShake;
+
         public float ShakeRecoverSpeed => _shakeFadeSpeed;
+
         public float TierFovKick => _tierFovKick;
+
         public float FovRecoverSpeed => _fovReturnSpeed;
 
         private void OnValidate()

@@ -1,8 +1,9 @@
 using System;
+using Game;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Game;
+
 namespace UI.Upgrades
 {
     [RequireComponent(typeof(Image), typeof(Button))]

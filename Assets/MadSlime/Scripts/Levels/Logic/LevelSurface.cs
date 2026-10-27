@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.Rendering;
+
 namespace Levels
 {
     public class LevelSurface
@@ -28,24 +29,33 @@ namespace Levels
 
             float edgeTop = floorBounds.min.y;
             Vector3 edgeCenter = floorBounds.center;
-            edgeCenter.y = edgeTop - theme.PlatformDepth * 0.5f;
-            SetSurface(_edge, theme.EdgeMaterial, edgeCenter,
-                new Vector3(floorBounds.size.x, theme.PlatformDepth, floorBounds.size.z));
+
+            edgeCenter.y = edgeTop - (theme.PlatformDepth * 0.5f);
+            SetSurface(_edge, theme.EdgeMaterial, edgeCenter, new Vector3(floorBounds.size.x, theme.PlatformDepth, floorBounds.size.z));
             _edge.enabled = theme.EnvironmentPrefab == null;
 
             Vector3 backgroundCenter = floorBounds.center;
-            backgroundCenter.y = edgeTop - theme.PlatformDepth - BackgroundThickness * 0.5f;
-            SetSurface(_background, theme.BackgroundMaterial, backgroundCenter,
-                new Vector3(floorBounds.size.x * BackgroundSizeMultiplier, BackgroundThickness,
+
+            backgroundCenter.y = edgeTop - theme.PlatformDepth - (BackgroundThickness * 0.5f);
+            SetSurface(
+                _background,
+                theme.BackgroundMaterial,
+                backgroundCenter,
+                new Vector3(
+                    floorBounds.size.x * BackgroundSizeMultiplier,
+                    BackgroundThickness,
                     floorBounds.size.z * BackgroundSizeMultiplier));
         }
 
         private MeshRenderer CreateSurface(string name, Mesh mesh, Transform parent)
         {
             GameObject surface = new GameObject(name);
+
             surface.transform.SetParent(parent, false);
             surface.AddComponent<MeshFilter>().sharedMesh = mesh;
+
             MeshRenderer renderer = surface.AddComponent<MeshRenderer>();
+
             renderer.shadowCastingMode = ShadowCastingMode.Off;
             renderer.receiveShadows = true;
             return renderer;

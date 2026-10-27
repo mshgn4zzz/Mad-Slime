@@ -1,6 +1,8 @@
+using System;
 using Audio;
 using CameraSystem;
 using Collectables;
+using Economy;
 using Game;
 using Items;
 using Leaderboards;
@@ -9,15 +11,16 @@ using Player;
 using PlayerInput;
 using Quota;
 using Skins;
-using System;
 using UI.HUD;
 using UI.Player;
 using UI.Quota;
 using UI.Spawning;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Upgrades;
 using VContainer;
 using VContainer.Unity;
+
 namespace DI
 {
     public class GameLifetimeScope : ValidatedLifetimeScope
@@ -39,13 +42,16 @@ namespace DI
         [SerializeField] private AdrenalineBoost _adrenalineBoost;
         [SerializeField] private AdrenalineSound _adrenalineSound;
         [SerializeField] private FinalCountdownVignette _finalCountdownVignette;
-        [SerializeField] private GameplayOrchestrator _gameplayOrchestrator;
+        [SerializeField] private GameSceneState _gameplayOrchestrator;
+        [SerializeField] private LeaderboardReporter _leaderboardReporter;
+        [SerializeField] private Wallet _wallet;
         [SerializeField] private QuotaUI _quotaUI;
         [SerializeField] private CameraPullAnimator _cameraPullAnimator;
         [SerializeField] private CameraShakeAnimator _cameraShakeAnimator;
         [SerializeField] private CameraFovKickAnimator _cameraFovKickAnimator;
         [SerializeField] private CameraFollow _cameraFollow;
         [SerializeField] private SkinApplier _skinApplier;
+        [FormerlySerializedAs("_gameplayUIFabric")]
         [SerializeField] private GameplayPauseFlow _gameplayPauseFlow;
         [SerializeField] private PlayerPickupSound _playerPickupSound;
         [SerializeField] private TierUpSound _tierUpSound;
@@ -74,12 +80,18 @@ namespace DI
 
             builder.RegisterInstance(_playerConfig);
             builder.Register<CollectedItemsCounter>(Lifetime.Scoped);
+            builder.RegisterComponent(_leaderboardReporter);
+            builder.RegisterComponent(_wallet);
             builder.Register<QuotaGenerator>(Lifetime.Scoped);
             builder.Register<QuotaOutlineInitializer>(Lifetime.Scoped);
             builder.Register<UiSpawner>(Lifetime.Scoped);
             builder.Register<GameplayActivityController>(Lifetime.Scoped);
             builder.Register<FinalCountdownEffects>(Lifetime.Scoped);
             builder.Register<GameplayPlayerSetup>(Lifetime.Scoped);
+            builder.Register<WaitingForStartState>(Lifetime.Scoped);
+            builder.Register<PlayingState>(Lifetime.Scoped);
+            builder.Register<CompletedState>(Lifetime.Scoped);
+            builder.Register<GameplayStateMachine>(Lifetime.Scoped);
 
             builder.RegisterComponent(_levelGenerator);
             builder.RegisterComponent(_playerTier);
@@ -156,6 +168,8 @@ namespace DI
             ValidateAssigned(_adrenalineSound, nameof(_adrenalineSound));
             ValidateAssigned(_finalCountdownVignette, nameof(_finalCountdownVignette));
             ValidateAssigned(_gameplayOrchestrator, nameof(_gameplayOrchestrator));
+            ValidateAssigned(_leaderboardReporter, nameof(_leaderboardReporter));
+            ValidateAssigned(_wallet, nameof(_wallet));
             ValidateAssigned(_quotaUI, nameof(_quotaUI));
             ValidateAssigned(_cameraPullAnimator, nameof(_cameraPullAnimator));
             ValidateAssigned(_cameraShakeAnimator, nameof(_cameraShakeAnimator));

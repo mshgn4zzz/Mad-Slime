@@ -1,8 +1,9 @@
-using Skins;
 using System;
+using Skins;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
 namespace UI.Shop
 {
     using Localization = global::Localization.Localization;
@@ -52,15 +53,19 @@ namespace UI.Shop
                 case SkinRarity.Common:
                     _title.text = Localization.Get("skins_common");
                     break;
+
                 case SkinRarity.Rare:
                     _title.text = Localization.Get("skins_rare");
                     break;
+
                 case SkinRarity.Epic:
                     _title.text = Localization.Get("skins_epic");
                     break;
+
                 case SkinRarity.Legendary:
                     _title.text = Localization.Get("skins_legendary");
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(_rarity), _rarity, "Unknown skin rarity.");
             }

@@ -1,8 +1,9 @@
-using Player;
 using System;
 using System.Collections.Generic;
+using Player;
 using Unity.Profiling;
 using UnityEngine;
+
 namespace Collectables
 {
     public abstract class GenericOverlapDetector<T> : OverlapRadiusDetector where T : class
@@ -16,10 +17,10 @@ namespace Collectables
         private HashSet<T> _previousTargets = new HashSet<T>();
         private HashSet<T> _currentTargets = new HashSet<T>();
 
-        private static ProfilerMarker _scanMarker = new ProfilerMarker($"{typeof(T).Name}.Scan");
-        private static ProfilerMarker _collectHitsMarker = new ProfilerMarker($"{typeof(T).Name}.CollectHits");
-        private static ProfilerMarker _processTargetsMarker = new ProfilerMarker($"{typeof(T).Name}.ProcessTargets");
-        private static ProfilerMarker _processExitsMarker = new ProfilerMarker($"{typeof(T).Name}.ProcessExits");
+        private static ProfilerMarker s_scanMarker = new ProfilerMarker($"{typeof(T).Name}.Scan");
+        private static ProfilerMarker s_collectHitsMarker = new ProfilerMarker($"{typeof(T).Name}.CollectHits");
+        private static ProfilerMarker s_processTargetsMarker = new ProfilerMarker($"{typeof(T).Name}.ProcessTargets");
+        private static ProfilerMarker s_processExitsMarker = new ProfilerMarker($"{typeof(T).Name}.ProcessExits");
 
         public event Action<T> Detected;
 
@@ -27,10 +28,12 @@ namespace Collectables
 
         protected virtual void Update()
         {
-            using ProfilerMarker.AutoScope scanScope = _scanMarker.Auto();
+            using ProfilerMarker.AutoScope scanScope = s_scanMarker.Auto();
 
             _currentTargets.Clear();
+
             int hitsCount = CollectHits();
+
             ProcessTargets(hitsCount);
             ProcessExits();
             SwapTargetSets();
@@ -38,14 +41,14 @@ namespace Collectables
 
         private int CollectHits()
         {
-            using ProfilerMarker.AutoScope collectHitsScope = _collectHitsMarker.Auto();
+            using ProfilerMarker.AutoScope collectHitsScope = s_collectHitsMarker.Auto();
 
-            int hitsCount = Physics.OverlapSphereNonAlloc(transform.position, _radius, _buffer, _layerMask);
+            int hitsCount = Physics.OverlapSphereNonAlloc(transform.position, DetectionRadius, _buffer, _layerMask);
 
             while (hitsCount == _buffer.Length)
             {
                 Array.Resize(ref _buffer, _buffer.Length * 2);
-                hitsCount = Physics.OverlapSphereNonAlloc(transform.position, _radius, _buffer, _layerMask);
+                hitsCount = Physics.OverlapSphereNonAlloc(transform.position, DetectionRadius, _buffer, _layerMask);
             }
 
             return hitsCount;
@@ -53,7 +56,7 @@ namespace Collectables
 
         private void ProcessTargets(int hitsCount)
         {
-            using ProfilerMarker.AutoScope processTargetsScope = _processTargetsMarker.Auto();
+            using ProfilerMarker.AutoScope processTargetsScope = s_processTargetsMarker.Auto();
 
             for (int i = 0; i < hitsCount; i++)
             {
@@ -68,7 +71,7 @@ namespace Collectables
 
         private void ProcessExits()
         {
-            using ProfilerMarker.AutoScope processExitsScope = _processExitsMarker.Auto();
+            using ProfilerMarker.AutoScope processExitsScope = s_processExitsMarker.Auto();
 
             foreach (T target in _previousTargets)
             {
@@ -87,6 +90,7 @@ namespace Collectables
         private void SwapTargetSets()
         {
             HashSet<T> reusableTargets = _previousTargets;
+
             _previousTargets = _currentTargets;
             _currentTargets = reusableTargets;
         }
@@ -110,7 +114,7 @@ namespace Collectables
         private void OnDrawGizmos()
         {
             Gizmos.color = _gizmoColor;
-            Gizmos.DrawWireSphere(transform.position, _radius);
+            Gizmos.DrawWireSphere(transform.position, DetectionRadius);
         }
     }
 }

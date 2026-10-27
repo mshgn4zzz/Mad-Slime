@@ -1,10 +1,11 @@
+using System;
+using System.Threading;
 using Audio;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using System;
-using System.Threading;
 using UnityEngine;
 using VContainer;
+
 namespace ShapeFill
 {
     [RequireComponent(typeof(FillCompleteSound))]
@@ -119,6 +120,7 @@ namespace ShapeFill
                 foreach (ParticleSystem system in _confetti.GetComponentsInChildren<ParticleSystem>(true))
                 {
                     ParticleSystem.MainModule main = system.main;
+
                     duration = Mathf.Max(duration, main.duration);
                     maxLifetime = Mathf.Max(maxLifetime, main.startLifetime.constantMax);
                 }
@@ -155,6 +157,7 @@ namespace ShapeFill
             camera.DOKill();
 
             Sequence kick = DOTween.Sequence().SetLink(gameObject);
+
             kick.Append(camera.DOFieldOfView(startFov + _config.FovKick, _config.FovDuration).SetEase(Ease.OutQuad));
             kick.Append(camera.DOFieldOfView(startFov, _config.FovDuration).SetEase(Ease.InQuad));
         }

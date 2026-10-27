@@ -1,4 +1,5 @@
 using UnityEngine;
+
 namespace Collectables
 {
     [CreateAssetMenu(fileName = "NewAttractConfig", menuName = "Mad Slime/Attract Config")]
@@ -11,7 +12,9 @@ namespace Collectables
         [SerializeField] private float _boostPower = 2f;
 
         public float AttractionForce => _pullSpeed;
+
         public float ApproachMultiplier => _catchBoost;
+
         public float ApproachPower => _boostPower;
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using Game;
+
 namespace Roulette
 {
     public class RouletteAccess
@@ -13,8 +14,13 @@ namespace Roulette
 
         public bool HasAdvertising => _hasAdvertising;
 
-        public RouletteAccess(Func<int> price, Func<int> freeRemainSeconds, Func<int> adSpinsLeft,
-            Func<bool, bool> canSpin, Action<bool> pay, bool hasAdvertising)
+        public RouletteAccess(
+            Func<int> price,
+            Func<int> freeRemainSeconds,
+            Func<int> adSpinsLeft,
+            Func<bool, bool> canSpin,
+            Action<bool> pay,
+            bool hasAdvertising)
         {
             ArgumentGuard.CheckNotNull(price, nameof(price));
             ArgumentGuard.CheckNotNull(freeRemainSeconds, nameof(freeRemainSeconds));

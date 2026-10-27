@@ -8,8 +8,11 @@ namespace Quota
         private bool _hasChanged;
 
         public QuotaEntry Entry => _entry;
+
         public bool IsHighlighted => _isHighlighted;
+
         public bool IsDirty => _isDirty;
+
         public bool HasChanged => _hasChanged;
 
         public QuotaTypeState(QuotaEntry entry, bool isHighlighted)

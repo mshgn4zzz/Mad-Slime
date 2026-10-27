@@ -1,8 +1,9 @@
+using System;
+using System.Collections.Generic;
 using Economy;
 using Saves;
 using Skins;
-using System;
-using System.Collections.Generic;
+
 namespace Roulette
 {
     public class RouletteFactory
@@ -17,8 +18,13 @@ namespace Roulette
         private int _dailySlotCount;
         private int _skinSlotCount;
 
-        public RouletteFactory(RouletteConfig config, IRouletteStorage storage, ISkinStorage skinStorage,
-            SkinInventory inventory, Wallet wallet, SavesTransaction transaction)
+        public RouletteFactory(
+            RouletteConfig config,
+            IRouletteStorage storage,
+            ISkinStorage skinStorage,
+            SkinInventory inventory,
+            Wallet wallet,
+            SavesTransaction transaction)
         {
             _config = config;
             _storage = storage;
@@ -31,8 +37,9 @@ namespace Roulette
         public RouletteModel CreateDaily(int slotCount)
         {
             _dailySlotCount = slotCount;
-            RouletteAccess access = new RouletteAccess(GetZero, GetFreeRemainSeconds, GetAdSpinsLeft,
-                CanSpinDaily, PayDaily, true);
+
+            RouletteAccess access = new RouletteAccess(GetZero, GetFreeRemainSeconds, GetAdSpinsLeft, CanSpinDaily, PayDaily, true);
+
             return new RouletteModel(new RouletteModelDependencies
             {
                 Config = _config,
@@ -51,8 +58,9 @@ namespace Roulette
         {
             _skinSlotCount = slotCount;
             _showcase = new SkinShowcase(_config, _skinStorage, _inventory, catalog);
-            RouletteAccess access = new RouletteAccess(GetSkinPrice, GetZero, GetZero,
-                CanSpinSkins, PaySkins, false);
+
+            RouletteAccess access = new RouletteAccess(GetSkinPrice, GetZero, GetZero, CanSpinSkins, PaySkins, false);
+
             return new RouletteModel(new RouletteModelDependencies
             {
                 Config = _config,
@@ -81,6 +89,7 @@ namespace Roulette
             {
                 RouletteSector sector = _config.Sectors[i];
                 bool isHidden = sector.RewardType == RewardType.Skin;
+
                 slots.Add(new RouletteSlot(null, sector.Coins, sector.DropChance, isHidden));
             }
 
@@ -100,6 +109,7 @@ namespace Roulette
             }
 
             int skinIndex = UnityEngine.Random.Range(0, _config.ExclusiveSkins.Count);
+
             return new RoulettePrize(_config.ExclusiveSkins[skinIndex], 0);
         }
 
@@ -128,6 +138,7 @@ namespace Roulette
         private int GetAdSpinsLeft()
         {
             int used = _storage.CountAdSpinsSince(GetNow() - _config.AdSpinWindowSeconds);
+
             return Math.Max(0, _config.AdSpinsPerWindow - used);
         }
 
@@ -157,7 +168,7 @@ namespace Roulette
 
         private int GetSkinPrice()
         {
-            long price = (long)_config.SkinSpinMinCost + (long)_config.SkinSpinCostStep * _storage.SkinSpinCount;
+            long price = (long)_config.SkinSpinMinCost + ((long)_config.SkinSpinCostStep * _storage.SkinSpinCount);
 
             if (_config.SkinSpinMaxCost > 0)
             {

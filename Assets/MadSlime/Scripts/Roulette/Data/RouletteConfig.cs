@@ -1,8 +1,9 @@
-using Audio;
-using Skins;
 using System;
 using System.Collections.Generic;
+using Audio;
+using Skins;
 using UnityEngine;
+
 namespace Roulette
 {
     [CreateAssetMenu(menuName = "Mad Slime/Roulette Config", fileName = "NewRouletteConfig")]
@@ -75,36 +76,61 @@ namespace Roulette
         [SerializeField] private SfxClip _winClip;
 
         public IReadOnlyList<RouletteSector> Sectors => _sectors;
+
         public IReadOnlyList<SkinItem> ExclusiveSkins => _rouletteSkins;
+
         public int SkinSpinMinCost => _skinSpinMinCost;
+
         public int SkinSpinMaxCost => _skinSpinMaxCost;
+
         public int SkinSpinCostStep => _skinSpinCostStep;
+
         public int DuplicateCoinsCompensation => _duplicateCoins;
+
         public SkinRarityTable RarityTable => _rarityTable;
+
         public int AdSpinWindowSeconds => _adSpinWindowSeconds;
+
         public int AdSpinsPerWindow => _adSpinsPerWindow;
+
         public int FreeSpinCooldownSeconds => _freeSpinCooldownSeconds;
+
         public float CommonDropChance => _commonDropChance;
+
         public float RareDropChance => _rareDropChance;
+
         public float EpicDropChance => _epicDropChance;
+
         public float LegendaryDropChance => _legendaryDropChance;
+
         public int ShowcaseRareCount => _showcaseRareCount;
+
         public int ShowcaseEpicCount => _showcaseEpicCount;
+
         public int ShowcaseLegendaryCount => _showcaseLegendaryCount;
 
         public float IdleRotationSpeed => _idleRotationSpeed;
+
         public float WindBackDegrees => _pullBackDegrees;
+
         public float WindBackDuration => _pullBackTime;
+
         public int MinTurns => _minTurns;
+
         public int MaxTurns => _maxTurns;
+
         public float SpinDuration => _spinDuration;
+
         public float SpinEasePower => _brakePower;
+
         public float SettleMaxDeviationDegrees => _maxMissDegrees;
+
         public float WinDwellSeconds => _winPauseSeconds;
+
         public SfxClip StepClip => _stepClip;
+
         public SfxClip SpinStartClip => _spinStartClip;
+
         public SfxClip WinClip => _winClip;
-
     }
-
 }

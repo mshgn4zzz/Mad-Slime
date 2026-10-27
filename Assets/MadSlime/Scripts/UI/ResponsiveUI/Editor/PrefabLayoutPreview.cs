@@ -21,18 +21,18 @@ namespace UI.ResponsiveUI
         private const string SpinButtonProperty = "_spinButton";
         private const string AdButtonProperty = "_adButton";
 
-        private static PrefabStage _stage;
-        private static PrefabStage _pendingStage;
-        private static ResponsiveCanvasLayout _layout;
-        private static PreviewSource _source;
-        private static bool _isLandscape;
-        private static bool _isWithoutControls;
-        private static bool _isSaving;
-        private static Vector2 _size;
-        private static List<PrefabCanvasSurface> _surfaces = new List<PrefabCanvasSurface>();
-        private static Dictionary<GameObject, bool> _rouletteControls = new Dictionary<GameObject, bool>();
+        private static PrefabStage s_stage;
+        private static PrefabStage s_pendingStage;
+        private static ResponsiveCanvasLayout s_layout;
+        private static PreviewSource s_source;
+        private static bool s_isLandscape;
+        private static bool s_isWithoutControls;
+        private static bool s_isSaving;
+        private static Vector2 s_size;
+        private static List<PrefabCanvasSurface> s_surfaces = new List<PrefabCanvasSurface>();
+        private static Dictionary<GameObject, bool> s_rouletteControls = new Dictionary<GameObject, bool>();
 
-        public static bool IsLandscape => _isLandscape;
+        public static bool IsLandscape => s_isLandscape;
 
         static PrefabLayoutPreview()
         {
@@ -54,9 +54,9 @@ namespace UI.ResponsiveUI
 
         public static PreviewSource GetSource(ResponsiveCanvasLayout layout)
         {
-            if (_stage != null && _stage == PrefabStageUtility.GetPrefabStage(layout.gameObject))
+            if (s_stage != null && s_stage == PrefabStageUtility.GetPrefabStage(layout.gameObject))
             {
-                return _source;
+                return s_source;
             }
 
             return PreviewSource.GameView;
@@ -67,28 +67,28 @@ namespace UI.ResponsiveUI
         {
             PrefabStage stage = PrefabStageUtility.GetPrefabStage(layout.gameObject);
 
-            if (stage == null || _isSaving)
+            if (stage == null || s_isSaving)
             {
                 return;
             }
 
             Vector2 size = GetSurfaceSize(source);
             bool isLandscape = size.x > size.y;
-            bool isOpened = _stage != stage;
-            bool shouldApplyProfile = isOpened || forceProfile || _isLandscape != isLandscape || _source != source ||
-                (_layout == layout && _isWithoutControls != withoutControls);
-            bool isResized = isOpened || (_size - size).sqrMagnitude > ResizeThresholdSquared;
+            bool isOpened = s_stage != stage;
+            bool shouldApplyProfile = isOpened || forceProfile || s_isLandscape != isLandscape || s_source != source ||
+                (s_layout == layout && s_isWithoutControls != withoutControls);
+            bool isResized = isOpened || (s_size - size).sqrMagnitude > ResizeThresholdSquared;
 
             if (isOpened)
             {
                 OpenStage(stage);
             }
 
-            _layout = layout;
-            _source = source;
-            _size = size;
-            _isLandscape = isLandscape;
-            _isWithoutControls = withoutControls;
+            s_layout = layout;
+            s_source = source;
+            s_size = size;
+            s_isLandscape = isLandscape;
+            s_isWithoutControls = withoutControls;
 
             if (shouldApplyProfile)
             {
@@ -113,9 +113,11 @@ namespace UI.ResponsiveUI
                 case PreviewSource.Landscape:
                     size = new Vector2(PortraitHeight, PortraitWidth);
                     break;
+
                 case PreviewSource.Portrait:
                     size = new Vector2(PortraitWidth, PortraitHeight);
                     break;
+
                 default:
                     size = Handles.GetMainGameViewSize();
                     break;
@@ -134,13 +136,15 @@ namespace UI.ResponsiveUI
             }
 
             float scale = Mathf.Min(size.x / reference.x, size.y / reference.y);
+
             return size / scale;
         }
 
         private static void OpenStage(PrefabStage stage)
         {
             Clear();
-            _stage = stage;
+            s_stage = stage;
+
             HashSet<Canvas> seenCanvases = new HashSet<Canvas>();
             Canvas[] canvases = stage.prefabContentsRoot.GetComponentsInChildren<Canvas>(true);
 
@@ -152,7 +156,7 @@ namespace UI.ResponsiveUI
                 {
                     if (seenCanvases.Add(parents[i]))
                     {
-                        _surfaces.Add(new PrefabCanvasSurface(parents[i]));
+                        s_surfaces.Add(new PrefabCanvasSurface(parents[i]));
                     }
                 }
             }
@@ -160,21 +164,22 @@ namespace UI.ResponsiveUI
 
         private static void ApplyProfiles()
         {
-            Undo.RegisterFullObjectHierarchyUndo(_stage.prefabContentsRoot,
+            Undo.RegisterFullObjectHierarchyUndo(s_stage.prefabContentsRoot,
                 "Edit orientation profile");
+
             ResponsiveCanvasLayout[] profiles =
-                _stage.prefabContentsRoot.GetComponentsInChildren<ResponsiveCanvasLayout>(true);
+                s_stage.prefabContentsRoot.GetComponentsInChildren<ResponsiveCanvasLayout>(true);
 
             foreach (ResponsiveCanvasLayout profile in profiles)
             {
                 if (profile.TryGetComponent(out RoulettePopupLayout roulette))
                 {
                     RememberControls(roulette);
-                    roulette.ApplyOrientation(_isLandscape, _isWithoutControls);
+                    roulette.ApplyOrientation(s_isLandscape, s_isWithoutControls);
                 }
                 else
                 {
-                    profile.ApplyOrientation(_isLandscape);
+                    profile.ApplyOrientation(s_isLandscape);
                 }
             }
 
@@ -183,7 +188,7 @@ namespace UI.ResponsiveUI
 
         private static void OnStageOpened(PrefabStage stage)
         {
-            _pendingStage = stage;
+            s_pendingStage = stage;
             EditorApplication.delayCall -= OnStageReady;
             EditorApplication.delayCall += OnStageReady;
         }
@@ -191,10 +196,12 @@ namespace UI.ResponsiveUI
         private static void OnStageReady()
         {
             EditorApplication.delayCall -= OnStageReady;
-            PrefabStage stage = _pendingStage;
-            _pendingStage = null;
 
-            if (stage == null || stage != PrefabStageUtility.GetCurrentPrefabStage() || _stage == stage)
+            PrefabStage stage = s_pendingStage;
+
+            s_pendingStage = null;
+
+            if (stage == null || stage != PrefabStageUtility.GetCurrentPrefabStage() || s_stage == stage)
             {
                 return;
             }
@@ -210,18 +217,18 @@ namespace UI.ResponsiveUI
 
         private static void OnEditorUpdate()
         {
-            if (_stage == null || _layout == null || _isSaving || _source != PreviewSource.GameView ||
-                EditorApplication.isPlayingOrWillChangePlaymode || _stage != PrefabStageUtility.GetCurrentPrefabStage())
+            if (s_stage == null || s_layout == null || s_isSaving || s_source != PreviewSource.GameView ||
+                EditorApplication.isPlayingOrWillChangePlaymode || s_stage != PrefabStageUtility.GetCurrentPrefabStage())
             {
                 return;
             }
 
-            Configure(_layout, PreviewSource.GameView, _isWithoutControls);
+            Configure(s_layout, PreviewSource.GameView, s_isWithoutControls);
         }
 
         private static void OnUndoRedo()
         {
-            if (_stage != null)
+            if (s_stage != null)
             {
                 RefreshSurfaces();
             }
@@ -229,9 +236,9 @@ namespace UI.ResponsiveUI
 
         private static void RefreshSurfaces()
         {
-            foreach (PrefabCanvasSurface surface in _surfaces)
+            foreach (PrefabCanvasSurface surface in s_surfaces)
             {
-                surface.Show(_size);
+                surface.Show(s_size);
             }
 
             Canvas.ForceUpdateCanvases();
@@ -242,19 +249,22 @@ namespace UI.ResponsiveUI
         {
             SceneView view = SceneView.lastActiveSceneView;
 
-            if (view == null || _surfaces.Count == 0)
+            if (view == null || s_surfaces.Count == 0)
             {
                 return;
             }
 
             view.in2DMode = true;
-            Vector3 size = new Vector3(_size.x, _size.y, 1f);
-            view.Frame(new Bounds(_surfaces[0].Canvas.transform.position, size), false);
+
+            Vector3 size = new Vector3(s_size.x, s_size.y, 1f);
+
+            view.Frame(new Bounds(s_surfaces[0].Canvas.transform.position, size), false);
         }
 
         private static void RememberControls(RoulettePopupLayout roulette)
         {
             SerializedObject serialized = new SerializedObject(roulette);
+
             RememberControl(serialized.FindProperty(SpinButtonProperty));
             RememberControl(serialized.FindProperty(AdButtonProperty));
         }
@@ -263,17 +273,17 @@ namespace UI.ResponsiveUI
         {
             RectTransform rect = property.objectReferenceValue as RectTransform;
 
-            if (rect == null || _rouletteControls.ContainsKey(rect.gameObject))
+            if (rect == null || s_rouletteControls.ContainsKey(rect.gameObject))
             {
                 return;
             }
 
-            _rouletteControls.Add(rect.gameObject, rect.gameObject.activeSelf);
+            s_rouletteControls.Add(rect.gameObject, rect.gameObject.activeSelf);
         }
 
         private static void RestoreControls()
         {
-            foreach (KeyValuePair<GameObject, bool> entry in _rouletteControls)
+            foreach (KeyValuePair<GameObject, bool> entry in s_rouletteControls)
             {
                 if (entry.Key != null)
                 {
@@ -284,42 +294,42 @@ namespace UI.ResponsiveUI
 
         private static void ApplyControlsPreview()
         {
-            foreach (KeyValuePair<GameObject, bool> entry in _rouletteControls)
+            foreach (KeyValuePair<GameObject, bool> entry in s_rouletteControls)
             {
                 if (entry.Key != null)
                 {
-                    entry.Key.SetActive(_isWithoutControls == false && entry.Value);
+                    entry.Key.SetActive(s_isWithoutControls == false && entry.Value);
                 }
             }
         }
 
         private static void OnBeforeSave(GameObject root)
         {
-            if (_stage == null || _stage.prefabContentsRoot != root)
+            if (s_stage == null || s_stage.prefabContentsRoot != root)
             {
                 return;
             }
 
-            _isSaving = true;
+            s_isSaving = true;
             RestoreControls();
             RestoreSurfaces();
         }
 
         private static void OnAfterSave(GameObject root)
         {
-            if (_stage == null || _stage.prefabContentsRoot != root)
+            if (s_stage == null || s_stage.prefabContentsRoot != root)
             {
                 return;
             }
 
-            _isSaving = false;
+            s_isSaving = false;
             ApplyControlsPreview();
             RefreshSurfaces();
         }
 
         private static void OnStageClosing(PrefabStage stage)
         {
-            if (_stage == stage)
+            if (s_stage == stage)
             {
                 Clear();
             }
@@ -327,7 +337,7 @@ namespace UI.ResponsiveUI
 
         private static void RestoreSurfaces()
         {
-            foreach (PrefabCanvasSurface surface in _surfaces)
+            foreach (PrefabCanvasSurface surface in s_surfaces)
             {
                 surface.Restore();
             }
@@ -343,19 +353,19 @@ namespace UI.ResponsiveUI
             EditorApplication.update -= OnEditorUpdate;
             EditorApplication.delayCall -= OnStageReady;
             Undo.undoRedoPerformed -= OnUndoRedo;
-            _pendingStage = null;
+            s_pendingStage = null;
             Clear();
         }
 
         private static void Clear()
         {
             RestoreControls();
-            _rouletteControls.Clear();
+            s_rouletteControls.Clear();
             RestoreSurfaces();
-            _surfaces.Clear();
-            _stage = null;
-            _layout = null;
-            _isSaving = false;
+            s_surfaces.Clear();
+            s_stage = null;
+            s_layout = null;
+            s_isSaving = false;
         }
     }
 }

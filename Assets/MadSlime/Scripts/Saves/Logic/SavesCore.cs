@@ -1,8 +1,9 @@
-using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using YG;
+
 namespace Saves
 {
     public class SavesCore : ISavesReadiness, ISaveConfirmation
@@ -54,6 +55,7 @@ namespace Saves
 
             SavesYG originalData = LoadData();
             string snapshot = JsonUtility.ToJson(originalData);
+
             _isTransactionRunning = true;
 
             try

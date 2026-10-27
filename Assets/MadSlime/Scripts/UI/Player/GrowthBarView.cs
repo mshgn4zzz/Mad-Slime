@@ -1,12 +1,13 @@
+using System;
 using DG.Tweening;
 using Items;
 using Player;
-using System;
 using TMPro;
 using UI.Common;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
+
 namespace UI.Player
 {
     using Localization = global::Localization.Localization;

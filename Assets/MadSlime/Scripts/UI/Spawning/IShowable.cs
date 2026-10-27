@@ -1,4 +1,5 @@
 using System;
+
 namespace UI.Spawning
 {
     public interface IShowable

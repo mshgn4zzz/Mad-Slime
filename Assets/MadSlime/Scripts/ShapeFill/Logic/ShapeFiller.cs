@@ -1,9 +1,10 @@
-using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using VContainer;
+
 namespace ShapeFill
 {
     [RequireComponent(typeof(CubeSpawner))]
@@ -135,8 +136,7 @@ namespace ShapeFill
         {
             if (result == null)
             {
-                throw new ArgumentNullException(nameof(result),
-                    $"{name}: ShowResult requires a calculated fill result.");
+                throw new ArgumentNullException(nameof(result), $"{name}: ShowResult requires a calculated fill result.");
             }
 
             StopFill();
@@ -243,15 +243,11 @@ namespace ShapeFill
                 texture,
                 new Rect(0f, 0f, texture.width, texture.height),
                 Vector2.one * 0.5f,
-                texture.width / (_gridShape.Width * _gridShape.CellSize)
-            );
+                texture.width / (_gridShape.Width * _gridShape.CellSize));
 
             _ghostBackground.sprite = _ghostSprite;
             _ghostBackground.color = new Color(1f, 1f, 1f, _config.GhostOpacity);
-            _ghostBackground.transform.SetPositionAndRotation(
-                _gridShape.TextureCenter,
-                _gridShape.transform.rotation
-            );
+            _ghostBackground.transform.SetPositionAndRotation(_gridShape.GetTextureCenter(), _gridShape.transform.rotation);
             _ghostBackground.transform.localScale = Vector3.one;
         }
 
@@ -303,8 +299,7 @@ namespace ShapeFill
                 _gridShape.GridToWorld(cell.x, cell.y),
                 Quaternion.identity,
                 _gridShape.CellSize,
-                _config.BorderColor
-            );
+                _config.BorderColor);
 
             borderCube.GrowIn();
         }
@@ -367,11 +362,16 @@ namespace ShapeFill
                 target,
                 () =>
                 {
-                    float maxDuration = _boostStage == BoostStage.Boosted
-                        ? _config.MaxBoostedFillDuration
-                        : _config.MaxFillDuration;
+                    float maxDuration = _config.MaxFillDuration;
+
+                    if (_boostStage == BoostStage.Boosted)
+                    {
+                        maxDuration = _config.MaxBoostedFillDuration;
+                    }
+
                     float duration = Mathf.Max(0.001f, Mathf.Min(GetSpawnInterval() * target, maxDuration));
-                    progress = Mathf.Min(1f, progress + Time.deltaTime / duration);
+
+                    progress = Mathf.Min(1f, progress + (Time.deltaTime / duration));
                     return CubeSpawnSchedule.GetTargetCount(progress, 1f, target);
                 },
                 index => SpawnFillCube(fillCells[index], GetFlightDuration()));
@@ -399,6 +399,7 @@ namespace ShapeFill
             while (index < target)
             {
                 cancellationToken.ThrowIfCancellationRequested();
+
                 int due = getDue();
 
                 while (index < due)
@@ -488,8 +489,7 @@ namespace ShapeFill
                 _spawnPosition,
                 UnityEngine.Random.rotation,
                 _gridShape.CellSize,
-                GetCubeColor(cell)
-            );
+                GetCubeColor(cell));
 
             fillCube.Arrived += OnCubeArrived;
 

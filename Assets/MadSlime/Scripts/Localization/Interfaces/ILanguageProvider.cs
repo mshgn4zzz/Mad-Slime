@@ -1,4 +1,5 @@
 using System;
+
 namespace Localization
 {
     public interface ILanguageProvider

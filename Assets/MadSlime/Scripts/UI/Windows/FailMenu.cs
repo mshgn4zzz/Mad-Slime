@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
 namespace UI.Windows
 {
     public class FailMenu : BaseWindow
@@ -64,6 +65,11 @@ namespace UI.Windows
             _rescueButton.interactable = false;
         }
 
+        public void SetRescueAvailable(bool isAvailable)
+        {
+            _rescueButton.interactable = isAvailable;
+        }
+
         private void OnEnable()
         {
             _rescueButton.onClick.AddListener(OnRescueClicked);
@@ -94,6 +100,7 @@ namespace UI.Windows
             }
 
             Action rescueRequested = RescueRequested;
+
             rescueRequested?.Invoke();
         }
 
@@ -105,9 +112,10 @@ namespace UI.Windows
             }
 
             _isNavigationRequested = true;
-            Action restartRequested = RestartRequested;
-            restartRequested?.Invoke();
 
+            Action restartRequested = RestartRequested;
+
+            restartRequested?.Invoke();
         }
 
         private void OnMenuClicked()
@@ -118,9 +126,10 @@ namespace UI.Windows
             }
 
             _isNavigationRequested = true;
-            Action menuRequested = MenuRequested;
-            menuRequested?.Invoke();
 
+            Action menuRequested = MenuRequested;
+
+            menuRequested?.Invoke();
         }
     }
 }

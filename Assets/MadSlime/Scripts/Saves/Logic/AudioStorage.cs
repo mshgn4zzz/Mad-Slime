@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using YG;
+
 namespace Saves
 {
     public class AudioStorage : IAudioStorage
@@ -20,13 +21,20 @@ namespace Saves
             _core = core;
         }
 
-        public int MusicVolume => ToVolumePercent(_core.LoadData().musicVolume);
+        public int GetMusicVolume()
+        {
+            return ToVolumePercent(_core.LoadData().musicVolume);
+        }
 
-        public int SfxVolume => ToVolumePercent(_core.LoadData().sfxVolume);
+        public int GetSfxVolume()
+        {
+            return ToVolumePercent(_core.LoadData().sfxVolume);
+        }
 
         public void SetVolumes(int musicVolume, int sfxVolume)
         {
             SavesYG data = _core.LoadData();
+
             data.musicVolume = Mathf.Clamp(musicVolume, 0, MaxVolumePercent);
             data.sfxVolume = Mathf.Clamp(sfxVolume, 0, MaxVolumePercent);
             _core.SaveChanges();

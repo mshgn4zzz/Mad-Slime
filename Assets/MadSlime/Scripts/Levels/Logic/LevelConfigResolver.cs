@@ -1,4 +1,5 @@
 using System;
+
 namespace Levels
 {
     public class LevelConfigResolver
@@ -9,8 +10,7 @@ namespace Levels
         {
             if (catalog == null)
             {
-                throw new ArgumentNullException(nameof(catalog),
-                    "LevelConfigResolver requires a LevelsCatalog asset.");
+                throw new ArgumentNullException(nameof(catalog), "LevelConfigResolver requires a LevelsCatalog asset.");
             }
 
             _catalog = catalog;
@@ -46,7 +46,7 @@ namespace Levels
             }
 
             int cycleLength = _catalog.Ranges[_catalog.Ranges.Count - 1].ToLevel;
-            int cycleLevel = (levelNumber - 1) % cycleLength + 1;
+            int cycleLevel = ((levelNumber - 1) % cycleLength) + 1;
 
             for (int i = 0; i < _catalog.Ranges.Count; i++)
             {

@@ -1,5 +1,6 @@
 using System;
 using YG;
+
 namespace Ads
 {
     public class Yg2AdsService : IAdsService, IDisposable

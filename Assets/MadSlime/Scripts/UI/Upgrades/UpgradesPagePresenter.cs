@@ -1,10 +1,11 @@
-using Economy;
-using Saves;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using Economy;
+using Saves;
 using UnityEngine;
 using Upgrades;
+
 namespace UI.Upgrades
 {
     using Localization = global::Localization.Localization;
@@ -65,6 +66,7 @@ namespace UI.Upgrades
             foreach (UpgradeEntry entry in _upgrades.Config.Upgrades)
             {
                 UpgradeItemView view = _upgradeFactory.Create(_upgradesParent);
+
                 view.Initialize(entry.Icon, Localization.Get(GetUpgradeKey(entry.Type)), string.Empty, true);
                 view.Click += OnClicked;
                 _upgradeViews.Add(view);
@@ -74,8 +76,8 @@ namespace UI.Upgrades
             foreach (PerkEntry entry in _upgrades.Config.Perks)
             {
                 UpgradeItemView view = _upgradeFactory.Create(_perksParent);
-                view.Initialize(entry.Icon, Localization.Get(GetPerkKey(entry.Type)),
-                    Localization.Get(GetPerkDescKey(entry.Type)), false);
+
+                view.Initialize(entry.Icon, Localization.Get(GetPerkKey(entry.Type)), Localization.Get(GetPerkDescKey(entry.Type)), false);
                 view.Click += OnClicked;
                 _perkViews.Add(view);
                 UpdatePerk(view, entry.Type);
@@ -122,8 +124,8 @@ namespace UI.Upgrades
                 value = _upgrades.GetNextStepValue(type);
             }
 
-            view.SetProgress(string.Format(Localization.Get("upgrade_step"),
-                _upgrades.GetLevel(type), _upgrades.GetMaxSteps(type)),
+            view.SetProgress(
+                string.Format(Localization.Get("upgrade_step"), _upgrades.GetLevel(type), _upgrades.GetMaxSteps(type)),
                 string.Format(Localization.Get(GetUpgradeDescKey(type)), FormatPercent(value)));
             SetUpgradeState(view, type);
         }

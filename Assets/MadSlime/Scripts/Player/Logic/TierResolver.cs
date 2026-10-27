@@ -1,7 +1,8 @@
-using Items;
 using System;
 using System.Collections.Generic;
+using Items;
 using UnityEngine;
+
 namespace Player
 {
     public class TierResolver : MonoBehaviour

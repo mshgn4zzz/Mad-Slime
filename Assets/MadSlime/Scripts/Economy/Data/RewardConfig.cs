@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+
 namespace Economy
 {
     [CreateAssetMenu(menuName = "Mad Slime/Reward Config", fileName = "NewRewardConfig")]
@@ -14,6 +15,7 @@ namespace Economy
         [SerializeField] private int _loseDivideBy = 4;
 
         public float LoseMultiplierThreshold => _minPayFill;
+
         public int LoseRewardDivisor => _loseDivideBy;
 
         public int GetReward(int level)
@@ -30,10 +32,12 @@ namespace Economy
             }
 
             double reward = Math.Round(_baseReward * Math.Pow(level, _growPower), MidpointRounding.AwayFromZero);
+
             if (reward > int.MaxValue)
             {
                 throw new OverflowException("The level reward exceeds the wallet's integer range.");
             }
+
             return (int)reward;
         }
     }

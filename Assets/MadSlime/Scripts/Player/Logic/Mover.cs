@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+
 namespace Player
 {
     public class Mover : MonoBehaviour
@@ -33,7 +34,8 @@ namespace Player
 
             Vector3 startPosition = transform.position;
             Vector3 stepVelocity = Vector3.ClampMagnitude(direction, 1f) * speed;
-            Vector3 desiredPosition = startPosition + stepVelocity * Time.deltaTime;
+            Vector3 desiredPosition = startPosition + (stepVelocity * Time.deltaTime);
+
             transform.position = _clamper.ClampPosition(desiredPosition);
             _velocity = Vector3.zero;
 

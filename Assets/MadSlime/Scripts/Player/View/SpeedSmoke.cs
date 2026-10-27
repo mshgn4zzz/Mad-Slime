@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using VContainer;
+
 namespace Player
 {
     public class SpeedSmoke : MonoBehaviour

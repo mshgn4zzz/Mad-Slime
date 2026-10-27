@@ -1,4 +1,5 @@
 using UnityEngine;
+
 namespace Levels
 {
     public struct ZonePlacement
@@ -7,6 +8,7 @@ namespace Levels
         private int _poolIndex;
 
         public Vector3 Position => _position;
+
         public int PoolIndex => _poolIndex;
 
         public ZonePlacement(Vector3 position, int poolIndex)

@@ -1,5 +1,6 @@
 using Items;
 using UnityEngine;
+
 namespace Levels
 {
     public struct LevelPlacement
@@ -10,8 +11,11 @@ namespace Levels
         private float _scale;
 
         public Item Prefab => _prefab;
+
         public ItemDefinition Definition => _definition;
+
         public Vector3 Position => _position;
+
         public float Scale => _scale;
 
         public LevelPlacement(Item prefab, ItemDefinition definition, Vector3 position, float scale)

@@ -1,8 +1,9 @@
-using Economy;
-using Saves;
 using System;
-using Upgrades;
+using Economy;
 using Game;
+using Saves;
+using Upgrades;
+
 namespace UI.Upgrades
 {
     public class UpgradePurchaseModel

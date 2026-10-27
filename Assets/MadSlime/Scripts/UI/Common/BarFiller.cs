@@ -1,6 +1,7 @@
+using Game;
 using UnityEngine;
 using UnityEngine.UI;
-using Game;
+
 namespace UI.Common
 {
     public class BarFiller
@@ -17,11 +18,13 @@ namespace UI.Common
         public void SetFill(float fillAmount)
         {
             float clamped = Mathf.Clamp01(fillAmount);
+
             _bar.fillAmount = clamped;
 
             if (_bar.type == Image.Type.Sliced)
             {
                 RectTransform fill = _bar.rectTransform;
+
                 fill.anchorMax = new Vector2(clamped, 1f);
                 fill.offsetMin = Vector2.zero;
                 fill.offsetMax = Vector2.zero;

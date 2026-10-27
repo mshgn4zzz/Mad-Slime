@@ -14,8 +14,8 @@ namespace UI.ResponsiveUI
         private const string LandscapeProfile = "Landscape";
         private const int SkinRouletteMode = 1;
 
-        private static string[] _rouletteOptions = { "С кнопками (ежедневная)", "Без кнопок (скины)" };
-        private static string[] _surfaceOptions =
+        private static string[] s_rouletteOptions = { "С кнопками (ежедневная)", "Без кнопок (скины)" };
+        private static string[] s_surfaceOptions =
         {
             "Из Game View (автоматически)",
             "Portrait · 1080 × 1920",
@@ -31,7 +31,9 @@ namespace UI.ResponsiveUI
         {
             _layout = (ResponsiveCanvasLayout)target;
             _layout.TryGetComponent(out _roulette);
+
             string stateKey = "ResponsiveCanvasLayout.Capture." + target.GetInstanceID();
+
             _rouletteModeKey = stateKey + ".RouletteMode";
             _messageKey = stateKey + ".Message";
         }
@@ -47,7 +49,9 @@ namespace UI.ResponsiveUI
             }
 
             SerializedObject storage = GetCaptureStorage();
+
             storage.Update();
+
             SerializedProperty elements = storage.FindProperty(GetCaptureProperty());
             int count = CountTargets(elements);
             bool isInPrefabMode = PrefabStageUtility.GetPrefabStage(_layout.gameObject) != null;
@@ -59,6 +63,7 @@ namespace UI.ResponsiveUI
 
             DrawInstructions(isInPrefabMode, count);
             DrawCaptureButtons(count);
+
             string message = SessionState.GetString(_messageKey, "");
 
             if (string.IsNullOrEmpty(message) == false)
@@ -77,7 +82,7 @@ namespace UI.ResponsiveUI
             }
 
             int mode = SessionState.GetInt(_rouletteModeKey, 0);
-            int selected = EditorGUILayout.Popup("Вариант рулетки", mode, _rouletteOptions);
+            int selected = EditorGUILayout.Popup("Вариант рулетки", mode, s_rouletteOptions);
 
             if (selected == mode)
             {
@@ -89,6 +94,7 @@ namespace UI.ResponsiveUI
             if (PrefabStageUtility.GetPrefabStage(_layout.gameObject) != null)
             {
                 PrefabLayoutPreview.PreviewSource source = PrefabLayoutPreview.GetSource(_layout);
+
                 PrefabLayoutPreview.Configure(_layout, source, selected == SkinRouletteMode, true);
             }
 
@@ -99,8 +105,10 @@ namespace UI.ResponsiveUI
         private void DrawSurfaceSource()
         {
             PrefabLayoutPreview.PreviewSource source = PrefabLayoutPreview.GetSource(_layout);
-            int selected = EditorGUILayout.Popup("Размер области", (int)source, _surfaceOptions);
+            int selected = EditorGUILayout.Popup("Размер области", (int)source, s_surfaceOptions);
+
             PrefabLayoutPreview.Configure(_layout, (PrefabLayoutPreview.PreviewSource)selected, IsWithoutControls());
+
             string profile = PortraitProfile;
 
             if (PrefabLayoutPreview.IsLandscape)
@@ -143,6 +151,7 @@ namespace UI.ResponsiveUI
             if (isInPrefabMode == false)
             {
                 Vector2 size = Handles.GetMainGameViewSize();
+
                 EditorGUILayout.LabelField("Game View", Mathf.RoundToInt(size.x) + " × " + Mathf.RoundToInt(size.y));
             }
         }
@@ -214,9 +223,12 @@ namespace UI.ResponsiveUI
         private void Capture(string profile)
         {
             serializedObject.ApplyModifiedProperties();
+
             SerializedObject storage = GetCaptureStorage();
+
             Undo.RecordObject(storage.targetObject, "Capture UI layout");
             storage.Update();
+
             SerializedProperty elements = storage.FindProperty(GetCaptureProperty());
             int count = 0;
 
@@ -231,6 +243,7 @@ namespace UI.ResponsiveUI
                 }
 
                 SerializedProperty placement = element.FindPropertyRelative(profile);
+
                 CapturePlacement(placement, rect);
                 count++;
             }
@@ -263,6 +276,7 @@ namespace UI.ResponsiveUI
         {
             Canvas.ForceUpdateCanvases();
             SceneView.RepaintAll();
+
             EditorWindow[] windows = Resources.FindObjectsOfTypeAll<EditorWindow>();
 
             foreach (EditorWindow window in windows)

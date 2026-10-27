@@ -12,8 +12,7 @@ namespace Leaderboards
 
         public bool HasPlayerError => _hasPlayerError;
 
-        public LeaderboardData(LeaderboardEntryData[] players, LeaderboardEntryData? currentPlayer,
-            bool hasPlayerError = false)
+        public LeaderboardData(LeaderboardEntryData[] players, LeaderboardEntryData? currentPlayer, bool hasPlayerError = false)
         {
             _players = players;
             _currentPlayer = currentPlayer;

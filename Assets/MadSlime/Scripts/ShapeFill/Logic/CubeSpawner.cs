@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+
 namespace ShapeFill
 {
     public class CubeSpawner : MonoBehaviour
@@ -34,6 +35,7 @@ namespace ShapeFill
         public CubeFlightAnimator Spawn(Vector3 position, Quaternion rotation, float scale, Color color)
         {
             FlyingCube cube = Instantiate(_cubePrefab, position, rotation, _cubesParent);
+
             cube.transform.localScale = Vector3.one * scale;
 
             SetColor(cube.gameObject, color);

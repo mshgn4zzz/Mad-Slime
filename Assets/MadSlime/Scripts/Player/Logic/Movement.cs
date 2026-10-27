@@ -1,9 +1,10 @@
+using System;
 using Items;
 using PlayerInput;
-using System;
 using UnityEngine;
 using Upgrades;
 using VContainer;
+
 namespace Player
 {
     public class Movement : MonoBehaviour
@@ -29,8 +30,7 @@ namespace Player
         public float CurrentSpeed => _currentSpeed;
 
         [Inject]
-        public void Construct(PlayerTier playerTier, TierResolver tierResolver, PlayerUpgrades upgrades,
-            PlayerInputReader inputReader)
+        public void Construct(PlayerTier playerTier, TierResolver tierResolver, PlayerUpgrades upgrades, PlayerInputReader inputReader)
         {
             _playerTier = playerTier;
             _tierResolver = tierResolver;
@@ -134,8 +134,7 @@ namespace Player
         {
             if (multiplier <= 0f)
             {
-                throw new ArgumentOutOfRangeException(nameof(multiplier),
-                    "Movement.SetBoostMultiplier requires a positive multiplier.");
+                throw new ArgumentOutOfRangeException(nameof(multiplier), "Movement.SetBoostMultiplier requires a positive multiplier.");
             }
 
             _boostMultiplier = multiplier;
@@ -153,7 +152,6 @@ namespace Player
             float baseSpeed = _tierResolver.GetSpeedFor(_playerTier.CurrentTier) * _upgrades.GetSpeedMultiplier();
 
             _movementSpeed = baseSpeed * _boostMultiplier;
-
         }
 
         private void SetActualSpeed(float speed)
@@ -169,7 +167,7 @@ namespace Player
 
         private Vector3 ConvertToWorldDirection(Vector2 input)
         {
-            return s_forward * input.y + s_right * input.x;
+            return (s_forward * input.y) + (s_right * input.x);
         }
     }
 }

@@ -1,6 +1,7 @@
 using Economy;
 using TMPro;
 using UnityEngine;
+
 namespace UI.Shop
 {
     public class ShopBalanceView : MonoBehaviour

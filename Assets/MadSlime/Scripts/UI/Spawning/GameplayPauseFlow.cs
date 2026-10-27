@@ -1,9 +1,10 @@
-using Game;
 using System;
+using Game;
 using UI.Windows;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
+
 namespace UI.Spawning
 {
     public class GameplayPauseFlow : MonoBehaviour
@@ -12,11 +13,11 @@ namespace UI.Spawning
         [SerializeField] private PauseMenu _pauseMenuPrefab;
 
         private UiSpawner _uiSpawner;
-        private GameplayOrchestrator _orchestrator;
+        private GameSceneState _orchestrator;
         private PauseMenu _activePauseMenu;
 
         [Inject]
-        public void Construct(UiSpawner uiSpawner, GameplayOrchestrator orchestrator)
+        public void Construct(UiSpawner uiSpawner, GameSceneState orchestrator)
         {
             _uiSpawner = uiSpawner;
             _orchestrator = orchestrator;
@@ -34,8 +35,8 @@ namespace UI.Spawning
             if (_orchestrator == null)
             {
                 throw new InvalidOperationException(
-                    $"{name}: GameplayOrchestrator was not injected. Check that GameLifetimeScope "
-                        + $"registers GameplayOrchestrator and GameplayPauseFlow.");
+                    $"{name}: GameSceneState was not injected. Check that GameLifetimeScope "
+                        + $"registers GameSceneState and GameplayPauseFlow.");
             }
 
             if (_pauseButton == null)

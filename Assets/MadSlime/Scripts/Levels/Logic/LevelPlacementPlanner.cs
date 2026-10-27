@@ -1,6 +1,6 @@
-using Items;
 using System;
 using System.Collections.Generic;
+using Items;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -40,14 +40,19 @@ namespace Levels
             return library.Layouts[Random.Range(0, library.Layouts.Count)];
         }
 
-        public IReadOnlyList<LevelPlacement> Plan(LevelConfig config, LayoutSet layout,
-            Dictionary<Item, ItemDefinition> assignedVariants, TierTable tierTable,
-            Transform origin, Bounds floorBounds)
+        public IReadOnlyList<LevelPlacement> Plan(
+            LevelConfig config,
+            LayoutSet layout,
+            Dictionary<Item, ItemDefinition> assignedVariants,
+            TierTable tierTable,
+            Transform origin,
+            Bounds floorBounds)
         {
             _tierLookup = new TierLookup(tierTable);
             _placements.Clear();
             _occupancy.Clear();
             _bossCount = 0;
+
             bool mirrorX = layout.AllowMirroring == true && Random.value > 0.5f;
             bool mirrorZ = layout.AllowMirroring == true && Random.value > 0.5f;
 
@@ -129,8 +134,11 @@ namespace Levels
             }
         }
 
-        private void AppendPlacements(Dictionary<Item, ItemDefinition> assignedVariants,
-            Transform origin, Bounds floorBounds, LayoutSet layout)
+        private void AppendPlacements(
+            Dictionary<Item, ItemDefinition> assignedVariants,
+            Transform origin,
+            Bounds floorBounds,
+            LayoutSet layout)
         {
             IReadOnlyList<ZonePlacement> placements = _layoutPlanner.Placements;
 

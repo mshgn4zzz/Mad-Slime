@@ -1,9 +1,10 @@
-using Items;
-using Levels;
 using System;
 using System.IO;
+using Items;
+using Levels;
 using UnityEditor;
 using UnityEngine;
+
 namespace Items.Editor
 {
     public partial class ItemPropFactory : EditorWindow
@@ -113,6 +114,7 @@ namespace Items.Editor
         private void SaveState()
         {
             WindowState state = new WindowState();
+
             state.ModelsPath = GetAssetPathOrNull(_modelsFolder);
             state.PrefabsPath = GetAssetPathOrNull(_prefabsFolder);
             state.DefinitionsPath = GetAssetPathOrNull(_definitionsFolder);

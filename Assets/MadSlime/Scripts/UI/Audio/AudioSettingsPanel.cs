@@ -1,8 +1,9 @@
-using Audio;
 using System;
+using Audio;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
+
 namespace UI.Audio
 {
     public class AudioSettingsPanel : MonoBehaviour
@@ -66,7 +67,6 @@ namespace UI.Audio
             _musicSlider.maxValue = MaxSliderValue;
             _sfxSlider.maxValue = MaxSliderValue;
 
-            // Slider holds 0..20 whole steps; each step equals VolumeStepPercent percents.
             _musicSlider.wholeNumbers = true;
             _sfxSlider.wholeNumbers = true;
         }
@@ -75,20 +75,20 @@ namespace UI.Audio
         {
             _musicSlider.onValueChanged.AddListener(OnMusicSliderChanged);
             _sfxSlider.onValueChanged.AddListener(OnSfxSliderChanged);
-            _mixerController.VolumesChanged += RefreshVolumes;
-            RefreshVolumes();
+            _mixerController.VolumesChanged += OnVolumesChanged;
+            OnVolumesChanged();
         }
 
         private void OnDisable()
         {
             _musicSlider.onValueChanged.RemoveListener(OnMusicSliderChanged);
             _sfxSlider.onValueChanged.RemoveListener(OnSfxSliderChanged);
-            _mixerController.VolumesChanged -= RefreshVolumes;
+            _mixerController.VolumesChanged -= OnVolumesChanged;
 
             _mixerController.CommitVolumes();
         }
 
-        private void RefreshVolumes()
+        private void OnVolumesChanged()
         {
             _musicSlider.SetValueWithoutNotify(_mixerController.MusicVolume / (float)VolumeStepPercent);
             _sfxSlider.SetValueWithoutNotify(_mixerController.SfxVolume / (float)VolumeStepPercent);

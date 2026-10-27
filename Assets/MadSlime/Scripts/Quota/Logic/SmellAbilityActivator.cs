@@ -1,12 +1,13 @@
-using Collectables;
-using Cysharp.Threading.Tasks;
-using Items;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Collectables;
+using Cysharp.Threading.Tasks;
+using Items;
 using UnityEngine;
 using Upgrades;
 using VContainer;
+
 namespace Quota
 {
     public class SmellAbilityActivator : MonoBehaviour
@@ -20,8 +21,7 @@ namespace Quota
         private bool _isPaused = true;
 
         [Inject]
-        public void Construct(PlayerUpgrades upgrades, QuotaItemDetector detector,
-            QuotaOutlineInitializer outlineInitializer)
+        public void Construct(PlayerUpgrades upgrades, QuotaItemDetector detector, QuotaOutlineInitializer outlineInitializer)
         {
             _upgrades = upgrades;
             _detector = detector;
@@ -59,8 +59,7 @@ namespace Quota
             }
         }
 
-        public async UniTask PrepareAsync(IReadOnlyList<Item> items, Action<float> progress,
-            CancellationToken cancellationToken)
+        public async UniTask PrepareAsync(IReadOnlyList<Item> items, Action<float> progress, CancellationToken cancellationToken)
         {
             _isAvailable = false;
             _isPaused = true;
@@ -73,8 +72,12 @@ namespace Quota
                 return;
             }
 
-            await _outlineInitializer.PrepareAsync(items, _highlighter.HighlightColor,
-                _highlighter.OutlineWidth, progress, cancellationToken);
+            await _outlineInitializer.PrepareAsync(
+                items,
+                _highlighter.HighlightColor,
+                _highlighter.OutlineWidth,
+                progress,
+                cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
             _isAvailable = true;
             ApplyState();
@@ -89,6 +92,7 @@ namespace Quota
         private void ApplyState()
         {
             bool isEnabled = _isAvailable && _isPaused == false;
+
             _detector.enabled = isEnabled;
             _highlighter.enabled = isEnabled;
         }

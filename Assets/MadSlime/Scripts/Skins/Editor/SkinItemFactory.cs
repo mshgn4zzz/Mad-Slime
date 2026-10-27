@@ -1,10 +1,11 @@
+using System;
+using System.IO;
 using Items.Editor;
 using Shop;
 using Skins;
-using System;
-using System.IO;
 using UnityEditor;
 using UnityEngine;
+
 namespace Skins.Editor
 {
     public class SkinItemFactory : EditorWindow
@@ -36,9 +37,11 @@ namespace Skins.Editor
         public static void CreateFromCommandLine()
         {
             string[] args = Environment.GetCommandLineArgs();
+
             string Argument(string key)
             {
                 int index = Array.IndexOf(args, key);
+
                 if (index < 0 || index + 1 >= args.Length || args[index + 1].StartsWith("-"))
                 {
                     throw new ArgumentException($"Skin Factory requires {key}.");
@@ -49,6 +52,7 @@ namespace Skins.Editor
 
             string path = Argument("-skinSource");
             string id = Argument("-skinId");
+
             if (Enum.TryParse(Argument("-skinRarity"), true, out SkinRarity rarity) == false
                 || Enum.IsDefined(typeof(SkinRarity), rarity) == false)
             {
@@ -56,6 +60,7 @@ namespace Skins.Editor
             }
 
             GameObject source = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+
             if (source == null)
             {
                 throw new ArgumentException($"Skin model does not exist: {path}");
@@ -69,7 +74,9 @@ namespace Skins.Editor
             ItemFactoryTools.EnsureFolder(DefaultPrefabsPath);
             ItemFactoryTools.EnsureFolder(DefaultSkinsPath);
             ItemFactoryTools.EnsureFolder(DefaultIconsPath);
+
             SkinItemFactory factory = CreateInstance<SkinItemFactory>();
+
             try
             {
                 factory._sourceModel = sourceModel;
@@ -184,12 +191,14 @@ namespace Skins.Editor
 
             SkinItem skin = AssetDatabase.LoadAssetAtPath<SkinItem>(assetPath);
             bool isNew = skin == null;
+
             if (isNew)
             {
                 skin = ScriptableObject.CreateInstance<SkinItem>();
             }
 
             SerializedObject serialized = new SerializedObject(skin);
+
             serialized.FindProperty(ModelField).objectReferenceValue = prefab;
             serialized.FindProperty(IconField).objectReferenceValue = AssetDatabase.LoadAssetAtPath<Sprite>(iconPath);
             serialized.FindProperty(RarityField).intValue = (int)_rarity;
@@ -204,6 +213,7 @@ namespace Skins.Editor
             {
                 AssetDatabase.SaveAssetIfDirty(skin);
             }
+
             if (IsIdUsed(_skinId) == false)
             {
                 AppendToShopContent(skin);
@@ -303,9 +313,11 @@ namespace Skins.Editor
                 PrefabUtility.UnpackPrefabInstance(
                     instance, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
             }
+
             instance.name = $"{_sourceModel.name}Skin";
 
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(instance, prefabPath);
+
             DestroyImmediate(instance);
 
             return prefab;
@@ -430,6 +442,7 @@ namespace Skins.Editor
         private void SaveState()
         {
             WindowState state = new WindowState();
+
             state.ShopContentPath = GetAssetPathOrNull(_shopContent);
             state.SkinsPath = GetAssetPathOrNull(_skinsFolder);
             state.PrefabsPath = GetAssetPathOrNull(_prefabsFolder);

@@ -1,7 +1,8 @@
-using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+
 namespace Game
 {
     public class LoadingScreenController

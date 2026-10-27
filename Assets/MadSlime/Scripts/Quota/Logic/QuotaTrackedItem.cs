@@ -1,5 +1,6 @@
 using Items;
 using UnityEngine;
+
 namespace Quota
 {
     internal struct QuotaTrackedItem
@@ -9,7 +10,9 @@ namespace Quota
         private QuotaTypeState _type;
 
         public GhostAnimator Animator => _animator;
+
         public Collider Collider => _collider;
+
         public QuotaTypeState Type => _type;
 
         public QuotaTrackedItem(GhostAnimator animator, Collider collider, QuotaTypeState type)

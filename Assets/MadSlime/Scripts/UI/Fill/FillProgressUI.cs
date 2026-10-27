@@ -1,10 +1,11 @@
-using ShapeFill;
 using System;
+using ShapeFill;
 using TMPro;
 using UI.Common;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
+
 namespace UI.Fill
 {
     public class FillProgressUI : MonoBehaviour
@@ -71,8 +72,11 @@ namespace UI.Fill
         private void ApplyProgress(float fraction)
         {
             float fillAmount = Mathf.Clamp01(fraction);
+
             _barFiller.SetFill(fillAmount);
+
             int percent = Mathf.RoundToInt(fillAmount * FullPercent);
+
             _percentText.SetText("{0}%", percent);
         }
     }

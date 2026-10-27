@@ -1,4 +1,5 @@
 using UnityEngine;
+
 namespace ShapeFill
 {
     [CreateAssetMenu(menuName = "Mad Slime/Fill Config", fileName = "NewFillConfig")]
@@ -55,25 +56,45 @@ namespace ShapeFill
         [SerializeField, Min(0.01f)] private float _fovDuration = 0.6f;
 
         public float FillDelay => _fillDelay;
+
         public float SpawnInterval => _spawnInterval;
+
         public float MaxFillDuration => _maxFillDuration;
+
         public float FlightDuration => _flightDuration;
+
         public float BoostedSpawnInterval => _boostedSpawnInterval;
+
         public float MaxBoostedFillDuration => _maxBoostedTime;
+
         public float BoostedFlightDuration => _boostedFlightDuration;
+
         public float InstantFillDuration => _instantFillDuration;
+
         public float InstantFlightDuration => _instantFlightDuration;
+
         public float BonusWaveDelay => _bonusWaveDelay;
+
         public Color BonusTintColor => _bonusColor;
+
         public float BonusTintStrength => _bonusColorMix;
+
         public float BorderCascadeDuration => _borderSpawnTime;
+
         public Color BorderColor => _borderColor;
+
         public float GhostOpacity => _ghostAlpha;
+
         public float ShapePunchStrength => _shapePunch;
+
         public float ShapePunchDuration => _shapePunchDuration;
+
         public int ShapePunchVibrato => _shapePunchShakes;
+
         public float ShapePunchElasticity => _shapePunchSpring;
+
         public float FovKick => _fovKick;
+
         public float FovDuration => _fovDuration;
     }
 }

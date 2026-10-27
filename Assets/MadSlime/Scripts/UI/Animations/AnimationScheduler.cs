@@ -1,8 +1,9 @@
-using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+
 namespace UI.Animations
 {
     public class AnimationScheduler : MonoBehaviour
@@ -31,15 +32,16 @@ namespace UI.Animations
             }
         }
 
-        private async UniTaskVoid RunAsync(IReadOnlyList<Action> animations, IReadOnlyList<float> delays,
+        private async UniTaskVoid RunAsync(
+            IReadOnlyList<Action> animations,
+            IReadOnlyList<float> delays,
             CancellationToken cancellationToken)
         {
             try
             {
                 for (int i = 0; i < animations.Count; i++)
                 {
-                    await UniTask.Delay(TimeSpan.FromSeconds(delays[i]), DelayType.Realtime,
-                        cancellationToken: cancellationToken);
+                    await UniTask.Delay(TimeSpan.FromSeconds(delays[i]), DelayType.Realtime, cancellationToken: cancellationToken);
                     cancellationToken.ThrowIfCancellationRequested();
                     animations[i].Invoke();
                 }

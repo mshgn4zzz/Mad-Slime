@@ -37,9 +37,12 @@ namespace UI.ResponsiveUI
             _width = width;
 
             float available = width - _grid.padding.horizontal;
-            int columns = Mathf.Clamp(Mathf.FloorToInt((available + _grid.spacing.x) /
-                (_preferredCellSize + _grid.spacing.x)), 1, _maximumColumns);
-            float size = (available - (columns - 1) * _grid.spacing.x) / columns;
+            int columns = Mathf.Clamp(
+                Mathf.FloorToInt((available + _grid.spacing.x) /
+                (_preferredCellSize + _grid.spacing.x)),
+                1,
+                _maximumColumns);
+            float size = (available - ((columns - 1) * _grid.spacing.x)) / columns;
 
             _grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             _grid.constraintCount = columns;

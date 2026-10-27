@@ -1,9 +1,10 @@
-using Items;
-using Levels;
 using System;
 using System.Collections.Generic;
+using Items;
+using Levels;
 using UnityEditor;
 using UnityEngine;
+
 namespace Items.Editor
 {
     public partial class ItemPropFactory
@@ -35,6 +36,7 @@ namespace Items.Editor
                 }
 
                 SerializedObject serialized = new SerializedObject(definition);
+
                 serialized.FindProperty(TierField).intValue = (int)entry.Tier;
                 serialized.FindProperty(IconField).objectReferenceValue = LoadIcon(job.IconPath, job.PrefabName);
                 serialized.ApplyModifiedPropertiesWithoutUndo();
@@ -83,6 +85,7 @@ namespace Items.Editor
                 }
 
                 Item prefab = AssetDatabase.LoadAssetAtPath<Item>(jobs[i].PrefabPath);
+
                 jobs[i].SetPrefab(prefab);
             }
         }
@@ -95,13 +98,16 @@ namespace Items.Editor
             };
 
             GameObject modelInstance = (GameObject)PrefabUtility.InstantiatePrefab(job.Model, root.transform);
+
             modelInstance.transform.localPosition = Vector3.zero;
 
             BoxCollider collider = root.AddComponent<BoxCollider>();
+
             ApplyCollider(collider, ComputeBounds(root));
             ApplyNormalizedScale(root, collider);
 
             Item item = root.AddComponent<Item>();
+
             WriteItemFields(item, collider, job.FallbackDefinition);
 
             PrefabUtility.SaveAsPrefabAsset(root, job.PrefabPath);
@@ -142,6 +148,7 @@ namespace Items.Editor
         private void WriteItemFields(Item item, BoxCollider collider, ItemDefinition fallbackDefinition)
         {
             SerializedObject serialized = new SerializedObject(item);
+
             serialized.FindProperty(DefinitionField).objectReferenceValue = fallbackDefinition;
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
@@ -151,6 +158,7 @@ namespace Items.Editor
             }
 
             SerializedObject serializedBody = new SerializedObject(body);
+
             serializedBody.FindProperty(ColliderField).objectReferenceValue = collider;
             serializedBody.ApplyModifiedPropertiesWithoutUndo();
 
@@ -160,6 +168,7 @@ namespace Items.Editor
             }
 
             SerializedObject serializedVisual = new SerializedObject(animator);
+
             serializedVisual.FindProperty(GhostMaterialField).objectReferenceValue = _ghostMaterial;
             serializedVisual.FindProperty(GhostFadeConfigField).objectReferenceValue = _ghostFadeConfig;
             serializedVisual.ApplyModifiedPropertiesWithoutUndo();
@@ -195,6 +204,7 @@ namespace Items.Editor
                     variants.InsertArrayElementAtIndex(variants.arraySize);
 
                     SerializedProperty element = variants.GetArrayElementAtIndex(variants.arraySize - 1);
+
                     element.FindPropertyRelative(PrefabField).objectReferenceValue = jobs[i].Prefab;
                     element.FindPropertyRelative(DefinitionField).objectReferenceValue = jobs[i].Definitions[j];
                 }
@@ -206,8 +216,11 @@ namespace Items.Editor
         private void ApplyNormalizedScale(GameObject root, BoxCollider collider)
         {
             float largestDimension = Mathf.Max(collider.size.x, collider.size.y, collider.size.z);
+
             root.transform.localScale = Vector3.one * (NormalizedModelSize / largestDimension);
+
             Vector3 pivotOffset = collider.center;
+
             pivotOffset.y -= collider.size.y * 0.5f;
 
             for (int childIndex = 0; childIndex < root.transform.childCount; childIndex++)

@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+
 namespace UI.HUD
 {
     using Localization = global::Localization.Localization;

@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 namespace PlayerInput
 {
     public class PlayerInputReader : MonoBehaviour
@@ -10,6 +11,7 @@ namespace PlayerInput
         private Vector2 _moveInput;
 
         public Vector2 MoveInput => _moveInput;
+
         public event Action MovementKeyPressed;
 
         private void Awake()
@@ -44,6 +46,7 @@ namespace PlayerInput
         private void OnMovePerformed(InputAction.CallbackContext context)
         {
             bool wasZero = MoveInput == Vector2.zero;
+
             _moveInput = context.ReadValue<Vector2>();
 
             if (wasZero == true)

@@ -3,6 +3,7 @@ using UI.Audio;
 using UI.ResponsiveUI;
 using UnityEngine;
 using UnityEngine.UI;
+
 namespace UI.Windows
 {
     public class PauseMenu : BaseWindow
@@ -23,6 +24,7 @@ namespace UI.Windows
         public event Action CloseButtonClicked;
 
         public event Action MenuButtonClicked;
+
         public event Action ResetConfirmed;
 
         protected override void Awake()
@@ -71,6 +73,7 @@ namespace UI.Windows
             OnResetCanceled();
 
             _menuButton.gameObject.SetActive(isMenuButtonNeeded);
+
             if (TryGetComponent(out ResponsiveCanvasLayout profiles) && profiles.Manages(_languageButton))
             {
                 return;
@@ -156,7 +159,9 @@ namespace UI.Windows
             }
 
             _isActionRequested = true;
+
             Action closeButtonClicked = CloseButtonClicked;
+
             closeButtonClicked?.Invoke();
         }
 
@@ -168,7 +173,9 @@ namespace UI.Windows
             }
 
             _isActionRequested = true;
+
             Action menuButtonClicked = MenuButtonClicked;
+
             menuButtonClicked?.Invoke();
         }
     }
