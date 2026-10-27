@@ -1,0 +1,3 @@
+<RuleSet Name="MadSlime code style" ToolsVersion="12.0">
+  <Include Path="../MadSlime.Core/MadSlime.CodeStyle.ruleset" Action="Default" />
+</RuleSet>

@@ -114,3 +114,7 @@ InitTestScene*.unity*
 .claude/
 .agents/
 CLAUDE.md
+
+# Hand-authored analyzer projects (Unity-generated project files stay ignored).
+!/tools/Codestyle/Analyzer/MadSlime.CodeStyle.csproj
+!/tools/Codestyle/Checks/MadSlime.CodeStyle.Checks.csproj
