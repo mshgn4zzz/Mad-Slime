@@ -11,7 +11,7 @@ namespace Game
         [SerializeField, Min(0f)] private float _endDelay = 1f;
         [SerializeField, Min(0.1f)] private float _finalSeconds = 20f;
 
-        private SceneNavigator _navigator;
+        private SceneStateMachine _sceneMachine;
         private Pauser _pauser;
 
         public event Action GameplayStarted;
@@ -19,13 +19,15 @@ namespace Game
         public event Action MenuRequested;
         public event Action FillRequested;
 
+        public override SceneId SceneId => SceneId.Game;
+
         [Inject]
-        public void Construct(GameplayStateMachine machine, SceneNavigator navigator, SceneStateMachine sceneMachine, Pauser pauser)
+        public void Construct(GameplayStateMachine machine, SceneStateMachine sceneMachine, Pauser pauser)
         {
             ArgumentGuard.CheckNotNull(pauser, nameof(pauser));
 
-            Initialize(machine, navigator, sceneMachine);
-            _navigator = navigator;
+            Initialize(machine, sceneMachine);
+            _sceneMachine = sceneMachine;
             _pauser = pauser;
         }
 
@@ -94,7 +96,7 @@ namespace Game
 
         private void OnPreparationProgressChanged(float progress)
         {
-            _navigator.ReportPreparationProgress(progress);
+            _sceneMachine.ReportPreparationProgress(progress);
         }
     }
 }

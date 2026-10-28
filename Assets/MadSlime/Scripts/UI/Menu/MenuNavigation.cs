@@ -47,7 +47,9 @@ namespace UI.Menu
         private MenuPopupStack _popups;
         private MenuRouletteFlow _rouletteFlow;
         private UiSpawner _spawner;
-        private SceneNavigator _sceneNavigator;
+        private SceneStateMachine _scenes;
+        private MenuSessionData _sessionData;
+        private ResetProgressFlow _resetProgress;
         private PauseMenu _settings;
         private LeaderboardMenu _leaderboard;
         private bool _isSubscribed;
@@ -55,10 +57,12 @@ namespace UI.Menu
         public event Action PlayRequested;
 
         [Inject]
-        public void Construct(UiSpawner spawner, SceneNavigator sceneNavigator)
+        public void Construct(UiSpawner spawner, SceneStateMachine scenes, MenuSessionData sessionData, ResetProgressFlow resetProgress)
         {
             _spawner = spawner;
-            _sceneNavigator = sceneNavigator;
+            _scenes = scenes;
+            _sessionData = sessionData;
+            _resetProgress = resetProgress;
         }
 
         private void Awake()
@@ -73,7 +77,7 @@ namespace UI.Menu
                 throw new InvalidOperationException($"{name}: assign all menu navigation references.");
             }
 
-            if (_spawner == null || _sceneNavigator == null)
+            if (_spawner == null || _scenes == null || _sessionData == null || _resetProgress == null)
             {
                 throw new InvalidOperationException($"{name}: menu navigation dependencies were not injected.");
             }
@@ -103,7 +107,7 @@ namespace UI.Menu
             Subscribe();
             SetWindow(WindowState.Main);
 
-            if (_sceneNavigator.TryMarkDailyShown() == true)
+            if (_sessionData.TryMarkDailyShown() == true)
             {
                 _rouletteFlow.OpenDaily();
             }
@@ -172,7 +176,8 @@ namespace UI.Menu
 
         private bool CanInteractWithScreen()
         {
-            return _popups.HasOpenPopups() == false && _sceneNavigator.IsTransitioning == false;
+            return _popups.HasOpenPopups() == false && _scenes.IsTransitioning == false
+                && _scenes.IsStopped == false && _resetProgress.IsRunning == false;
         }
 
         private void OnPlayClicked()
@@ -259,7 +264,7 @@ namespace UI.Menu
 
         private void OnResetConfirmed()
         {
-            _sceneNavigator.ResetProgressAndLoadMenuAsync().Forget();
+            _resetProgress.RunAsync(this.GetCancellationTokenOnDestroy()).Forget();
         }
 
         private void OnSettingsClosed()

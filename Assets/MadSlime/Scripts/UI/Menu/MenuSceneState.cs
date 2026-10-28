@@ -14,12 +14,14 @@ namespace UI.Menu
 
         public event Action PlayRequested;
 
+        public override SceneId SceneId => SceneId.Menu;
+
         [Inject]
-        public void Construct(MenuStateMachine machine, SceneNavigator navigator, SceneStateMachine sceneMachine, Pauser pauser)
+        public void Construct(MenuStateMachine machine, SceneStateMachine sceneMachine, Pauser pauser)
         {
             ArgumentGuard.CheckNotNull(pauser, nameof(pauser));
 
-            Initialize(machine, navigator, sceneMachine);
+            Initialize(machine, sceneMachine);
             _pauser = pauser;
         }
 

@@ -143,7 +143,6 @@ namespace DI
         private void InitializeScene(IObjectResolver container)
         {
             container.Resolve<CollectedItemsCounter>();
-            container.Resolve<SceneNavigator>().EnsureInitialized();
 
             SceneButtonSoundInjector.Inject(container, gameObject.scene);
         }

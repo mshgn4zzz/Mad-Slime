@@ -22,10 +22,11 @@ namespace ShapeFill
 
         public float ResultWindowDelay => _winWindowDelay;
 
+        public override SceneId SceneId => SceneId.Fill;
+
         [Inject]
         public void Construct(
             FillStateMachine machine,
-            SceneNavigator navigator,
             SceneStateMachine sceneMachine,
             FillExitFlow exitFlow,
             Pauser pauser)
@@ -33,7 +34,7 @@ namespace ShapeFill
             ArgumentGuard.CheckNotNull(exitFlow, nameof(exitFlow));
             ArgumentGuard.CheckNotNull(pauser, nameof(pauser));
 
-            Initialize(machine, navigator, sceneMachine);
+            Initialize(machine, sceneMachine);
             _exitFlow = exitFlow;
             _pauser = pauser;
         }

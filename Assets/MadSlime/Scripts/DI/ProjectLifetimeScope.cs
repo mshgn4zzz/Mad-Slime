@@ -1,6 +1,7 @@
 using System;
 using Ads;
 using Audio;
+using Cysharp.Threading.Tasks;
 using Game;
 using Items;
 using Leaderboards;
@@ -10,6 +11,7 @@ using Quota;
 using Saves;
 using Skins;
 using UnityEngine;
+using UI.Menu;
 using Upgrades;
 using VContainer;
 using VContainer.Unity;
@@ -27,7 +29,7 @@ namespace DI
         [SerializeField] private LayoutsLibrary _layoutsLibrary;
         [SerializeField] private AudioPlayer _audioPlayer;
         [SerializeField] private AudioMixerController _audioMixerController;
-        [SerializeField] private SceneNavigator _sceneNavigator;
+        [SerializeField] private Canvas _loadingScreenPrefab;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -40,7 +42,7 @@ namespace DI
             ValidateAssigned(_layoutsLibrary, nameof(_layoutsLibrary));
             ValidateAssigned(_audioPlayer, nameof(_audioPlayer));
             ValidateAssigned(_audioMixerController, nameof(_audioMixerController));
-            ValidateAssigned(_sceneNavigator, nameof(_sceneNavigator));
+            ValidateAssigned(_loadingScreenPrefab, nameof(_loadingScreenPrefab));
 
             Yg2SavesAccess savesAccess = new Yg2SavesAccess(_saveConfirmation);
             SavesCore core = new SavesCore(savesAccess);
@@ -70,7 +72,10 @@ namespace DI
                 .As<Audio.IGameSoundPlayer>()
                 .As<Audio.IUISoundPlayer>();
             builder.RegisterComponent(_audioMixerController);
-            builder.RegisterComponent(_sceneNavigator);
+            builder.Register<SceneNavigator>(Lifetime.Singleton);
+            builder.RegisterInstance(new LoadingScreenController(_loadingScreenPrefab, transform));
+            builder.RegisterInstance(this.GetCancellationTokenOnDestroy());
+            builder.Register<MenuSessionData>(Lifetime.Singleton);
             builder.RegisterInstance(_levelsCatalog);
             builder.RegisterInstance(_tierTable);
             builder.RegisterInstance(_layoutsLibrary);

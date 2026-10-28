@@ -8,7 +8,6 @@ namespace Game
     public abstract class SceneState<TMachine> : MonoBehaviour, ISceneState
         where TMachine : class, ISessionStateMachine
     {
-        private SceneNavigator _navigator;
         private SceneStateMachine _sceneMachine;
         private CancellationTokenSource _sessionSource;
         private CancellationTokenSource _preparationSource;
@@ -23,11 +22,13 @@ namespace Game
 
         public bool IsFinished { get; private set; }
 
+        public abstract SceneId SceneId { get; }
+
         protected TMachine Machine { get; private set; }
 
         protected virtual void Awake()
         {
-            if (Machine == null || _navigator == null || _sceneMachine == null)
+            if (Machine == null || _sceneMachine == null)
             {
                 throw new InvalidOperationException($"{name}: scene state dependencies were not injected.");
             }
@@ -42,27 +43,31 @@ namespace Game
 
         protected virtual void Start()
         {
-            _navigator.RegisterSession(PrepareAsync, StartScene, FinishScene, _sessionSource.Token);
+            _sceneMachine.RegisterScene(this, gameObject.scene, _sessionSource.Token);
         }
 
         protected virtual void OnDisable()
         {
-            if (_navigator != null)
+            try
             {
-                _navigator.UnregisterSession(StartScene);
-            }
+                if (_sceneMachine != null)
+                {
+                    _sceneMachine.UnregisterScene(this);
+                }
 
-            if (Machine != null)
-            {
-                FinishScene();
-                Exit();
+                if (Machine != null)
+                {
+                    Exit();
+                }
             }
-
-            if (_sessionSource != null)
+            finally
             {
-                _sessionSource.Cancel();
-                _sessionSource.Dispose();
-                _sessionSource = null;
+                if (_sessionSource != null)
+                {
+                    _sessionSource.Cancel();
+                    _sessionSource.Dispose();
+                    _sessionSource = null;
+                }
             }
         }
 
@@ -83,11 +88,6 @@ namespace Game
                     await Machine.PrepareAsync(source.Token);
                     source.Token.ThrowIfCancellationRequested();
                     SceneSessionPrepared?.Invoke();
-                }
-                catch
-                {
-                    Exit();
-                    throw;
                 }
                 finally
                 {
@@ -113,53 +113,47 @@ namespace Game
             IsFinished = true;
             _isEntered = false;
             _preparationSource?.Cancel();
-            Machine.Stop();
-            OnStopped();
 
-            if (_isSubscribed)
+            try
             {
-                UnsubscribeMachineEvents();
-                _isSubscribed = false;
+                Machine.Stop();
             }
+            finally
+            {
+                try
+                {
+                    OnStopped();
+                }
+                finally
+                {
+                    if (_isSubscribed)
+                    {
+                        _isSubscribed = false;
+                        UnsubscribeMachineEvents();
+                    }
 
-            Finished?.Invoke();
+                    Finished?.Invoke();
+                }
+            }
         }
 
-        protected void Initialize(TMachine machine, SceneNavigator navigator, SceneStateMachine sceneMachine)
+        protected void Initialize(TMachine machine, SceneStateMachine sceneMachine)
         {
             ArgumentGuard.CheckNotNull(machine, nameof(machine));
-            ArgumentGuard.CheckNotNull(navigator, nameof(navigator));
             ArgumentGuard.CheckNotNull(sceneMachine, nameof(sceneMachine));
 
             Machine = machine;
-            _navigator = navigator;
             _sceneMachine = sceneMachine;
         }
 
         protected void RequestTransition(SceneId sceneId)
         {
-            if (_isEntered == false || _navigator.IsTransitioning)
+            if (_isEntered == false || _sceneMachine.IsTransitioning || _sceneMachine.IsStopped)
             {
                 return;
             }
 
-            switch (sceneId)
-            {
-                case SceneId.Menu:
-                    _navigator.LoadMenuAsync().Forget();
-                    break;
-
-                case SceneId.Game:
-                    _navigator.LoadGameAsync().Forget();
-                    break;
-
-                case SceneId.Fill:
-                    _navigator.LoadFillAsync().Forget();
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(sceneId), sceneId, "Unknown target scene.");
-            }
+            _sceneMachine.ChangeStateAsync(sceneId).Forget();
         }
 
         protected abstract void ValidateConfiguration();
@@ -183,16 +177,6 @@ namespace Game
 
             SubscribeMachineEvents();
             _isSubscribed = true;
-        }
-
-        private void StartScene()
-        {
-            _sceneMachine.Start(this);
-        }
-
-        private void FinishScene()
-        {
-            _sceneMachine.Stop(this);
         }
     }
 }

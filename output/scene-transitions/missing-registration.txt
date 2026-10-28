@@ -1,0 +1,4 @@
+Passed: 3; Exit code: 0
+PASS: Missing state registration times out with an exception
+PASS: Registration timeout permanently stops machine and navigator
+PASS: Unregistered scene never enters its gameplay state

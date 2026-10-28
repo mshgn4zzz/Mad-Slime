@@ -1,0 +1,4 @@
+Passed: 3; Exit code: 0
+PASS: Direct boot enters declared scene Fill
+PASS: Direct boot is not paused: Fill
+PASS: Direct boot does not load fallback scenes: Fill

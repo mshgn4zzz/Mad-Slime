@@ -55,6 +55,7 @@ namespace DI
             builder.RegisterComponent(_menuOrchestrator);
             builder.Register<MenuRunningState>(Lifetime.Scoped);
             builder.Register<MenuStateMachine>(Lifetime.Scoped);
+            builder.Register<ResetProgressFlow>(Lifetime.Scoped);
             builder.Register<RouletteFactory>(resolver => new RouletteFactory(_rouletteConfig,
                 resolver.Resolve<IRouletteStorage>(), resolver.Resolve<ISkinStorage>(),
                 resolver.Resolve<SkinInventory>(), resolver.Resolve<Wallet>(),
@@ -74,7 +75,6 @@ namespace DI
         private void InitializeScene(IObjectResolver container)
         {
             container.Resolve<UiSpawner>().SetParent(_runtimeWindows);
-            container.Resolve<SceneNavigator>().EnsureInitialized();
             container.Resolve<Pauser>().ResetToPlay();
 
             SceneButtonSoundInjector.Inject(container, gameObject.scene);

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using DI;
 using Economy;
 using Game;
@@ -40,6 +42,9 @@ public class FsmFlowChecks
     private static FillSessionData _session;
     private static FillStateMachine _fillMachine;
     private static FillResult _initialResult;
+    private static UniTask _navigationChecks;
+    private static MenuSessionData _menuSession;
+    private static int _menuHandle;
 
     static FsmFlowChecks()
     {
@@ -64,13 +69,40 @@ public class FsmFlowChecks
         }
         SessionState.SetBool(ActiveKey, true);
         SessionState.SetBool(FinishedKey, false);
-        EditorSceneManager.OpenScene("Assets/MadSlime/Scenes/Menu.unity", OpenSceneMode.Single);
+        string bootScene = SessionState.GetString("MadSlime.FsmChecks.BootScene", "Menu");
+        EditorSceneManager.OpenScene("Assets/MadSlime/Scenes/" + bootScene + ".unity", OpenSceneMode.Single);
         EditorApplication.EnterPlaymode();
     }
 
     public static void RunSmoke()
     {
         SessionState.SetBool("MadSlime.FsmChecks.Smoke", true);
+        Run();
+    }
+
+    public static void RunGameBoot()
+    {
+        SessionState.SetString("MadSlime.FsmChecks.BootScene", "Game");
+        Run();
+    }
+
+    public static void RunFillBoot()
+    {
+        SessionState.SetString("MadSlime.FsmChecks.BootScene", "Fill");
+        Run();
+    }
+
+    public static void RunMissingScene()
+    {
+        SessionState.SetBool("MadSlime.FsmChecks.MissingScene", true);
+        EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
+        EditorBuildSettings.scenes = new[] { scenes[0], scenes[2] };
+        Run();
+    }
+
+    public static void RunMissingRegistration()
+    {
+        SessionState.SetBool("MadSlime.FsmChecks.MissingRegistration", true);
         Run();
     }
 
@@ -93,6 +125,72 @@ public class FsmFlowChecks
             if (EditorApplication.timeSinceStartup - _phaseStarted > 90)
             {
                 throw new Exception("Timeout in phase " + _phase + ", active scene " + SceneManager.GetActiveScene().name);
+            }
+            if (SessionState.GetBool("MadSlime.FsmChecks.MissingRegistration", false))
+            {
+                if (_phase == 0)
+                {
+                    if (Ready<MenuSceneState>() == null) return;
+                    SceneManager.sceneLoaded += DisableGameRegistration;
+                    _navigationChecks = Find<ProjectLifetimeScope>().Container.Resolve<SceneStateMachine>().ChangeStateAsync(SceneId.Game);
+                    Next();
+                    return;
+                }
+
+                if (_navigationChecks.Status == UniTaskStatus.Pending) return;
+                SceneManager.sceneLoaded -= DisableGameRegistration;
+                Expect<InvalidOperationException>(() => _navigationChecks.GetAwaiter().GetResult(), "Missing state registration times out with an exception");
+                SceneStateMachine failedRegistration = Find<ProjectLifetimeScope>().Container.Resolve<SceneStateMachine>();
+                Require(failedRegistration.IsStopped && failedRegistration.Failure.Message.Contains("register")
+                    && Find<ProjectLifetimeScope>().Container.Resolve<SceneNavigator>().IsStopped,
+                    "Registration timeout permanently stops machine and navigator");
+                Require(GetCurrent(failedRegistration) == null
+                    && GetCurrent(Find<GameLifetimeScope>().Container.Resolve<GameplayStateMachine>()) == null,
+                    "Unregistered scene never enters its gameplay state");
+                Finish(0);
+                return;
+            }
+            if (SessionState.GetBool("MadSlime.FsmChecks.MissingScene", false))
+            {
+                if (_phase == 0)
+                {
+                    if (Ready<MenuSceneState>() == null) return;
+                    _navigationChecks = Find<ProjectLifetimeScope>().Container.Resolve<SceneStateMachine>().ChangeStateAsync(SceneId.Game);
+                    Next();
+                    return;
+                }
+
+                if (_navigationChecks.Status == UniTaskStatus.Pending) return;
+                Expect<Exception>(() => _navigationChecks.GetAwaiter().GetResult(), "Missing scene load error propagates");
+                SceneStateMachine failedMachine = Find<ProjectLifetimeScope>().Container.Resolve<SceneStateMachine>();
+                Require(failedMachine.IsStopped && failedMachine.Failure != null
+                    && Find<ProjectLifetimeScope>().Container.Resolve<SceneNavigator>().IsStopped,
+                    "Real Unity scene loading failure stops machine and navigator");
+                Require(GetCurrent(failedMachine) == null && SceneManager.sceneCount == 1,
+                    "Loading failure clears state without starting a fallback scene");
+                Finish(0);
+                return;
+            }
+            string bootScene = SessionState.GetString("MadSlime.FsmChecks.BootScene", "Menu");
+            if (bootScene != "Menu")
+            {
+                if (bootScene == "Game" && Ready<GameSceneState>() == null) return;
+                if (bootScene == "Fill" && Ready<FillSceneState>() == null) return;
+                SceneStateMachine bootMachine = Find<ProjectLifetimeScope>().Container.Resolve<SceneStateMachine>();
+                Require(bootMachine.CurrentSceneId.ToString() == bootScene, "Direct boot enters declared scene " + bootScene);
+                if (bootScene == "Game")
+                {
+                    Require(GetCurrent(Find<GameLifetimeScope>().Container.Resolve<GameplayStateMachine>()) is WaitingForStartState,
+                        "Direct Game boot waits for the first movement");
+                    Raise(Find<PlayerInputReader>(), "MovementKeyPressed");
+                    Require(GetCurrent(Find<GameLifetimeScope>().Container.Resolve<GameplayStateMachine>()) is PlayingState,
+                        "Direct Game boot starts playing after movement");
+                }
+                YG.YG2.SetFocusWindowGame(true);
+                Require(Time.timeScale == 1f && AudioListener.pause == false, "Direct boot is not paused: " + bootScene);
+                Require(SceneManager.sceneCount == 1, "Direct boot does not load fallback scenes: " + bootScene);
+                Finish(0);
+                return;
             }
             switch (_phase)
             {
@@ -287,6 +385,43 @@ public class FsmFlowChecks
                     if (Ready<MenuSceneState>() == null) return;
                     Require(Find<WinMenu>() == null && Find<FailMenu>() == null,
                         "Interrupted filling does not emit a successful completion or result UI");
+                    _navigationChecks = CheckSceneContractsAsync();
+                    Next();
+                    break;
+                case 23:
+                    if (_navigationChecks.Status == UniTaskStatus.Pending) return;
+                    _navigationChecks.GetAwaiter().GetResult();
+                    _menuSession = Find<ProjectLifetimeScope>().Container.Resolve<MenuSessionData>();
+                    _menuHandle = SceneManager.GetActiveScene().handle;
+                    _navigationChecks = Find<MenuLifetimeScope>().Container.Resolve<ResetProgressFlow>().RunAsync(CancellationToken.None);
+                    Next();
+                    break;
+                case 24:
+                    if (_navigationChecks.Status == UniTaskStatus.Pending) return;
+                    _navigationChecks.GetAwaiter().GetResult();
+                    if (Ready<MenuSceneState>() == null) return;
+                    Require(SceneManager.GetActiveScene().handle != _menuHandle, "Reset explicitly reloads the same Menu scene");
+                    Require(ReferenceEquals(_menuSession, Find<ProjectLifetimeScope>().Container.Resolve<MenuSessionData>()),
+                        "Daily roulette session survives Menu restart");
+                    Require(Find<ProjectLifetimeScope>().Container.Resolve<ILevelStorage>().CurrentLevel == 1,
+                        "Successful reset restores initial level");
+                    Find<ProjectLifetimeScope>().Container.Resolve<IBalanceStorage>().SetBalance(321);
+                    Find<ProjectLifetimeScope>().Container.Resolve<ILevelStorage>().SetLevelProgress(2, 2);
+                    _balanceBefore = Find<Wallet>().Balance;
+                    FsmSaveConfirmation.FailNext = true;
+                    _navigationChecks = Find<MenuLifetimeScope>().Container.Resolve<ResetProgressFlow>().RunAsync(CancellationToken.None);
+                    Next();
+                    break;
+                case 25:
+                    if (_navigationChecks.Status == UniTaskStatus.Pending) return;
+                    Expect<InvalidOperationException>(() => _navigationChecks.GetAwaiter().GetResult(), "Reset confirmation error propagates");
+                    SceneStateMachine stopped = Find<ProjectLifetimeScope>().Container.Resolve<SceneStateMachine>();
+                    Require(stopped.IsStopped && Find<ProjectLifetimeScope>().Container.Resolve<SceneNavigator>().IsStopped,
+                        "Reset failure permanently stops scene machine and navigator");
+                    Require(Find<ProjectLifetimeScope>().Container.Resolve<IBalanceStorage>().Balance == _balanceBefore,
+                        "Failed reset confirmation does not reset progress");
+                    Require(Find<ProjectLifetimeScope>().Container.Resolve<ILevelStorage>().CurrentLevel == 2,
+                        "Failed reset confirmation preserves level progress");
                     Finish(0);
                     break;
             }
@@ -358,11 +493,11 @@ public class FsmFlowChecks
 
     private static T Ready<T>() where T : Object
     {
-        SceneNavigator navigator = Find<SceneNavigator>();
-        if (navigator == null || navigator.IsTransitioning) return null;
         T state = Find<T>();
         ProjectLifetimeScope scope = Find<ProjectLifetimeScope>();
-        if (scope == null || ReferenceEquals(GetCurrent(scope.Container.Resolve<SceneStateMachine>()), state) == false) return null;
+        if (scope == null) return null;
+        SceneStateMachine machine = scope.Container.Resolve<SceneStateMachine>();
+        if (machine.IsTransitioning || machine.IsStopped || ReferenceEquals(GetCurrent(machine), state) == false) return null;
         return state;
     }
 
@@ -421,6 +556,128 @@ public class FsmFlowChecks
         Expect<InvalidOperationException>(data.MarkRescueUsed, "Winning session rejects rescue");
     }
 
+    private static async UniTask CheckSceneContractsAsync()
+    {
+        ProjectLifetimeScope scope = Find<ProjectLifetimeScope>();
+        Canvas prefab = AssetDatabase.LoadAssetAtPath<Canvas>(AssetDatabase.GUIDToAssetPath("36cd546a12462c565a235f5ca971a629"));
+        List<Exception> unobserved = new List<Exception>();
+        Action<Exception> observe = exception => unobserved.Add(exception);
+        UniTaskScheduler.UnobservedTaskException += observe;
+
+        try
+        {
+            for (int scenario = 0; scenario < 8; scenario++)
+            {
+                SceneNavigator navigator = new SceneNavigator();
+                SceneStateMachine machine = new SceneStateMachine(navigator,
+                    new LoadingScreenController(prefab, scope.transform),
+                    scope.Container.Resolve<ISavesReadiness>(), scope.Container.Resolve<Skins.SkinInventory>(),
+                    scope.GetCancellationTokenOnDestroy());
+                ProbeSceneState state = new ProbeSceneState();
+                state.FailPreparation = scenario == 0;
+                state.FailEntry = scenario == 1;
+                state.FailExit = scenario == 2;
+                state.WaitForCancellation = scenario == 7;
+                int errorsBefore = unobserved.Count;
+                CancellationTokenSource sceneLifetime = new CancellationTokenSource();
+                machine.RegisterScene(state, SceneManager.GetActiveScene(), sceneLifetime.Token);
+                if (scenario == 7)
+                {
+                    await UniTask.NextFrame();
+                    sceneLifetime.Cancel();
+                }
+                await UniTask.WaitUntil(() => machine.IsStopped || machine.IsTransitioning == false)
+                    .Timeout(TimeSpan.FromSeconds(15));
+
+                if (scenario < 2)
+                {
+                    Require(ReferenceEquals(machine.Failure, state.Error), "Preparation/entry preserves original exception: " + scenario);
+                    Require(unobserved.Count == errorsBefore + 1, "Initial failure is reported once: " + scenario);
+                }
+                else if (scenario == 7)
+                {
+                    Require(machine.Failure is OperationCanceledException, "Unexpected scene lifetime cancellation stops preparation");
+                }
+                else
+                {
+                    Require(ReferenceEquals(GetCurrent(machine), state), "Scene machine enters through base CurrentState: " + scenario);
+                    try
+                    {
+                        if (scenario == 3)
+                        {
+                            machine.RegisterScene(new ProbeSceneState(), SceneManager.GetActiveScene(), CancellationToken.None);
+                        }
+                        else if (scenario == 4)
+                        {
+                            ProbeSceneState wrong = new ProbeSceneState { Id = SceneId.Fill };
+                            machine.RegisterScene(wrong, SceneManager.GetActiveScene(), CancellationToken.None);
+                        }
+                        else if (scenario == 6)
+                        {
+                            navigator.Stop();
+                            await machine.ChangeStateAsync(SceneId.Game);
+                        }
+                        else
+                        {
+                            await machine.ChangeStateAsync(scenario == 5 ? (SceneId)999 : SceneId.Game);
+                        }
+
+                        throw new Exception("Navigation contract violation did not throw: " + scenario);
+                    }
+                    catch (InvalidOperationException) { }
+                    catch (ArgumentException) { }
+                }
+
+                Require(machine.IsStopped && navigator.IsStopped && machine.Failure != null,
+                    "Contract failure stops machine and navigator: " + scenario);
+                Require(GetCurrent(machine) == null && state.Exits == 1, "Base clears current state and exits once: " + scenario);
+                try
+                {
+                    await machine.ChangeStateAsync(SceneId.Game);
+                    throw new Exception("Stopped machine accepted another transition");
+                }
+                catch (InvalidOperationException) { }
+                Require(machine.IsStopped && navigator.IsStopped, "Failure cannot silently resume navigation: " + scenario);
+                machine.Dispose();
+                sceneLifetime.Dispose();
+            }
+        }
+        finally
+        {
+            UniTaskScheduler.UnobservedTaskException -= observe;
+        }
+    }
+
+    private sealed class ProbeSceneState : ISceneState
+    {
+        public SceneId Id = SceneId.Menu;
+        public bool FailPreparation;
+        public bool FailEntry;
+        public bool FailExit;
+        public bool WaitForCancellation;
+        public int Exits;
+        public Exception Error = new InvalidOperationException("Injected scene lifecycle error");
+        public SceneId SceneId => Id;
+
+        public UniTask PrepareAsync(CancellationToken cancellationToken)
+        {
+            if (FailPreparation) throw Error;
+            if (WaitForCancellation) return UniTask.Delay(TimeSpan.FromSeconds(60), cancellationToken: cancellationToken);
+            return UniTask.CompletedTask;
+        }
+
+        public void Enter()
+        {
+            if (FailEntry) throw Error;
+        }
+
+        public void Exit()
+        {
+            Exits++;
+            if (FailExit) throw Error;
+        }
+    }
+
     private static void Expect<T>(Action action, string description) where T : Exception
     {
         try { action(); }
@@ -438,8 +695,20 @@ public class FsmFlowChecks
     private static void OnLog(string message, string stackTrace, LogType type)
     {
         if (type != LogType.Exception && type != LogType.Error && type != LogType.Assert) return;
+        if (SessionState.GetBool("MadSlime.FsmChecks.MissingScene", false)
+            && message.Contains("couldn't be loaded")) return;
         _results.Add("UNITY ERROR: " + message + "\n" + stackTrace);
         Finish(1);
+    }
+
+    private static void DisableGameRegistration(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name != "Game") return;
+        foreach (GameObject root in scene.GetRootGameObjects())
+        {
+            GameSceneState state = root.GetComponentInChildren<GameSceneState>();
+            if (state != null) state.enabled = false;
+        }
     }
 
     private static void Finish(int code)

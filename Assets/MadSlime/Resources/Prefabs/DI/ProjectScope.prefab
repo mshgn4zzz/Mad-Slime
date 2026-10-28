@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 6330714499415004578}
   - component: {fileID: 623364931739954327}
   - component: {fileID: 499422805580341}
-  - component: {fileID: 5388489806158652999}
   - component: {fileID: 930003}
   m_Layer: 0
   m_Name: ProjectScope
@@ -76,7 +75,7 @@ MonoBehaviour:
   _layoutsLibrary: {fileID: 11400000, guid: 6d4a8c2e7f1b493a8c0d5e7f9a1b3c64, type: 2}
   _audioPlayer: {fileID: 6330714499415004578}
   _audioMixerController: {fileID: 623364931739954327}
-  _sceneNavigator: {fileID: 5388489806158652999}
+  _loadingScreenPrefab: {fileID: 7158324449715521420, guid: 36cd546a12462c565a235f5ca971a629, type: 3}
 --- !u!114 &900000000000000020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -137,19 +136,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _config: {fileID: 11400000, guid: 90f4b9db17c6b2ffc98874fb1b3cbd0d, type: 2}
---- !u!114 &5388489806158652999
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5567698310828948670}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3394a6f83cb43414a9fab5f1943edd48, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _loadingScreenPrefab: {fileID: 7158324449715521420, guid: 36cd546a12462c565a235f5ca971a629, type: 3}
 --- !u!114 &930003
 MonoBehaviour:
   m_ObjectHideFlags: 0

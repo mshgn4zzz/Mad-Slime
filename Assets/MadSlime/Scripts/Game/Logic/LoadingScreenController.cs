@@ -10,29 +10,31 @@ namespace Game
         private const string ControllerName = "LoadingScreenController";
 
         private Canvas _prefab;
+        private Transform _parent;
         private Canvas _instance;
         private LoadingScreenView _view;
 
-        public LoadingScreenController(Canvas prefab)
+        public LoadingScreenController(Canvas prefab, Transform parent)
         {
             _prefab = prefab;
+            _parent = parent;
         }
 
-        public void Show(Transform parent)
+        public void Show()
         {
             if (_prefab == null)
             {
                 throw new InvalidOperationException(
                     $"{ControllerName}: loading screen prefab is not assigned. Drag a loading screen Canvas "
-                        + $"prefab into the _loadingScreenPrefab field of SceneNavigator.");
+                        + $"prefab into the _loadingScreenPrefab field of ProjectLifetimeScope.");
             }
 
             if (_instance != null)
             {
-                DestroyInstance();
+                throw new InvalidOperationException("A loading screen is already open.");
             }
 
-            _instance = UnityEngine.Object.Instantiate(_prefab, parent);
+            _instance = UnityEngine.Object.Instantiate(_prefab, _parent);
 
             if (_instance.TryGetComponent(out _view) == false)
             {
@@ -62,7 +64,7 @@ namespace Game
         {
             if (_view == null)
             {
-                return UniTask.CompletedTask;
+                throw new InvalidOperationException("No loading screen is open.");
             }
 
             return _view.CompleteAsync(cancellationToken);

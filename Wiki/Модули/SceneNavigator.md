@@ -1,42 +1,50 @@
 # SceneNavigator
 
-**Слой:** Gameplay · **Код:** `Assets/MadSlime/Scripts/Game/Runtime/SceneNavigator.cs` · root-скоуп ([[ProjectLifetimeScope]])
+**Код:** `Assets/MadSlime/Scripts/Game/Logic/SceneNavigator.cs` · singleton в `ProjectLifetimeScope`.
 
-Единственная точка смены сцен. Никто не имеет права дергать `SceneManager.LoadScene` — только `LoadMenuAsync`/`LoadGameAsync`/`LoadFillAsync` (внутри один `LoadAsync(SceneId)`). Сцены: `SceneId` = Menu/Game/Fill (enum `SceneId` в `Game/Data`); отдельной сцены Shop больше нет — магазин живёт окнами в Menu.
+Сервис физических операций с Unity-сценами. Жизненным циклом состояний управляет [[SceneStateMachine]], которая наследует `BaseStateMachine<ISceneState>` и использует его `Stop()` и `SwitchTo()`.
 
-## Session-протокол
+## Ответственность
 
-Сценический оркестратор ([[GameplayOrchestrator]], [[Меню | MenuOrchestrator]], [[FillSceneOrchestrator]]) в `Start` вызывает `RegisterSession(preparation, sessionStart, sessionFinish, token)`:
+- `LoadAsync(source, targetId, token)` отключает Canvas, EventSystem и AudioListener исходной сцены, аддитивно загружает целевую сцену и назначает её активной.
+- `UnloadAsync(scene)` выгружает конкретную исходную сцену.
+- `GetSceneName(SceneId)` хранит соответствие Menu / Game / Fill именам Unity-сцен.
+- `Stop()` окончательно запрещает новые операции сервиса.
 
-- вне перехода — колбэки запускаются сразу (`StartInitialSessionAsync`): loading screen → ожидание готовности сейва (`ISavesReadiness.IsReady`) → `SkinInventory.Initialize()` → `EnsureInitialized()` → `preparation(token)` → `CompleteAsync` → `sessionStart()`
-- во время перехода — колбэки складываются в pending и запускаются новой сценой
+Навигатор не хранит игровое состояние, не вызывает `PrepareAsync`, `Enter` или `Exit`, не занимается сохранениями, скинами, рулеткой или сбросом прогресса. Это обычный C#-сервис; компонента SceneNavigator на ProjectScope больше нет.
 
-`UnregisterSession(sessionStart)` — симметричная очистка в `OnDisable` оркестратора.
+## Переход
 
-## TransitionAsync — что происходит
+`SceneStateMachine.ChangeStateAsync` выполняет:
 
-1. Loading screen: инстанс префаба с `LoadingScreenView` (показывает выбранный скин игрока, прогресс из `ReportPreparationProgress` — его тянет генерация уровня)
-2. `sessionFinish()` уходящей сцены, у её корней выключаются `EventSystem`/`Canvas`, перед загрузкой входящей — `AudioListener` (звук живёт без разрыва)
-3. Аддитивная загрузка с `allowSceneActivation = false`, ожидание прогресса до 0.9, активация, `SetActiveScene`
-4. Ожидание регистрации входящей сессии → `preparation(token)` → `CompleteAsync`
-5. Выгрузка исходящей сцены → восстановление `EventSystem`, если он остался только в умершей сцене → `sessionStart()` входящей → скрыть loading
-6. Обновление `PreviousSceneId`/`CurrentSceneId`
+1. Показывает загрузочный экран.
+2. Вызывает базовый `Stop()` для завершения исходного состояния.
+3. Загружает целевую сцену через навигатор.
+4. Ожидает регистрацию конкретного `ISceneState`, проверяя его SceneId и принадлежность загруженной сцене.
+5. Вызывает `PrepareAsync` и завершает загрузочную анимацию.
+6. Выгружает исходную Unity-сцену.
+7. Вызывает базовый `SwitchTo` для входа в новое состояние.
+8. Закрывает загрузочный экран и разрешает взаимодействие.
 
-## API
+При `RestartCurrentAsync` новая копия одноимённой сцены загружается аддитивно. Навигатор получает конкретную сцену через sceneLoaded, а не ищет первую по имени. Старая копия выгружается по её Scene handle после подготовки новой. Корневой scope и загрузочный экран продолжают жить независимо от них.
 
-- `EnsureInitialized()` — лениво резолвит `SceneId` по открытым сценам; неизвестная сцена — `InvalidOperationException`. Вызывается из `RegisterBuildCallback` сценических скоупов (Menu, Game) и перед каждым переходом
-- `IsTransitioning` — guard, который проверяют все вызывающие перед навигацией
-- `TryMarkDailyShown()` — одноразовый показ ежедневной рулетки за сессию ([[Меню | MenuNavigation]])
-- `ReportPreparationProgress(float)` — прокидывает прогресс в `LoadingScreenView`
+## Ошибки
 
-## Связи
+Неверная регистрация, ошибка загрузки, подготовки, входа или выхода останавливает машину и навигатор. Исключение передаётся наверх; повторные переходы запрещены. Автоматического возврата в Menu и исправления конфигурации EventSystem нет.
 
-- Владелец: [[ProjectLifetimeScope]] (компонент на ProjectScope)
-- Вызывают: [[Меню | MenuOrchestrator]] → [[Меню | MenuNavigation]], [[GameplayOrchestrator]], [[FillSceneOrchestrator]]
-- Время не трогает: перед переходами оркестраторы зовут `Pauser.ResetToPlay()` ([[Pauser]])
+Входящая сцена должна содержать ровно один активный EventSystem. Навигатор не включает произвольный найденный компонент.
 
-## Нюансы
+Активация загрузки не удерживается на 0.9. Отмена ожидания не отменяет физическую операцию Unity, но не оставляет её с запрещённой активацией. Завершившаяся после остановки загрузка не запускает игровое состояние.
 
-- Повторный `LoadAsync` во время перехода молча выходит (early-return) — потерянное нажатие без лога, вызывающие страхуются проверкой `IsTransitioning`
-- Loading screen инстансится от поля `_loadingScreenPrefab` на SceneNavigator; префаб обязан содержать `LoadingScreenView` (fail-fast)
-- Сессия стартует не раньше готовности сейва — [[SavesYG]]/[[YG2-адаптеры | Yg2SavesAccess]]
+## Первоначальный запуск
+
+`SceneState<TMachine>.Start` передаёт машине сам объект состояния, Unity-сцену и токен жизни. Первая регистрация явно определяет исходную сцену, включая прямой запуск Game и Fill в редакторе. Перебора загруженных сцен нет.
+
+Машина ожидает готовность сохранений, инициализирует SkinInventory и запускает общий путь подготовки и входа. Ожидания сохранений и регистрации ограничены десятью секундами.
+
+## Смежные сценарии
+
+- `MenuSessionData` хранит однократный показ ежедневной рулетки на время жизни приложения.
+- `ResetProgressFlow` подтверждает сохранение, сбрасывает прогресс и запрашивает перезапуск Menu. Ошибка подтверждения не выполняет сброс и останавливает навигацию.
+- `FillExitFlow` показывает рекламу и направляет запрос перехода в машину сцен; допустимы только Game и Menu.
+- `GameSceneState` направляет прогресс подготовки машине, которая обновляет загрузочный экран.

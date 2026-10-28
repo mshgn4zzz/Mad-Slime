@@ -7,14 +7,14 @@ namespace ShapeFill
 {
     public class FillExitFlow
     {
-        private SceneNavigator _sceneNavigator;
+        private SceneStateMachine _sceneMachine;
         private AdScheduler _adScheduler;
 
-        public FillExitFlow(SceneNavigator sceneNavigator, AdScheduler adScheduler)
+        public FillExitFlow(SceneStateMachine sceneMachine, AdScheduler adScheduler)
         {
-            if (sceneNavigator == null)
+            if (sceneMachine == null)
             {
-                throw new ArgumentNullException(nameof(sceneNavigator));
+                throw new ArgumentNullException(nameof(sceneMachine));
             }
 
             if (adScheduler == null)
@@ -22,26 +22,24 @@ namespace ShapeFill
                 throw new ArgumentNullException(nameof(adScheduler));
             }
 
-            _sceneNavigator = sceneNavigator;
+            _sceneMachine = sceneMachine;
             _adScheduler = adScheduler;
         }
 
         public void Exit(SceneId targetSceneId)
         {
-            if (_sceneNavigator.IsTransitioning == true)
+            if (_sceneMachine.IsTransitioning || _sceneMachine.IsStopped)
             {
                 return;
+            }
+
+            if (targetSceneId != SceneId.Game && targetSceneId != SceneId.Menu)
+            {
+                throw new ArgumentOutOfRangeException(nameof(targetSceneId), targetSceneId, "Fill can exit only to Game or Menu.");
             }
 
             _adScheduler.TryShowInterstitial();
-
-            if (targetSceneId == SceneId.Game)
-            {
-                _sceneNavigator.LoadGameAsync().Forget();
-                return;
-            }
-
-            _sceneNavigator.LoadMenuAsync().Forget();
+            _sceneMachine.ChangeStateAsync(targetSceneId).Forget();
         }
     }
 }
