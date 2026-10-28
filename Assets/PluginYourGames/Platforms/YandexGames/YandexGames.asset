@@ -23,7 +23,7 @@ MonoBehaviour:
     skipInterAdvAfterReward: 0
     saveLocal: 0
     saveCloud: 1
-    autoPauseGame: 1
+    autoPauseGame: 0
     selectWebGLTemplate: 1
     runInBackground: 0
     enableExceptions: 2
