@@ -1,17 +1,23 @@
 using System;
+using MadSlime.Ads.Interfaces;
 using YG;
 
-namespace Ads
+namespace MadSlime.Ads.Adapters
 {
     public class Yg2AdsService : IAdsService, IDisposable
     {
+        public Yg2AdsService()
+        {
+            Subscribe();
+        }
+
         public event Action RewardedOpened;
 
         public event Action<string> RewardReceived;
 
         public event Action RewardedClosed;
 
-        public event Action RewardedError;
+        public event Action RewardedFailed;
 
         public event Action<bool> PauseGameChanged;
 
@@ -19,22 +25,9 @@ namespace Ads
 
         public bool IsPauseGame => YG2.isPauseGame;
 
-        public Yg2AdsService()
-        {
-            YG2.onOpenRewardedAdv += OnRewardedOpened;
-            YG2.onRewardAdv += OnRewardReceived;
-            YG2.onCloseRewardedAdv += OnRewardedClosed;
-            YG2.onErrorRewardedAdv += OnRewardedError;
-            YG2.onPauseGame += OnPauseGame;
-        }
-
         public void Dispose()
         {
-            YG2.onOpenRewardedAdv -= OnRewardedOpened;
-            YG2.onRewardAdv -= OnRewardReceived;
-            YG2.onCloseRewardedAdv -= OnRewardedClosed;
-            YG2.onErrorRewardedAdv -= OnRewardedError;
-            YG2.onPauseGame -= OnPauseGame;
+            Unsubscribe();
         }
 
         public void ShowRewarded(string rewardId)
@@ -45,6 +38,24 @@ namespace Ads
         public void ShowInterstitial()
         {
             YG2.InterstitialAdvShow();
+        }
+
+        private void Subscribe()
+        {
+            YG2.onOpenRewardedAdv += OnRewardedOpened;
+            YG2.onRewardAdv += OnRewardReceived;
+            YG2.onCloseRewardedAdv += OnRewardedClosed;
+            YG2.onErrorRewardedAdv += OnRewardedError;
+            YG2.onPauseGame += OnPauseGame;
+        }
+
+        private void Unsubscribe()
+        {
+            YG2.onOpenRewardedAdv -= OnRewardedOpened;
+            YG2.onRewardAdv -= OnRewardReceived;
+            YG2.onCloseRewardedAdv -= OnRewardedClosed;
+            YG2.onErrorRewardedAdv -= OnRewardedError;
+            YG2.onPauseGame -= OnPauseGame;
         }
 
         private void OnRewardedOpened()
@@ -64,7 +75,7 @@ namespace Ads
 
         private void OnRewardedError()
         {
-            RewardedError?.Invoke();
+            RewardedFailed?.Invoke();
         }
 
         private void OnPauseGame(bool isPaused)

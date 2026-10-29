@@ -1,6 +1,6 @@
 using System;
 
-namespace Ads
+namespace MadSlime.Ads.Interfaces
 {
     public interface IAdsService
     {
@@ -10,7 +10,7 @@ namespace Ads
 
         event Action RewardedClosed;
 
-        event Action RewardedError;
+        event Action RewardedFailed;
 
         event Action<bool> PauseGameChanged;
 
