@@ -1,50 +1,34 @@
 using System;
-using Saves;
-using UnityEngine;
-using VContainer;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Validation;
 
-namespace Economy
+namespace MadSlime.Economy.Logic
 {
-    public class Wallet : MonoBehaviour
+    public class Wallet
     {
-        private IBalanceStorage _balanceStorage;
+        private readonly IBalanceStorage _balanceStorage;
+
+        public Wallet(IBalanceStorage balanceStorage)
+        {
+            _balanceStorage = balanceStorage;
+
+            ArgumentGuard.CheckNotNull(_balanceStorage, nameof(balanceStorage));
+        }
 
         public event Action<int, int> BalanceChanged;
 
         public int Balance => _balanceStorage.Balance;
 
-        [Inject]
-        public void Construct(IBalanceStorage balanceStorage)
-        {
-            _balanceStorage = balanceStorage;
-        }
-
-        private void Awake()
-        {
-            if (_balanceStorage == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: IBalanceStorage was not injected. Check that ProjectLifetimeScope "
-                        + $"registers BalanceStorage as IBalanceStorage and Wallet.");
-            }
-        }
-
         public void Add(int amount)
         {
-            if (amount <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(amount), "Wallet.Add requires a positive amount.");
-            }
+            ArgumentGuard.CheckPositive(amount, nameof(amount));
 
             SetBalance(_balanceStorage.Balance + amount);
         }
 
         public void Spend(int amount)
         {
-            if (amount <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(amount), "Wallet.Spend requires a positive amount.");
-            }
+            ArgumentGuard.CheckPositive(amount, nameof(amount));
 
             if (_balanceStorage.Balance < amount)
             {

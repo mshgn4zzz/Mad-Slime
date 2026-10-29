@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Economy;
-using Saves;
-using Skins;
+using MadSlime.Economy.Logic;
+using MadSlime.Roulette.Data;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Skins.Data;
+using MadSlime.Validation;
 
-namespace Roulette
+namespace MadSlime.Roulette.Logic
 {
     public class RouletteModel
     {
@@ -12,78 +14,43 @@ namespace Roulette
         private Func<List<RouletteSlot>> _createSlots;
         private RouletteAccess _access;
         private Func<RouletteSlot, RoulettePrize> _resolvePrize;
-        private LootRoller _roller;
+        private RouletteSlotCalculator _slotCalculator;
         private SkinInventory _inventory;
         private Wallet _wallet;
         private SavesTransaction _transaction;
         private Action _refreshShowcase;
         private List<RouletteSlot> _slots;
-        private bool _advertisementGranted;
+        private bool _isAdvertisementGranted;
         private RouletteOutcome _outcome;
-
-        public RouletteConfig Config => _config;
-
-        public IReadOnlyList<RouletteSlot> Slots => _slots;
-
-        public bool HasAdvertising => _access.HasAdvertising;
 
         public RouletteModel(RouletteModelDependencies dependencies)
         {
-            if (dependencies == null)
-            {
-                throw new ArgumentNullException(nameof(dependencies));
-            }
-
-            if (dependencies.Config == null)
-            {
-                throw new ArgumentNullException(nameof(dependencies.Config));
-            }
-
-            if (dependencies.CreateSlots == null)
-            {
-                throw new ArgumentNullException(nameof(dependencies.CreateSlots));
-            }
-
-            if (dependencies.Access == null)
-            {
-                throw new ArgumentNullException(nameof(dependencies.Access));
-            }
-
-            if (dependencies.ResolvePrize == null)
-            {
-                throw new ArgumentNullException(nameof(dependencies.ResolvePrize));
-            }
-
-            if (dependencies.Roller == null)
-            {
-                throw new ArgumentNullException(nameof(dependencies.Roller));
-            }
-
-            if (dependencies.Inventory == null)
-            {
-                throw new ArgumentNullException(nameof(dependencies.Inventory));
-            }
-
-            if (dependencies.Wallet == null)
-            {
-                throw new ArgumentNullException(nameof(dependencies.Wallet));
-            }
-
-            if (dependencies.Transaction == null)
-            {
-                throw new ArgumentNullException(nameof(dependencies.Transaction));
-            }
+            ArgumentGuard.CheckNotNull(dependencies, nameof(dependencies));
+            ArgumentGuard.CheckNotNull(dependencies.Config, nameof(dependencies.Config));
+            ArgumentGuard.CheckNotNull(dependencies.CreateSlots, nameof(dependencies.CreateSlots));
+            ArgumentGuard.CheckNotNull(dependencies.Access, nameof(dependencies.Access));
+            ArgumentGuard.CheckNotNull(dependencies.ResolvePrize, nameof(dependencies.ResolvePrize));
+            ArgumentGuard.CheckNotNull(dependencies.SlotCalculator, nameof(dependencies.SlotCalculator));
+            ArgumentGuard.CheckNotNull(dependencies.Inventory, nameof(dependencies.Inventory));
+            ArgumentGuard.CheckNotNull(dependencies.Wallet, nameof(dependencies.Wallet));
+            ArgumentGuard.CheckNotNull(dependencies.Transaction, nameof(dependencies.Transaction));
 
             _config = dependencies.Config;
             _createSlots = dependencies.CreateSlots;
             _access = dependencies.Access;
             _resolvePrize = dependencies.ResolvePrize;
-            _roller = dependencies.Roller;
+            _slotCalculator = dependencies.SlotCalculator;
             _inventory = dependencies.Inventory;
             _wallet = dependencies.Wallet;
             _transaction = dependencies.Transaction;
             _refreshShowcase = dependencies.RefreshShowcase;
         }
+
+        public RouletteConfig Config => _config;
+
+        public IReadOnlyList<RouletteSlot> Slots => _slots;
+
+        public bool IsAdvertisingAvailable => _access.IsAdvertisingAvailable;
 
         public void RefreshSlots()
         {
@@ -95,7 +62,7 @@ namespace Roulette
             return _access.GetPrice();
         }
 
-        public bool HasAvailableSkin()
+        public bool IsSkinAvailable()
         {
             for (int i = 0; i < _slots.Count; i++)
             {
@@ -120,26 +87,26 @@ namespace Roulette
             return _access.GetAdSpinsLeft();
         }
 
-        public bool CanSpin(bool advertisementGranted)
+        public bool IsSpinAvailable(bool isAdvertisementGranted)
         {
             if (_slots == null || _slots.Count == 0)
             {
                 return false;
             }
 
-            return _access.CanSpin(advertisementGranted);
+            return _access.IsSpinAvailable(isAdvertisementGranted);
         }
 
-        public bool Spin(bool advertisementGranted, out RouletteOutcome outcome)
+        public bool TrySpin(bool isAdvertisementGranted, out RouletteOutcome outcome)
         {
             outcome = null;
 
-            if (CanSpin(advertisementGranted) == false)
+            if (IsSpinAvailable(isAdvertisementGranted) == false)
             {
                 return false;
             }
 
-            _advertisementGranted = advertisementGranted;
+            _isAdvertisementGranted = isAdvertisementGranted;
             _transaction(ExecuteSpin);
             outcome = _outcome;
             _outcome = null;
@@ -148,14 +115,14 @@ namespace Roulette
 
         private void ExecuteSpin()
         {
-            _access.Pay(_advertisementGranted);
+            _access.Pay(_isAdvertisementGranted);
 
-            int slotIndex = _roller.Roll(_slots);
+            int slotIndex = _slotCalculator.CalculateIndex(_slots);
             RoulettePrize prize = _resolvePrize(_slots[slotIndex]);
 
             if (prize.Skin != null)
             {
-                if (_inventory.Grant(prize.Skin.Id) == false)
+                if (_inventory.TryGrant(prize.Skin.Id) == false)
                 {
                     prize = new RoulettePrize(null, _config.DuplicateCoinsCompensation);
                 }

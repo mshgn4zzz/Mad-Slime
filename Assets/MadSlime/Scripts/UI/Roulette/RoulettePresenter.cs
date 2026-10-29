@@ -1,413 +1,305 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
-using Ads;
-using Audio;
 using Cysharp.Threading.Tasks;
-using Roulette;
-using Saves;
+using MadSlime.Ads.Logic;
+using MadSlime.Audio.Interfaces;
+using MadSlime.Roulette.Logic;
+using MadSlime.Roulette.Logic.StateMachine;
+using MadSlime.UI.Menu;
+using MadSlime.UI.Spawning;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace UI.Roulette
+namespace MadSlime.UI.Roulette
 {
-    using Localization = global::Localization.Localization;
-
     public class RoulettePresenter : MonoBehaviour
     {
         private const float ButtonRefreshInterval = 1f;
-
-        private enum RouletteState
-        {
-            Hidden,
-            Idle,
-            WaitingForAd,
-            ConfirmingSave,
-            Spinning,
-            SaveFailed
-        }
+        [VContainer.Inject] private RouletteDisplayBuilder _displayBuilder;
 
         [SerializeField] private RouletteView _view;
 
-        private RouletteModel _model;
-        private ISaveConfirmation _saveConfirmation;
-        private AdScheduler _adScheduler;
-        private RouletteSoundFeedback _sound;
+        private RouletteEventSubscription _events;
+        private RoulettePrizeSubscription _prizeSubscription;
+        private RouletteStateMachine _machine;
+        private AdScheduler _ads;
         private IUISoundPlayer _soundPlayer;
-        private RouletteOutcome _outcome;
+        private RouletteSoundFeedback _sound;
+        private UiSpawner _spawner;
+        private MenuPopupStack _popups;
+        private RouletteWinPopup _prize;
         private CancellationTokenSource _presentationCancellation;
-        private RouletteState _state = RouletteState.Hidden;
-        private bool _isSubscribed;
-        private Action<RoulettePrize> _onComplete;
         private float _nextRefreshTime;
 
-        public event Action CloseRequested;
-
         public event Action Closed;
-
-        public RouletteView View => _view;
-
-        public void Setup(RouletteModel model, AdScheduler adScheduler, IUISoundPlayer soundPlayer, ISaveConfirmation saveConfirmation)
-        {
-            Unsubscribe();
-            _model = model;
-            _saveConfirmation = saveConfirmation;
-            _adScheduler = adScheduler;
-            _soundPlayer = soundPlayer;
-            _sound = new RouletteSoundFeedback();
-            _view.Wheel.Setup(model.Config);
-            _model.RefreshSlots();
-
-            if (isActiveAndEnabled == true)
-            {
-                Subscribe();
-            }
-        }
-
-        public bool CanSpin()
-        {
-            return IsBusy() == false && _model.CanSpin(false);
-        }
-
-        public bool ShowAndSpin(Action<RoulettePrize> onComplete)
-        {
-            if (_state != RouletteState.Idle || CanSpin() == false)
-            {
-                return false;
-            }
-
-            Show(onComplete);
-            Spin(false);
-            return true;
-        }
-
-        public void Show(Action<RoulettePrize> onComplete)
-        {
-            if (_state != RouletteState.Hidden)
-            {
-                return;
-            }
-
-            if (onComplete == null)
-            {
-                throw new ArgumentNullException(nameof(onComplete));
-            }
-
-            _onComplete = onComplete;
-            Subscribe();
-            _state = RouletteState.Idle;
-            _presentationCancellation = CancellationTokenSource.CreateLinkedTokenSource(
-                this.GetCancellationTokenOnDestroy());
-            BuildWheel();
-            _view.Show();
-            RefreshButtons();
-        }
-
-        public void Hide()
-        {
-            if (_state == RouletteState.Hidden)
-            {
-                return;
-            }
-
-            OnViewDisabled();
-            _view.Hide();
-        }
-
-        public void ResumeAfterPrize()
-        {
-            if (_state == RouletteState.Hidden)
-            {
-                return;
-            }
-
-            _view.Wheel.Stop();
-            _outcome = null;
-            _state = RouletteState.Idle;
-            BuildWheel();
-            RefreshButtons();
-        }
+        public event Action<RoulettePrize> PrizePresented;
 
         private void OnEnable()
         {
-            if (_model != null)
-            {
-                Subscribe();
-            }
+            Attach();
         }
 
         private void OnDisable()
         {
             OnViewDisabled();
-            Unsubscribe();
+            Detach();
         }
 
-        private void Subscribe()
+        private void OnDestroy()
         {
-            if (_isSubscribed == true)
-            {
-                return;
-            }
-
-            _view.SpinRequested += OnSpinRequested;
-            _view.AdRequested += OnAdRequested;
-            _view.CloseRequested += OnCloseRequested;
-            _view.Closed += OnViewClosed;
-            _view.Disabled += OnViewDisabled;
-            _view.Wheel.Completed += OnWheelCompleted;
-            _sound.Setup(_view.Wheel, _model.Config, _soundPlayer);
-            _isSubscribed = true;
-        }
-
-        private void Unsubscribe()
-        {
-            if (_isSubscribed == false)
-            {
-                return;
-            }
-
-            _view.SpinRequested -= OnSpinRequested;
-            _view.AdRequested -= OnAdRequested;
-            _view.CloseRequested -= OnCloseRequested;
-            _view.Closed -= OnViewClosed;
-            _view.Disabled -= OnViewDisabled;
-            _view.Wheel.Completed -= OnWheelCompleted;
-            _sound.Release();
-            _isSubscribed = false;
+            Detach();
+            _machine?.Dispose();
         }
 
         private void Update()
         {
-            if (_state == RouletteState.Hidden || Time.unscaledTime < _nextRefreshTime)
+            if (_machine == null || _machine.IsRunning() == false || Time.unscaledTime < _nextRefreshTime)
             {
                 return;
             }
 
             _nextRefreshTime = Time.unscaledTime + ButtonRefreshInterval;
-            RefreshButtons();
+            OnMachineChanged();
         }
 
-        private void OnCloseRequested()
+        public void Setup(
+            RouletteStateMachine machine,
+            AdScheduler ads,
+            IUISoundPlayer soundPlayer,
+            UiSpawner spawner,
+            MenuPopupStack popups)
         {
-            if (IsBusy() == false)
+            ArgumentGuard.CheckNotNull(machine, nameof(machine));
+            ArgumentGuard.CheckNotNull(ads, nameof(ads));
+            ArgumentGuard.CheckNotNull(soundPlayer, nameof(soundPlayer));
+            ArgumentGuard.CheckNotNull(spawner, nameof(spawner));
+            ArgumentGuard.CheckNotNull(popups, nameof(popups));
+            Detach();
+            StopPresentation();
+            _machine?.Dispose();
+            _machine = machine;
+            _ads = ads;
+            _soundPlayer = soundPlayer;
+            _spawner = spawner;
+            _popups = popups;
+            _sound = new RouletteSoundFeedback();
+            _view.Setup(machine.Model.Config);
+
+            if (isActiveAndEnabled)
             {
-                CloseRequested?.Invoke();
+                Attach();
             }
         }
 
-        private bool IsBusy()
+        public void Show()
         {
-            return _state == RouletteState.WaitingForAd || _state == RouletteState.ConfirmingSave
-                || _state == RouletteState.Spinning;
-        }
-
-        private void BuildWheel()
-        {
-            _model.RefreshSlots();
-
-            List<RouletteSectorIcon> icons = new List<RouletteSectorIcon>();
-
-            for (int i = 0; i < _model.Slots.Count; i++)
-            {
-                RouletteSlot slot = _model.Slots[i];
-                Sprite icon;
-                string label = null;
-
-                if (slot.IsHidden == true)
-                {
-                    icon = _view.SecretIcon;
-                }
-                else if (slot.Skin != null)
-                {
-                    icon = slot.Skin.Icon;
-                }
-                else
-                {
-                    icon = _view.GetCoinIcon(slot.Coins);
-                    label = $"×{slot.Coins}";
-                }
-
-                icons.Add(new RouletteSectorIcon(icon, label));
-            }
-
-            _view.Wheel.Build(icons);
-        }
-
-        private void OnSpinRequested()
-        {
-            if (_state == RouletteState.Idle || _state == RouletteState.SaveFailed)
-            {
-                Spin(false);
-            }
-        }
-
-        private void OnAdRequested()
-        {
-            if (_state != RouletteState.Idle || _model.HasAdvertising == false
-                || _model.CanSpin(true) == false)
+            if (_machine.IsRunning() || _presentationCancellation != null)
             {
                 return;
             }
 
-            _state = RouletteState.WaitingForAd;
-            RefreshButtons();
-            _adScheduler.ShowRewarded(_adScheduler.RouletteRewardId, OnAdGranted, OnAdNotGranted, OnAdNotGranted, OnAdNotGranted);
+            _presentationCancellation = CancellationTokenSource.CreateLinkedTokenSource(
+                this.GetCancellationTokenOnDestroy());
+            _view.Show();
+            _machine.Start();
         }
 
-        private void OnAdGranted()
+        public bool TryShowAndSpin()
         {
-            if (_state != RouletteState.WaitingForAd)
+            if (_machine.IsRunning() || _presentationCancellation != null
+                || _machine.Model.IsSpinAvailable(false) == false)
+            {
+                return false;
+            }
+
+            Show();
+            return _machine.TrySpin();
+        }
+
+        public void Hide()
+        {
+            if (_machine == null || _machine.IsRunning() == false)
             {
                 return;
             }
 
-            Spin(true);
+            _machine.Stop();
+            CancelPresentation();
+            OnMachineChanged();
+            _view.Hide();
         }
 
-        private void OnAdNotGranted()
+        private void Attach()
         {
-            if (_state != RouletteState.WaitingForAd)
+            if (_machine == null)
             {
                 return;
             }
 
-            _state = RouletteState.Idle;
-            RefreshButtons();
+            _events = new RouletteEventSubscription(this, _machine, _view);
+            _sound.Setup(_view.Wheel, _machine.Model.Config, _soundPlayer);
         }
 
-        private void Spin(bool advertisementGranted)
+        private void Detach()
         {
-            if (_model.Spin(advertisementGranted, out _outcome) == false)
+            if (_machine == null)
             {
-                _state = RouletteState.Idle;
-                RefreshButtons();
                 return;
             }
 
-            _state = RouletteState.ConfirmingSave;
-            RefreshButtons();
-            ConfirmAndSpinAsync(_presentationCancellation.Token).Forget();
+            _events?.Dispose();
+            _events = null;
+            _sound.Release();
         }
 
-        private async UniTaskVoid ConfirmAndSpinAsync(CancellationToken cancellationToken)
+        private async UniTask PresentResultAsync(RouletteOutcome outcome, CancellationToken token)
         {
             try
             {
-                await _saveConfirmation.ConfirmSavedAsync(cancellationToken);
-                cancellationToken.ThrowIfCancellationRequested();
+                _sound.PlaySpin();
+                await _view.PresentResultAsync(outcome.SlotIndex, token);
+                token.ThrowIfCancellationRequested();
+                _sound.PlayWin();
+                _prize = _spawner.Spawn(_view.WinPopupPrefab, UiLayer.Popup);
+                _prize.Initialize(outcome.Prize, _view);
+                _prizeSubscription = new RoulettePrizeSubscription(
+                    _prize, OnPrizeCloseRequested, OnPrizeClosed);
+                _popups.Push(_prize);
+                _spawner.Show(_prize);
+                PrizePresented?.Invoke(outcome.Prize);
             }
-            catch (OperationCanceledException)
+            catch (OperationCanceledException) when (token.IsCancellationRequested)
+            {
+            }
+            catch (Exception exception)
+            {
+                OnFailed(exception);
+                Hide();
+            }
+        }
+
+        private void ReleasePrize()
+        {
+            RouletteWinPopup prize = _prize;
+
+            _prize = null;
+            _prizeSubscription?.Dispose();
+            _prizeSubscription = null;
+
+            if (prize == null)
             {
                 return;
             }
-            catch (Exception)
+
+            if (_popups.IsTop(prize))
             {
-                _state = RouletteState.SaveFailed;
-                RefreshButtons();
-                return;
+                _popups.Pop(prize);
             }
 
-            _sound.PlaySpin();
-            _state = RouletteState.Spinning;
-            _view.Wheel.Spin(_outcome.SlotIndex);
+            _spawner.Release(prize);
         }
 
-        private void OnWheelCompleted()
+        private void CancelPresentation()
         {
-            RoulettePrize prize = _outcome.Prize;
-            Action<RoulettePrize> onComplete = _onComplete;
-
-            ShowPrizeAsync(prize, onComplete, this.GetCancellationTokenOnDestroy()).Forget();
-        }
-
-        private async UniTaskVoid ShowPrizeAsync(RoulettePrize prize, Action<RoulettePrize> onComplete, CancellationToken cancellationToken)
-        {
-            try
-            {
-                await UniTask.Delay(
-                    TimeSpan.FromSeconds(_model.Config.WinDwellSeconds),
-                    DelayType.Realtime,
-                    PlayerLoopTiming.Update,
-                    cancellationToken);
-            }
-            catch (OperationCanceledException)
-            {
-                onComplete?.Invoke(prize);
-                return;
-            }
-
-            _sound.PlayWin();
-            onComplete?.Invoke(prize);
-        }
-
-        private void OnViewDisabled()
-        {
-            _state = RouletteState.Hidden;
-            _onComplete = null;
-            _outcome = null;
-
-            if (_presentationCancellation != null)
-            {
-                _presentationCancellation.Cancel();
-                _presentationCancellation.Dispose();
-                _presentationCancellation = null;
-            }
-
+            _presentationCancellation?.Cancel();
+            ReleasePrize();
             _view.Wheel.Stop();
         }
 
-        private void OnViewClosed()
+        private void StopPresentation()
         {
+            CancellationTokenSource source = _presentationCancellation;
+
+            _presentationCancellation = null;
+            source?.Cancel();
+            source?.Dispose();
+            ReleasePrize();
+            _view.Wheel.Stop();
+        }
+
+        internal void OnMachineCloseRequested()
+        {
+            Hide();
+        }
+
+        internal void OnMachineChanged()
+        {
+            _view.Display(_displayBuilder.Build(_machine));
+        }
+
+        internal void OnReady()
+        {
+            _view.Wheel.Stop();
+            _displayBuilder.BuildWheel(_machine.Model, _view);
+        }
+
+        internal void OnSpinRequested()
+        {
+            _machine.TrySpin();
+        }
+
+        internal void OnAdRequested()
+        {
+            _machine.TryAdvertisement();
+        }
+
+        internal void OnCloseRequested()
+        {
+            _machine.RequestClose();
+        }
+
+        internal void OnAdvertisementRequested(Action<bool> complete)
+        {
+            _ads.ShowRewarded(
+                _ads.RouletteRewardId,
+                () => complete(true),
+                () => complete(false),
+                () => complete(false),
+                () => complete(false));
+        }
+
+        internal void OnResultReady(RouletteOutcome outcome)
+        {
+            PresentResultAsync(outcome, _presentationCancellation.Token).Forget();
+        }
+
+        internal void OnViewDisabled()
+        {
+            bool isPresentationAssigned = _presentationCancellation != null;
+
+            _machine?.Stop();
+            StopPresentation();
+
+            if (isPresentationAssigned)
+            {
+                Closed?.Invoke();
+            }
+        }
+
+        internal void OnViewClosed()
+        {
+            _machine.Stop();
+            StopPresentation();
             Closed?.Invoke();
         }
 
-        private string FormatRemainingTime(int totalSeconds)
+        internal void OnFailed(Exception exception)
         {
-            int minutes = totalSeconds / 60;
-            int seconds = totalSeconds % 60;
-
-            return $"{minutes}:{seconds:00}";
+            UniTask.FromException(exception).Forget();
         }
 
-        private void RefreshButtons()
+        private void OnPrizeCloseRequested()
         {
-            string title = Localization.Get("skin_roulette_title");
-            string spinText = _model.GetPrice().ToString();
-
-            if (_model.HasAdvertising == true)
+            if (_prize != null && _popups.IsTop(_prize))
             {
-                title = Localization.Get("daily_roulette_title");
-
-                int remaining = _model.GetFreeRemainSeconds();
-
-                spinText = Localization.Get("roulette_free_ready");
-
-                if (remaining > 0)
-                {
-                    spinText = FormatRemainingTime(remaining);
-                }
+                _prize.BeginClose();
             }
+        }
 
-            if (_state == RouletteState.SaveFailed)
-            {
-                title = Localization.Get("roulette_save_error");
-                spinText = Localization.Get("leaderboard_retry");
-            }
-
-            RouletteDisplayData data = new RouletteDisplayData
-            {
-                Title = title,
-                ShowSpin = _model.HasAdvertising == true || _state == RouletteState.SaveFailed,
-                SpinText = spinText,
-                CanSpin = (_state == RouletteState.Idle && _model.CanSpin(false))
-                    || _state == RouletteState.SaveFailed,
-                ShowAd = _model.HasAdvertising == true && _state != RouletteState.SaveFailed,
-                AdText = string.Format(Localization.Get("roulette_ad_spins"), _model.GetAdSpinsLeft()),
-                CanWatchAd = _state == RouletteState.Idle && _model.CanSpin(true),
-                ShowClose = _model.HasAdvertising,
-                CanClose = IsBusy() == false
-            };
-
-            _view.Display(data);
+        private void OnPrizeClosed()
+        {
+            ReleasePrize();
+            _machine.CompletePresentation();
         }
     }
 }

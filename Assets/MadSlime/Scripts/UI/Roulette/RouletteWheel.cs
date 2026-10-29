@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
-using Roulette;
+using MadSlime.Roulette.Data;
+using MadSlime.Validation;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
-namespace UI.Roulette
+namespace MadSlime.UI.Roulette
 {
     public class RouletteWheel : MonoBehaviour
     {
@@ -22,7 +23,7 @@ namespace UI.Roulette
         private RectTransform _spinContainer;
         [SerializeField]
         private RectTransform _arrow;
-                [SerializeField]
+        [SerializeField]
         private List<Image> _sectorIcons = new List<Image>();
         [SerializeField]
         private List<TMP_Text> _sectorLabels = new List<TMP_Text>();
@@ -39,11 +40,32 @@ namespace UI.Roulette
         private RectTransform _punchedIcon;
         private Vector3 _iconScaleBeforePunch;
 
-        public event Action Tick;
+        public event Action Ticked;
 
         public event Action Completed;
 
         public int SectorCount => _sectorIcons.Count;
+
+        private void Update()
+        {
+            if (_isBuilt == false || _isSpinning)
+            {
+                return;
+            }
+
+            if (_rotation <= -FullCircleDegrees)
+            {
+                _rotation %= FullCircleDegrees;
+                _lastTickIndex = Mathf.FloorToInt((_arrowAngle - _rotation) / _averageSectorAngle);
+            }
+
+            ApplyRotation(_rotation - (_config.IdleRotationSpeed * Time.unscaledDeltaTime));
+        }
+
+        private void OnDisable()
+        {
+            Stop();
+        }
 
         public void Setup(RouletteConfig config)
         {
@@ -58,23 +80,12 @@ namespace UI.Roulette
                     $"{name}: RouletteWheel.Setup was not called. Pass the RouletteConfig before building.");
             }
 
-            if (_spinContainer == null || _arrow == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: SpinContainer or Arrow is not assigned. Wire them in the wheel prefab.");
-            }
+            ArgumentGuard.CheckAssigned(_spinContainer, name, nameof(_spinContainer));
+            ArgumentGuard.CheckAssigned(_arrow, name, nameof(_arrow));
 
-            if (sectors == null || sectors.Count == 0)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: RouletteWheel.Build requires at least one sector.");
-            }
+            ArgumentGuard.CheckNotEmpty(sectors, name, nameof(sectors));
 
-            if (_sectorIcons.Count == 0)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: the wheel has no icon slots. Add sector icon slots to the prefab.");
-            }
+            ArgumentGuard.CheckNotEmpty(_sectorIcons, name, nameof(_sectorIcons));
 
             if (_sectorLabels.Count != _sectorIcons.Count)
             {
@@ -89,36 +100,20 @@ namespace UI.Roulette
                 Image sectorIcon = _sectorIcons[i];
                 TMP_Text sectorLabel = _sectorLabels[i];
 
-                if (sectorIcon == null)
-                {
-                    throw new InvalidOperationException(
-                        $"{name}: icon slot {i} is not assigned. Wire all sector icon slots in the prefab.");
-                }
+                ArgumentGuard.CheckAssigned(sectorIcon, name, nameof(sectorIcon));
 
-                if (sectorLabel == null)
-                {
-                    throw new InvalidOperationException(
-                        $"{name}: sector label {i} is not assigned. Wire all sector labels in the prefab.");
-                }
+                ArgumentGuard.CheckAssigned(sectorLabel, name, nameof(sectorLabel));
 
                 Vector2 slotOffset = sectorIcon.rectTransform.anchoredPosition;
 
-                if (slotOffset.sqrMagnitude <= 0f)
-                {
-                    throw new InvalidOperationException(
-                        $"{name}: icon slot {i} sits at the container center. Offset it from the center.");
-                }
+                ArgumentGuard.CheckPositive(slotOffset.sqrMagnitude, name, nameof(slotOffset.sqrMagnitude));
 
                 _sectorAngles[i] = Mathf.Atan2(slotOffset.y, slotOffset.x) * Mathf.Rad2Deg;
             }
 
             Vector2 arrowOffset = _arrow.anchoredPosition;
 
-            if (arrowOffset.sqrMagnitude <= 0f)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: the Arrow sits at the center. Offset it from the wheel center.");
-            }
+            ArgumentGuard.CheckPositive(arrowOffset.sqrMagnitude, name, nameof(arrowOffset.sqrMagnitude));
 
             _arrowAngle = Mathf.Atan2(arrowOffset.y, arrowOffset.x) * Mathf.Rad2Deg;
             _averageSectorAngle = FullCircleDegrees / _sectorAngles.Length;
@@ -132,11 +127,7 @@ namespace UI.Roulette
             {
                 RouletteSectorIcon sector = sectors[i];
 
-                if (sector.Icon == null)
-                {
-                    throw new InvalidOperationException(
-                        $"{name}: sector icon at index {i} is null.");
-                }
+                ArgumentGuard.CheckAssigned(sector.Icon, name, nameof(sector.Icon));
 
                 _sectorIcons[i].sprite = sector.Icon;
                 _sectorIcons[i].preserveAspect = true;
@@ -162,29 +153,22 @@ namespace UI.Roulette
                     $"{name}: RouletteWheel.Spin was called before Build.");
             }
 
-            if (_isSpinning == true)
+            if (_isSpinning)
             {
                 throw new InvalidOperationException(
                     $"{name}: RouletteWheel.Spin was called while already spinning.");
             }
 
-            if (targetIndex < 0 || targetIndex >= _sectorAngles.Length)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(targetIndex),
-                    targetIndex,
-                    $"RouletteWheel.Spin received a target index outside the "
-                        + $"0..{_sectorAngles.Length - 1} sector range.");
-            }
+            ArgumentGuard.CheckRange(targetIndex, 0, _sectorAngles.Length - 1, nameof(targetIndex));
 
             Stop();
             _isSpinning = true;
             _pendingTargetIndex = targetIndex;
 
             int turns = Random.Range(_config.MinTurns, _config.MaxTurns + 1);
-            float targetAngle = Mod(_arrowAngle - _sectorAngles[targetIndex], FullCircleDegrees);
+            float targetAngle = GetPositiveRemainder(_arrowAngle - _sectorAngles[targetIndex], FullCircleDegrees);
             float windBackRotation = _rotation + _config.WindBackDegrees;
-            float delta = Mod(windBackRotation - targetAngle, FullCircleDegrees);
+            float delta = GetPositiveRemainder(windBackRotation - targetAngle, FullCircleDegrees);
             float targetRotation = windBackRotation - ((turns * FullCircleDegrees) + delta);
 
             Sequence sequence = DOTween.Sequence();
@@ -222,20 +206,17 @@ namespace UI.Roulette
             sequence.OnComplete(OnSpinCompleted);
         }
 
-        private void Update()
+        public void Stop()
         {
-            if (_isBuilt == false || _isSpinning == true)
+            DOTween.Kill(this);
+
+            if (_punchedIcon != null)
             {
-                return;
+                _punchedIcon.localScale = _iconScaleBeforePunch;
+                _punchedIcon = null;
             }
 
-            if (_rotation <= -FullCircleDegrees)
-            {
-                _rotation %= FullCircleDegrees;
-                _lastTickIndex = Mathf.FloorToInt((_arrowAngle - _rotation) / _averageSectorAngle);
-            }
-
-            ApplyRotation(_rotation - (_config.IdleRotationSpeed * Time.unscaledDeltaTime));
+            _isSpinning = false;
         }
 
         private void ApplySectorLabel(TMP_Text label, string labelText)
@@ -280,19 +261,7 @@ namespace UI.Roulette
             }
 
             _lastTickIndex = tickIndex;
-            Tick?.Invoke();
-        }
-
-        private void OnSpinCompleted()
-        {
-            float targetAngle = Mod(_arrowAngle - _sectorAngles[_pendingTargetIndex], FullCircleDegrees);
-
-            _rotation = targetAngle
-                + (FullCircleDegrees * Mathf.RoundToInt((_rotation - targetAngle) / FullCircleDegrees));
-
-            ApplyRotation(_rotation);
-            PunchWinningIcon();
-            Completed?.Invoke();
+            Ticked?.Invoke();
         }
 
         private void PunchWinningIcon()
@@ -304,34 +273,16 @@ namespace UI.Roulette
 
             _punchedIcon
                 .DOPunchScale(
-                    new Vector3(WinPunchStrength, WinPunchStrength, 0f),
-                    punchDuration,
-                    WinPunchVibrato,
-                    WinPunchElasticity)
+                new Vector3(WinPunchStrength, WinPunchStrength, 0f),
+                punchDuration,
+                WinPunchVibrato,
+                WinPunchElasticity)
                 .SetTarget(this)
                 .SetUpdate(true)
                 .SetLink(gameObject, LinkBehaviour.KillOnDisable);
         }
 
-        public void Stop()
-        {
-            DOTween.Kill(this);
-
-            if (_punchedIcon != null)
-            {
-                _punchedIcon.localScale = _iconScaleBeforePunch;
-                _punchedIcon = null;
-            }
-
-            _isSpinning = false;
-        }
-
-        private void OnDisable()
-        {
-            Stop();
-        }
-
-        private static float Mod(float value, float modulus)
+        private float GetPositiveRemainder(float value, float modulus)
         {
             float remainder = value % modulus;
 
@@ -341,6 +292,20 @@ namespace UI.Roulette
             }
 
             return remainder;
+        }
+
+        private void OnSpinCompleted()
+        {
+            float targetAngle = GetPositiveRemainder(
+                _arrowAngle - _sectorAngles[_pendingTargetIndex],
+                FullCircleDegrees);
+
+            _rotation = targetAngle
+                + (FullCircleDegrees * Mathf.RoundToInt((_rotation - targetAngle) / FullCircleDegrees));
+
+            ApplyRotation(_rotation);
+            PunchWinningIcon();
+            Completed?.Invoke();
         }
     }
 }

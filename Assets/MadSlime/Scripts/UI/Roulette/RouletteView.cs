@@ -1,13 +1,16 @@
 using System;
-using Game;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using MadSlime.Roulette.Data;
+using MadSlime.UI.Animations;
+using MadSlime.UI.ResponsiveUI.Runtime;
+using MadSlime.UI.Spawning;
+using MadSlime.Validation;
 using TMPro;
-using UI.Animations;
-using UI.ResponsiveUI;
-using UI.Spawning;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.Roulette
+namespace MadSlime.UI.Roulette
 {
     public class RouletteView : MonoBehaviour, IShowable
     {
@@ -34,6 +37,10 @@ namespace UI.Roulette
         [SerializeField] private TMP_Text _title;
         [SerializeField] private RoulettePopupLayout _layout;
 
+        private RouletteConfig _config;
+        private UniTaskCompletionSource _resultCompletion;
+        private bool _isHiding;
+
         public event Action SpinRequested;
 
         public event Action AdRequested;
@@ -50,12 +57,67 @@ namespace UI.Roulette
 
         public RouletteWinPopup WinPopupPrefab => _winPopupPrefab;
 
+        private void Awake()
+        {
+            if (_wheel == null || _spinButton == null || _spinPriceText == null || _title == null
+                || _secretIcon == null || _fewCoinIcon == null || _stackCoinIcon == null || _pileCoinIcon == null
+                || _bagCoinIcon == null || _safeCoinIcon == null || _winPopupPrefab == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: assign all roulette view references (_wheel, _spinButton, _spinPriceText, _title, "
+                    + $"coin icons, _secretIcon and _winPopupPrefab).");
+            }
+        }
+
+        private void OnEnable()
+        {
+            _spinButton.onClick.AddListener(OnSpinClicked);
+
+            if (_adButton != null)
+            {
+                _adButton.onClick.AddListener(OnAdClicked);
+            }
+
+            if (_closeButton != null)
+            {
+                _closeButton.onClick.AddListener(OnCloseClicked);
+            }
+
+            _wheel.Completed += OnWheelCompleted;
+
+            if (_screenView != null)
+            {
+                _screenView.DisableCompleted += OnHideCompleted;
+            }
+        }
+
+        private void OnDisable()
+        {
+            _spinButton.onClick.RemoveListener(OnSpinClicked);
+
+            if (_adButton != null)
+            {
+                _adButton.onClick.RemoveListener(OnAdClicked);
+            }
+
+            if (_closeButton != null)
+            {
+                _closeButton.onClick.RemoveListener(OnCloseClicked);
+            }
+
+            if (_screenView != null)
+            {
+                _screenView.DisableCompleted -= OnHideCompleted;
+            }
+
+            _wheel.Completed -= OnWheelCompleted;
+            _isHiding = false;
+            Disabled?.Invoke();
+        }
+
         public Sprite GetCoinIcon(int amount)
         {
-            if (amount <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(amount));
-            }
+            ArgumentGuard.CheckPositive(amount, nameof(amount));
 
             Sprite icon;
 
@@ -90,57 +152,48 @@ namespace UI.Roulette
             return icon;
         }
 
-        private void Awake()
+        public void Setup(RouletteConfig config)
         {
-            if (_wheel == null || _spinButton == null || _spinPriceText == null || _title == null
-                || _secretIcon == null || _fewCoinIcon == null || _stackCoinIcon == null || _pileCoinIcon == null
-                || _bagCoinIcon == null || _safeCoinIcon == null || _winPopupPrefab == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: assign all roulette view references (_wheel, _spinButton, _spinPriceText, _title, "
-                        + $"coin icons, _secretIcon and _winPopupPrefab).");
-            }
+            _config = config;
+            _wheel.Setup(config);
         }
 
-        private void OnEnable()
+        public async UniTask PresentResultAsync(int slotIndex, CancellationToken cancellationToken)
         {
-            _spinButton.onClick.AddListener(OnSpinClicked);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (_adButton != null)
+            UniTaskCompletionSource completed = new UniTaskCompletionSource();
+
+            _resultCompletion = completed;
+
+            try
             {
-                _adButton.onClick.AddListener(OnAdClicked);
+                _wheel.Spin(slotIndex);
+                await completed.Task.AttachExternalCancellation(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                await UniTask.Delay(
+                    TimeSpan.FromSeconds(_config.WinDwellSeconds),
+                    DelayType.Realtime,
+                    cancellationToken: cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
             }
-
-            if (_closeButton != null)
+            finally
             {
-                _closeButton.onClick.AddListener(OnCloseClicked);
+                if (ReferenceEquals(_resultCompletion, completed))
+                {
+                    _resultCompletion = null;
+                }
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    _wheel.Stop();
+                }
             }
-        }
-
-        private void OnDisable()
-        {
-            _spinButton.onClick.RemoveListener(OnSpinClicked);
-
-            if (_adButton != null)
-            {
-                _adButton.onClick.RemoveListener(OnAdClicked);
-            }
-
-            if (_closeButton != null)
-            {
-                _closeButton.onClick.RemoveListener(OnCloseClicked);
-            }
-
-            if (_screenView != null)
-            {
-                _screenView.DisableCompleted -= OnHideCompleted;
-            }
-
-            Disabled?.Invoke();
         }
 
         public void Show()
         {
+            _isHiding = false;
             gameObject.SetActive(true);
 
             if (_screenRoot != null)
@@ -150,17 +203,21 @@ namespace UI.Roulette
 
             if (_screenView != null)
             {
-                _screenView.DisableCompleted -= OnHideCompleted;
                 _screenView.Enable();
             }
         }
 
         public void Hide()
         {
+            if (_isHiding)
+            {
+                return;
+            }
+
+            _isHiding = true;
+
             if (_screenView != null)
             {
-                _screenView.DisableCompleted -= OnHideCompleted;
-                _screenView.DisableCompleted += OnHideCompleted;
                 _screenView.Disable();
                 return;
             }
@@ -174,23 +231,23 @@ namespace UI.Roulette
 
             if (_layout != null)
             {
-                _layout.SetControlsVisible(data.ShowSpin, data.ShowAd);
+                _layout.SetControlsVisible(data.IsSpinVisible, data.IsAdvertisementVisible);
             }
 
-            _spinButton.gameObject.SetActive(data.ShowSpin);
+            _spinButton.gameObject.SetActive(data.IsSpinVisible);
             _spinPriceText.text = data.SpinText;
-            _spinButton.interactable = data.CanSpin;
+            _spinButton.interactable = data.IsSpinAvailable;
 
             if (_closeButton != null)
             {
-                _closeButton.gameObject.SetActive(data.ShowClose);
-                _closeButton.interactable = data.CanClose;
+                _closeButton.gameObject.SetActive(data.IsCloseVisible);
+                _closeButton.interactable = data.IsClosingAllowed;
             }
 
             if (_adButton != null)
             {
-                _adButton.gameObject.SetActive(data.ShowAd);
-                _adButton.interactable = data.CanWatchAd;
+                _adButton.gameObject.SetActive(data.IsAdvertisementVisible);
+                _adButton.interactable = data.IsAdvertisementAvailable;
             }
 
             if (_adButtonText != null)
@@ -199,13 +256,19 @@ namespace UI.Roulette
             }
         }
 
+        private void OnWheelCompleted()
+        {
+            _resultCompletion?.TrySetResult();
+        }
+
         private void OnHideCompleted(ReactiveUIView view)
         {
-            if (_screenView != null)
+            if (_isHiding == false)
             {
-                _screenView.DisableCompleted -= OnHideCompleted;
+                return;
             }
 
+            _isHiding = false;
             Closed?.Invoke();
 
             if (_screenRoot != null)

@@ -1,38 +1,54 @@
 using System;
 using System.Collections.Generic;
-using Skins;
+using MadSlime.Roulette.Data;
+using MadSlime.Skins.Data;
+using MadSlime.Validation;
 
-namespace Roulette
+namespace MadSlime.Roulette.Logic
 {
     public class RouletteConfigValidator
     {
         private const float FullChance = 100f;
         private const float ChanceTolerance = 0.01f;
 
-        public void Validate(RouletteConfig config, IReadOnlyList<SkinItem> catalog, int dailySlotCount, int skinSlotCount)
+        public void Validate(RouletteConfig config, IReadOnlyList<SkinItem> catalog, int skinSlotCount)
         {
-            if (config == null || config.RarityTable == null)
-            {
-                throw new InvalidOperationException("Roulette config and rarity table must be assigned.");
-            }
+            ArgumentGuard.CheckNotNull(config, nameof(config));
+            ArgumentGuard.CheckAssigned(config.RarityTable, config.name, nameof(config.RarityTable));
+            ArgumentGuard.CheckPositive(skinSlotCount, nameof(skinSlotCount));
 
-            if (config.Sectors.Count != dailySlotCount || skinSlotCount <= 0)
-            {
-                throw new InvalidOperationException("Configure exactly one daily reward per wheel sector.");
-            }
+            ValidatePrices(config);
+            ValidateAccessTimers(config);
+            ValidateMotion(config);
+            ValidateDailySectors(config);
+            ValidateSkinProbabilities(config, skinSlotCount);
 
+            HashSet<string> catalogIds = ValidateCatalog(config, catalog);
+
+            ValidateExclusiveSkins(config, catalogIds);
+        }
+
+        private void ValidatePrices(RouletteConfig config)
+        {
             if (config.SkinSpinMinCost <= 0 || config.SkinSpinCostStep < 0
                 || config.SkinSpinMaxCost < 0 || config.DuplicateCoinsCompensation <= 0
                 || (config.SkinSpinMaxCost > 0 && config.SkinSpinMaxCost < config.SkinSpinMinCost))
             {
                 throw new InvalidOperationException("Roulette prices and compensation are invalid.");
             }
+        }
 
-            if (config.FreeSpinCooldownSeconds <= 0 || config.AdSpinWindowSeconds <= 0 || config.AdSpinsPerWindow <= 0)
+        private void ValidateAccessTimers(RouletteConfig config)
+        {
+            if (config.FreeSpinCooldownSeconds <= 0 || config.AdSpinWindowSeconds <= 0
+                || config.AdSpinsPerWindow <= 0)
             {
                 throw new InvalidOperationException("Roulette access timers must be positive.");
             }
+        }
 
+        private void ValidateMotion(RouletteConfig config)
+        {
             if (config.MinTurns <= 0 || config.MaxTurns < config.MinTurns || config.SpinDuration <= 0f
                 || config.WindBackDuration <= 0f || config.SpinEasePower < 1f || config.WinDwellSeconds < 0f
                 || config.IdleRotationSpeed < 0f || config.WindBackDegrees < 0f
@@ -40,7 +56,10 @@ namespace Roulette
             {
                 throw new InvalidOperationException("Roulette motion configuration is invalid.");
             }
+        }
 
+        private void ValidateDailySectors(RouletteConfig config)
+        {
             float sectorWeight = 0f;
             int hiddenSectors = 0;
 
@@ -64,24 +83,24 @@ namespace Roulette
                 {
                     hiddenSectors++;
 
-                    if (config.ExclusiveSkins.Count == 0)
-                    {
-                        throw new InvalidOperationException("Hidden roulette sector requires exclusive skins.");
-                    }
+                    ArgumentGuard.CheckNotEmpty(config.ExclusiveSkins, config.name, nameof(config.ExclusiveSkins));
                 }
             }
 
             if (Math.Abs(sectorWeight - FullChance) > ChanceTolerance)
             {
-                                throw new InvalidOperationException($"{config.name}: daily sector chances must "
-                                        + $"total 100%, got {sectorWeight}%.");
+                throw new InvalidOperationException($"{config.name}: daily sector chances must "
+                    + $"total 100%, got {sectorWeight}%.");
             }
 
             if (hiddenSectors != 1)
             {
                 throw new InvalidOperationException("Daily roulette requires exactly one hidden sector.");
             }
+        }
 
+        private void ValidateSkinProbabilities(RouletteConfig config, int skinSlotCount)
+        {
             RouletteProbabilityRules probabilityRules = new RouletteProbabilityRules(config);
             SkinRarityLookup rarityLookup = new SkinRarityLookup(config.RarityTable);
             int showcaseSize = 0;
@@ -91,7 +110,7 @@ namespace Roulette
             {
                 SkinRarity rarity = (SkinRarity)rarityIndex;
 
-                ValidateRarityExists(rarityLookup, rarity);
+                rarityLookup.Get(rarity);
 
                 float weight = probabilityRules.GetSkinDropChance(rarity);
                 int quota = probabilityRules.GetShowcaseQuota(rarity);
@@ -107,19 +126,19 @@ namespace Roulette
 
             if (Math.Abs(skinWeight - FullChance) > ChanceTolerance)
             {
-                                throw new InvalidOperationException($"{config.name}: skin rarity chances must total "
-                                        + $"100%, got {skinWeight}%.");
+                throw new InvalidOperationException($"{config.name}: skin rarity chances must total "
+                    + $"100%, got {skinWeight}%.");
             }
 
             if (showcaseSize <= 0 || showcaseSize > skinSlotCount)
             {
                 throw new InvalidOperationException("Skin showcase must fit the wheel.");
             }
+        }
 
-            if (catalog == null || catalog.Count == 0)
-            {
-                throw new InvalidOperationException("Skin roulette requires a skin catalog.");
-            }
+        private HashSet<string> ValidateCatalog(RouletteConfig config, IReadOnlyList<SkinItem> catalog)
+        {
+            ArgumentGuard.CheckNotEmpty(catalog, config.name, nameof(catalog));
 
             HashSet<string> ids = new HashSet<string>();
 
@@ -133,6 +152,11 @@ namespace Roulette
                 }
             }
 
+            return ids;
+        }
+
+        private void ValidateExclusiveSkins(RouletteConfig config, HashSet<string> ids)
+        {
             HashSet<string> exclusiveIds = new HashSet<string>();
 
             for (int i = 0; i < config.ExclusiveSkins.Count; i++)
@@ -143,8 +167,8 @@ namespace Roulette
 
                 if (ids.Contains(skin.Id) == false || exclusiveIds.Add(skin.Id) == false)
                 {
-                                        throw new InvalidOperationException("Exclusive skins must be unique entries "
-                                                + "from the skin catalog.");
+                    throw new InvalidOperationException("Exclusive skins must be unique entries "
+                        + "from the skin catalog.");
                 }
             }
         }
@@ -155,14 +179,9 @@ namespace Roulette
                 && float.IsNaN(weight) == false && float.IsInfinity(weight) == false;
         }
 
-        private void ValidateRarityExists(SkinRarityLookup rarityLookup, SkinRarity rarity)
-        {
-            rarityLookup.Get(rarity);
-        }
-
         private void ValidateSkin(SkinItem skin)
         {
-            if (skin == null || string.IsNullOrWhiteSpace(skin.Id) == true || skin.Icon == null)
+            if (skin == null || string.IsNullOrWhiteSpace(skin.Id) || skin.Icon == null)
             {
                 throw new InvalidOperationException("Roulette skin requires an ID and icon.");
             }

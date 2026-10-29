@@ -1,20 +1,22 @@
 using System;
-using Roulette;
-using Skins;
+using MadSlime.Roulette.Logic;
+using MadSlime.Skins.Data;
+using MadSlime.UI.Animations;
+using MadSlime.UI.Windows;
+using MadSlime.Validation;
 using TMPro;
-using UI.Animations;
-using UI.Windows;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.Roulette
+namespace MadSlime.UI.Roulette
 {
-    using Localization = global::Localization.Localization;
+    using Localization = global::MadSlime.Localization.Logic.Localization;
 
     [RequireComponent(typeof(UiScaleAnimator))]
     public class RouletteWinPopup : BaseWindow
     {
         private const float FadeAlpha = 0.935f;
+        [VContainer.Inject] private Localization _localization;
 
         [SerializeField] private RectTransform _panel;
         [SerializeField] private Image _fade;
@@ -61,7 +63,7 @@ namespace UI.Roulette
             {
                 throw new InvalidOperationException(
                     $"{name}: a win popup part is not assigned. Drag the Panel, Fade, SkinIcon, CoinIcon, "
-                        + $"PrizeFrame, Plate, PlateText and TakeButton into the fields.");
+                    + $"PrizeFrame, Plate, PlateText and TakeButton into the fields.");
             }
 
             if (_normalFrame == null || _rareFrame == null || _epicFrame == null || _legendaryFrame == null)
@@ -74,19 +76,19 @@ namespace UI.Roulette
             {
                 throw new InvalidOperationException(
                     $"{name}: a plate sprite is not assigned. Drag the GUI Kit grade label sprites "
-                        + $"(blue, green, purple, orange) into the fields.");
+                    + $"(blue, green, purple, orange) into the fields.");
             }
-        }
-
-        private void OnEnable()
-        {
-            _takeButton.onClick.AddListener(OnTakeClicked);
         }
 
         protected override void OnDisable()
         {
             _takeButton.onClick.RemoveListener(OnTakeClicked);
             base.OnDisable();
+        }
+
+        private void OnEnable()
+        {
+            _takeButton.onClick.AddListener(OnTakeClicked);
         }
 
         public override void Show()
@@ -98,19 +100,13 @@ namespace UI.Roulette
 
         public void Initialize(RoulettePrize prize, RouletteView source)
         {
-            if (prize == null)
-            {
-                throw new ArgumentNullException(nameof(prize));
-            }
+            ArgumentGuard.CheckNotNull(prize, nameof(prize));
 
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
+            ArgumentGuard.CheckNotNull(source, nameof(source));
 
             if (prize.Skin != null)
             {
-                InitializeSkin(prize.Skin, prize.Skin.Rarity, Localization.Get(GetRarityKey(prize.Skin.Rarity)));
+                InitializeSkin(prize.Skin, prize.Skin.Rarity, _localization.Get(GetRarityKey(prize.Skin.Rarity)));
             }
             else
             {
@@ -120,16 +116,9 @@ namespace UI.Roulette
 
         private void InitializeSkin(SkinItem skin, SkinRarity rarity, string rarityName)
         {
-            if (skin == null)
-            {
-                throw new ArgumentNullException(nameof(skin), $"{name}: ShowSkin requires a skin.");
-            }
+            ArgumentGuard.CheckNotNull(skin, nameof(skin));
 
-            if (skin.Icon == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: SkinItem '{skin.name}' has no icon. Assign the Icon in the skin asset.");
-            }
+            ArgumentGuard.CheckAssigned(skin.Icon, skin.name, nameof(skin.Icon));
 
             _skinIcon.sprite = skin.Icon;
             _skinIcon.gameObject.SetActive(true);
@@ -140,10 +129,7 @@ namespace UI.Roulette
 
         private void InitializeCoins(int amount, Sprite icon)
         {
-            if (icon == null)
-            {
-                throw new ArgumentNullException(nameof(icon));
-            }
+            ArgumentGuard.CheckNotNull(icon, nameof(icon));
 
             _coinIcon.sprite = icon;
             _coinIcon.preserveAspect = true;

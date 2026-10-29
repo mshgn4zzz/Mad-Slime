@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Economy;
-using Saves;
-using Skins;
+using MadSlime.Economy.Logic;
+using MadSlime.Roulette.Data;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Skins.Data;
 
-namespace Roulette
+namespace MadSlime.Roulette.Logic
 {
     public class RouletteModelDependencies
     {
@@ -16,7 +17,7 @@ namespace Roulette
 
         public Func<RouletteSlot, RoulettePrize> ResolvePrize { get; set; }
 
-        public LootRoller Roller { get; set; }
+        public RouletteSlotCalculator SlotCalculator { get; set; }
 
         public SkinInventory Inventory { get; set; }
 

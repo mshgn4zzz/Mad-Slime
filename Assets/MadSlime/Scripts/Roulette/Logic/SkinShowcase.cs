@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Saves;
-using Skins;
+using MadSlime.Roulette.Data;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Skins.Data;
 
-namespace Roulette
+namespace MadSlime.Roulette.Logic
 {
     public class SkinShowcase
     {
@@ -15,7 +16,11 @@ namespace Roulette
         private SkinInventory _inventory;
         private IReadOnlyList<SkinItem> _catalog;
 
-        public SkinShowcase(RouletteConfig config, ISkinStorage storage, SkinInventory inventory, IReadOnlyList<SkinItem> catalog)
+        public SkinShowcase(
+            RouletteConfig config,
+            ISkinStorage storage,
+            SkinInventory inventory,
+            IReadOnlyList<SkinItem> catalog)
         {
             _config = config;
             _probabilityRules = new RouletteProbabilityRules(config);
@@ -29,7 +34,11 @@ namespace Roulette
             List<string> existing = _storage.ReadShowcaseSkinIds();
             List<string> formed = new List<string>();
 
-            AppendQuota(formed, existing, SkinRarity.Legendary, _probabilityRules.GetShowcaseQuota(SkinRarity.Legendary));
+            AppendQuota(
+                formed,
+                existing,
+                SkinRarity.Legendary,
+                _probabilityRules.GetShowcaseQuota(SkinRarity.Legendary));
             AppendQuota(formed, existing, SkinRarity.Epic, _probabilityRules.GetShowcaseQuota(SkinRarity.Epic));
             AppendQuota(formed, existing, SkinRarity.Rare, _probabilityRules.GetShowcaseQuota(SkinRarity.Rare));
 
@@ -42,13 +51,13 @@ namespace Roulette
                 AppendQuota(formed, existing, SkinRarity.Common, quota);
             }
 
-            if (Matches(existing, formed) == false)
+            if (IsMatching(existing, formed) == false)
             {
                 _storage.SetShowcaseSkinIds(formed);
             }
         }
 
-        public bool HasAvailableSkins()
+        public bool IsSkinAvailable()
         {
             for (int i = 0; i < _catalog.Count; i++)
             {
@@ -136,7 +145,7 @@ namespace Roulette
 
             for (int i = 0; i < entries.Count; i++)
             {
-                if (availableRarities.Add(entries[i].Rarity) == true)
+                if (availableRarities.Add(entries[i].Rarity))
                 {
                     availableChance += _probabilityRules.GetSkinDropChance(entries[i].Rarity);
                 }
@@ -215,9 +224,9 @@ namespace Roulette
                 }
             }
 
-                throw new InvalidOperationException(
-                    "Skin roulette needs at least one sector for every available rarity with a "
-                        + "positive chance.");
+            throw new InvalidOperationException(
+                "Skin roulette needs at least one sector for every available rarity with a "
+                + "positive chance.");
         }
 
         private void AppendQuota(List<string> formed, List<string> existing, SkinRarity rarity, int quota)
@@ -228,8 +237,8 @@ namespace Roulette
             {
                 SkinItem skin = Find(existing[i]);
 
-                if (skin == null || skin.Rarity != rarity || _inventory.IsOpen(skin.Id) == true
-                    || IsExclusive(skin) == true || formed.Contains(skin.Id) == true)
+                if (skin == null || skin.Rarity != rarity || _inventory.IsOpen(skin.Id)
+                    || IsExclusive(skin) || formed.Contains(skin.Id))
                 {
                     continue;
                 }
@@ -302,7 +311,7 @@ namespace Roulette
             return count;
         }
 
-        private bool Matches(List<string> existing, List<string> formed)
+        private bool IsMatching(List<string> existing, List<string> formed)
         {
             if (existing.Count != formed.Count)
             {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UI.Roulette
+namespace MadSlime.UI.Roulette
 {
     public struct RouletteSectorIcon
     {

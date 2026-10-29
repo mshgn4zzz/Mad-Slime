@@ -1,7 +1,7 @@
 using System;
-using Game;
+using MadSlime.Validation;
 
-namespace Roulette
+namespace MadSlime.Roulette.Logic
 {
     public class RouletteAccess
     {
@@ -10,9 +10,7 @@ namespace Roulette
         private Func<int> _adSpinsLeft;
         private Func<bool, bool> _canSpin;
         private Action<bool> _pay;
-        private bool _hasAdvertising;
-
-        public bool HasAdvertising => _hasAdvertising;
+        private bool _isAdvertisingAvailable;
 
         public RouletteAccess(
             Func<int> price,
@@ -20,7 +18,7 @@ namespace Roulette
             Func<int> adSpinsLeft,
             Func<bool, bool> canSpin,
             Action<bool> pay,
-            bool hasAdvertising)
+            bool isAdvertisingAvailable)
         {
             ArgumentGuard.CheckNotNull(price, nameof(price));
             ArgumentGuard.CheckNotNull(freeRemainSeconds, nameof(freeRemainSeconds));
@@ -33,8 +31,10 @@ namespace Roulette
             _adSpinsLeft = adSpinsLeft;
             _canSpin = canSpin;
             _pay = pay;
-            _hasAdvertising = hasAdvertising;
+            _isAdvertisingAvailable = isAdvertisingAvailable;
         }
+
+        public bool IsAdvertisingAvailable => _isAdvertisingAvailable;
 
         public int GetPrice()
         {
@@ -51,14 +51,14 @@ namespace Roulette
             return _adSpinsLeft();
         }
 
-        public bool CanSpin(bool advertisementGranted)
+        public bool IsSpinAvailable(bool isAdvertisementGranted)
         {
-            return _canSpin(advertisementGranted);
+            return _canSpin(isAdvertisementGranted);
         }
 
-        public void Pay(bool advertisementGranted)
+        public void Pay(bool isAdvertisementGranted)
         {
-            _pay(advertisementGranted);
+            _pay(isAdvertisementGranted);
         }
     }
 }

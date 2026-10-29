@@ -1,11 +1,11 @@
-using System;
 using System.Collections.Generic;
+using MadSlime.Validation;
 
-namespace Roulette
+namespace MadSlime.Roulette.Logic
 {
-    public class LootRoller
+    public class RouletteSlotCalculator
     {
-        public int Roll(IReadOnlyList<RouletteSlot> slots)
+        public int CalculateIndex(IReadOnlyList<RouletteSlot> slots)
         {
             float total = 0f;
 
@@ -14,10 +14,7 @@ namespace Roulette
                 total += slots[i].Weight;
             }
 
-            if (total <= 0f)
-            {
-                throw new InvalidOperationException("Roulette slots must have a positive total weight.");
-            }
+            ArgumentGuard.CheckPositive(total, nameof(RouletteSlotCalculator), nameof(total));
 
             float roll = UnityEngine.Random.Range(0f, total);
             int lastWeightedIndex = -1;

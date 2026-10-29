@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
-using Audio;
-using Skins;
+using MadSlime.Audio.Data;
+using MadSlime.Skins.Data;
 using UnityEngine;
 
-namespace Roulette
+namespace MadSlime.Roulette.Data
 {
     [CreateAssetMenu(menuName = "Mad Slime/Roulette Config", fileName = "NewRouletteConfig")]
     public class RouletteConfig : ScriptableObject

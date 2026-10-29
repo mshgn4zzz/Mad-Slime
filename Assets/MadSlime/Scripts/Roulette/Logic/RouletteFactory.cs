@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Economy;
-using Saves;
-using Skins;
+using MadSlime.Economy.Logic;
+using MadSlime.Roulette.Data;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Skins.Data;
 
-namespace Roulette
+namespace MadSlime.Roulette.Logic
 {
     public class RouletteFactory
     {
@@ -38,7 +39,13 @@ namespace Roulette
         {
             _dailySlotCount = slotCount;
 
-            RouletteAccess access = new RouletteAccess(GetZero, GetFreeRemainSeconds, GetAdSpinsLeft, CanSpinDaily, PayDaily, true);
+            RouletteAccess access = new RouletteAccess(
+                GetZero,
+                GetFreeRemainSeconds,
+                GetAdSpinsLeft,
+                IsDailySpinAvailable,
+                PayDaily,
+                true);
 
             return new RouletteModel(new RouletteModelDependencies
             {
@@ -46,7 +53,7 @@ namespace Roulette
                 CreateSlots = CreateDailySlots,
                 Access = access,
                 ResolvePrize = ResolveDailyPrize,
-                Roller = new LootRoller(),
+                SlotCalculator = new RouletteSlotCalculator(),
                 Inventory = _inventory,
                 Wallet = _wallet,
                 Transaction = _transaction,
@@ -59,7 +66,13 @@ namespace Roulette
             _skinSlotCount = slotCount;
             _showcase = new SkinShowcase(_config, _skinStorage, _inventory, catalog);
 
-            RouletteAccess access = new RouletteAccess(GetSkinPrice, GetZero, GetZero, CanSpinSkins, PaySkins, false);
+            RouletteAccess access = new RouletteAccess(
+                GetSkinPrice,
+                GetZero,
+                GetZero,
+                IsSkinSpinAvailable,
+                PaySkins,
+                false);
 
             return new RouletteModel(new RouletteModelDependencies
             {
@@ -67,7 +80,7 @@ namespace Roulette
                 CreateSlots = CreateSkinSlots,
                 Access = access,
                 ResolvePrize = ResolveSkinPrize,
-                Roller = new LootRoller(),
+                SlotCalculator = new RouletteSlotCalculator(),
                 Inventory = _inventory,
                 Wallet = _wallet,
                 Transaction = _transaction,
@@ -81,8 +94,8 @@ namespace Roulette
 
             if (_config.Sectors.Count != _dailySlotCount)
             {
-                                throw new InvalidOperationException("Daily roulette must configure exactly one "
-                                        + "reward per wheel sector.");
+                throw new InvalidOperationException("Daily roulette must configure exactly one "
+                    + "reward per wheel sector.");
             }
 
             for (int i = 0; i < _dailySlotCount; i++)
@@ -142,9 +155,9 @@ namespace Roulette
             return Math.Max(0, _config.AdSpinsPerWindow - used);
         }
 
-        private bool CanSpinDaily(bool advertisementGranted)
+        private bool IsDailySpinAvailable(bool isAdvertisementGranted)
         {
-            if (advertisementGranted == true)
+            if (isAdvertisementGranted)
             {
                 return GetAdSpinsLeft() > 0;
             }
@@ -152,11 +165,11 @@ namespace Roulette
             return GetFreeRemainSeconds() == 0;
         }
 
-        private void PayDaily(bool advertisementGranted)
+        private void PayDaily(bool isAdvertisementGranted)
         {
             long now = GetNow();
 
-            if (advertisementGranted == true)
+            if (isAdvertisementGranted)
             {
                 _storage.PruneAdSpinsBefore(now - _config.AdSpinWindowSeconds);
                 _storage.RegisterAdSpin(now);
@@ -178,13 +191,13 @@ namespace Roulette
             return (int)Math.Min(price, int.MaxValue);
         }
 
-        private bool CanSpinSkins(bool advertisementGranted)
+        private bool IsSkinSpinAvailable(bool isAdvertisementGranted)
         {
-            return advertisementGranted == false && _showcase.HasAvailableSkins() == true
+            return isAdvertisementGranted == false && _showcase.IsSkinAvailable()
                 && _wallet.Balance >= GetSkinPrice() && _storage.SkinSpinCount < int.MaxValue;
         }
 
-        private void PaySkins(bool advertisementGranted)
+        private void PaySkins(bool isAdvertisementGranted)
         {
             _wallet.Spend(GetSkinPrice());
             _storage.SetSkinSpinCount(_storage.SkinSpinCount + 1);

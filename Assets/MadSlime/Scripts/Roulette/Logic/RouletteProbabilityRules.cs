@@ -1,7 +1,8 @@
-using System;
-using Skins;
+using MadSlime.Roulette.Data;
+using MadSlime.Skins.Data;
+using MadSlime.Validation;
 
-namespace Roulette
+namespace MadSlime.Roulette.Logic
 {
     public class RouletteProbabilityRules
     {
@@ -9,10 +10,7 @@ namespace Roulette
 
         public RouletteProbabilityRules(RouletteConfig config)
         {
-            if (config == null)
-            {
-                throw new ArgumentNullException(nameof(config));
-            }
+            ArgumentGuard.CheckNotNull(config, nameof(config));
 
             _config = config;
         }

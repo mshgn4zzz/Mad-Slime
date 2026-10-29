@@ -1,4 +1,4 @@
-namespace Roulette
+namespace MadSlime.Roulette.Data
 {
     public enum RewardType
     {

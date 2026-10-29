@@ -1,74 +1,48 @@
 using System;
-using Saves;
-using UnityEngine;
-using VContainer;
+using MadSlime.Economy.Data;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Validation;
 
-namespace Economy
+namespace MadSlime.Economy.Logic
 {
-    public class Rewarder : MonoBehaviour
+    public class Rewarder
     {
-        [SerializeField] private RewardConfig _config;
+        private readonly RewardConfig _config;
 
-        private Wallet _wallet;
-        private ILevelStorage _levelStorage;
+        private readonly Wallet _wallet;
+        private readonly ILevelStorage _levelStorage;
         private int _levelReward;
         private int _grantedAmount;
         private bool _isLevelResultCommitted;
         private bool _isWin;
 
+        public Rewarder(RewardConfig config, Wallet wallet, ILevelStorage levelStorage)
+        {
+            _config = config;
+            _wallet = wallet;
+            _levelStorage = levelStorage;
+
+            ArgumentGuard.CheckNotNull(_config, nameof(config));
+            ArgumentGuard.CheckPositive(_config.LoseRewardDivisor, _config.name, nameof(_config.LoseRewardDivisor));
+            ArgumentGuard.CheckNotNull(_wallet, nameof(wallet));
+            ArgumentGuard.CheckNotNull(_levelStorage, nameof(levelStorage));
+        }
+
         public int GrantedTotal => _grantedAmount;
 
         public bool IsWin => _isWin;
 
-        [Inject]
-        public void Construct(Wallet wallet, ILevelStorage levelStorage)
-        {
-            _wallet = wallet;
-            _levelStorage = levelStorage;
-        }
-
-        private void Awake()
-        {
-            if (_config == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: RewardConfig is not assigned. Create a RewardConfig asset and "
-                        + $"drag it into the _config field.");
-            }
-
-            if (_config.LoseRewardDivisor <= 0)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: RewardConfig '{_config.name}' has LoseRewardDivisor <= 0. Set a "
-                        + $"positive divisor in the asset.");
-            }
-
-            if (_wallet == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Wallet was not injected. Check that FillLifetimeScope registers Wallet and Rewarder.");
-            }
-
-            if (_levelStorage == null)
-            {
-                throw new InvalidOperationException($"{name}: ILevelStorage was not injected.");
-            }
-        }
-
         public void CommitLevelResult(float percent)
         {
-            if (_isLevelResultCommitted == true)
+            if (_isLevelResultCommitted)
             {
                 throw new InvalidOperationException(
-                    $"{name}: CommitLevelResult is called twice for the same level. The result is already committed.");
+                    "Rewarder: CommitLevelResult is called twice for the same level. The result is already committed.");
             }
 
-            if (percent < 0f || percent > 1f)
-            {
-                throw new ArgumentOutOfRangeException(nameof(percent), "CommitLevelResult requires a fill percent within 0..1.");
-            }
+            ArgumentGuard.CheckRange(percent, 0f, 1f, nameof(percent));
 
-            _levelReward = _config.GetReward(_levelStorage.CurrentLevel);
+            _levelReward = GetLevelReward(_levelStorage.CurrentLevel);
             _isLevelResultCommitted = true;
             _isWin = percent >= 1f;
             _grantedAmount = CalculateReward(percent);
@@ -84,7 +58,7 @@ namespace Economy
             if (_isLevelResultCommitted == false)
             {
                 throw new InvalidOperationException(
-                    $"{name}: CommitRescueTopUp requires a committed level result. Commit the level result first.");
+                    "Rewarder: CommitRescueTopUp requires a committed level result. Commit the level result first.");
             }
 
             if (IsWin)
@@ -110,6 +84,27 @@ namespace Economy
             _isWin = false;
             _grantedAmount = 0;
             _levelReward = 0;
+        }
+
+        private int GetLevelReward(int level)
+        {
+            ArgumentGuard.CheckPositive(level, nameof(level));
+
+            if (_config.BaseReward < 0 || _config.GrowPower < 1f
+                || float.IsNaN(_config.GrowPower) || float.IsInfinity(_config.GrowPower))
+            {
+                throw new InvalidOperationException($"{_config.name}: reward progression settings are invalid.");
+            }
+
+            double reward = Math.Round(
+                _config.BaseReward * Math.Pow(level, _config.GrowPower), MidpointRounding.AwayFromZero);
+
+            if (reward > int.MaxValue)
+            {
+                throw new OverflowException("The level reward exceeds the wallet's integer range.");
+            }
+
+            return (int)reward;
         }
 
         private int CalculateReward(float percent)

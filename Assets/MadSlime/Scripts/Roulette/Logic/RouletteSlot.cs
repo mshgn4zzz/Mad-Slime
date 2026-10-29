@@ -1,17 +1,9 @@
-using Skins;
+using MadSlime.Skins.Data;
 
-namespace Roulette
+namespace MadSlime.Roulette.Logic
 {
     public class RouletteSlot
     {
-        public SkinItem Skin { get; }
-
-        public int Coins { get; }
-
-        public float Weight { get; }
-
-        public bool IsHidden { get; }
-
         public RouletteSlot(SkinItem skin, int coins, float weight, bool isHidden)
         {
             Skin = skin;
@@ -19,5 +11,13 @@ namespace Roulette
             Weight = weight;
             IsHidden = isHidden;
         }
+
+        public SkinItem Skin { get; }
+
+        public int Coins { get; }
+
+        public float Weight { get; }
+
+        public bool IsHidden { get; }
     }
 }

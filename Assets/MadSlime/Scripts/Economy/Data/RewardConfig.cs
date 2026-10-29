@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 
-namespace Economy
+namespace MadSlime.Economy.Data
 {
     [CreateAssetMenu(menuName = "Mad Slime/Reward Config", fileName = "NewRewardConfig")]
     public class RewardConfig : ScriptableObject
@@ -14,31 +13,12 @@ namespace Economy
 
         [SerializeField] private int _loseDivideBy = 4;
 
+        public int BaseReward => _baseReward;
+
+        public float GrowPower => _growPower;
+
         public float LoseMultiplierThreshold => _minPayFill;
 
         public int LoseRewardDivisor => _loseDivideBy;
-
-        public int GetReward(int level)
-        {
-            if (level < 1)
-            {
-                throw new ArgumentOutOfRangeException(nameof(level));
-            }
-
-            if (_baseReward < 0 || _growPower < 1f
-                || float.IsNaN(_growPower) || float.IsInfinity(_growPower))
-            {
-                throw new InvalidOperationException($"{name}: reward progression settings are invalid.");
-            }
-
-            double reward = Math.Round(_baseReward * Math.Pow(level, _growPower), MidpointRounding.AwayFromZero);
-
-            if (reward > int.MaxValue)
-            {
-                throw new OverflowException("The level reward exceeds the wallet's integer range.");
-            }
-
-            return (int)reward;
-        }
     }
 }

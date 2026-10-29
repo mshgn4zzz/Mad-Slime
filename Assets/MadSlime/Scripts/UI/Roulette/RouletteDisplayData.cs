@@ -1,4 +1,4 @@
-namespace UI.Roulette
+namespace MadSlime.UI.Roulette
 {
     public class RouletteDisplayData
     {
@@ -8,16 +8,16 @@ namespace UI.Roulette
 
         public string AdText { get; set; }
 
-        public bool ShowSpin { get; set; }
+        public bool IsSpinVisible { get; set; }
 
-        public bool CanSpin { get; set; }
+        public bool IsSpinAvailable { get; set; }
 
-        public bool ShowAd { get; set; }
+        public bool IsAdvertisementVisible { get; set; }
 
-        public bool CanWatchAd { get; set; }
+        public bool IsAdvertisementAvailable { get; set; }
 
-        public bool ShowClose { get; set; }
+        public bool IsCloseVisible { get; set; }
 
-        public bool CanClose { get; set; }
+        public bool IsClosingAllowed { get; set; }
     }
 }

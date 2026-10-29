@@ -1,8 +1,9 @@
-using Audio;
-using Roulette;
+using MadSlime.Audio.Data;
+using MadSlime.Audio.Interfaces;
+using MadSlime.Roulette.Data;
 using UnityEngine;
 
-namespace UI.Roulette
+namespace MadSlime.UI.Roulette
 {
     public class RouletteSoundFeedback
     {
@@ -18,12 +19,15 @@ namespace UI.Roulette
             _wheel = wheel;
             _config = config;
             _soundPlayer = soundPlayer;
-            _wheel.Tick += OnTick;
+            _wheel.Ticked += OnTick;
         }
 
         public void Release()
         {
-            _wheel.Tick -= OnTick;
+            if (_wheel != null)
+            {
+                _wheel.Ticked -= OnTick;
+            }
         }
 
         public void PlaySpin()
@@ -36,6 +40,14 @@ namespace UI.Roulette
             Play(_config.WinClip);
         }
 
+        private void Play(SfxClip clip)
+        {
+            if (clip != null)
+            {
+                _soundPlayer.Play(clip);
+            }
+        }
+
         private void OnTick()
         {
             if (Time.unscaledTime - _lastTickTime < MinTickIntervalSeconds)
@@ -45,14 +57,6 @@ namespace UI.Roulette
 
             _lastTickTime = Time.unscaledTime;
             Play(_config.StepClip);
-        }
-
-        private void Play(SfxClip clip)
-        {
-            if (clip != null)
-            {
-                _soundPlayer.Play(clip);
-            }
         }
     }
 }

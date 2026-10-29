@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Roulette
+namespace MadSlime.Roulette.Data
 {
     [Serializable]
     public class RouletteSector
