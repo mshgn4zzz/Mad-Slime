@@ -1,57 +1,59 @@
-using System;
-using Audio;
-using CameraSystem;
-using Collectables;
-using Economy;
-using Game;
-using Items;
-using Leaderboards;
-using Levels;
-using Player;
-using PlayerInput;
-using Quota;
-using Skins;
-using UI.HUD;
-using UI.Player;
-using UI.Quota;
-using UI.Spawning;
+using MadSlime.Audio.View;
+using MadSlime.CameraSystem.Logic;
+using MadSlime.CameraSystem.Data;
+using MadSlime.CameraSystem.View;
+using MadSlime.Collectables.Logic;
+using MadSlime.Economy.Logic;
+using MadSlime.Game.Data;
+using MadSlime.Game.GameplayStateMachine.Logic;
+using MadSlime.Game.Logic;
+using MadSlime.Game.Logic.TimerStateMachine;
+using MadSlime.GameFSM.Scenes;
+using MadSlime.Items.Logic;
+using MadSlime.Leaderboards.Logic;
+using MadSlime.Levels.Logic;
+using MadSlime.Player.Data;
+using MadSlime.Player.Logic;
+using MadSlime.Player.View;
+using MadSlime.PlayerInput.Logic;
+using MadSlime.Quota.Logic;
+using MadSlime.Skins.Logic;
+using MadSlime.UI.HUD;
+using MadSlime.UI.Player;
+using MadSlime.UI.Quota;
+using MadSlime.UI.Spawning;
+using MadSlime.Upgrades.Logic;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Upgrades;
 using VContainer;
 using VContainer.Unity;
 
-namespace DI
+namespace MadSlime.DI
 {
     public class GameLifetimeScope : ValidatedLifetimeScope
     {
         [SerializeField] private PlayerConfig _playerConfig;
+        [SerializeField] private CameraConfig _cameraConfig;
+        [SerializeField] private Transform _cameraTarget;
+        [SerializeField] private YandexConfig _leaderboardConfig;
         [SerializeField] private LevelGenerator _levelGenerator;
-        [SerializeField] private PlayerTier _playerTier;
-        [SerializeField] private TierResolver _tierResolver;
         [SerializeField] private Movement _movement;
-        [SerializeField] private Clamper _clamper;
         [SerializeField] private CrawlAnimator _crawlAnimator;
         [SerializeField] private ScalePunch _scalePunch;
         [SerializeField] private MassGainer _massGainer;
-        [SerializeField] private CollectAvailability _collectAvailability;
         [SerializeField] private PlayerScaler _playerScaler;
         [SerializeField] private GrowthAnimator _growthAnimator;
         [SerializeField] private GameplayHud _gameplayHud;
         [SerializeField] private SpeedSmoke _speedSmoke;
-        [SerializeField] private AdrenalineBoost _adrenalineBoost;
         [SerializeField] private AdrenalineSound _adrenalineSound;
         [SerializeField] private FinalCountdownVignette _finalCountdownVignette;
         [SerializeField] private GameSceneState _gameplayOrchestrator;
-        [SerializeField] private LeaderboardReporter _leaderboardReporter;
-        [SerializeField] private Wallet _wallet;
         [SerializeField] private QuotaUI _quotaUI;
-        [SerializeField] private CameraPullAnimator _cameraPullAnimator;
         [SerializeField] private CameraShakeAnimator _cameraShakeAnimator;
         [SerializeField] private CameraFovKickAnimator _cameraFovKickAnimator;
         [SerializeField] private CameraFollow _cameraFollow;
+        [SerializeField] private Camera _gameCamera;
         [SerializeField] private SkinApplier _skinApplier;
-        [FormerlySerializedAs("_gameplayUIFabric")]
+
         [SerializeField] private GameplayPauseFlow _gameplayPauseFlow;
         [SerializeField] private PlayerPickupSound _playerPickupSound;
         [SerializeField] private TierUpSound _tierUpSound;
@@ -66,22 +68,24 @@ namespace DI
         [SerializeField] private ItemAttractor _itemAttractor;
         [SerializeField] private GhostToggler _ghostToggler;
         [SerializeField] private QuotaItemHighlighter _quotaItemHighlighter;
-        [SerializeField] private Collectables.QuotaItemDetector _quotaItemDetector;
-        [SerializeField] private Collectables.CameraObstacleDetector _obstacleDetector;
+        [SerializeField] private QuotaItemDetector _quotaItemDetector;
+        [SerializeField] private CameraObstacleDetector _obstacleDetector;
         [SerializeField] private SmellAbilityActivator _smellAbilityActivator;
         [SerializeField] private Pauser _pauser;
         [SerializeField] private Timer _timer;
         [SerializeField] private PlayerInputReader _inputReader;
-
 
         protected override void Configure(IContainerBuilder builder)
         {
             ValidateAll();
 
             builder.RegisterInstance(_playerConfig);
+            builder.RegisterInstance(_cameraConfig);
+            builder.RegisterInstance(_leaderboardConfig);
+            builder.Register<TimerStateMachine>(Lifetime.Scoped);
             builder.Register<CollectedItemsCounter>(Lifetime.Scoped);
-            builder.RegisterComponent(_leaderboardReporter);
-            builder.RegisterComponent(_wallet);
+            builder.Register<LeaderboardReporter>(Lifetime.Scoped);
+            builder.Register<Wallet>(Lifetime.Scoped);
             builder.Register<QuotaGenerator>(Lifetime.Scoped);
             builder.Register<QuotaOutlineInitializer>(Lifetime.Scoped);
             builder.Register<UiSpawner>(Lifetime.Scoped);
@@ -93,28 +97,37 @@ namespace DI
             builder.Register<CompletedState>(Lifetime.Scoped);
             builder.Register<GameplayStateMachine>(Lifetime.Scoped);
 
+            builder.Register<AdrenalineBoostEffect>(Lifetime.Scoped)
+                .As<IFinalCountdownEffect>();
+            builder.Register<FinalCountdownVignetteEffect>(Lifetime.Scoped)
+                .As<IFinalCountdownEffect>();
+            builder.Register<TimerTickSoundEffect>(Lifetime.Scoped)
+                .As<IFinalCountdownEffect>();
+            builder.Register<CrawlAnimationEffect>(Lifetime.Scoped)
+                .As<IFinalCountdownEffect>();
+
             builder.RegisterComponent(_levelGenerator);
-            builder.RegisterComponent(_playerTier);
-            builder.RegisterComponent(_tierResolver);
+            builder.Register<PlayerTier>(Lifetime.Scoped);
+            builder.Register<TierResolver>(Lifetime.Scoped);
             builder.RegisterComponent(_movement);
-            builder.RegisterComponent(_clamper);
+            builder.Register<Clamper>(Lifetime.Scoped);
             builder.RegisterComponent(_crawlAnimator);
             builder.RegisterComponent(_scalePunch);
             builder.RegisterComponent(_massGainer);
-            builder.RegisterComponent(_collectAvailability);
+            builder.Register<CollectAvailability>(Lifetime.Scoped);
             builder.RegisterComponent(_playerScaler);
             builder.RegisterComponent(_growthAnimator);
             builder.RegisterComponent(_gameplayHud);
             builder.RegisterComponent(_speedSmoke);
-            builder.RegisterComponent(_adrenalineBoost);
+            builder.Register<AdrenalineBoost>(Lifetime.Scoped);
             builder.RegisterComponent(_adrenalineSound);
             builder.RegisterComponent(_finalCountdownVignette);
             builder.RegisterComponent(_gameplayOrchestrator);
             builder.RegisterComponent(_quotaUI);
-            builder.RegisterComponent(_cameraPullAnimator);
             builder.RegisterComponent(_cameraShakeAnimator);
             builder.RegisterComponent(_cameraFovKickAnimator);
-            builder.RegisterComponent(_cameraFollow);
+            builder.RegisterComponent(_cameraFollow).WithParameter("target", _cameraTarget);
+            builder.RegisterComponent(_gameCamera);
             builder.RegisterComponent(_skinApplier);
             builder.RegisterComponent(_gameplayPauseFlow);
             builder.RegisterComponent(_playerPickupSound);
@@ -143,37 +156,34 @@ namespace DI
         private void InitializeScene(IObjectResolver container)
         {
             container.Resolve<CollectedItemsCounter>();
+            container.Resolve<LoadingScreenPresenter>().ObservePreparation(container.Resolve<GameplayStateMachine>());
 
-            SceneButtonSoundInjector.Inject(container, gameObject.scene);
+            SceneComponentInjector.Inject(container, gameObject.scene);
         }
 
         private void ValidateAll()
         {
             ValidateAssigned(_playerConfig, nameof(_playerConfig));
+            ValidateAssigned(_cameraConfig, nameof(_cameraConfig));
+            ValidateAssigned(_cameraTarget, nameof(_cameraTarget));
+            ValidateAssigned(_leaderboardConfig, nameof(_leaderboardConfig));
             ValidateAssigned(_levelGenerator, nameof(_levelGenerator));
-            ValidateAssigned(_playerTier, nameof(_playerTier));
-            ValidateAssigned(_tierResolver, nameof(_tierResolver));
             ValidateAssigned(_movement, nameof(_movement));
-            ValidateAssigned(_clamper, nameof(_clamper));
             ValidateAssigned(_crawlAnimator, nameof(_crawlAnimator));
             ValidateAssigned(_scalePunch, nameof(_scalePunch));
             ValidateAssigned(_massGainer, nameof(_massGainer));
-            ValidateAssigned(_collectAvailability, nameof(_collectAvailability));
             ValidateAssigned(_playerScaler, nameof(_playerScaler));
             ValidateAssigned(_growthAnimator, nameof(_growthAnimator));
             ValidateAssigned(_gameplayHud, nameof(_gameplayHud));
             ValidateAssigned(_speedSmoke, nameof(_speedSmoke));
-            ValidateAssigned(_adrenalineBoost, nameof(_adrenalineBoost));
             ValidateAssigned(_adrenalineSound, nameof(_adrenalineSound));
             ValidateAssigned(_finalCountdownVignette, nameof(_finalCountdownVignette));
             ValidateAssigned(_gameplayOrchestrator, nameof(_gameplayOrchestrator));
-            ValidateAssigned(_leaderboardReporter, nameof(_leaderboardReporter));
-            ValidateAssigned(_wallet, nameof(_wallet));
             ValidateAssigned(_quotaUI, nameof(_quotaUI));
-            ValidateAssigned(_cameraPullAnimator, nameof(_cameraPullAnimator));
             ValidateAssigned(_cameraShakeAnimator, nameof(_cameraShakeAnimator));
             ValidateAssigned(_cameraFovKickAnimator, nameof(_cameraFovKickAnimator));
             ValidateAssigned(_cameraFollow, nameof(_cameraFollow));
+            ValidateAssigned(_gameCamera, nameof(_gameCamera));
             ValidateAssigned(_skinApplier, nameof(_skinApplier));
             ValidateAssigned(_gameplayPauseFlow, nameof(_gameplayPauseFlow));
             ValidateAssigned(_playerPickupSound, nameof(_playerPickupSound));
@@ -196,6 +206,5 @@ namespace DI
             ValidateAssigned(_timer, nameof(_timer));
             ValidateAssigned(_inputReader, nameof(_inputReader));
         }
-
     }
 }

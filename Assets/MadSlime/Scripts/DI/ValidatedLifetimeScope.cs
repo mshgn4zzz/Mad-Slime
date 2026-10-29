@@ -1,18 +1,13 @@
-using System;
+using MadSlime.Validation;
 using VContainer.Unity;
 
-namespace DI
+namespace MadSlime.DI
 {
     public abstract class ValidatedLifetimeScope : LifetimeScope
     {
         protected void ValidateAssigned(object dependency, string fieldName)
         {
-            if (dependency == null)
-            {
-                throw new InvalidOperationException(
-                    $"{GetType().Name}: '{fieldName}' is not assigned. Select the scope object in the scene "
-                        + "and drag the missing reference.");
-            }
+            ArgumentGuard.CheckAssigned(dependency, name, fieldName);
         }
     }
 }

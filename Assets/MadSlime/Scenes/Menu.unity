@@ -568,7 +568,6 @@ MonoBehaviour:
   _openSkinButton: {fileID: 900000000000970116}
   _settingsMenuPrefab: {fileID: 5859713677950448305, guid: 07369f9036a55ff4e8db9b912f0290c3, type: 3}
   _leaderboardMenuPrefab: {fileID: 8220248474289526730, guid: 65a7a973925ce514787b4a5cea516689, type: 3}
-  _roulettePreparation: {fileID: 900000000002000011}
   _content: {fileID: 900000000000970166}
 --- !u!114 &206106546
 MonoBehaviour:
@@ -1989,16 +1988,17 @@ MonoBehaviour:
   _navigation: {fileID: 206106545}
   _content: {fileID: 900000000000970166}
   _modelPlacer: {fileID: 900000000000970121}
-  _skinFactory: {fileID: 900000000000970071}
-  _upgradeFactory: {fileID: 900000000000970070}
   _menuOrchestrator: {fileID: 870000000}
   _rouletteConfig: {fileID: 11400000, guid: 9f034a199c15cd67ea264f0afa3531c4, type: 2}
   _shopContent: {fileID: 11400000, guid: 3e9b0436cf221244fb683430095afbcf, type: 2}
-  _roulettePreparation: {fileID: 900000000002000011}
   _adScheduler: {fileID: 1028076303}
-  _wallet: {fileID: 1028076296}
   _pauser: {fileID: 1028076297}
   _runtimeWindows: {fileID: 900000000001000004}
+  _shopItemViewPrefab: {fileID: 2164479651705539539, guid: c4494d4242e1f8543a3c14c902ea7517, type: 3}
+  _rarityGroupPrefab: {fileID: 100105, guid: eac62099752645bfa4c4e171ec7834fc, type: 3}
+  _upgradeItemViewPrefab: {fileID: 6353883623085171593, guid: c8a1d7e21ebe0c9a3834c00cc0543699, type: 3}
+  _dailyRoulettePrefab: {fileID: 1560748444112562554, guid: 1206b6c4bac963847b4f2ce565c39c2c, type: 3}
+  _skinRoulettePrefab: {fileID: 1560748444112562554, guid: 1206b6c4bac963847b4f2ce565c39c2c, type: 3}
 --- !u!1 &818601247
 GameObject:
   m_ObjectHideFlags: 0
@@ -2074,7 +2074,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _navigation: {fileID: 206106545}
-  _roulettePreparation: {fileID: 900000000002000011}
   _content: {fileID: 900000000000970166}
   _musicPlaylist: {fileID: 11400000, guid: 189043936494be54fb7b4dedf1a99314, type: 2}
 --- !u!1 &993728347
@@ -2192,18 +2191,6 @@ Transform:
   - {fileID: 900000000002000010}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1028076296
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 900000000001000025}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0111018253ce41e58afbaf4a849e1b58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1028076297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4683,7 +4670,6 @@ GameObject:
   - component: {fileID: 900000000000970056}
   - component: {fileID: 900000000000970055}
   - component: {fileID: 900000000000970054}
-  - component: {fileID: 900000000000970071}
   - component: {fileID: 900000000000970168}
   m_Layer: 5
   m_Name: SkinsWindow
@@ -4935,33 +4921,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 900000000000970060}
   m_CullTransparentMesh: 1
---- !u!114 &900000000000970070
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 900000000000970130}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30076978a48d90109922fc7bacaa095c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _upgradeItemViewPrefab: {fileID: 6353883623085171593, guid: c8a1d7e21ebe0c9a3834c00cc0543699, type: 3}
---- !u!114 &900000000000970071
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 900000000000970052}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec73ee6d56624db0bd5cff816fb1911d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _shopItemViewPrefab: {fileID: 2164479651705539539, guid: c4494d4242e1f8543a3c14c902ea7517, type: 3}
-  _rarityGroupPrefab: {fileID: 100105, guid: eac62099752645bfa4c4e171ec7834fc, type: 3}
 --- !u!1 &900000000000970072
 GameObject:
   m_ObjectHideFlags: 0
@@ -5554,7 +5513,6 @@ GameObject:
   - component: {fileID: 900000000000970134}
   - component: {fileID: 900000000000970133}
   - component: {fileID: 900000000000970132}
-  - component: {fileID: 900000000000970070}
   - component: {fileID: 900000000000970165}
   - component: {fileID: 1089487733}
   m_Layer: 5
@@ -5700,7 +5658,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _itemsParent: {fileID: 900000000000970094}
   _scroll: {fileID: 900000000000970074}
-  _factory: {fileID: 900000000000970071}
 --- !u!114 &900000000000970164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5715,7 +5672,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _upgradesParent: {fileID: 818601248}
   _perksParent: {fileID: 1773097729}
-  _upgradeFactory: {fileID: 900000000000970070}
 --- !u!114 &900000000000970165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5858,7 +5814,6 @@ MonoBehaviour:
   _upgradesPage: {fileID: 900000000000970164}
   _skinsBalance: {fileID: 900000000001000015}
   _upgradesBalance: {fileID: 900000000001000020}
-  _roulettePreparation: {fileID: 900000000002000011}
   _preview: {fileID: 900000000000970121}
   _openSkinButton: {fileID: 900000000000970116}
   _openSkinLabel: {fileID: 900000000000970172}
@@ -7235,7 +7190,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 900000000001000026}
-  - component: {fileID: 1028076296}
   m_Layer: 0
   m_Name: Wallet
   m_TagString: Untagged
@@ -7396,7 +7350,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 900000000002000010}
-  - component: {fileID: 900000000002000011}
   m_Layer: 0
   m_Name: RoulettePreparation
   m_TagString: Untagged
@@ -7419,20 +7372,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1028076294}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &900000000002000011
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 900000000002000009}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cd8702be0ee4015a66e280e7af0c36c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _dailyRoulettePrefab: {fileID: 1560748444112562554, guid: 1206b6c4bac963847b4f2ce565c39c2c, type: 3}
-  _skinRoulettePrefab: {fileID: 1560748444112562554, guid: 1206b6c4bac963847b4f2ce565c39c2c, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
