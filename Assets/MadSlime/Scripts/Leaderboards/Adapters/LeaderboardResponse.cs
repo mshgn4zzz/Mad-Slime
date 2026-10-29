@@ -1,12 +1,12 @@
 using System;
 
-namespace Leaderboards
+namespace MadSlime.Leaderboards.Adapters
 {
     [Serializable]
     public class LeaderboardResponse
     {
-        public int requestId;
-        public string error;
-        public LeaderboardPlayerResponse[] players;
+        public int RequestId;
+        public string Error;
+        public LeaderboardPlayerResponse[] Players;
     }
 }

@@ -1,16 +1,17 @@
 using System;
-using Leaderboards;
+using MadSlime.Leaderboards.Data;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.Leaderboards
+namespace MadSlime.UI.Leaderboards
 {
-    using Localization = global::Localization.Localization;
+    using Localization = global::MadSlime.Localization.Logic.Localization;
 
     public class LeaderboardRowView : MonoBehaviour
     {
         private const string AnonymousNameMarker = "anonymous";
+        [VContainer.Inject] private Localization _localization;
 
         [SerializeField] private RectTransform _rectTransform;
         [SerializeField] private Image _background;
@@ -26,12 +27,12 @@ namespace UI.Leaderboards
 
         private void OnEnable()
         {
-            Localization.LanguageChanged += OnLanguageChanged;
+            _localization.LanguageChanged += OnLanguageChanged;
         }
 
         private void OnDisable()
         {
-            Localization.LanguageChanged -= OnLanguageChanged;
+            _localization.LanguageChanged -= OnLanguageChanged;
         }
 
         public void Initialize(LeaderboardEntryData entry, bool isOwn)
@@ -50,7 +51,7 @@ namespace UI.Leaderboards
             _scoreText.text = entry.Score.ToString();
             _background.color = _rowColor;
 
-            if (isOwn == true)
+            if (isOwn)
             {
                 _background.color = _ownRowColor;
             }
@@ -58,9 +59,9 @@ namespace UI.Leaderboards
 
         private void OnLanguageChanged()
         {
-            if (string.IsNullOrEmpty(_entry.Name) == true || _entry.Name == AnonymousNameMarker)
+            if (string.IsNullOrEmpty(_entry.Name) || _entry.Name == AnonymousNameMarker)
             {
-                string anonymousName = Localization.Get("leaderboard_anonymous");
+                string anonymousName = _localization.Get("leaderboard_anonymous");
 
                 _nameText.text = $"{anonymousName} #{_entry.Id}";
                 return;

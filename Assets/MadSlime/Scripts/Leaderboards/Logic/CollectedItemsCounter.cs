@@ -1,9 +1,9 @@
 using System;
-using Collectables;
-using Items;
-using Saves;
+using MadSlime.Collectables.Logic;
+using MadSlime.Items.View;
+using MadSlime.Saves.Interfaces;
 
-namespace Leaderboards
+namespace MadSlime.Leaderboards.Logic
 {
     public class CollectedItemsCounter : IDisposable
     {

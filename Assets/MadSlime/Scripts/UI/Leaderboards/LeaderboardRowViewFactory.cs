@@ -1,29 +1,31 @@
-using System;
-using Leaderboards;
+using MadSlime.Leaderboards.Data;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace UI.Leaderboards
+namespace MadSlime.UI.Leaderboards
 {
-    public class LeaderboardRowViewFactory : MonoBehaviour
+    public class LeaderboardRowViewFactory
     {
-        [SerializeField] private LeaderboardRowView _prefab;
+        private readonly LeaderboardRowView _prefab;
 
-        private IObjectResolver _resolver;
+        private readonly IObjectResolver _resolver;
 
-        [Inject]
-        public void Construct(IObjectResolver resolver)
+        public LeaderboardRowViewFactory(IObjectResolver resolver, LeaderboardRowView prefab)
         {
+            ArgumentGuard.CheckNotNull(resolver, nameof(resolver));
+            ArgumentGuard.CheckNotNull(prefab, nameof(prefab));
+
             _resolver = resolver;
+            _prefab = prefab;
         }
 
         public LeaderboardRowView Create(Transform parent, LeaderboardEntryData entry, bool isOwn)
         {
-            if (_resolver == null || _prefab == null || parent == null)
-            {
-                throw new InvalidOperationException($"{name}: leaderboard row factory is not configured.");
-            }
+            ArgumentGuard.CheckAssigned(_resolver, nameof(LeaderboardRowViewFactory), nameof(_resolver));
+            ArgumentGuard.CheckAssigned(_prefab, nameof(LeaderboardRowViewFactory), nameof(_prefab));
+            ArgumentGuard.CheckAssigned(parent, nameof(LeaderboardRowViewFactory), nameof(parent));
 
             LeaderboardRowView row = _resolver.Instantiate(_prefab, parent);
 

@@ -1,7 +1,8 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using MadSlime.Leaderboards.Data;
 
-namespace Leaderboards
+namespace MadSlime.Leaderboards.Interfaces
 {
     public interface ILeaderboardService
     {

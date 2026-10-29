@@ -4,9 +4,9 @@ mergeInto(LibraryManager.library, {
         const leaderboardName = UTF8ToString(namePointer);
         const complete = function (players, error) {
             SendMessage(target, "OnLeaderboardResponse", JSON.stringify({
-                requestId: requestId,
-                error: error,
-                players: players
+                RequestId: requestId,
+                Error: error,
+                Players: players
             }));
         };
         const mapEntry = function (entry) {
@@ -16,10 +16,10 @@ mergeInto(LibraryManager.library, {
                 playerName = entry.player.publicName;
             }
             return {
-                id: entry.player.uniqueID,
-                name: playerName,
-                rank: entry.rank,
-                score: entry.score
+                Id: entry.player.uniqueID,
+                Name: playerName,
+                Rank: entry.rank,
+                Score: entry.score
             };
         };
         Promise.resolve().then(function () {

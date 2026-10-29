@@ -1,4 +1,4 @@
-namespace Leaderboards
+namespace MadSlime.Leaderboards.Data
 {
     public struct LeaderboardEntryData
     {

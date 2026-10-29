@@ -1,16 +1,26 @@
+#if UNITY_WEBGL && !UNITY_EDITOR
+using System.Runtime.InteropServices;
+#endif
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using MadSlime.Leaderboards.Data;
+using MadSlime.Leaderboards.Interfaces;
 using UnityEngine;
 using YG;
 using YG.Utils.LB;
 
-namespace Leaderboards
+namespace MadSlime.Leaderboards.Adapters
 {
     public class Yg2LeaderboardService : MonoBehaviour, ILeaderboardService
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [DllImport("__Internal")]
+        private static extern void MadSlimeGetLeaderboard(
+            string target, int requestId, string leaderboardName, int topCount, bool isCurrentPlayerRequested);
+#endif
+
         private const int EntriesTimeoutSeconds = 8;
         private const int MaxTopCount = 20;
 
@@ -21,12 +31,6 @@ namespace Leaderboards
         public bool IsAuthorized => YG2.player.auth;
 
         public string PlayerId => YG2.player.id;
-
-#if UNITY_WEBGL && UNITY_EDITOR == false
-        [DllImport("__Internal")]
-        private static extern void MadSlimeGetLeaderboard(string target, int requestId, string leaderboardName,
-            int topCount, bool currentPlayer);
-#endif
 
         public void SetScore(string leaderboardName, int score)
         {
@@ -53,8 +57,12 @@ namespace Leaderboards
                 throw new InvalidOperationException("Yandex leaderboards are disabled.");
             }
 
-            LeaderboardResponse topResponse = await RequestAsync(leaderboardName, topCount, false, cancellationToken);
-            LeaderboardEntryData[] top = MapPlayers(topResponse.players);
+            LeaderboardResponse topResponse = await RequestAsync(
+                leaderboardName,
+                topCount,
+                false,
+                cancellationToken);
+            LeaderboardEntryData[] top = MapPlayers(topResponse.Players);
             LeaderboardEntryData? currentPlayer = null;
 
             if (IsAuthorized == false)
@@ -72,13 +80,13 @@ namespace Leaderboards
                 }
             }
 
-            bool hasPlayerError = false;
+            bool isPlayerError = false;
 
             try
             {
                 LeaderboardResponse playerResponse =
                     await RequestAsync(leaderboardName, topCount, true, cancellationToken);
-                LeaderboardEntryData[] players = MapPlayers(playerResponse.players);
+                LeaderboardEntryData[] players = MapPlayers(playerResponse.Players);
 
                 for (int i = 0; i < players.Length; i++)
                 {
@@ -95,14 +103,14 @@ namespace Leaderboards
             }
             catch (Exception)
             {
-                hasPlayerError = true;
+                isPlayerError = true;
             }
 
-            return new LeaderboardData(top, currentPlayer, hasPlayerError);
+            return new LeaderboardData(top, currentPlayer, isPlayerError);
         }
 
         private async UniTask<LeaderboardResponse> RequestAsync(
-            string leaderboardName, int topCount, bool currentPlayer, CancellationToken cancellationToken)
+            string leaderboardName, int topCount, bool isCurrentPlayerRequested, CancellationToken cancellationToken)
         {
             using (CancellationTokenSource requestSource = CancellationTokenSource.CreateLinkedTokenSource(
                 cancellationToken, this.GetCancellationTokenOnDestroy()))
@@ -117,10 +125,11 @@ namespace Leaderboards
 
                 try
                 {
-#if UNITY_WEBGL && UNITY_EDITOR == false
-                    MadSlimeGetLeaderboard(gameObject.name, requestId, leaderboardName, topCount, currentPlayer);
+#if UNITY_WEBGL && !UNITY_EDITOR
+                    MadSlimeGetLeaderboard(
+                        gameObject.name, requestId, leaderboardName, topCount, isCurrentPlayerRequested);
 #elif UNITY_EDITOR
-                    completion.TrySetResult(Simulate(leaderboardName, topCount, currentPlayer));
+                    completion.TrySetResult(Simulate(leaderboardName, topCount, isCurrentPlayerRequested));
 #else
                     completion.TrySetException(new PlatformNotSupportedException("Leaderboards require Yandex WebGL."));
 #endif
@@ -129,9 +138,9 @@ namespace Leaderboards
                         .Timeout(TimeSpan.FromSeconds(EntriesTimeoutSeconds), DelayType.Realtime)
                         .AttachExternalCancellation(requestSource.Token);
 
-                    if (string.IsNullOrEmpty(response.error) == false)
+                    if (string.IsNullOrEmpty(response.Error) == false)
                     {
-                        throw new InvalidOperationException(response.error);
+                        throw new InvalidOperationException(response.Error);
                     }
 
                     return response;
@@ -148,7 +157,7 @@ namespace Leaderboards
         {
             LeaderboardResponse response = JsonUtility.FromJson<LeaderboardResponse>(json);
 
-            if (response == null || _requests.TryGetValue(response.requestId,
+            if (response == null || _requests.TryGetValue(response.RequestId,
                 out UniTaskCompletionSource<LeaderboardResponse> completion) == false)
             {
                 return;
@@ -170,17 +179,17 @@ namespace Leaderboards
             {
                 LeaderboardPlayerResponse player = source[i];
 
-                if (player == null || player.rank <= 0)
+                if (player == null || player.Rank <= 0)
                 {
                     continue;
                 }
 
                 entries.Add(new LeaderboardEntryData
                 {
-                    Id = player.id,
-                    Name = player.name,
-                    Rank = player.rank,
-                    Score = player.score
+                    Id = player.Id,
+                    Name = player.Name,
+                    Rank = player.Rank,
+                    Score = player.Score
                 });
             }
 
@@ -188,7 +197,7 @@ namespace Leaderboards
         }
 
 #if UNITY_EDITOR
-        private LeaderboardResponse Simulate(string leaderboardName, int topCount, bool currentPlayer)
+        private LeaderboardResponse Simulate(string leaderboardName, int topCount, bool isCurrentPlayerRequested)
         {
             LBData[] leaderboards = YG2.infoYG.Leaderboards.listLBSim;
 
@@ -216,16 +225,16 @@ namespace Leaderboards
 
                         players.Add(new LeaderboardPlayerResponse
                         {
-                            id = player.uniqueID,
-                            name = player.name,
-                            score = player.score
+                            Id = player.uniqueID,
+                            Name = player.name,
+                            Score = player.score
                         });
                     }
                 }
 
                 players.Sort(CompareScores);
 
-                if (leaderboard.isInvertSortOrder == true)
+                if (leaderboard.isInvertSortOrder)
                 {
                     players.Reverse();
                 }
@@ -234,17 +243,17 @@ namespace Leaderboards
                 {
                     LeaderboardPlayerResponse player = players[playerIndex];
 
-                    player.rank = playerIndex + 1;
+                    player.Rank = playerIndex + 1;
 
-                    if (currentPlayer == true && player.id == PlayerId)
+                    if (isCurrentPlayerRequested && player.Id == PlayerId)
                     {
-                        return new LeaderboardResponse { players = new LeaderboardPlayerResponse[] { player } };
+                        return new LeaderboardResponse { Players = new LeaderboardPlayerResponse[] { player } };
                     }
                 }
 
-                if (currentPlayer == true)
+                if (isCurrentPlayerRequested)
                 {
-                    return new LeaderboardResponse { players = Array.Empty<LeaderboardPlayerResponse>() };
+                    return new LeaderboardResponse { Players = Array.Empty<LeaderboardPlayerResponse>() };
                 }
 
                 if (players.Count > topCount)
@@ -252,15 +261,15 @@ namespace Leaderboards
                     players.RemoveRange(topCount, players.Count - topCount);
                 }
 
-                return new LeaderboardResponse { players = players.ToArray() };
+                return new LeaderboardResponse { Players = players.ToArray() };
             }
 
-            return new LeaderboardResponse { error = "Leaderboard simulation is missing: " + leaderboardName };
+            return new LeaderboardResponse { Error = "Leaderboard simulation is missing: " + leaderboardName };
         }
 
         private int CompareScores(LeaderboardPlayerResponse first, LeaderboardPlayerResponse second)
         {
-            return second.score.CompareTo(first.score);
+            return second.Score.CompareTo(first.Score);
         }
 #endif
     }

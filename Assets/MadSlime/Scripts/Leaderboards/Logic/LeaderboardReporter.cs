@@ -1,53 +1,39 @@
 using System;
-using Game;
-using Saves;
-using UnityEngine;
-using VContainer;
+using MadSlime.Game.Data;
+using MadSlime.Leaderboards.Interfaces;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Validation;
 
-namespace Leaderboards
+namespace MadSlime.Leaderboards.Logic
 {
-    public class LeaderboardReporter : MonoBehaviour
+    public class LeaderboardReporter
     {
-        [SerializeField] private YandexConfig _config;
+        private readonly YandexConfig _config;
 
-        private ILeaderboardService _leaderboardService;
-        private ICollectedItemsStorage _storage;
+        private readonly ILeaderboardService _leaderboardService;
+        private readonly ICollectedItemsStorage _storage;
 
-        [Inject]
-        public void Construct(ILeaderboardService leaderboardService, ICollectedItemsStorage storage)
+        public LeaderboardReporter(
+            YandexConfig config,
+            ILeaderboardService leaderboardService,
+            ICollectedItemsStorage storage)
         {
+            _config = config;
             _leaderboardService = leaderboardService;
             _storage = storage;
-        }
 
-        private void Awake()
-        {
-            if (_config == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: YandexConfig is not assigned. Drag the YandexConfig asset into the _config field.");
-            }
+            ArgumentGuard.CheckNotNull(_config, nameof(config));
 
             if (string.IsNullOrEmpty(_config.LeaderboardName))
             {
                 throw new InvalidOperationException(
-                    $"{name}: LeaderboardName is empty. Fill it in the YandexConfig asset (id of the "
-                        + $"leaderboard from the Yandex console).");
+                    "LeaderboardReporter: LeaderboardName is empty. Fill it in the YandexConfig asset (id of the "
+                    + "leaderboard from the Yandex console).");
             }
 
-            if (_leaderboardService == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: ILeaderboardService was not injected. Check that ProjectLifetimeScope "
-                        + $"registers the YG2 leaderboard adapter.");
-            }
+            ArgumentGuard.CheckNotNull(_leaderboardService, nameof(leaderboardService));
 
-            if (_storage == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: ICollectedItemsStorage was not injected. Check that ProjectLifetimeScope "
-                        + $"registers CollectedItemsStorage as ICollectedItemsStorage and LeaderboardReporter.");
-            }
+            ArgumentGuard.CheckNotNull(_storage, nameof(storage));
         }
 
         public void Report()
