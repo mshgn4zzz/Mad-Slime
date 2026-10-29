@@ -1,8 +1,9 @@
-using System;
 using System.Collections.Generic;
+using MadSlime.Audio.Data;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace Audio
+namespace MadSlime.Audio.Logic
 {
     public class MusicChannel
     {
@@ -26,30 +27,15 @@ namespace Audio
             float fadeOutDuration,
             float overlapDuration)
         {
-            if (firstSource == null)
-            {
-                throw new ArgumentNullException(nameof(firstSource));
-            }
+            ArgumentGuard.CheckNotNull(firstSource, nameof(firstSource));
 
-            if (secondSource == null)
-            {
-                throw new ArgumentNullException(nameof(secondSource));
-            }
+            ArgumentGuard.CheckNotNull(secondSource, nameof(secondSource));
 
-            if (fadeInDuration <= 0f)
-            {
-                throw new ArgumentOutOfRangeException(nameof(fadeInDuration), "MusicChannel requires a positive fade-in duration.");
-            }
+            ArgumentGuard.CheckPositive(fadeInDuration, nameof(fadeInDuration));
 
-            if (fadeOutDuration <= 0f)
-            {
-                throw new ArgumentOutOfRangeException(nameof(fadeOutDuration), "MusicChannel requires a positive fade-out duration.");
-            }
+            ArgumentGuard.CheckPositive(fadeOutDuration, nameof(fadeOutDuration));
 
-            if (overlapDuration <= 0f)
-            {
-                throw new ArgumentOutOfRangeException(nameof(overlapDuration), "MusicChannel requires a positive overlap duration.");
-            }
+            ArgumentGuard.CheckPositive(overlapDuration, nameof(overlapDuration));
 
             _sources[0] = firstSource;
             _sources[1] = secondSource;
@@ -60,18 +46,11 @@ namespace Audio
 
         public void Play(Playlist playlist)
         {
-            if (playlist == null)
-            {
-                throw new ArgumentNullException(nameof(playlist), "MusicChannel.Play requires a playlist.");
-            }
+            ArgumentGuard.CheckNotNull(playlist, nameof(playlist));
 
-            if (playlist.Tracks.Count == 0)
-            {
-                throw new InvalidOperationException(
-                    $"MusicChannel.Play: playlist '{playlist.name}' has no tracks.");
-            }
+            ArgumentGuard.CheckNotEmpty(playlist.Tracks, playlist.name, nameof(playlist.Tracks));
 
-            if (IsSamePlaylist(playlist) == true && _sources[_activeIndex].clip != null)
+            if (IsSamePlaylist(playlist) && _sources[_activeIndex].clip != null)
             {
                 return;
             }
@@ -79,7 +58,7 @@ namespace Audio
             _tracks = playlist.Tracks;
             _trackIndex = 0;
 
-            if (playlist.RandomStart == true)
+            if (playlist.IsRandomStart)
             {
                 _trackIndex = UnityEngine.Random.Range(0, _tracks.Count);
             }
@@ -167,21 +146,21 @@ namespace Audio
         {
             AudioSource leadSource = _sources[_activeIndex];
 
-            if (leadSource.clip == null || AudioListener.pause == true)
+            if (leadSource.clip == null || AudioListener.pause)
             {
                 return;
             }
 
             int outgoingIndex = 1 - _activeIndex;
 
-            if (_isLeadFadingIn == true || _isSourceFadingOut[outgoingIndex] == true)
+            if (_isLeadFadingIn || _isSourceFadingOut[outgoingIndex])
             {
                 return;
             }
 
             float remaining = 0f;
 
-            if (leadSource.isPlaying == true)
+            if (leadSource.isPlaying)
             {
                 remaining = leadSource.clip.length - leadSource.time;
             }

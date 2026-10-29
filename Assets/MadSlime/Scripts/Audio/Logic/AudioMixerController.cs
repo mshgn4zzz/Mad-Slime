@@ -1,10 +1,11 @@
 using System;
-using Saves;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Validation;
 using UnityEngine;
 using UnityEngine.Audio;
 using VContainer;
 
-namespace Audio
+namespace MadSlime.Audio.Logic
 {
     public class AudioMixerController : MonoBehaviour
     {
@@ -26,17 +27,10 @@ namespace Audio
         private int _musicVolume;
         private int _sfxVolume;
         private bool _isVolumesLoaded;
-        private bool _hasUnsavedChanges;
-        private bool _hasStarted;
+        private bool _isSavePending;
+        private bool _isStarted;
 
         public event Action VolumesChanged;
-
-        [Inject]
-        public void Construct(IAudioStorage audioStorage, ISavesReadiness savesReadiness)
-        {
-            _audioStorage = audioStorage;
-            _savesReadiness = savesReadiness;
-        }
 
         public int MusicVolume => _musicVolume;
 
@@ -46,53 +40,65 @@ namespace Audio
 
         private void Awake()
         {
-            if (_mixer == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: AudioMixer is not assigned. Drag MasterMixer into the _mixer field.");
-            }
-
-            if (_musicGroup == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Music AudioMixerGroup is not assigned. Drag a group into the _musicGroup field.");
-            }
-
-            if (_sfxGroup == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: SFX AudioMixerGroup is not assigned. Drag a group into the _sfxGroup field.");
-            }
-
-            if (_audioStorage == null || _savesReadiness == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: saves dependencies were not injected. Check that ProjectLifetimeScope "
-                        + $"registers AudioStorage and AudioMixerController.");
-            }
+            ArgumentGuard.CheckAssigned(_mixer, name, nameof(_mixer));
+            ArgumentGuard.CheckAssigned(_musicGroup, name, nameof(_musicGroup));
+            ArgumentGuard.CheckAssigned(_sfxGroup, name, nameof(_sfxGroup));
+            ArgumentGuard.CheckAssigned(_audioStorage, name, nameof(_audioStorage));
+            ArgumentGuard.CheckAssigned(_savesReadiness, name, nameof(_savesReadiness));
         }
 
         private void OnEnable()
         {
-            _savesReadiness.Ready += OnSavesReady;
+            _savesReadiness.Prepared += OnSavesReady;
             ApplyFromSaves();
         }
 
         private void OnDisable()
         {
-            _savesReadiness.Ready -= OnSavesReady;
+            _savesReadiness.Prepared -= OnSavesReady;
         }
 
         private void Start()
         {
-            _hasStarted = true;
+            _isStarted = true;
             ApplyChannelVolume(MusicVolumeParam, _musicVolume);
             ApplyChannelVolume(SfxVolumeParam, _sfxVolume);
         }
 
-        private void OnSavesReady()
+        [Inject]
+        public void Construct(IAudioStorage audioStorage, ISavesReadiness savesReadiness)
         {
-            ApplyFromSaves();
+            _audioStorage = audioStorage;
+            _savesReadiness = savesReadiness;
+        }
+
+        public void SetMusicVolume(int volume)
+        {
+            _musicVolume = ClampVolume(volume);
+            _isSavePending = true;
+
+            ApplyChannelVolume(MusicVolumeParam, _musicVolume);
+            VolumesChanged?.Invoke();
+        }
+
+        public void SetSfxVolume(int volume)
+        {
+            _sfxVolume = ClampVolume(volume);
+            _isSavePending = true;
+
+            ApplyChannelVolume(SfxVolumeParam, _sfxVolume);
+            VolumesChanged?.Invoke();
+        }
+
+        public void CommitVolumes()
+        {
+            if (_isVolumesLoaded == false || _isSavePending == false)
+            {
+                return;
+            }
+
+            _isSavePending = false;
+            _audioStorage.SetVolumes(_musicVolume, _sfxVolume);
         }
 
         private void ApplyFromSaves()
@@ -114,50 +120,21 @@ namespace Audio
             }
 
             _isVolumesLoaded = true;
-            _hasUnsavedChanges = false;
+            _isSavePending = false;
 
             ApplyChannelVolume(MusicVolumeParam, _musicVolume);
             ApplyChannelVolume(SfxVolumeParam, _sfxVolume);
             VolumesChanged?.Invoke();
         }
 
-        public void SetMusicVolume(int volume)
-        {
-            _musicVolume = ClampVolume(volume);
-            _hasUnsavedChanges = true;
-
-            ApplyChannelVolume(MusicVolumeParam, _musicVolume);
-            VolumesChanged?.Invoke();
-        }
-
-        public void SetSfxVolume(int volume)
-        {
-            _sfxVolume = ClampVolume(volume);
-            _hasUnsavedChanges = true;
-
-            ApplyChannelVolume(SfxVolumeParam, _sfxVolume);
-            VolumesChanged?.Invoke();
-        }
-
-        public void CommitVolumes()
-        {
-            if (_isVolumesLoaded == false || _hasUnsavedChanges == false)
-            {
-                return;
-            }
-
-            _hasUnsavedChanges = false;
-            _audioStorage.SetVolumes(_musicVolume, _sfxVolume);
-        }
-
-        private static int ClampVolume(int volume)
+        private int ClampVolume(int volume)
         {
             return Mathf.Clamp(volume, MinVolume, MaxVolume);
         }
 
         private void ApplyChannelVolume(string mixerParameter, int volume)
         {
-            if (_hasStarted == false || _isVolumesLoaded == false)
+            if (_isStarted == false || _isVolumesLoaded == false)
             {
                 return;
             }
@@ -167,14 +144,14 @@ namespace Audio
             _mixer.SetFloat(mixerParameter, decibels);
         }
 
-        private static int SnapToStep(int volume)
+        private int SnapToStep(int volume)
         {
             int stepped = Mathf.RoundToInt(volume / (float)VolumeStep) * VolumeStep;
 
             return Mathf.Clamp(stepped, MinVolume, MaxVolume);
         }
 
-        private static float LinearToDecibels(float volume01)
+        private float LinearToDecibels(float volume01)
         {
             if (volume01 <= Mathf.Epsilon)
             {
@@ -191,6 +168,11 @@ namespace Audio
             float audibleProgress = (volume01 - MuteZone01) / (1f - MuteZone01);
 
             return Mathf.Lerp(MinAudibleDecibels, 0f, audibleProgress);
+        }
+
+        private void OnSavesReady()
+        {
+            ApplyFromSaves();
         }
     }
 }

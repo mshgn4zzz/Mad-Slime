@@ -1,9 +1,12 @@
 using System;
+using MadSlime.Audio.Data;
+using MadSlime.Audio.Interfaces;
+using MadSlime.Validation;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-namespace Audio
+namespace MadSlime.Audio.View
 {
     [RequireComponent(typeof(Button))]
     public class UIButtonSound : MonoBehaviour
@@ -13,33 +16,18 @@ namespace Audio
         private Button _button;
         private IUISoundPlayer _soundPlayer;
 
-        [Inject]
-        public void Construct(IUISoundPlayer soundPlayer)
-        {
-            _soundPlayer = soundPlayer;
-        }
-
         private void Awake()
         {
             if (TryGetComponent(out _button) == false)
             {
                 throw new InvalidOperationException(
                     $"{name}: Button component is missing. UIButtonSound requires the Button "
-                        + $"component on the same object.");
+                    + $"component on the same object.");
             }
 
-            if (_soundPlayer == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: IUISoundPlayer was not injected. Scene buttons are injected by the "
-                        + $"scene LifetimeScope; spawned buttons must use IObjectResolver.Instantiate.");
-            }
+            ArgumentGuard.CheckAssigned(_soundPlayer, name, nameof(_soundPlayer));
 
-            if (_sfxClip == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: SfxClip is not assigned. Drag a SfxClip asset into the _sfxClip field.");
-            }
+            ArgumentGuard.CheckAssigned(_sfxClip, name, nameof(_sfxClip));
         }
 
         private void OnEnable()
@@ -53,6 +41,12 @@ namespace Audio
             {
                 _button.onClick.RemoveListener(OnClick);
             }
+        }
+
+        [Inject]
+        public void Construct(IUISoundPlayer soundPlayer)
+        {
+            _soundPlayer = soundPlayer;
         }
 
         private void OnClick()

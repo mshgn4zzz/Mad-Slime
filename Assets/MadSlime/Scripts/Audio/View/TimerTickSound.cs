@@ -1,8 +1,10 @@
-using System;
+using MadSlime.Audio.Data;
+using MadSlime.Audio.Interfaces;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace Audio
+namespace MadSlime.Audio.View
 {
     public class TimerTickSound : MonoBehaviour
     {
@@ -11,26 +13,11 @@ namespace Audio
         private IGameSoundPlayer _soundPlayer;
         private bool _isTickingActive;
 
-        [Inject]
-        public void Construct(IGameSoundPlayer soundPlayer)
-        {
-            _soundPlayer = soundPlayer;
-        }
-
         private void Awake()
         {
-            if (_soundPlayer == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: IGameSoundPlayer was not injected. GameLifetimeScope must be the "
-                        + $"first object in the scene hierarchy.");
-            }
+            ArgumentGuard.CheckAssigned(_soundPlayer, name, nameof(_soundPlayer));
 
-            if (_sfxClip == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: SfxClip is not assigned. Drag a SfxClip asset into the _sfxClip field.");
-            }
+            ArgumentGuard.CheckAssigned(_sfxClip, name, nameof(_sfxClip));
         }
 
         private void OnDisable()
@@ -38,9 +25,15 @@ namespace Audio
             StopTicking();
         }
 
+        [Inject]
+        public void Construct(IGameSoundPlayer soundPlayer)
+        {
+            _soundPlayer = soundPlayer;
+        }
+
         public void StartTicking()
         {
-            if (_isTickingActive == true)
+            if (_isTickingActive)
             {
                 return;
             }

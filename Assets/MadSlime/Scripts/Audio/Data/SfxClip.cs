@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Audio
+namespace MadSlime.Audio.Data
 {
     [CreateAssetMenu(menuName = "Mad Slime/Sfx Clip", fileName = "NewSfxClip")]
     public class SfxClip : ScriptableObject

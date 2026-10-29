@@ -1,9 +1,13 @@
 using System;
-using ShapeFill;
+using MadSlime.Audio.Data;
+using MadSlime.Audio.Interfaces;
+using MadSlime.ShapeFill.Logic;
+using MadSlime.ShapeFill.View;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace Audio
+namespace MadSlime.Audio.View
 {
     [RequireComponent(typeof(ShapeFiller))]
     public class FlyingCubeArrivalSound : MonoBehaviour
@@ -16,32 +20,13 @@ namespace Audio
         private IGameSoundPlayer _soundPlayer;
         private ShapeFiller _filler;
 
-        [Inject]
-        public void Construct(IGameSoundPlayer soundPlayer)
-        {
-            _soundPlayer = soundPlayer;
-        }
-
         private void Awake()
         {
-            if (_soundPlayer == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: IGameSoundPlayer was not injected. FillLifetimeScope must be the "
-                        + $"first object in the scene hierarchy.");
-            }
+            ArgumentGuard.CheckAssigned(_soundPlayer, name, nameof(_soundPlayer));
 
-            if (_sfxClip == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: SfxClip is not assigned. Drag a SfxClip asset into the _sfxClip field.");
-            }
+            ArgumentGuard.CheckAssigned(_sfxClip, name, nameof(_sfxClip));
 
-            if (_minPitch > _maxPitch)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: MinPitch {_minPitch} is greater than MaxPitch {_maxPitch}.");
-            }
+            ArgumentGuard.CheckOrder(_minPitch, _maxPitch, name, nameof(_minPitch));
 
             if (TryGetComponent(out _filler) == false)
             {
@@ -57,6 +42,12 @@ namespace Audio
         private void OnDisable()
         {
             _filler.CubeArrived -= OnFillerCubeArrived;
+        }
+
+        [Inject]
+        public void Construct(IGameSoundPlayer soundPlayer)
+        {
+            _soundPlayer = soundPlayer;
         }
 
         private void OnFillerCubeArrived(CubeFlightAnimator cube)

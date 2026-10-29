@@ -1,8 +1,10 @@
-using System;
+using MadSlime.Audio.Data;
+using MadSlime.Audio.Interfaces;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace Audio
+namespace MadSlime.Audio.View
 {
     public class FillCompleteSound : MonoBehaviour
     {
@@ -10,26 +12,17 @@ namespace Audio
 
         private IGameSoundPlayer _soundPlayer;
 
+        private void Awake()
+        {
+            ArgumentGuard.CheckAssigned(_soundPlayer, name, nameof(_soundPlayer));
+
+            ArgumentGuard.CheckAssigned(_sfxClip, name, nameof(_sfxClip));
+        }
+
         [Inject]
         public void Construct(IGameSoundPlayer soundPlayer)
         {
             _soundPlayer = soundPlayer;
-        }
-
-        private void Awake()
-        {
-            if (_soundPlayer == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: IGameSoundPlayer was not injected. Check that FillLifetimeScope "
-                        + $"registers FillCompleteSound.");
-            }
-
-            if (_sfxClip == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: SfxClip is not assigned. Drag a clap SfxClip asset into the _sfxClip field.");
-            }
         }
 
         public void Play()

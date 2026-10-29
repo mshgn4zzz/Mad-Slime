@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace Audio
+namespace MadSlime.Audio.Logic
 {
     internal class AudioVoicePool
     {
@@ -10,6 +10,7 @@ namespace Audio
 
         private List<AudioSource> _sources = new List<AudioSource>();
         private List<float> _sourceEndTimes = new List<float>();
+        private AudioSourceFactory _sourceFactory = new AudioSourceFactory();
         private AudioMixerGroup _mixerGroup;
         private Transform _ownerTransform;
 
@@ -50,12 +51,7 @@ namespace Audio
 
         private int AddSource()
         {
-            AudioSource source = _ownerTransform.gameObject.AddComponent<AudioSource>();
-
-            source.outputAudioMixerGroup = _mixerGroup;
-            source.playOnAwake = false;
-            source.loop = false;
-            source.spatialBlend = 0f;
+            AudioSource source = _sourceFactory.Create(_ownerTransform, _mixerGroup);
 
             _sources.Add(source);
             _sourceEndTimes.Add(0f);

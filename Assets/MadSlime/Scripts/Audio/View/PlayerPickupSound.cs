@@ -1,11 +1,13 @@
-using System;
-using Collectables;
-using Player;
+using MadSlime.Audio.Data;
+using MadSlime.Audio.Interfaces;
+using MadSlime.Collectables.Logic;
+using MadSlime.Player.Data;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 using Random = UnityEngine.Random;
 
-namespace Audio
+namespace MadSlime.Audio.View
 {
     public class PlayerPickupSound : MonoBehaviour
     {
@@ -15,55 +17,24 @@ namespace Audio
         private IGameSoundPlayer _soundPlayer;
         private ItemCollector _itemCollector;
 
-        [Inject]
-        public void Construct(IGameSoundPlayer soundPlayer, ItemCollector itemCollector)
-        {
-            _soundPlayer = soundPlayer;
-            _itemCollector = itemCollector;
-        }
-
         private void Awake()
         {
-            if (_soundPlayer == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: IGameSoundPlayer was not injected. GameLifetimeScope must be the "
-                        + $"first object in the scene hierarchy.");
-            }
+            ArgumentGuard.CheckAssigned(_soundPlayer, name, nameof(_soundPlayer));
 
-            if (_config == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerConfig is not assigned. Drag the PlayerConfig asset into the _config field.");
-            }
+            ArgumentGuard.CheckAssigned(_config, name, nameof(_config));
 
-            if (_itemCollector == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: ItemCollector was not injected. Check that GameLifetimeScope "
-                        + $"registers ItemCollector and PlayerPickupSound.");
-            }
+            ArgumentGuard.CheckAssigned(_itemCollector, name, nameof(_itemCollector));
 
-            if (_sfxClip == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: SfxClip is not assigned. Drag a SfxClip asset into the _sfxClip field.");
-            }
+            ArgumentGuard.CheckAssigned(_sfxClip, name, nameof(_sfxClip));
 
-            if (_config.PickupSoundMinInterval > _config.PickupSoundMaxInterval)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerConfig has PickupSoundMinInterval "
-                        + $"{_config.PickupSoundMinInterval} greater than "
-                        + $"PickupSoundMaxInterval {_config.PickupSoundMaxInterval}.");
-            }
+            ArgumentGuard.CheckOrder(
+                _config.PickupSoundMinInterval,
+                _config.PickupSoundMaxInterval,
+                name,
+                nameof(_config.PickupSoundMinInterval));
 
-            if (_config.PickupSoundMinPitch > _config.PickupSoundMaxPitch)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerConfig has PickupSoundMinPitch {_config.PickupSoundMinPitch} "
-                        + $"greater than PickupSoundMaxPitch {_config.PickupSoundMaxPitch}.");
-            }
+            ArgumentGuard.CheckOrder(
+                _config.PickupSoundMinPitch, _config.PickupSoundMaxPitch, name, nameof(_config.PickupSoundMinPitch));
         }
 
         private void OnEnable()
@@ -76,7 +47,14 @@ namespace Audio
             _itemCollector.ItemCollected -= OnItemCollected;
         }
 
-        private void OnItemCollected(Items.Item item)
+        [Inject]
+        public void Construct(IGameSoundPlayer soundPlayer, ItemCollector itemCollector)
+        {
+            _soundPlayer = soundPlayer;
+            _itemCollector = itemCollector;
+        }
+
+        private void OnItemCollected(global::MadSlime.Items.View.Item item)
         {
             float throttleSeconds = Random.Range(
                 _config.PickupSoundMinInterval,

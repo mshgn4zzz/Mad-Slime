@@ -1,10 +1,12 @@
-using System;
 using System.Collections.Generic;
+using MadSlime.Audio.Data;
+using MadSlime.Audio.Interfaces;
+using MadSlime.Validation;
 using UnityEngine;
 using UnityEngine.Audio;
 using Random = UnityEngine.Random;
 
-namespace Audio
+namespace MadSlime.Audio.Logic
 {
     public class AudioPlayer : MonoBehaviour, IMusicPlayer, IGameSoundPlayer, IUISoundPlayer
     {
@@ -22,6 +24,7 @@ namespace Audio
 
         [SerializeField, Min(0.01f)] private float _musicOverlapDuration = 2.5f;
 
+        private AudioSourceFactory _sourceFactory = new AudioSourceFactory();
         private AudioVoicePool _uiPool;
         private AudioVoicePool _gamePool;
         private AudioSource _loopSource;
@@ -30,28 +33,18 @@ namespace Audio
 
         private void Awake()
         {
-            if (_sfxGroup == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: SFX mixer group is not assigned. Open the ProjectScope prefab and drag "
-                        + $"the SFX group of the MasterMixer into the Sfx Group field.");
-            }
+            ArgumentGuard.CheckAssigned(_sfxGroup, name, nameof(_sfxGroup));
 
-            if (_musicGroup == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Music mixer group is not assigned. Open the ProjectScope prefab and "
-                        + $"drag the Music group of the MasterMixer into the Music Group field.");
-            }
+            ArgumentGuard.CheckAssigned(_musicGroup, name, nameof(_musicGroup));
 
             _uiPool = new AudioVoicePool(_uiVoices, _sfxGroup, transform);
             _gamePool = new AudioVoicePool(_gameVoices, _sfxGroup, transform);
 
-            _loopSource = CreateSource(_sfxGroup);
+            _loopSource = _sourceFactory.Create(transform, _sfxGroup);
             _loopSource.loop = true;
 
-            AudioSource firstMusicSource = CreateMusicSource();
-            AudioSource secondMusicSource = CreateMusicSource();
+            AudioSource firstMusicSource = _sourceFactory.Create(transform, _musicGroup);
+            AudioSource secondMusicSource = _sourceFactory.Create(transform, _musicGroup);
 
             _musicChannel = new MusicChannel(
                 firstMusicSource,
@@ -79,7 +72,7 @@ namespace Audio
 
         public void Play(SfxClip clip, float throttleSeconds)
         {
-            if (PassesThrottle(clip, throttleSeconds) == false)
+            if (TryPassThrottle(clip, throttleSeconds) == false)
             {
                 return;
             }
@@ -90,7 +83,7 @@ namespace Audio
 
         public void Play(SfxClip clip, float pitch, float throttleSeconds)
         {
-            if (PassesThrottle(clip, throttleSeconds) == false)
+            if (TryPassThrottle(clip, throttleSeconds) == false)
             {
                 return;
             }
@@ -111,39 +104,18 @@ namespace Audio
 
         public void StopLoop()
         {
-            if (_loopSource.isPlaying == true)
+            if (_loopSource.isPlaying)
             {
                 _loopSource.Stop();
             }
         }
 
-        private AudioSource CreateMusicSource()
-        {
-            AudioSource source = CreateSource(_musicGroup);
-
-            source.loop = false;
-
-            return source;
-        }
-
-        private AudioSource CreateSource(AudioMixerGroup mixerGroup)
-        {
-            AudioSource source = gameObject.AddComponent<AudioSource>();
-
-            source.outputAudioMixerGroup = mixerGroup;
-            source.playOnAwake = false;
-            source.loop = false;
-            source.spatialBlend = 0f;
-
-            return source;
-        }
-
-        private bool PassesThrottle(SfxClip clip, float throttleSeconds)
+        private bool TryPassThrottle(SfxClip clip, float throttleSeconds)
         {
             int clipId = clip.GetInstanceID();
             float currentTime = Time.unscaledTime;
 
-            if (_nextAllowedPlayTimeByClipId.TryGetValue(clipId, out float nextAllowedTime) == true)
+            if (_nextAllowedPlayTimeByClipId.TryGetValue(clipId, out float nextAllowedTime))
             {
                 if (currentTime < nextAllowedTime)
                 {
@@ -168,22 +140,13 @@ namespace Audio
 
         private void ValidateSfxClip(SfxClip clip)
         {
-            if (clip == null)
-            {
-                throw new ArgumentNullException(nameof(clip), $"{name}: SfxClip is not assigned.");
-            }
+            ArgumentGuard.CheckNotNull(clip, nameof(clip));
 
-            if (clip.Clip == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: SfxClip '{clip.name}' has no AudioClip assigned.");
-            }
+            ArgumentGuard.CheckAssigned(clip.Clip, clip.name, nameof(clip.Clip));
 
-            if (clip.IsRandomPitch && clip.MinPitch > clip.MaxPitch)
+            if (clip.IsRandomPitch)
             {
-                throw new InvalidOperationException(
-                    $"{name}: SfxClip '{clip.name}' has MinPitch {clip.MinPitch} greater than "
-                        + $"MaxPitch {clip.MaxPitch}.");
+                ArgumentGuard.CheckOrder(clip.MinPitch, clip.MaxPitch, clip.name, nameof(clip.MinPitch));
             }
         }
     }

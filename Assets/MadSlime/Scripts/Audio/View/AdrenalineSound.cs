@@ -1,9 +1,11 @@
-using System;
+using MadSlime.Audio.Data;
+using MadSlime.Audio.Interfaces;
+using MadSlime.Upgrades.Logic;
+using MadSlime.Validation;
 using UnityEngine;
-using Upgrades;
 using VContainer;
 
-namespace Audio
+namespace MadSlime.Audio.View
 {
     public class AdrenalineSound : MonoBehaviour
     {
@@ -12,28 +14,11 @@ namespace Audio
         private IGameSoundPlayer _soundPlayer;
         private AdrenalineBoost _adrenalineBoost;
 
-        [Inject]
-        public void Construct(IGameSoundPlayer soundPlayer, AdrenalineBoost adrenalineBoost)
-        {
-            _soundPlayer = soundPlayer;
-            _adrenalineBoost = adrenalineBoost;
-        }
-
         private void Awake()
         {
-            if (_soundPlayer == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: IGameSoundPlayer was not injected. GameLifetimeScope must be the "
-                        + $"first object in the scene hierarchy.");
-            }
+            ArgumentGuard.CheckAssigned(_soundPlayer, name, nameof(_soundPlayer));
 
-            if (_adrenalineBoost == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: AdrenalineBoost was not injected. Check that GameLifetimeScope "
-                        + $"registers AdrenalineBoost and AdrenalineSound.");
-            }
+            ArgumentGuard.CheckAssigned(_adrenalineBoost, name, nameof(_adrenalineBoost));
         }
 
         private void OnEnable()
@@ -44,6 +29,13 @@ namespace Audio
         private void OnDisable()
         {
             _adrenalineBoost.BoostStarted -= OnBoostStarted;
+        }
+
+        [Inject]
+        public void Construct(IGameSoundPlayer soundPlayer, AdrenalineBoost adrenalineBoost)
+        {
+            _soundPlayer = soundPlayer;
+            _adrenalineBoost = adrenalineBoost;
         }
 
         private void OnBoostStarted()
