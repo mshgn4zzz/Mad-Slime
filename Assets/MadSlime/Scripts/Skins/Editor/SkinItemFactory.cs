@@ -1,18 +1,18 @@
 using System;
 using System.IO;
-using Items.Editor;
-using Shop;
-using Skins;
+using MadSlime.Items.Editor;
+using MadSlime.Shop.Data;
+using MadSlime.Shop.View;
+using MadSlime.Skins.Data;
 using UnityEditor;
 using UnityEngine;
 
-namespace Skins.Editor
+namespace MadSlime.Skins.Editor
 {
     public class SkinItemFactory : EditorWindow
     {
         private const string PrefsKey = "MadSlime.SkinItemFactory";
         private const int IconSize = 512;
-        private const float IconCameraDistance = 10f;
         private const string DefaultSkinsPath = "Assets/MadSlime/Scriptables/Skins";
         private const string DefaultPrefabsPath = "Assets/MadSlime/Resources/PlayerModel/Prefabs";
         private const string DefaultIconsPath = "Assets/MadSlime/Resources/Icons/Skins";
@@ -23,6 +23,7 @@ namespace Skins.Editor
         private const string RarityField = "_rarity";
         private const string IdField = "_id";
         private const string SkinItemsField = "_skinItems";
+        private ItemFactoryTools _tools = new ItemFactoryTools();
 
         private GameObject _sourceModel;
         private ShopContent _shopContent;
@@ -31,77 +32,8 @@ namespace Skins.Editor
         private DefaultAsset _iconsFolder;
         private string _skinId = "";
         private SkinRarity _rarity = SkinRarity.Common;
-        private bool _forceIcon;
-        private bool _replaceExisting;
-
-        public static void CreateFromCommandLine()
-        {
-            string[] args = Environment.GetCommandLineArgs();
-
-            string Argument(string key)
-            {
-                int index = Array.IndexOf(args, key);
-
-                if (index < 0 || index + 1 >= args.Length || args[index + 1].StartsWith("-"))
-                {
-                    throw new ArgumentException($"Skin Factory requires {key}.");
-                }
-
-                return args[index + 1];
-            }
-
-            string path = Argument("-skinSource");
-            string id = Argument("-skinId");
-
-            if (Enum.TryParse(Argument("-skinRarity"), true, out SkinRarity rarity) == false
-                || Enum.IsDefined(typeof(SkinRarity), rarity) == false)
-            {
-                throw new ArgumentException("Unknown skin rarity.");
-            }
-
-            GameObject source = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-
-            if (source == null)
-            {
-                throw new ArgumentException($"Skin model does not exist: {path}");
-            }
-
-            RebuildSkin(source, id, rarity);
-        }
-
-        public static SkinItem RebuildSkin(GameObject sourceModel, string skinId, SkinRarity rarity)
-        {
-            ItemFactoryTools.EnsureFolder(DefaultPrefabsPath);
-            ItemFactoryTools.EnsureFolder(DefaultSkinsPath);
-            ItemFactoryTools.EnsureFolder(DefaultIconsPath);
-
-            SkinItemFactory factory = CreateInstance<SkinItemFactory>();
-
-            try
-            {
-                factory._sourceModel = sourceModel;
-                factory._skinId = skinId;
-                factory._rarity = rarity;
-                factory._shopContent = AssetDatabase.LoadAssetAtPath<ShopContent>(DefaultShopContentPath);
-                factory._skinsFolder = AssetDatabase.LoadAssetAtPath<DefaultAsset>(DefaultSkinsPath);
-                factory._prefabsFolder = AssetDatabase.LoadAssetAtPath<DefaultAsset>(DefaultPrefabsPath);
-                factory._iconsFolder = AssetDatabase.LoadAssetAtPath<DefaultAsset>(DefaultIconsPath);
-                factory._forceIcon = true;
-                factory._replaceExisting = true;
-                factory.CreateSkin();
-                return AssetDatabase.LoadAssetAtPath<SkinItem>($"{DefaultSkinsPath}/{skinId}.asset");
-            }
-            finally
-            {
-                DestroyImmediate(factory);
-            }
-        }
-
-        [MenuItem("Mad Slime/Skin Factory")]
-        private static void Open()
-        {
-            GetWindow<SkinItemFactory>("Skin Factory");
-        }
+        private bool _isIconRegenerationForced;
+        private bool _isReplacementEnabled;
 
         private void OnEnable()
         {
@@ -118,10 +50,10 @@ namespace Skins.Editor
             EditorGUILayout.HelpBox(
                 "Drop a model or a prefab into Source Model. A prefab is used as is; a raw model is saved as " +
                                 "'<Name>Skin.prefab' into the Prefabs Folder (an existing file is reused, never "
-                                        + "duplicated). The tool  " +
+                + "duplicated). The tool  " +
                 "renders the icon into the Icons Folder as '<Id>.png' (kept unless Force Icon is on), creates the " +
                                 "SkinItem asset in the Skins Folder and appends it to Shop Content. The id must be "
-                                        + "unique — it is the  " +
+                + "unique — it is the  " +
                 "save key of the skin and must never change after release.",
                 MessageType.Info);
 
@@ -140,7 +72,7 @@ namespace Skins.Editor
 
             _skinId = EditorGUILayout.TextField("Skin Id", _skinId);
             _rarity = (SkinRarity)EditorGUILayout.EnumPopup("Rarity", _rarity);
-            _forceIcon = EditorGUILayout.Toggle("Force Icon", _forceIcon);
+            _isIconRegenerationForced = EditorGUILayout.Toggle("Force Icon", _isIconRegenerationForced);
 
             EditorGUILayout.Space();
 
@@ -152,27 +84,22 @@ namespace Skins.Editor
 
         private void CreateSkin()
         {
-            if (Validate() == false)
-            {
-                return;
-            }
+            Validate();
 
-            string skinsPath = ItemFactoryTools.GetFolderPath(_skinsFolder);
-            string prefabsPath = ItemFactoryTools.GetFolderPath(_prefabsFolder);
-            string iconsPath = ItemFactoryTools.GetFolderPath(_iconsFolder);
+            string skinsPath = _tools.GetFolderPath(_skinsFolder);
+            string prefabsPath = _tools.GetFolderPath(_prefabsFolder);
+            string iconsPath = _tools.GetFolderPath(_iconsFolder);
             string assetPath = $"{skinsPath}/{_skinId}.asset";
 
-            if (IsIdUsed(_skinId) == true && _replaceExisting == false)
+            if (IsIdUsed(_skinId) && _isReplacementEnabled == false)
             {
-                                Debug.LogError($"[SkinFactory] Skin id '{_skinId}' is already used in ShopContent "
-                                        + $"'{_shopContent.name}'.");
-                return;
+                throw new InvalidOperationException($"[SkinFactory] Skin id '{_skinId}' is already used in ShopContent "
+                    + $"'{_shopContent.name}'.");
             }
 
-            if (File.Exists(assetPath) == true && _replaceExisting == false)
+            if (File.Exists(assetPath) && _isReplacementEnabled == false)
             {
-                Debug.LogError($"[SkinFactory] SkinItem asset already exists: {assetPath}");
-                return;
+                throw new InvalidOperationException($"[SkinFactory] SkinItem asset already exists: {assetPath}");
             }
 
             GameObject prefab = ResolveSkinPrefab(prefabsPath);
@@ -183,7 +110,7 @@ namespace Skins.Editor
             }
 
             EnsurePreviewModel(prefab);
-            ItemFactoryTools.EnsureFolder(skinsPath);
+            _tools.EnsureFolder(skinsPath);
 
             string iconPath = $"{iconsPath}/{_skinId}.png";
 
@@ -224,44 +151,36 @@ namespace Skins.Editor
 
             Selection.activeObject = skin;
             EditorGUIUtility.PingObject(skin);
-
-            Debug.Log($"[SkinFactory] Skin '{_skinId}' created at {assetPath} and appended to '{_shopContent.name}'.");
         }
 
-        private bool Validate()
+        private void Validate()
         {
             if (_sourceModel == null)
             {
-                Debug.LogError("[SkinFactory] Source Model is not assigned.");
-                return false;
+                throw new InvalidOperationException("[SkinFactory] Source Model is not assigned.");
             }
 
             if (_shopContent == null)
             {
-                Debug.LogError("[SkinFactory] Shop Content is not assigned.");
-                return false;
+                throw new InvalidOperationException("[SkinFactory] Shop Content is not assigned.");
             }
 
             if (_skinsFolder == null || _prefabsFolder == null || _iconsFolder == null)
             {
-                Debug.LogError("[SkinFactory] A folder is not assigned. Fill Skins, Prefabs and Icons folders.");
-                return false;
+                throw new InvalidOperationException(
+                    "[SkinFactory] A folder is not assigned. Fill Skins, Prefabs and Icons folders.");
             }
 
-            if (string.IsNullOrWhiteSpace(_skinId) == true)
+            if (string.IsNullOrWhiteSpace(_skinId))
             {
-                Debug.LogError("[SkinFactory] Skin Id is empty. It is the save key of the skin.");
-                return false;
+                throw new InvalidOperationException("[SkinFactory] Skin Id is empty. It is the save key of the skin.");
             }
 
             if (_sourceModel.GetComponentsInChildren<Renderer>().Length == 0)
             {
-                                Debug.LogError($"[SkinFactory] '{_sourceModel.name}' has no Renderers — there is "
-                                        + $"nothing to render the icon from.");
-                return false;
+                throw new InvalidOperationException($"[SkinFactory] '{_sourceModel.name}' has no Renderers — there is "
+                    + $"nothing to render the icon from.");
             }
-
-            return true;
         }
 
         private bool IsIdUsed(string skinId)
@@ -281,25 +200,25 @@ namespace Skins.Editor
         {
             string sourcePath = AssetDatabase.GetAssetPath(_sourceModel);
 
-            if (sourcePath.EndsWith(".prefab", StringComparison.OrdinalIgnoreCase) == true)
+            if (sourcePath.EndsWith(".prefab", StringComparison.OrdinalIgnoreCase))
             {
                 return _sourceModel;
             }
 
-            ItemFactoryTools.EnsureFolder(prefabsPath);
+            _tools.EnsureFolder(prefabsPath);
 
             string prefabPath = $"{prefabsPath}/{_sourceModel.name}Skin.prefab";
 
             GameObject existing = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
 
-            if (existing != null && _replaceExisting == false)
+            if (existing != null && _isReplacementEnabled == false)
             {
                 return existing;
             }
 
             GameObject instance;
 
-            if (string.IsNullOrEmpty(sourcePath) == true)
+            if (string.IsNullOrEmpty(sourcePath))
             {
                 instance = UnityEngine.Object.Instantiate(_sourceModel);
             }
@@ -308,7 +227,7 @@ namespace Skins.Editor
                 instance = (GameObject)PrefabUtility.InstantiatePrefab(_sourceModel);
             }
 
-            if (_replaceExisting && PrefabUtility.IsPartOfPrefabInstance(instance))
+            if (_isReplacementEnabled && PrefabUtility.IsPartOfPrefabInstance(instance))
             {
                 PrefabUtility.UnpackPrefabInstance(
                     instance, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
@@ -325,7 +244,7 @@ namespace Skins.Editor
 
         private void EnsurePreviewModel(GameObject prefab)
         {
-            if (prefab.TryGetComponent(out SkinModel skinModel) == true)
+            if (prefab.TryGetComponent(out SkinModel skinModel))
             {
                 return;
             }
@@ -346,31 +265,31 @@ namespace Skins.Editor
 
         private void RenderIconIfNeeded(GameObject prefab, string iconPath)
         {
-            if (File.Exists(iconPath) == true && _forceIcon == false)
+            if (File.Exists(iconPath) && _isIconRegenerationForced == false)
             {
                 return;
             }
 
-            ItemFactoryTools.EnsureFolder(Path.GetDirectoryName(iconPath)?.Replace('\\', '/'));
+            _tools.EnsureFolder(Path.GetDirectoryName(iconPath)?.Replace('\\', '/'));
 
-            int iconLayer = ItemFactoryTools.ResolveFreeLayer();
+            int iconLayer = _tools.ResolveFreeLayer();
 
             if (iconLayer < 0)
             {
-                Debug.LogError("[SkinFactory] No unnamed layer left in 9-31 for icon rendering. Free one in "
-                        + "Project Settings → Tags and Layers.");
-                return;
+                throw new InvalidOperationException(
+                    "[SkinFactory] No unnamed layer left in 9-31 for icon rendering. Free one in "
+                    + "Project Settings → Tags and Layers.");
             }
 
             IconRenderSettings settings = new IconRenderSettings
             {
                 LightEuler = new Vector3(35f, 210f, 0f),
-                RelightToCamera = false,
+                IsRelightingEnabled = false,
                 CameraOffset = Quaternion.Euler(0f, 30f, 0f) * new Vector3(0f, 0.35f, 1f),
                 OrthographicPadding = 1f,
-                FitByProjectiveBounds = false
+                IsProjectiveFitEnabled = false
             };
-            Texture2D texture = ItemFactoryTools.RenderToTexture(prefab, iconLayer, IconSize, settings);
+            Texture2D texture = _tools.RenderToTexture(prefab, iconLayer, IconSize, settings);
 
             File.WriteAllBytes(iconPath, texture.EncodeToPNG());
             DestroyImmediate(texture);
@@ -381,7 +300,6 @@ namespace Skins.Editor
 
             if (importer == null)
             {
-                Debug.LogWarning($"[SkinFactory] No TextureImporter for '{iconPath}'.");
                 return;
             }
 
@@ -408,17 +326,12 @@ namespace Skins.Editor
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
-
-
-
-
-
-
         private void LoadState()
         {
-            if (EditorPrefs.HasKey(PrefsKey) == true)
+            if (EditorPrefs.HasKey(PrefsKey))
             {
-                WindowState state = JsonUtility.FromJson<WindowState>(EditorPrefs.GetString(PrefsKey));
+                SkinFactoryWindowState state = JsonUtility.FromJson<SkinFactoryWindowState>(
+                EditorPrefs.GetString(PrefsKey));
 
                 if (state != null)
                 {
@@ -427,7 +340,7 @@ namespace Skins.Editor
                     _prefabsFolder = LoadStateAsset<DefaultAsset>(state.PrefabsPath);
                     _iconsFolder = LoadStateAsset<DefaultAsset>(state.IconsPath);
                     _rarity = state.Rarity;
-                    _forceIcon = state.ForceIcon;
+                    _isIconRegenerationForced = state.IsIconRegenerationForced;
 
                     return;
                 }
@@ -441,21 +354,21 @@ namespace Skins.Editor
 
         private void SaveState()
         {
-            WindowState state = new WindowState();
+            SkinFactoryWindowState state = new SkinFactoryWindowState();
 
             state.ShopContentPath = GetAssetPathOrNull(_shopContent);
             state.SkinsPath = GetAssetPathOrNull(_skinsFolder);
             state.PrefabsPath = GetAssetPathOrNull(_prefabsFolder);
             state.IconsPath = GetAssetPathOrNull(_iconsFolder);
             state.Rarity = _rarity;
-            state.ForceIcon = _forceIcon;
+            state.IsIconRegenerationForced = _isIconRegenerationForced;
 
             EditorPrefs.SetString(PrefsKey, JsonUtility.ToJson(state));
         }
 
-        private static T LoadStateAsset<T>(string path) where T : UnityEngine.Object
+        private T LoadStateAsset<T>(string path) where T : UnityEngine.Object
         {
-            if (string.IsNullOrEmpty(path) == true)
+            if (string.IsNullOrEmpty(path))
             {
                 return null;
             }
@@ -463,7 +376,7 @@ namespace Skins.Editor
             return AssetDatabase.LoadAssetAtPath<T>(path);
         }
 
-        private static string GetAssetPathOrNull(UnityEngine.Object asset)
+        private string GetAssetPathOrNull(UnityEngine.Object asset)
         {
             if (asset == null)
             {
@@ -471,17 +384,6 @@ namespace Skins.Editor
             }
 
             return AssetDatabase.GetAssetPath(asset);
-        }
-
-        [Serializable]
-        private class WindowState
-        {
-            public string ShopContentPath;
-            public string SkinsPath;
-            public string PrefabsPath;
-            public string IconsPath;
-            public SkinRarity Rarity;
-            public bool ForceIcon;
         }
     }
 }

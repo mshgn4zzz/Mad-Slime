@@ -3,7 +3,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace Items.Editor
+namespace MadSlime.Items.Editor
 {
     public partial class ItemPropFactory
     {
@@ -13,10 +13,13 @@ namespace Items.Editor
 
             for (int i = 0; i < jobs.Count; i++)
             {
-                EditorUtility.DisplayProgressBar("Prop Factory",
-                        $"Icon {jobs[i].PrefabName} ({i + 1}/{jobs.Count})", (float)i / jobs.Count);
+                int jobNumber = i + 1;
+                float progress = (float)i / jobs.Count;
 
-                if (RenderIcon(jobs[i]) == true)
+                EditorUtility.DisplayProgressBar("Prop Factory",
+                    $"Icon {jobs[i].PrefabName} ({jobNumber}/{jobs.Count})", progress);
+
+                if (TryRenderIcon(jobs[i]))
                 {
                     rendered++;
                 }
@@ -25,9 +28,9 @@ namespace Items.Editor
             return rendered;
         }
 
-        private bool RenderIcon(ItemPropJob job)
+        private bool TryRenderIcon(ItemPropJob job)
         {
-            if (File.Exists(job.IconPath) == true && _forceIcons == false)
+            if (File.Exists(job.IconPath) && _isIconRegenerationForced == false)
             {
                 return false;
             }
@@ -35,12 +38,12 @@ namespace Items.Editor
             IconRenderSettings settings = new IconRenderSettings
             {
                 LightEuler = new Vector3(45f, -30f, 0f),
-                RelightToCamera = true,
+                IsRelightingEnabled = true,
                 CameraOffset = new Vector3(1f, 0.85f, 1.6f),
                 OrthographicPadding = 1.15f,
-                FitByProjectiveBounds = true
+                IsProjectiveFitEnabled = true
             };
-            Texture2D texture = ItemFactoryTools.RenderToTexture(job.Model, _iconLayer, IconSize, settings);
+            Texture2D texture = _tools.RenderToTexture(job.Model, _iconLayer, IconSize, settings);
 
             File.WriteAllBytes(job.IconPath, texture.EncodeToPNG());
             DestroyImmediate(texture);

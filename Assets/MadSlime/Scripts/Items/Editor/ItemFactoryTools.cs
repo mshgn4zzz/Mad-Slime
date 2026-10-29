@@ -2,16 +2,16 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace Items.Editor
+namespace MadSlime.Items.Editor
 {
-    public static class ItemFactoryTools
+    public class ItemFactoryTools
     {
         public const int LowestFreeLayer = 9;
         public const int HighestFreeLayer = 31;
         public const float LightIntensity = 1.2f;
         public const float CameraDistance = 10f;
 
-        public static int ResolveFreeLayer()
+        public int ResolveFreeLayer()
         {
             for (int i = LowestFreeLayer; i <= HighestFreeLayer; i++)
             {
@@ -24,7 +24,7 @@ namespace Items.Editor
             return -1;
         }
 
-        public static void SetLayerRecursively(GameObject root, int layer)
+        public void SetLayerRecursively(GameObject root, int layer)
         {
             Transform[] children = root.GetComponentsInChildren<Transform>(true);
 
@@ -34,13 +34,12 @@ namespace Items.Editor
             }
         }
 
-        public static void EnsureSpriteImport(string iconPath)
+        public void EnsureSpriteImport(string iconPath)
         {
             TextureImporter importer = AssetImporter.GetAtPath(iconPath) as TextureImporter;
 
             if (importer == null)
             {
-                Debug.LogWarning($"[ItemFactoryTools] No TextureImporter for '{iconPath}'.");
                 return;
             }
 
@@ -53,11 +52,11 @@ namespace Items.Editor
             importer.SaveAndReimport();
         }
 
-        public static string GetFolderPath(DefaultAsset folder)
+        public string GetFolderPath(DefaultAsset folder)
         {
             string path = AssetDatabase.GetAssetPath(folder);
 
-            if (File.Exists(path) == true)
+            if (File.Exists(path))
             {
                 path = Path.GetDirectoryName(path);
             }
@@ -65,9 +64,9 @@ namespace Items.Editor
             return path;
         }
 
-        public static void EnsureFolder(string folder)
+        public void EnsureFolder(string folder)
         {
-            if (string.IsNullOrEmpty(folder) == true || AssetDatabase.IsValidFolder(folder) == true)
+            if (string.IsNullOrEmpty(folder) || AssetDatabase.IsValidFolder(folder))
             {
                 return;
             }
@@ -83,7 +82,7 @@ namespace Items.Editor
             AssetDatabase.CreateFolder(parent, leaf);
         }
 
-        public static Texture2D RenderToTexture(GameObject modelPrefab, int iconLayer, int iconSize,
+        public Texture2D RenderToTexture(GameObject modelPrefab, int iconLayer, int iconSize,
             IconRenderSettings settings)
         {
             GameObject renderRoot = new GameObject("IconRenderRoot");
@@ -124,7 +123,7 @@ namespace Items.Editor
 
             FitCamera(cam, instance, settings);
 
-            if (settings.RelightToCamera == true)
+            if (settings.IsRelightingEnabled)
             {
                 light.transform.rotation = cam.transform.rotation;
             }
@@ -150,7 +149,7 @@ namespace Items.Editor
             return tex;
         }
 
-        private static void FitCamera(Camera cam, GameObject instance, IconRenderSettings settings)
+        private void FitCamera(Camera cam, GameObject instance, IconRenderSettings settings)
         {
             Renderer[] renderers = instance.GetComponentsInChildren<Renderer>();
 
@@ -172,7 +171,7 @@ namespace Items.Editor
             cam.transform.position = bounds.center + settings.CameraOffset.normalized * CameraDistance;
             cam.transform.LookAt(bounds.center);
 
-            if (settings.FitByProjectiveBounds == true)
+            if (settings.IsProjectiveFitEnabled)
             {
                 Vector3 right = cam.transform.right;
                 Vector3 up = cam.transform.up;

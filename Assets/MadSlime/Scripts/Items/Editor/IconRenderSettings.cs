@@ -1,13 +1,13 @@
 using UnityEngine;
 
-namespace Items.Editor
+namespace MadSlime.Items.Editor
 {
     public class IconRenderSettings
     {
         public Vector3 LightEuler;
-        public bool RelightToCamera;
+        public bool IsRelightingEnabled;
         public Vector3 CameraOffset;
         public float OrthographicPadding;
-        public bool FitByProjectiveBounds;
+        public bool IsProjectiveFitEnabled;
     }
 }

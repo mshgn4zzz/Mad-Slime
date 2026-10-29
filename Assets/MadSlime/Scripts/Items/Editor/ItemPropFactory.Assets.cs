@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Items;
-using Levels;
+using MadSlime.Items.Data;
+using MadSlime.Items.View;
 using UnityEditor;
 using UnityEngine;
 
-namespace Items.Editor
+namespace MadSlime.Items.Editor
 {
     public partial class ItemPropFactory
     {
@@ -15,8 +15,11 @@ namespace Items.Editor
 
             for (int i = 0; i < jobs.Count; i++)
             {
+                int jobNumber = i + 1;
+                float progress = (float)i / jobs.Count;
+
                 EditorUtility.DisplayProgressBar("Prop Factory",
-                        $"Definitions {jobs[i].PrefabName} ({i + 1}/{jobs.Count})", (float)i / jobs.Count);
+                    $"Definitions {jobs[i].PrefabName} ({jobNumber}/{jobs.Count})", progress);
                 BakeJobDefinitions(jobs[i], entries, definitionsPath);
             }
         }
@@ -55,15 +58,9 @@ namespace Items.Editor
             }
         }
 
-        private static Sprite LoadIcon(string iconPath, string prefabName)
+        private Sprite LoadIcon(string iconPath, string prefabName)
         {
             Sprite icon = AssetDatabase.LoadAssetAtPath<Sprite>(iconPath);
-
-            if (icon == null)
-            {
-                                Debug.LogWarning($"[PropFactory] No Sprite at '{iconPath}' for '{prefabName}'. "
-                                        + $"Definition gets no icon.");
-            }
 
             return icon;
         }
@@ -72,8 +69,11 @@ namespace Items.Editor
         {
             for (int i = 0; i < jobs.Count; i++)
             {
+                int jobNumber = i + 1;
+                float progress = (float)i / jobs.Count;
+
                 EditorUtility.DisplayProgressBar("Prop Factory",
-                        $"Prefab {jobs[i].PrefabName} ({i + 1}/{jobs.Count})", (float)i / jobs.Count);
+                    $"Prefab {jobs[i].PrefabName} ({jobNumber}/{jobs.Count})", progress);
 
                 if (AssetDatabase.LoadAssetAtPath<GameObject>(jobs[i].PrefabPath) != null)
                 {
@@ -183,8 +183,8 @@ namespace Items.Editor
 
             if (props == null || props.isArray == false || variants == null || variants.isArray == false)
             {
-                Debug.LogError($"[PropFactory] PropSet '{_propSet.name}' has no {PropsField} or {VariantsField} list.");
-                return;
+                throw new InvalidOperationException(
+                    $"[PropFactory] PropSet '{_propSet.name}' has no {PropsField} or {VariantsField} list.");
             }
 
             props.ClearArray();
@@ -231,13 +231,13 @@ namespace Items.Editor
             collider.center -= pivotOffset;
         }
 
-        private static void ApplyCollider(BoxCollider collider, Bounds bounds)
+        private void ApplyCollider(BoxCollider collider, Bounds bounds)
         {
             collider.size = bounds.size;
             collider.center = bounds.center;
         }
 
-        private static Bounds ComputeBounds(GameObject instance)
+        private Bounds ComputeBounds(GameObject instance)
         {
             Renderer[] renderers = instance.GetComponentsInChildren<Renderer>();
             Bounds world = new Bounds(instance.transform.position, Vector3.zero);
@@ -252,14 +252,14 @@ namespace Items.Editor
             Vector3 localSize = new Vector3
             (
                 Mathf.Abs(worldToLocal.m00) * world.size.x
-                    + Mathf.Abs(worldToLocal.m01) * world.size.y
-                    + Mathf.Abs(worldToLocal.m02) * world.size.z,
+                + Mathf.Abs(worldToLocal.m01) * world.size.y
+                + Mathf.Abs(worldToLocal.m02) * world.size.z,
                 Mathf.Abs(worldToLocal.m10) * world.size.x
-                    + Mathf.Abs(worldToLocal.m11) * world.size.y
-                    + Mathf.Abs(worldToLocal.m12) * world.size.z,
+                + Mathf.Abs(worldToLocal.m11) * world.size.y
+                + Mathf.Abs(worldToLocal.m12) * world.size.z,
                 Mathf.Abs(worldToLocal.m20) * world.size.x
-                    + Mathf.Abs(worldToLocal.m21) * world.size.y
-                    + Mathf.Abs(worldToLocal.m22) * world.size.z
+                + Mathf.Abs(worldToLocal.m21) * world.size.y
+                + Mathf.Abs(worldToLocal.m22) * world.size.z
             );
 
             if (localSize.x <= 0f || localSize.y <= 0f || localSize.z <= 0f)

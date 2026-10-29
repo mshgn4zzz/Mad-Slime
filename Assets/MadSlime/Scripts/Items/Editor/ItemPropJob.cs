@@ -1,8 +1,9 @@
 using System.Collections.Generic;
-using Items;
+using MadSlime.Items.Data;
+using MadSlime.Items.View;
 using UnityEngine;
 
-namespace Items.Editor
+namespace MadSlime.Items.Editor
 {
     internal class ItemPropJob
     {
@@ -14,14 +15,6 @@ namespace Items.Editor
         private Item _prefab;
         private List<ItemDefinition> _definitions = new List<ItemDefinition>();
 
-        public GameObject Model => _model;
-        public string PrefabName => _prefabName;
-        public string PrefabPath => _prefabPath;
-        public string IconPath => _iconPath;
-        public ItemDefinition FallbackDefinition => _fallbackDefinition;
-        public Item Prefab => _prefab;
-        public IReadOnlyList<ItemDefinition> Definitions => _definitions;
-
         public ItemPropJob(GameObject model, string prefabsPath, string iconsPath)
         {
             _model = model;
@@ -29,6 +22,14 @@ namespace Items.Editor
             _prefabPath = $"{prefabsPath}/{_prefabName}.prefab";
             _iconPath = $"{iconsPath}/{_prefabName}.png";
         }
+
+        public GameObject Model => _model;
+        public string PrefabName => _prefabName;
+        public string PrefabPath => _prefabPath;
+        public string IconPath => _iconPath;
+        public ItemDefinition FallbackDefinition => _fallbackDefinition;
+        public Item Prefab => _prefab;
+        public IReadOnlyList<ItemDefinition> Definitions => _definitions;
 
         public void SetPrefab(Item prefab)
         {

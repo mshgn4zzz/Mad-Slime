@@ -1,106 +1,65 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Saves;
-using Shop;
-using Skins;
+using MadSlime.Shop.Data;
+using MadSlime.Skins.Data;
 using UnityEditor;
 using UnityEngine;
 using YG;
 
-namespace Saves.Editor
+namespace MadSlime.Saves.Editor
 {
     public class PlayerDataResetTool
     {
-        private const string EditorSavesPath = "Assets/PluginYourGames/Editor/SavesEditorYG2.json";
+        private readonly string _editorSavesPath = Path.Combine(
+            InfoYG.PATCH_PC_EDITOR,
+            "SavesEditorYG2.json");
         private const string ShopContentPath = "Assets/MadSlime/Scriptables/Shop/ShopContent.asset";
         private const string PendingResetKey = "MadSlime.PlayerDataResetTool.PendingReset";
         private const int EmptyBalance = 0;
         private const int TestBalance = 9999999;
 
-        [InitializeOnLoadMethod]
-        private static void SubscribeToPlayModeChanges()
-        {
-            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
-            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
-        }
-
-        private static void OnPlayModeStateChanged(PlayModeStateChange state)
-        {
-            if (state != PlayModeStateChange.EnteredEditMode)
-            {
-                return;
-            }
-
-            string json = SessionState.GetString(PendingResetKey, string.Empty);
-
-            if (string.IsNullOrEmpty(json) == true)
-            {
-                return;
-            }
-
-            WriteResetData(JsonUtility.FromJson<SavesYG>(json));
-            SessionState.EraseString(PendingResetKey);
-        }
-
-        [MenuItem("Mad Slime/Reset Player Data/From Zero")]
-        public static void ResetPlayerData()
+        public void ResetPlayerData()
         {
             Reset(EmptyBalance);
         }
 
-        [MenuItem("Mad Slime/Reset Player Data/From Zero With Money")]
-        public static void ResetPlayerDataWithMoney()
+        public void ResetPlayerDataWithMoney()
         {
             Reset(TestBalance);
         }
 
-        [MenuItem("Mad Slime/Reset Player Data/From Zero With Money And Skins")]
-        public static void ResetPlayerDataWithMoneyAndSkins()
+        public void ResetPlayerDataWithMoneyAndSkins()
         {
             Reset(TestBalance, CollectSkinIds());
         }
 
-        [MenuItem("Mad Slime/Unlock All Skins")]
-        public static void UnlockAllSkins()
+        public void UnlockAllSkins()
         {
-            if (EditorApplication.isPlayingOrWillChangePlaymode == true)
-            {
-                                Debug.LogWarning("[PlayerDataResetTool] Exit play mode first — the running session "
-                                        + "would overwrite the changes.");
-                return;
-            }
-
-            if (File.Exists(EditorSavesPath) == false)
-            {
-                SavesYG defaultData = new SavesYG();
-
-                Reset(defaultData.Balance, CollectSkinIds());
-                return;
-            }
-
-            SavesYG data = JsonUtility.FromJson<SavesYG>(File.ReadAllText(EditorSavesPath));
-
-            if (data == null)
-            {
-                Debug.LogError($"[PlayerDataResetTool] Failed to parse saves at {EditorSavesPath}.");
-                return;
-            }
-
-            data._openSkinIds = MergeSkinIds(data._openSkinIds, CollectSkinIds());
-
-            File.WriteAllText(EditorSavesPath, JsonUtility.ToJson(data, true));
-            AssetDatabase.Refresh();
-
-            Debug.Log($"[PlayerDataResetTool] all skins unlocked, open count {data._openSkinIds.Count}");
+            UnlockSkins();
         }
 
-        private static void Reset(int balance)
+        public void Subscribe()
+        {
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+
+            if (EditorApplication.isPlayingOrWillChangePlaymode == false)
+            {
+                OnPlayModeStateChanged(PlayModeStateChange.EnteredEditMode);
+            }
+        }
+
+        public void Unsubscribe()
+        {
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+        }
+
+        private void Reset(int balance)
         {
             Reset(balance, null);
         }
 
-        private static void Reset(int balance, List<string> openSkinIds)
+        private void Reset(int balance, List<string> openSkinIds)
         {
             SavesYG data = new SavesYG();
 
@@ -108,10 +67,10 @@ namespace Saves.Editor
 
             if (openSkinIds != null)
             {
-                data._openSkinIds = openSkinIds;
+                data.OpenSkinIds = openSkinIds;
             }
 
-            if (EditorApplication.isPlayingOrWillChangePlaymode == true)
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 SessionState.SetString(PendingResetKey, JsonUtility.ToJson(data));
                 EditorApplication.isPlaying = false;
@@ -121,17 +80,43 @@ namespace Saves.Editor
             WriteResetData(data);
         }
 
-        private static void WriteResetData(SavesYG data)
+        private void UnlockSkins()
         {
-            File.WriteAllText(EditorSavesPath, JsonUtility.ToJson(data, true));
-            YG2.saves = data;
-            AssetDatabase.Refresh();
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                return;
+            }
 
-                        Debug.Log($"[PlayerDataResetTool] all player data reset, balance set to {data.Balance}, "
-                                + $"open skins {data._openSkinIds.Count}");
+            if (File.Exists(_editorSavesPath) == false)
+            {
+                SavesYG defaultData = new SavesYG();
+
+                Reset(defaultData.Balance, CollectSkinIds());
+                return;
+            }
+
+            SavesYG data = JsonUtility.FromJson<SavesYG>(File.ReadAllText(_editorSavesPath));
+
+            if (data == null)
+            {
+                throw new InvalidOperationException(
+                    $"[PlayerDataResetTool] Failed to parse saves at {_editorSavesPath}.");
+            }
+
+            data.OpenSkinIds = MergeSkinIds(data.OpenSkinIds, CollectSkinIds());
+
+            File.WriteAllText(_editorSavesPath, JsonUtility.ToJson(data, true));
+            AssetDatabase.Refresh();
         }
 
-        private static List<string> CollectSkinIds()
+        private void WriteResetData(SavesYG data)
+        {
+            File.WriteAllText(_editorSavesPath, JsonUtility.ToJson(data, true));
+            YG2.saves = data;
+            AssetDatabase.Refresh();
+        }
+
+        private List<string> CollectSkinIds()
         {
             ShopContent shopContent = AssetDatabase.LoadAssetAtPath<ShopContent>(ShopContentPath);
 
@@ -155,7 +140,7 @@ namespace Saves.Editor
             return ids;
         }
 
-        private static List<string> MergeSkinIds(List<string> currentIds, List<string> catalogIds)
+        private List<string> MergeSkinIds(List<string> currentIds, List<string> catalogIds)
         {
             List<string> mergedIds = new List<string>();
 
@@ -173,6 +158,24 @@ namespace Saves.Editor
             }
 
             return mergedIds;
+        }
+
+        private void OnPlayModeStateChanged(PlayModeStateChange state)
+        {
+            if (state != PlayModeStateChange.EnteredEditMode)
+            {
+                return;
+            }
+
+            string json = SessionState.GetString(PendingResetKey, string.Empty);
+
+            if (string.IsNullOrEmpty(json))
+            {
+                return;
+            }
+
+            WriteResetData(JsonUtility.FromJson<SavesYG>(json));
+            SessionState.EraseString(PendingResetKey);
         }
     }
 }
