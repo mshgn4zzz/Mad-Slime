@@ -1,4 +1,0 @@
-PASS: taps=0, cubes=4305, time=9.066s, frames=544
-PASS: taps=1, cubes=4305, time=3.817s, frames=229
-PASS: taps=2, cubes=4305, time=0.333s, frames=20
-PASS: instant cancellation

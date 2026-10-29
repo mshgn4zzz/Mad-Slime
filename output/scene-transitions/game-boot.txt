@@ -1,6 +1,0 @@
-Passed: 5; Exit code: 0
-PASS: Direct boot enters declared scene Game
-PASS: Direct Game boot waits for the first movement
-PASS: Direct Game boot starts playing after movement
-PASS: Direct boot is not paused: Game
-PASS: Direct boot does not load fallback scenes: Game

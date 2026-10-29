@@ -1,1 +1,0 @@
-PASS: actual Fill scene prepared, framed and completed; frames=315; runtime errors=0

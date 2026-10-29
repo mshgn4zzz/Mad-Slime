@@ -1,4 +1,0 @@
-Passed: 3; Exit code: 0
-PASS: Missing scene load error propagates
-PASS: Real Unity scene loading failure stops machine and navigator
-PASS: Loading failure clears state without starting a fallback scene
