@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: FillConfig
   m_EditorClassIdentifier: 
   _fillDelay: 0.55
-  _spawnInterval: 0.04
+  _spawnInterval: 0.06
   _maxFillDuration: 8
-  _flightDuration: 0.5
-  _boostedSpawnInterval: 0.015
+  _flightDuration: 0.8
+  _boostedSpawnInterval: 0.02
   _maxBoostedTime: 3
   _boostedFlightDuration: 0.25
-  _instantFillDuration: 0.25
-  _instantFlightDuration: 0.1
+  _instantFillDuration: 0.15
+  _instantFlightDuration: 0.05
   _bonusWaveDelay: 0.35
   _bonusColor: {r: 1, g: 1, b: 1, a: 1}
   _bonusColorMix: 0.3
@@ -33,4 +33,3 @@ MonoBehaviour:
   _shapePunchSpring: 0.3
   _fovKick: 7
   _fovDuration: 0.3
-  _winDelay: 3

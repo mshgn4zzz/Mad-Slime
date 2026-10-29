@@ -1,4 +1,4 @@
-namespace ShapeFill
+namespace MadSlime.ShapeFill.FillStateMachine.Logic
 {
     public enum FillStartMode
     {

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace ShapeFill
+namespace MadSlime.ShapeFill.Input
 {
     [RequireComponent(typeof(Image))]
     public class FillTapButton : MonoBehaviour, IPointerDownHandler

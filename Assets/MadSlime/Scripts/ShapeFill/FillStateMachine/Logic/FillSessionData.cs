@@ -1,6 +1,8 @@
 using System;
+using MadSlime.ShapeFill.Logic;
+using MadSlime.Validation;
 
-namespace ShapeFill
+namespace MadSlime.ShapeFill.FillStateMachine.Logic
 {
     public class FillSessionData
     {
@@ -12,12 +14,7 @@ namespace ShapeFill
 
         public void Prepare(FillResult initialResult)
         {
-            if (initialResult == null)
-            {
-                throw new ArgumentNullException(
-                    nameof(initialResult),
-                    "Fill session preparation requires an initial fill result.");
-            }
+            ArgumentGuard.CheckNotNull(initialResult, nameof(initialResult));
 
             InitialResult = initialResult;
             IsRescueUsed = false;
@@ -48,7 +45,8 @@ namespace ShapeFill
         {
             if (InitialResult == null)
             {
-                throw new InvalidOperationException("Cannot prepare rescue continuation before the fill session is prepared.");
+                throw new InvalidOperationException(
+                    "Cannot prepare rescue continuation before the fill session is prepared.");
             }
 
             if (IsRescueUsed == false)
@@ -58,7 +56,8 @@ namespace ShapeFill
 
             if (StartMode == FillStartMode.AfterRescue)
             {
-                throw new InvalidOperationException("Rescue continuation has already been prepared for this fill session.");
+                throw new InvalidOperationException(
+                    "Rescue continuation has already been prepared for this fill session.");
             }
 
             StartMode = FillStartMode.AfterRescue;

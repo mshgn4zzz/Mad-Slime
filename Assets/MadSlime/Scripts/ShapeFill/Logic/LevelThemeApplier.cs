@@ -1,9 +1,10 @@
-using System;
-using Levels;
-using Saves;
+using MadSlime.Levels.Data;
+using MadSlime.Levels.Logic;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace ShapeFill
+namespace MadSlime.ShapeFill.Logic
 {
     public class LevelThemeApplier
     {
@@ -12,15 +13,9 @@ namespace ShapeFill
 
         public LevelThemeApplier(ILevelStorage levelStorage, LevelConfigResolver configResolver)
         {
-            if (levelStorage == null)
-            {
-                throw new ArgumentNullException(nameof(levelStorage));
-            }
+            ArgumentGuard.CheckNotNull(levelStorage, nameof(levelStorage));
 
-            if (configResolver == null)
-            {
-                throw new ArgumentNullException(nameof(configResolver));
-            }
+            ArgumentGuard.CheckNotNull(configResolver, nameof(configResolver));
 
             _levelStorage = levelStorage;
             _configResolver = configResolver;
@@ -30,25 +25,28 @@ namespace ShapeFill
         {
             LevelConfig config = _configResolver.GetConfigFor(_levelStorage.CurrentLevel);
 
-            if (config.Theme == null)
-            {
-                throw new InvalidOperationException(
-                    $"{config.name}: LevelTheme is not assigned. Assign a theme asset in the level config.");
-            }
+            ArgumentGuard.CheckAssigned(config.Theme, config.name, nameof(config.Theme));
 
             if (config.Theme.FloorMaterial != null)
             {
                 floorRenderer.sharedMaterial = config.Theme.FloorMaterial;
             }
 
-            Texture2D shapeTexture = config.Theme.PickFillShapeTexture();
+            Texture2D shapeTexture = PickFillShapeTexture(config.Theme);
 
-            if (shapeTexture == null)
-            {
-                throw new InvalidOperationException($"{config.Theme.name}: fill shape texture is missing.");
-            }
+            ArgumentGuard.CheckAssigned(shapeTexture, config.Theme.name, nameof(shapeTexture));
 
             fillOrchestrator.SetShapeTexture(shapeTexture);
+        }
+
+        private Texture2D PickFillShapeTexture(global::MadSlime.Levels.Data.LevelTheme theme)
+        {
+            if (theme.FillShapeTextures.Count == 0)
+            {
+                return theme.FillShapeTexture;
+            }
+
+            return theme.FillShapeTextures[Random.Range(0, theme.FillShapeTextures.Count)];
         }
     }
 }

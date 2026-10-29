@@ -1,28 +1,18 @@
-using System;
-using Quota;
+using MadSlime.Quota.Logic;
+using MadSlime.Validation;
 using UnityEngine;
-using VContainer;
 
-namespace ShapeFill
+namespace MadSlime.ShapeFill.Logic
 {
-    public class FillResultCalculator : MonoBehaviour
+    public class FillResultCalculator
     {
-        private QuotaCounter _quotaCounter;
+        private readonly QuotaCounter _quotaCounter;
 
-        [Inject]
-        public void Construct(QuotaCounter quotaCounter)
+        public FillResultCalculator(QuotaCounter quotaCounter)
         {
             _quotaCounter = quotaCounter;
-        }
 
-        private void Awake()
-        {
-            if (_quotaCounter == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: QuotaCounter was not injected. Check that ProjectLifetimeScope "
-                        + $"registers QuotaCounter and FillLifetimeScope registers FillResultCalculator.");
-            }
+            ArgumentGuard.CheckNotNull(_quotaCounter, nameof(quotaCounter));
         }
 
         public FillResult Calculate(int requiredCubes, Vector3 formCenter, Vector3 formSize)

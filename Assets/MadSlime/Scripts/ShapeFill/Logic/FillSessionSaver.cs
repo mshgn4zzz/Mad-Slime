@@ -1,12 +1,11 @@
-using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Economy;
-using Game;
-using Saves;
+using MadSlime.Economy.Logic;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace ShapeFill
+namespace MadSlime.ShapeFill.Logic
 {
     public class FillSessionSaver
     {
@@ -60,7 +59,7 @@ namespace ShapeFill
         {
             _rewarder.CommitLevelResult(fillResult.Percent);
 
-            if (_rewarder.IsWin == true)
+            if (_rewarder.IsWin)
             {
                 CommitLevelCompletion();
             }
@@ -74,7 +73,7 @@ namespace ShapeFill
 
         private void CommitLevelCompletion()
         {
-            if (_isLevelProgressCommitted == true)
+            if (_isLevelProgressCommitted)
             {
                 return;
             }

@@ -1,6 +1,6 @@
-using Game;
+using MadSlime.StateMachine.Interfaces;
 
-namespace ShapeFill
+namespace MadSlime.ShapeFill.FillStateMachine.Interfaces
 {
     public interface IFillState : IState
     {

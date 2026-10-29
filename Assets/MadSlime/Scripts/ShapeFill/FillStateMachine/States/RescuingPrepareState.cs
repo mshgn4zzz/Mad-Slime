@@ -1,9 +1,12 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Game;
+using MadSlime.ShapeFill.FillStateMachine.Interfaces;
+using MadSlime.ShapeFill.FillStateMachine.Logic;
+using MadSlime.ShapeFill.Logic;
+using MadSlime.Validation;
 
-namespace ShapeFill
+namespace MadSlime.ShapeFill.FillStateMachine.States
 {
     public class RescuingPrepareState : IFillState
     {

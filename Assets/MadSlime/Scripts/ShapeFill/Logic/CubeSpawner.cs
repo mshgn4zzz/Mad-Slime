@@ -1,30 +1,27 @@
 using System;
+using MadSlime.ShapeFill.View;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace ShapeFill
+namespace MadSlime.ShapeFill.Logic
 {
     public class CubeSpawner : MonoBehaviour
     {
-        private static int s_colorId = Shader.PropertyToID("_Color");
-
-        [SerializeField] private FlyingCube _cubePrefab;
-        [SerializeField] private Transform _cubesParent;
+        [SerializeField]
+        private FlyingCube _cubePrefab;
+        [SerializeField]
+        private Transform _cubesParent;
+        private int _colorId;
 
         private MaterialPropertyBlock _propertyBlock;
 
         public void Initialize()
         {
-            if (_cubePrefab == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: FlyingCube prefab is not assigned. Drag a FlyingCube prefab into the _cubePrefab field.");
-            }
+            _colorId = Shader.PropertyToID("_Color");
 
-            if (_cubesParent == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Cubes parent is not assigned. Drag a Transform into the _cubesParent field.");
-            }
+            ArgumentGuard.CheckAssigned(_cubePrefab, name, nameof(_cubePrefab));
+
+            ArgumentGuard.CheckAssigned(_cubesParent, name, nameof(_cubesParent));
 
             if (_propertyBlock == null)
             {
@@ -44,7 +41,7 @@ namespace ShapeFill
             {
                 throw new InvalidOperationException(
                     $"{name}: the FlyingCube prefab '{_cubePrefab.name}' has no "
-                        + $"CubeFlightAnimator. Add one to the prefab.");
+                    + "CubeFlightAnimator. Add one to the prefab.");
             }
 
             return flightAnimator;
@@ -57,7 +54,7 @@ namespace ShapeFill
                 return;
             }
 
-            _propertyBlock.SetColor(s_colorId, color);
+            _propertyBlock.SetColor(_colorId, color);
             cubeRenderer.SetPropertyBlock(_propertyBlock);
         }
     }

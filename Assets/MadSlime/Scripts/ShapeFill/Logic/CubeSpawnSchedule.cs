@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ShapeFill
+namespace MadSlime.ShapeFill.Logic
 {
     public static class CubeSpawnSchedule
     {

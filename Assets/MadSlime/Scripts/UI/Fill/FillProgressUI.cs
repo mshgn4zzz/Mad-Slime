@@ -1,47 +1,30 @@
-using System;
-using ShapeFill;
+using MadSlime.ShapeFill.Logic;
+using MadSlime.ShapeFill.View;
+using MadSlime.UI.Common;
+using MadSlime.Validation;
 using TMPro;
-using UI.Common;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-namespace UI.Fill
+namespace MadSlime.UI.Fill
 {
     public class FillProgressUI : MonoBehaviour
     {
+        private const float FullPercent = 100f;
         [SerializeField] private Image _progressBar;
         [SerializeField] private TMP_Text _percentText;
-
-        private const float FullPercent = 100f;
 
         private ShapeFiller _shapeFiller;
         private BarFiller _barFiller;
 
-        [Inject]
-        public void Construct(ShapeFiller shapeFiller)
-        {
-            _shapeFiller = shapeFiller;
-        }
-
         private void Awake()
         {
-            if (_shapeFiller == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: ShapeFiller was not injected. Check that FillLifetimeScope "
-                        + $"registers ShapeFiller and FillProgressUI.");
-            }
+            ArgumentGuard.CheckAssigned(_shapeFiller, name, nameof(_shapeFiller));
 
-            if (_percentText == null)
-            {
-                throw new InvalidOperationException($"{name}: assign the fill percentage text.");
-            }
+            ArgumentGuard.CheckAssigned(_percentText, name, nameof(_percentText));
 
-            if (_progressBar == null)
-            {
-                throw new InvalidOperationException($"{name}: assign the fill progress image.");
-            }
+            ArgumentGuard.CheckAssigned(_progressBar, name, nameof(_progressBar));
 
             _barFiller = new BarFiller(_progressBar);
         }
@@ -59,14 +42,10 @@ namespace UI.Fill
             _shapeFiller.FillCompleted -= OnFillCompleted;
         }
 
-        private void OnFillCompleted(float fraction)
+        [Inject]
+        public void Construct(ShapeFiller shapeFiller)
         {
-            ApplyProgress(fraction);
-        }
-
-        private void OnCubeArrived(CubeFlightAnimator cube)
-        {
-            ApplyProgress(_shapeFiller.GetFormFillFraction());
+            _shapeFiller = shapeFiller;
         }
 
         private void ApplyProgress(float fraction)
@@ -78,6 +57,16 @@ namespace UI.Fill
             int percent = Mathf.RoundToInt(fillAmount * FullPercent);
 
             _percentText.SetText("{0}%", percent);
+        }
+
+        private void OnFillCompleted(float fraction)
+        {
+            ApplyProgress(fraction);
+        }
+
+        private void OnCubeArrived(CubeFlightAnimator cube)
+        {
+            ApplyProgress(_shapeFiller.GetFormFillFraction());
         }
     }
 }

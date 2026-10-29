@@ -1,54 +1,27 @@
 using System;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace ShapeFill
+namespace MadSlime.ShapeFill.Logic
 {
     [RequireComponent(typeof(GridBuilder))]
     [RequireComponent(typeof(ShapeFiller))]
     public class ShapeFillOrchestrator : MonoBehaviour
     {
-        public event Action<float> FillCompleted;
-
         private GridBuilder _gridBuilder;
         private ShapeFiller _shapeFiller;
         private FillResultCalculator _resultCalculator;
 
-        public bool CanRescue()
-        {
-            return _shapeFiller.CanRescue();
-        }
-
-        [Inject]
-        public void Construct(GridBuilder gridBuilder, ShapeFiller shapeFiller, FillResultCalculator resultCalculator)
-        {
-            _gridBuilder = gridBuilder;
-            _shapeFiller = shapeFiller;
-            _resultCalculator = resultCalculator;
-        }
+        public event Action<float> FillCompleted;
 
         private void Awake()
         {
-            if (_gridBuilder == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: GridBuilder was not injected. Check that FillLifetimeScope "
-                        + $"registers GridBuilder and ShapeFillOrchestrator.");
-            }
+            ArgumentGuard.CheckAssigned(_gridBuilder, name, nameof(_gridBuilder));
 
-            if (_shapeFiller == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: ShapeFiller was not injected. Check that FillLifetimeScope "
-                        + $"registers ShapeFiller and ShapeFillOrchestrator.");
-            }
+            ArgumentGuard.CheckAssigned(_shapeFiller, name, nameof(_shapeFiller));
 
-            if (_resultCalculator == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: FillResultCalculator was not injected. Check that FillLifetimeScope "
-                        + $"registers FillResultCalculator and ShapeFillOrchestrator.");
-            }
+            ArgumentGuard.CheckAssigned(_resultCalculator, name, nameof(_resultCalculator));
         }
 
         private void OnEnable()
@@ -62,6 +35,22 @@ namespace ShapeFill
             {
                 _shapeFiller.FillCompleted -= OnFillCompleted;
             }
+        }
+
+        public bool IsRescueAvailable()
+        {
+            return _shapeFiller.IsRescueAvailable();
+        }
+
+        [Inject]
+        public void Construct(
+            GridBuilder gridBuilder,
+            ShapeFiller shapeFiller,
+            FillResultCalculator resultCalculator)
+        {
+            _gridBuilder = gridBuilder;
+            _shapeFiller = shapeFiller;
+            _resultCalculator = resultCalculator;
         }
 
         public void Prepare(Bounds playArea)

@@ -1,48 +1,54 @@
 using System;
 using DG.Tweening;
+using MadSlime.ShapeFill.Logic.CubeFlightStateMachine;
+using MadSlime.Validation;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace ShapeFill
+namespace MadSlime.ShapeFill.View
 {
     public class CubeFlightAnimator : MonoBehaviour
     {
-        private enum FlightState
-        {
-            Idle,
-            Flying
-        }
-
         [Header("Flight")]
-        [SerializeField, Range(0f, 0.6f)] private float _maxStretch = 0.35f;
+        [SerializeField, Range(0f, 0.6f)]
+        private float _maxStretch = 0.35f;
 
-        [SerializeField, Range(0f, 1f)] private float _stretchSqueeze = 0.5f;
+        [SerializeField, Range(0f, 1f)]
+        private float _stretchSqueeze = 0.5f;
 
-        [SerializeField, Range(0f, 0.6f)] private float _arcFraction = 0.25f;
+        [SerializeField, Range(0f, 0.6f)]
+        private float _arcFraction = 0.25f;
 
-        [SerializeField, Min(0f)] private float _minRollSpeed = 240f;
+        [SerializeField, Min(0f)]
+        private float _minRollSpeed = 240f;
 
-        [SerializeField, Min(0f)] private float _maxRollSpeed = 480f;
+        [SerializeField, Min(0f)]
+        private float _maxRollSpeed = 480f;
 
-        [SerializeField, Range(0f, 0.99f)] private float _rotationSettleStart = 0.75f;
+        [SerializeField, Range(0f, 0.99f)]
+        private float _rotationSettleStart = 0.75f;
 
         [Header("Landing")]
-        [SerializeField, Range(0f, 0.6f)] private float _landingPunch = 0.18f;
+        [SerializeField, Range(0f, 0.6f)]
+        private float _landingPunch = 0.18f;
 
-        [SerializeField, Min(0.01f)] private float _settleDuration = 0.18f;
+        [SerializeField, Min(0.01f)]
+        private float _settleDuration = 0.18f;
 
-        [SerializeField, Range(0f, 2f)] private float _settleSquashSpread = 0.6f;
+        [SerializeField, Range(0f, 2f)]
+        private float _settleSquashSpread = 0.6f;
 
         [Header("Grow")]
-        [SerializeField, Min(0.01f)] private float _growDuration = 0.22f;
+        [SerializeField, Min(0.01f)]
+        private float _growDuration = 0.22f;
 
-        private FlightState _state = FlightState.Idle;
+        private CubeFlightStateMachine _machine;
 
         private Vector3 _startPosition;
-        private Vector3 _controlPosition;
+        private Vector3 _departureControl;
+        private Vector3 _arrivalControl;
         private Vector3 _targetPosition;
         private Vector3 _targetScale;
-        private Vector3 _spinAxis;
         private float _flightDuration;
         private float _elapsedTime;
         private float _rollAngle;
@@ -52,38 +58,53 @@ namespace ShapeFill
 
         private void Awake()
         {
+            _machine = new CubeFlightStateMachine();
+            _machine.FlightRequested += OnFlightRequested;
+            _machine.FlightStopped += OnFlightStopped;
+            _machine.Arrived += OnArrived;
+
             enabled = false;
 
-            if (_minRollSpeed > _maxRollSpeed)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: MinRollSpeed {_minRollSpeed} is greater than MaxRollSpeed {_maxRollSpeed}.");
-            }
+            ArgumentGuard.CheckOrder(_minRollSpeed, _maxRollSpeed, name, nameof(_minRollSpeed));
         }
 
         private void Update()
         {
-            if (_state == FlightState.Flying)
+            UpdateFlying();
+        }
+
+        private void OnDisable()
+        {
+            transform.DOKill();
+
+            if (_machine != null && _machine.IsFlying())
             {
-                UpdateFlying();
+                _machine.Stop();
             }
         }
 
-        public void Launch(Vector3 target, float duration)
+        private void OnDestroy()
         {
-            enabled = true;
-            transform.DOKill();
+            if (_machine == null)
+            {
+                return;
+            }
 
-            _targetPosition = target;
-            _startPosition = transform.position;
-            _targetScale = transform.localScale;
-            _controlPosition = CalculateControlPosition(_startPosition, target);
-            _spinAxis = Random.onUnitSphere;
-            _rollAngle = 0f;
-            _rollSpeed = Random.Range(_minRollSpeed, _maxRollSpeed);
-            _flightDuration = duration;
-            _elapsedTime = 0f;
-            _state = FlightState.Flying;
+            _machine.FlightRequested -= OnFlightRequested;
+            _machine.FlightStopped -= OnFlightStopped;
+            _machine.Arrived -= OnArrived;
+            _machine.Dispose();
+        }
+
+        public void Launch(Vector3 target, Vector3 departureDirection, float departureDistance, float duration)
+        {
+            if (duration <= 0f || departureDirection.sqrMagnitude < 0.001f || departureDistance <= 0f)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(duration), $"{name}: flight requires positive duration, departure distance and direction.");
+            }
+
+            _machine.Launch(new CubeFlightData(target, departureDirection, departureDistance, duration));
         }
 
         public void GrowIn()
@@ -104,7 +125,12 @@ namespace ShapeFill
 
             Vector3 previousPosition = transform.position;
 
-            transform.position = GetBezierPoint(_startPosition, _controlPosition, _targetPosition, smoothedProgress);
+            transform.position = global::MadSlime.Geometry.BezierCurve.GetPoint(
+                _startPosition,
+                _departureControl,
+                _arrivalControl,
+                _targetPosition,
+                smoothedProgress);
 
             Vector3 velocity = transform.position - previousPosition;
 
@@ -120,11 +146,7 @@ namespace ShapeFill
             transform.rotation = Quaternion.identity;
             transform.localScale = _targetScale;
 
-            _state = FlightState.Idle;
-            enabled = false;
-            PlaySettle();
-
-            Arrived?.Invoke(this);
+            _machine.CompleteFlight();
         }
 
         private void PlaySettle()
@@ -150,8 +172,9 @@ namespace ShapeFill
 
             _rollAngle += _rollSpeed * Time.deltaTime;
 
-            Quaternion flightRotation = Quaternion.LookRotation(velocity.normalized, Vector3.up)
-                * Quaternion.AngleAxis(_rollAngle, Vector3.forward);
+            Quaternion flightRotation = Quaternion.LookRotation(velocity.normalized, Vector3.up) * Quaternion.AngleAxis(
+                _rollAngle,
+                Vector3.forward);
 
             float settle = Mathf.Clamp01(Mathf.InverseLerp(_rotationSettleStart, 1f, progress));
 
@@ -169,14 +192,14 @@ namespace ShapeFill
                 _targetScale.z * (1f + stretch));
         }
 
-        private Vector3 CalculateControlPosition(Vector3 startPosition, Vector3 endPosition)
+        private Vector3 CalculateArrivalControl(Vector3 startPosition, Vector3 endPosition, float departureDistance)
         {
             Vector3 offset = endPosition - startPosition;
             float distance = offset.magnitude;
 
             if (distance < 0.001f)
             {
-                return Vector3.Lerp(startPosition, endPosition, 0.5f);
+                return _departureControl;
             }
 
             Vector3 perpendicular = Vector3.Cross(offset / distance, Random.onUnitSphere);
@@ -197,16 +220,39 @@ namespace ShapeFill
                 side = -1f;
             }
 
-            return Vector3.Lerp(startPosition, endPosition, 0.5f) + (perpendicular * (distance * _arcFraction * side));
+            return _departureControl + (perpendicular * (departureDistance * _arcFraction * side));
         }
 
-        private static Vector3 GetBezierPoint(Vector3 start, Vector3 control, Vector3 end, float progress)
+        private void OnFlightRequested(CubeFlightData data)
         {
-            float invertedProgress = 1f - progress;
+            Vector3 target = data.Target;
+            Vector3 departureDirection = data.DepartureDirection;
+            float departureDistance = data.DepartureDistance;
+            float duration = data.Duration;
 
-            return (invertedProgress * invertedProgress * start)
-                + (2f * invertedProgress * progress * control)
-                + (progress * progress * end);
+            enabled = true;
+            transform.DOKill();
+
+            _targetPosition = target;
+            _startPosition = transform.position;
+            _targetScale = transform.localScale;
+            _departureControl = _startPosition + (departureDirection.normalized * departureDistance);
+            _arrivalControl = CalculateArrivalControl(_startPosition, target, departureDistance);
+            _rollAngle = 0f;
+            _rollSpeed = Random.Range(_minRollSpeed, _maxRollSpeed);
+            _flightDuration = duration;
+            _elapsedTime = 0f;
+        }
+
+        private void OnFlightStopped()
+        {
+            enabled = false;
+        }
+
+        private void OnArrived()
+        {
+            PlaySettle();
+            Arrived?.Invoke(this);
         }
     }
 }

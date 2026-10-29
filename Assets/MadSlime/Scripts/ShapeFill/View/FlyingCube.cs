@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ShapeFill
+namespace MadSlime.ShapeFill.View
 {
     public class FlyingCube : MonoBehaviour
     {

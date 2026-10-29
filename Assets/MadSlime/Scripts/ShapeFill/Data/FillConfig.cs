@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ShapeFill
+namespace MadSlime.ShapeFill.Data
 {
     [CreateAssetMenu(menuName = "Mad Slime/Fill Config", fileName = "NewFillConfig")]
     public class FillConfig : ScriptableObject

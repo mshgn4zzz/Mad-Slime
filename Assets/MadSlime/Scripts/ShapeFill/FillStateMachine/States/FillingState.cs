@@ -1,7 +1,11 @@
 using System;
-using Game;
+using MadSlime.Game.Interfaces;
+using MadSlime.ShapeFill.FillStateMachine.Interfaces;
+using MadSlime.ShapeFill.FillStateMachine.Logic;
+using MadSlime.ShapeFill.Logic;
+using MadSlime.Validation;
 
-namespace ShapeFill
+namespace MadSlime.ShapeFill.FillStateMachine.States
 {
     public class FillingState : IFillState
     {
@@ -50,14 +54,14 @@ namespace ShapeFill
             _fillOrchestrator.Stop();
         }
 
-        private void OnFillCompleted(float percent)
-        {
-            Completed?.Invoke();
-        }
-
         public void Accelerate()
         {
             _fillOrchestrator.Accelerate();
+        }
+
+        private void OnFillCompleted(float percent)
+        {
+            Completed?.Invoke();
         }
     }
 }

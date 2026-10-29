@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace ShapeFill
+namespace MadSlime.ShapeFill.Logic
 {
     public class GridBuilder : MonoBehaviour
     {
@@ -32,8 +33,6 @@ namespace ShapeFill
 
         public int Width => _gridWidth;
 
-        public int Height => _gridHeight;
-
         public Texture2D ShapeTexture => _shapeTexture;
 
         public float CellSize { get; private set; }
@@ -48,10 +47,7 @@ namespace ShapeFill
 
         public void SetShapeTexture(Texture2D shapeTexture)
         {
-            if (shapeTexture == null)
-            {
-                throw new ArgumentNullException(nameof(shapeTexture), "GridBuilder.SetShapeTexture requires a non-null texture.");
-            }
+            ArgumentGuard.CheckNotNull(shapeTexture, nameof(shapeTexture));
 
             _shapeTexture = shapeTexture;
         }
@@ -64,15 +60,6 @@ namespace ShapeFill
             }
 
             _playArea = playArea;
-        }
-
-        private static void ExpandBounds(List<Vector2Int> cells, ref Vector2 min, ref Vector2 max)
-        {
-            foreach (Vector2Int cell in cells)
-            {
-                min = Vector2.Min(min, cell);
-                max = Vector2.Max(max, cell);
-            }
         }
 
         public void Build()
@@ -98,58 +85,19 @@ namespace ShapeFill
 
         public Bounds GetFormBounds()
         {
-            bool hasCell = false;
+            bool isCellFound = false;
             Bounds bounds = new Bounds(transform.position, Vector3.zero);
 
-            EncapsulateCells(_borderCells, ref bounds, ref hasCell);
-            EncapsulateCells(_fillCells, ref bounds, ref hasCell);
+            EncapsulateCells(_borderCells, ref bounds, ref isCellFound);
+            EncapsulateCells(_fillCells, ref bounds, ref isCellFound);
 
-            if (hasCell == false)
+            if (isCellFound == false)
             {
                 throw new InvalidOperationException($"{name}: the shape has no opaque cells.");
             }
 
             bounds.Expand(CellSize);
             return bounds;
-        }
-
-        private void EncapsulateCells(List<Vector2Int> cells, ref Bounds bounds, ref bool hasCell)
-        {
-            foreach (Vector2Int cell in cells)
-            {
-                Vector3 position = GridToWorld(cell.x, cell.y);
-
-                if (hasCell == false)
-                {
-                    bounds = new Bounds(position, Vector3.zero);
-                    hasCell = true;
-                }
-                else
-                {
-                    bounds.Encapsulate(position);
-                }
-            }
-        }
-
-        private void FitToPlayArea()
-        {
-            if (_playArea.HasValue == false)
-            {
-                return;
-            }
-
-            Bounds area = _playArea.Value;
-            Bounds form = GetFormBounds();
-            float scale = Mathf.Min(1f, area.size.x * 0.95f / (form.size.x * 1.1f), area.size.z * 0.95f / (form.size.z * 1.1f));
-
-            CellSize *= scale;
-            form = GetFormBounds();
-
-            Vector3 position = transform.position;
-
-            position.x += area.center.x - form.center.x;
-            position.z += area.center.z - form.center.z;
-            transform.position = position;
         }
 
         public Vector3 GridToWorld(int gridX, int gridY)
@@ -168,6 +116,57 @@ namespace ShapeFill
             }
 
             return _pixelColors[gridX, gridY];
+        }
+
+        private void ExpandBounds(List<Vector2Int> cells, ref Vector2 min, ref Vector2 max)
+        {
+            foreach (Vector2Int cell in cells)
+            {
+                min = Vector2.Min(min, cell);
+                max = Vector2.Max(max, cell);
+            }
+        }
+
+        private void EncapsulateCells(List<Vector2Int> cells, ref Bounds bounds, ref bool isCellFound)
+        {
+            foreach (Vector2Int cell in cells)
+            {
+                Vector3 position = GridToWorld(cell.x, cell.y);
+
+                if (isCellFound == false)
+                {
+                    bounds = new Bounds(position, Vector3.zero);
+                    isCellFound = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(position);
+                }
+            }
+        }
+
+        private void FitToPlayArea()
+        {
+            if (_playArea.HasValue == false)
+            {
+                return;
+            }
+
+            Bounds area = _playArea.Value;
+            Bounds form = GetFormBounds();
+            float scale = Mathf.Min(
+                1f,
+                area.size.x * 0.95f / (form.size.x * 1.1f),
+                area.size.z * 0.95f / (form.size.z * 1.1f));
+
+            CellSize *= scale;
+            form = GetFormBounds();
+
+            Vector3 position = transform.position;
+
+            position.x += area.center.x - form.center.x;
+            position.z += area.center.z - form.center.z;
+            transform.position = position;
         }
 
         private void ReadPixels()
@@ -226,17 +225,17 @@ namespace ShapeFill
 
         private bool IsBorderCell(int gridX, int gridY)
         {
-            if (IsOnEdge(gridX, gridY) == true)
+            if (IsOnEdge(gridX, gridY))
             {
                 return true;
             }
 
-            if (HasEmptyDirectNeighbor(gridX, gridY) == true)
+            if (IsDirectNeighborEmpty(gridX, gridY))
             {
                 return true;
             }
 
-            return HasEmptyNeighborAtDistanceTwo(gridX, gridY);
+            return IsNeighborAtDistanceTwoEmpty(gridX, gridY);
         }
 
         private bool IsOnEdge(int gridX, int gridY)
@@ -247,7 +246,7 @@ namespace ShapeFill
                 || gridY >= _gridHeight - BorderThickness;
         }
 
-        private bool HasEmptyDirectNeighbor(int gridX, int gridY)
+        private bool IsDirectNeighborEmpty(int gridX, int gridY)
         {
             return _filledCells[gridX - 1, gridY] == false
                 || _filledCells[gridX + 1, gridY] == false
@@ -255,24 +254,24 @@ namespace ShapeFill
                 || _filledCells[gridX, gridY + 1] == false;
         }
 
-        private bool HasEmptyNeighborAtDistanceTwo(int gridX, int gridY)
+        private bool IsNeighborAtDistanceTwoEmpty(int gridX, int gridY)
         {
-            if (_filledCells[gridX - 1, gridY] == true && _filledCells[gridX - 2, gridY] == false)
+            if (_filledCells[gridX - 1, gridY] && _filledCells[gridX - 2, gridY] == false)
             {
                 return true;
             }
 
-            if (_filledCells[gridX + 1, gridY] == true && _filledCells[gridX + 2, gridY] == false)
+            if (_filledCells[gridX + 1, gridY] && _filledCells[gridX + 2, gridY] == false)
             {
                 return true;
             }
 
-            if (_filledCells[gridX, gridY - 1] == true && _filledCells[gridX, gridY - 2] == false)
+            if (_filledCells[gridX, gridY - 1] && _filledCells[gridX, gridY - 2] == false)
             {
                 return true;
             }
 
-            if (_filledCells[gridX, gridY + 1] == true && _filledCells[gridX, gridY + 2] == false)
+            if (_filledCells[gridX, gridY + 1] && _filledCells[gridX, gridY + 2] == false)
             {
                 return true;
             }
@@ -285,7 +284,7 @@ namespace ShapeFill
             _fillCells.Sort(CompareFillCells);
         }
 
-        private static int CompareFillCells(Vector2Int left, Vector2Int right)
+        private int CompareFillCells(Vector2Int left, Vector2Int right)
         {
             if (left.y != right.y)
             {

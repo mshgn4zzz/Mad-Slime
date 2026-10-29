@@ -1,558 +1,415 @@
 using System;
 using System.Threading;
-using Ads;
 using Cysharp.Threading.Tasks;
-using Economy;
-using Game;
-using Saves;
-using ShapeFill;
-using UI.Spawning;
-using UI.Windows;
+using MadSlime.Ads.Logic;
+using MadSlime.Game.Data;
+using MadSlime.GameFSM.Scenes;
+using MadSlime.ShapeFill.Input;
+using MadSlime.UI.Fill.StateMachine;
+using MadSlime.UI.Spawning;
+using MadSlime.UI.Windows;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-namespace UI.Fill
+namespace MadSlime.UI.Fill
 {
     public class FillUiPresenter : MonoBehaviour
     {
-        public enum WindowAction
-        {
-            None,
-            NextLevel,
-            Restart,
-            Menu,
-            Rescue
-        }
-
-        [SerializeField] private Button _pauseButton;
-        [SerializeField] private PauseMenu _pauseMenuPrefab;
-        [SerializeField] private WinMenu _winMenuPrefab;
-        [SerializeField] private FailMenu _failMenuPrefab;
-        [SerializeField] private YandexConfig _yandexConfig;
+        private readonly FillResultView _resultView = new FillResultView();
+        [SerializeField]
+        private Button _pauseButton;
+        [SerializeField]
+        private PauseMenu _pauseMenuPrefab;
+        [SerializeField]
+        private WinMenu _winMenuPrefab;
+        [SerializeField]
+        private FailMenu _failMenuPrefab;
+        [SerializeField]
+        private YandexConfig _yandexConfig;
+        [SerializeField, Min(0f)]
+        private float _resultWindowDelay = 1f;
 
         private UiSpawner _uiSpawner;
         private FillSceneState _orchestrator;
-        private Wallet _wallet;
         private AdScheduler _adScheduler;
-        private ISaveConfirmation _saveConfirmation;
         private FillTapButton _tapButton;
+        private FillUiStateMachine _machine;
+        private CancellationTokenSource _windowCancellation;
+        private WinMenuSubscription _winSubscription;
+        private FailMenuSubscription _failSubscription;
+        private PauseMenuSubscription _pauseSubscription;
         private WinMenu _activeWinMenu;
         private FailMenu _activeFailMenu;
-        private FillPauseFlow _pauseFlow;
-        private FillRescueFlow _rescueFlow;
-        private CancellationTokenSource _windowCancellation;
-        private CancellationTokenSource _resultCancellation;
-        private bool _isResultPending;
-        private WindowAction _pendingAction;
-        private bool _isActive;
-        private bool _isClosingWindow;
-        private bool _isDoubleRewardRequested;
-        private bool _isDoubleRewardGranted;
-        private int _lastRewardAmount;
-        private int _lastFailRewardAmount;
-
-        [Inject]
-        public void Construct(
-            UiSpawner uiSpawner,
-            FillSceneState orchestrator,
-            Wallet wallet,
-            AdScheduler adScheduler,
-            ISaveConfirmation saveConfirmation,
-            FillTapButton tapButton)
-        {
-            _uiSpawner = uiSpawner;
-            _orchestrator = orchestrator;
-            _wallet = wallet;
-            _adScheduler = adScheduler;
-            _saveConfirmation = saveConfirmation;
-            ArgumentGuard.CheckNotNull(tapButton, nameof(tapButton));
-            _tapButton = tapButton;
-            _pauseFlow = new FillPauseFlow(
-                uiSpawner,
-                _pauseMenuPrefab,
-                orchestrator,
-                CanOpenPauseMenu,
-                CompleteWindowActionRequest,
-                OnPauseCloseCompleted);
-            _rescueFlow = new FillRescueFlow(
-                adScheduler,
-                _yandexConfig,
-                CanResolveRescue,
-                OnRescueResolved,
-                OnRescueNotGranted);
-        }
-
-        private bool CanOpenPauseMenu()
-        {
-            return _isActive && _isResultPending == false && _activeWinMenu == null
-                && _activeFailMenu == null && _isClosingWindow == false;
-        }
-
-        private void CompleteWindowActionRequest(WindowAction action)
-        {
-            _isClosingWindow = true;
-            _pendingAction = action;
-        }
-
-        private void OnPauseCloseCompleted()
-        {
-            _isClosingWindow = false;
-            CompleteWindowAction();
-        }
-
-        private bool CanResolveRescue()
-        {
-            return _isActive && _isClosingWindow == false && _activeFailMenu != null;
-        }
-
-        private void OnRescueResolved()
-        {
-            CloseFailMenu(WindowAction.Rescue);
-        }
-
-        private void OnRescueNotGranted()
-        {
-            if (CanResolveRescue())
-            {
-                _activeFailMenu.SetRescueAvailable(true);
-            }
-        }
+        private PauseMenu _activePauseMenu;
 
         private void Awake()
         {
-            if (_uiSpawner == null)
+            if (_machine == null || _pauseButton == null || _pauseMenuPrefab == null || _winMenuPrefab == null
+                || _failMenuPrefab == null
+                || _yandexConfig == null)
             {
-                throw new InvalidOperationException(
-                    $"{name}: UiSpawner was not injected. Check that FillLifetimeScope "
-                        + $"registers UiSpawner and FillUiPresenter.");
-            }
-
-            if (_orchestrator == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: FillSceneState was not injected. Check that FillLifetimeScope "
-                        + $"registers FillSceneState and FillUiPresenter.");
-            }
-
-            if (_wallet == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Wallet was not injected. Check that FillLifetimeScope registers "
-                        + $"Wallet and FillUiPresenter.");
-            }
-
-            if (_adScheduler == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: AdScheduler was not injected. Check that FillLifetimeScope "
-                        + $"registers AdScheduler and FillUiPresenter.");
-            }
-
-            if (_pauseButton == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PauseButton is not assigned. Drag a Button into the _pauseButton field.");
-            }
-
-            if (_pauseMenuPrefab == null || _winMenuPrefab == null || _failMenuPrefab == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: a window prefab is not assigned. Drag the PauseMenu, WinMenu and "
-                        + $"FailMenu prefabs into the fields.");
-            }
-
-            if (_yandexConfig == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: YandexConfig is not assigned. Drag the YandexConfig asset into the _yandexConfig field.");
+                throw new InvalidOperationException($"{name}: Fill UI references are incomplete.");
             }
         }
 
         private void OnEnable()
         {
-            if (_orchestrator.IsFinished == true)
-            {
-                return;
-            }
-
-            _isActive = true;
-            _windowCancellation = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
+            _orchestrator.Succeeded += OnGameWin;
             _orchestrator.Failed += OnGameFailed;
-            _orchestrator.Win += OnGameWin;
             _orchestrator.Finished += OnSessionFinished;
             _orchestrator.PreparationFailed += OnPreparationFailed;
             _tapButton.Pressed += OnFillPressed;
             _pauseButton.onClick.AddListener(OnPauseButtonClick);
+            _machine.ResultPresentationRequested += OnResultRequested;
+            _machine.PauseRequested += OnPauseRequested;
+            _machine.WindowCloseRequested += OnWindowCloseRequested;
+            _machine.DoubleRewardAdRequested += OnDoubleRewardAdRequested;
+            _machine.RescueAdRequested += OnRescueAdRequested;
+            _machine.RewardChanged += OnRewardChanged;
+            _machine.NavigationRequested += OnNavigationRequested;
+            _machine.InteractionChanged += OnInteractionChanged;
+            _machine.AccelerateRequested += OnAccelerateRequested;
+            _machine.OperationFailed += OnOperationFailed;
+            _windowCancellation = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
+
+            if (_orchestrator.IsFinished == false)
+            {
+                _machine.Start();
+            }
         }
 
         private void OnDisable()
         {
+            _orchestrator.Succeeded -= OnGameWin;
             _orchestrator.Failed -= OnGameFailed;
-            _orchestrator.Win -= OnGameWin;
             _orchestrator.Finished -= OnSessionFinished;
             _orchestrator.PreparationFailed -= OnPreparationFailed;
             _tapButton.Pressed -= OnFillPressed;
             _pauseButton.onClick.RemoveListener(OnPauseButtonClick);
+            _machine.ResultPresentationRequested -= OnResultRequested;
+            _machine.PauseRequested -= OnPauseRequested;
+            _machine.WindowCloseRequested -= OnWindowCloseRequested;
+            _machine.DoubleRewardAdRequested -= OnDoubleRewardAdRequested;
+            _machine.RescueAdRequested -= OnRescueAdRequested;
+            _machine.RewardChanged -= OnRewardChanged;
+            _machine.NavigationRequested -= OnNavigationRequested;
+            _machine.InteractionChanged -= OnInteractionChanged;
+            _machine.AccelerateRequested -= OnAccelerateRequested;
+            _machine.OperationFailed -= OnOperationFailed;
             OnSessionFinished();
         }
 
-        private void OnSessionFinished()
+        private void OnDestroy()
         {
-            _isActive = false;
-            _isDoubleRewardRequested = false;
-            _pendingAction = WindowAction.None;
-            CancelResultDelay();
-
-            if (_windowCancellation != null)
-            {
-                _windowCancellation.Cancel();
-                _windowCancellation.Dispose();
-                _windowCancellation = null;
-            }
-
-            ReleaseWinMenu();
-            ReleaseFailMenu();
-            _pauseFlow.Release();
+            _machine?.Dispose();
+            _resultView.Dispose();
         }
 
-        private void OnGameWin(int rewardAmount)
+        [Inject]
+        public void Construct(
+            UiSpawner spawner,
+            FillSceneState orchestrator,
+            AdScheduler ads,
+            FillTapButton tapButton,
+            FillUiStateMachineFactory factory)
         {
-            ShowResultDelayedAsync(true, rewardAmount, false).Forget();
+            _uiSpawner = spawner;
+            _orchestrator = orchestrator;
+            _adScheduler = ads;
+            _tapButton = tapButton;
+            _machine = factory.Create();
         }
 
-        private void OnGameFailed(int rewardAmount, bool canRescue)
-        {
-            ShowResultDelayedAsync(false, rewardAmount, canRescue).Forget();
-        }
-
-        private void OnFillPressed()
-        {
-            if (_isActive && _isClosingWindow == false && _activeWinMenu == null && _activeFailMenu == null)
-            {
-                _orchestrator.Accelerate();
-            }
-        }
-
-        private void OnPreparationFailed(Exception exception)
-        {
-            OnGameFailed(_lastFailRewardAmount, false);
-        }
-
-        private async UniTask ShowResultDelayedAsync(bool isWin, int rewardAmount, bool canRescue)
-        {
-            if (_isActive == false)
-            {
-                return;
-            }
-
-            CancelResultDelay();
-
-            CancellationTokenSource source = CancellationTokenSource.CreateLinkedTokenSource(_windowCancellation.Token);
-
-            _resultCancellation = source;
-            _isResultPending = true;
-
-            CancellationToken token = source.Token;
-
-            try
-            {
-                if (_orchestrator.ResultWindowDelay > 0f)
-                {
-                    await UniTask.Delay(
-                        TimeSpan.FromSeconds(_orchestrator.ResultWindowDelay),
-                        DelayType.Realtime,
-                        cancellationToken: token);
-                }
-
-                token.ThrowIfCancellationRequested();
-
-                if (isWin)
-                {
-                    ShowWin(rewardAmount);
-                }
-                else
-                {
-                    ShowFailed(rewardAmount, canRescue);
-                }
-            }
-            catch (OperationCanceledException) when (token.IsCancellationRequested)
-            {
-            }
-            finally
-            {
-                if (ReferenceEquals(_resultCancellation, source))
-                {
-                    _resultCancellation = null;
-                    _isResultPending = false;
-                    source.Dispose();
-                }
-            }
-        }
-
-        private void CancelResultDelay()
-        {
-            CancellationTokenSource source = _resultCancellation;
-
-            _resultCancellation = null;
-            _isResultPending = false;
-
-            if (source != null)
-            {
-                source.Cancel();
-                source.Dispose();
-            }
-        }
-
-        private void ShowWin(int rewardAmount)
-        {
-            if (_isActive == false || _activeWinMenu != null)
-            {
-                return;
-            }
-
-            _lastRewardAmount = rewardAmount;
-            _isDoubleRewardRequested = false;
-            _isDoubleRewardGranted = false;
-            _isClosingWindow = false;
-            _activeWinMenu = _uiSpawner.Spawn(_winMenuPrefab, UiLayer.Popup);
-            _activeWinMenu.Initialize(rewardAmount, _lastFailRewardAmount, true);
-            _activeWinMenu.NextLevelRequested += OnWinNextLevelRequested;
-            _activeWinMenu.DoubleRewardRequested += OnWinDoubleRewardRequested;
-            _activeWinMenu.MenuRequested += OnWinMenuRequested;
-            _activeWinMenu.Closed += OnWinMenuClosed;
-            _uiSpawner.Show(_activeWinMenu);
-            _activeWinMenu.PlayRewardCountUp(rewardAmount);
-        }
-
-        private void ShowFailed(int rewardAmount, bool canRescue)
-        {
-            if (_isActive == false || _activeFailMenu != null)
-            {
-                return;
-            }
-
-            _lastFailRewardAmount = rewardAmount;
-            _rescueFlow.Reset();
-            _isClosingWindow = false;
-            _activeFailMenu = _uiSpawner.Spawn(_failMenuPrefab, UiLayer.Popup);
-            _activeFailMenu.Initialize(rewardAmount, canRescue);
-            _activeFailMenu.RescueRequested += OnFailRescueRequested;
-            _activeFailMenu.RestartRequested += OnFailRestartRequested;
-            _activeFailMenu.MenuRequested += OnFailMenuRequested;
-            _activeFailMenu.Closed += OnFailMenuClosed;
-            _uiSpawner.Show(_activeFailMenu);
-        }
-
-        private void OnFailRescueRequested()
-        {
-            if (_isActive == false || _isClosingWindow == true || _activeFailMenu == null)
-            {
-                return;
-            }
-
-            _activeFailMenu.LockRescue();
-            _rescueFlow.Begin();
-        }
-
-        private void CloseFailMenu(WindowAction action)
-        {
-            if (_isActive == false || _activeFailMenu == null || _isClosingWindow == true)
-            {
-                return;
-            }
-
-            _isClosingWindow = true;
-            _rescueFlow.StopRequest();
-            _pendingAction = action;
-            UnsubscribeFailRequests();
-            _activeFailMenu.BeginClose();
-        }
-
-        private void OnFailMenuClosed()
-        {
-            ReleaseFailMenu();
-            CompleteWindowAction();
-        }
-
-        private void OnFailRestartRequested()
-        {
-            CloseFailMenu(WindowAction.Restart);
-        }
-
-        private void OnFailMenuRequested()
-        {
-            CloseFailMenu(WindowAction.Menu);
-        }
-
-        private void CloseWinMenu(WindowAction action)
-        {
-            if (_isActive == false || _activeWinMenu == null || _isClosingWindow == true)
-            {
-                return;
-            }
-
-            _isClosingWindow = true;
-            _isDoubleRewardRequested = false;
-            _pendingAction = action;
-            UnsubscribeWinRequests();
-            _activeWinMenu.BeginClose();
-        }
-
-        private void OnWinMenuClosed()
-        {
-            ReleaseWinMenu();
-            CompleteWindowAction();
-        }
-
-        private void OnWinNextLevelRequested()
-        {
-            CloseWinMenu(WindowAction.NextLevel);
-        }
-
-        private void OnWinMenuRequested()
-        {
-            CloseWinMenu(WindowAction.Menu);
-        }
-
-        private void OnWinDoubleRewardRequested()
-        {
-            if (_isActive == false || _isClosingWindow == true || _activeWinMenu == null
-                || _isDoubleRewardRequested == true || _isDoubleRewardGranted == true)
-            {
-                return;
-            }
-
-            _isDoubleRewardRequested = true;
-            _activeWinMenu.SetDoubleRewardAvailable(false);
-            _adScheduler.ShowDoubleReward(OnDoubleRewardGranted, OnDoubleRewardNotGranted);
-        }
-
-        private void OnDoubleRewardNotGranted()
-        {
-            if (_isActive == false || _isDoubleRewardRequested == false)
-            {
-                return;
-            }
-
-            _isDoubleRewardRequested = false;
-
-            if (_isClosingWindow == false && _activeWinMenu != null)
-            {
-                _activeWinMenu.SetDoubleRewardAvailable(true);
-            }
-        }
-
-        private void OnDoubleRewardGranted()
-        {
-            if (_isActive == false || _isClosingWindow == true || _activeWinMenu == null
-                || _isDoubleRewardGranted == true || _isDoubleRewardRequested == false)
-            {
-                return;
-            }
-
-            _isDoubleRewardGranted = true;
-            _isDoubleRewardRequested = false;
-            _wallet.Add(_lastRewardAmount);
-            ShowDoubleRewardAsync(_windowCancellation.Token).Forget();
-        }
-
-        private async UniTaskVoid ShowDoubleRewardAsync(CancellationToken cancellationToken)
+        private async UniTask ShowResultAsync(FillUiResult result, CancellationToken token)
         {
             try
             {
-                await _saveConfirmation.ConfirmSavedAsync(cancellationToken);
+                await _resultView.WaitForResultAsync(_resultWindowDelay, token);
             }
             catch (OperationCanceledException)
             {
                 return;
             }
 
-            if (_isActive == true && _isClosingWindow == false && _activeWinMenu != null)
+            token.ThrowIfCancellationRequested();
+
+            if (result.IsWin)
             {
-                _activeWinMenu.PlayRewardCountUp(checked(_lastRewardAmount * 2));
+                _activeWinMenu = _uiSpawner.Spawn(_winMenuPrefab, UiLayer.Popup);
+                _activeWinMenu.Initialize(result.Reward, result.PreviousReward, true);
+                _winSubscription = new WinMenuSubscription(
+                    _activeWinMenu,
+                    OnWinNextLevelRequested,
+                    OnWinDoubleRewardRequested,
+                    OnWinMenuRequested,
+                    OnWinMenuClosed);
+                _uiSpawner.Show(_activeWinMenu);
+                _activeWinMenu.PlayRewardCountUp(result.Reward);
             }
+            else
+            {
+                _activeFailMenu = _uiSpawner.Spawn(_failMenuPrefab, UiLayer.Popup);
+                _activeFailMenu.Initialize(result.Reward, result.IsRescueAvailable);
+                _failSubscription = new FailMenuSubscription(
+                    _activeFailMenu,
+                    OnFailRescueRequested,
+                    OnFailRestartRequested,
+                    OnFailMenuRequested,
+                    OnFailMenuClosed);
+                _uiSpawner.Show(_activeFailMenu);
+            }
+
+            _machine.NotifyResultShown();
+        }
+
+        private void ReleaseWinMenu()
+        {
+            WinMenu menu = _activeWinMenu;
+
+            _activeWinMenu = null;
+            _winSubscription?.Dispose();
+            _winSubscription = null;
+
+            if (menu == null)
+            {
+                return;
+            }
+
+            _uiSpawner.Release(menu);
+        }
+
+        private void ReleaseFailMenu()
+        {
+            FailMenu menu = _activeFailMenu;
+
+            _activeFailMenu = null;
+            _failSubscription?.Dispose();
+            _failSubscription = null;
+
+            if (menu == null)
+            {
+                return;
+            }
+
+            _uiSpawner.Release(menu);
+        }
+
+        private void ReleasePauseMenu()
+        {
+            PauseMenu menu = _activePauseMenu;
+
+            _activePauseMenu = null;
+            _pauseSubscription?.Dispose();
+            _pauseSubscription = null;
+
+            if (menu == null)
+            {
+                return;
+            }
+
+            _uiSpawner.Release(menu);
+            _orchestrator.ResumeByRequest();
+        }
+
+        private void OnInteractionChanged()
+        {
+            _pauseButton.interactable = _machine.IsPauseAvailable();
+
+            if (_activeWinMenu != null)
+            {
+                _activeWinMenu.SetDoubleRewardAvailable(_machine.IsDoubleRewardAvailable());
+                _activeWinMenu.SetDoubleRewardRetry(_machine.IsSaveFailed());
+            }
+
+            if (_activeFailMenu != null)
+            {
+                _activeFailMenu.SetRescueAvailable(_machine.IsRescueAvailable());
+            }
+        }
+
+        private void OnSessionFinished()
+        {
+            _machine.Stop();
+            _resultView.Cancel();
+
+            CancellationTokenSource source = _windowCancellation;
+
+            _windowCancellation = null;
+            source?.Cancel();
+            source?.Dispose();
+            ReleaseWinMenu();
+            ReleaseFailMenu();
+            ReleasePauseMenu();
+        }
+
+        private void OnGameWin(int amount)
+        {
+            _machine.PresentWin(amount);
+        }
+
+        private void OnGameFailed(int amount, bool isRescueAvailable)
+        {
+            _machine.PresentFail(amount, isRescueAvailable);
+        }
+
+        private void OnPreparationFailed(Exception exception)
+        {
+            _machine.PreparationFailed();
+        }
+
+        private void OnFillPressed()
+        {
+            _machine.RequestAccelerate();
+        }
+
+        private void OnAccelerateRequested()
+        {
+            _orchestrator.Accelerate();
         }
 
         private void OnPauseButtonClick()
         {
-            if (_isClosingWindow == true)
-            {
-                return;
-            }
-
-            _pauseFlow.Open();
+            _machine.RequestPause();
         }
 
-        private void CompleteWindowAction()
+        private void OnResultRequested(FillUiResult result)
         {
-            WindowAction action = _pendingAction;
+            ReleasePauseMenu();
+            ReleaseWinMenu();
+            ReleaseFailMenu();
+            ShowResultAsync(result, _windowCancellation.Token).Forget();
+        }
 
-            _pendingAction = WindowAction.None;
-            _isClosingWindow = false;
+        private void OnPauseRequested()
+        {
+            _orchestrator.PauseByRequest();
+            _activePauseMenu = _uiSpawner.Spawn(_pauseMenuPrefab, UiLayer.Popup);
+            _activePauseMenu.Initialize(false);
+            _pauseSubscription = new PauseMenuSubscription(
+                _activePauseMenu, OnPauseCloseRequested, OnPauseMenuRequested, OnPauseClosed);
+            _uiSpawner.Show(_activePauseMenu);
+        }
 
-            if (_isActive == false)
+        private void OnWindowCloseRequested()
+        {
+            if (_activeWinMenu != null)
             {
-                return;
+                _activeWinMenu.BeginClose();
             }
+            else if (_activeFailMenu != null)
+            {
+                _activeFailMenu.BeginClose();
+            }
+            else if (_activePauseMenu != null)
+            {
+                _activePauseMenu.BeginClose();
+            }
+        }
 
+        private void OnWinMenuClosed()
+        {
+            ReleaseWinMenu();
+            _machine.NotifyWindowClosed();
+        }
+
+        private void OnFailMenuClosed()
+        {
+            ReleaseFailMenu();
+            _machine.NotifyWindowClosed();
+        }
+
+        private void OnPauseClosed()
+        {
+            ReleasePauseMenu();
+            _machine.NotifyWindowClosed();
+        }
+
+        private void OnWinNextLevelRequested()
+        {
+            _machine.RequestAction(FillUiAction.NextLevel);
+        }
+
+        private void OnWinMenuRequested()
+        {
+            _machine.RequestAction(FillUiAction.Menu);
+        }
+
+        private void OnFailRestartRequested()
+        {
+            _machine.RequestAction(FillUiAction.Restart);
+        }
+
+        private void OnFailMenuRequested()
+        {
+            _machine.RequestAction(FillUiAction.Menu);
+        }
+
+        private void OnPauseMenuRequested()
+        {
+            _machine.RequestAction(FillUiAction.Menu);
+        }
+
+        private void OnPauseCloseRequested()
+        {
+            _machine.RequestAction(FillUiAction.Continue);
+        }
+
+        private void OnWinDoubleRewardRequested()
+        {
+            _machine.RequestDoubleReward();
+        }
+
+        private void OnFailRescueRequested()
+        {
+            _machine.RequestRescue();
+        }
+
+        private void OnDoubleRewardAdRequested(Action<bool> complete)
+        {
+            _adScheduler.ShowDoubleReward(() => complete(true), () => complete(false));
+        }
+
+        private void OnRescueAdRequested(Action<bool> complete)
+        {
+            _adScheduler.ShowRewarded(
+                _yandexConfig.FillRescueRewardId,
+                () => complete(true),
+                () => complete(false),
+                () => complete(false),
+                () => complete(false));
+        }
+
+        private void OnRewardChanged(int amount)
+        {
+            if (_activeWinMenu != null)
+            {
+                _activeWinMenu.PlayRewardCountUp(amount);
+            }
+        }
+
+        private void OnNavigationRequested(FillUiAction action)
+        {
             switch (action)
             {
-                case WindowAction.NextLevel:
-                case WindowAction.Restart:
+                case FillUiAction.NextLevel:
+                case FillUiAction.Restart:
                     _orchestrator.ReloadLevel();
                     break;
 
-                case WindowAction.Menu:
+                case FillUiAction.Menu:
                     _orchestrator.ExitToMenu();
                     break;
 
-                case WindowAction.Rescue:
+                case FillUiAction.Rescue:
                     _orchestrator.RescueFill();
                     break;
             }
         }
 
-        private void UnsubscribeWinRequests()
+        private void OnOperationFailed(Exception exception)
         {
-            _activeWinMenu.NextLevelRequested -= OnWinNextLevelRequested;
-            _activeWinMenu.DoubleRewardRequested -= OnWinDoubleRewardRequested;
-            _activeWinMenu.MenuRequested -= OnWinMenuRequested;
-        }
-
-        private void UnsubscribeFailRequests()
-        {
-            _activeFailMenu.RescueRequested -= OnFailRescueRequested;
-            _activeFailMenu.RestartRequested -= OnFailRestartRequested;
-            _activeFailMenu.MenuRequested -= OnFailMenuRequested;
-        }
-
-        private void ReleaseWinMenu()
-        {
-            if (_activeWinMenu == null)
-            {
-                return;
-            }
-
-            UnsubscribeWinRequests();
-            _activeWinMenu.Closed -= OnWinMenuClosed;
-            _activeWinMenu.BeginClose();
-            _uiSpawner.Release(_activeWinMenu);
-            _activeWinMenu = null;
-        }
-
-        private void ReleaseFailMenu()
-        {
-            if (_activeFailMenu == null)
-            {
-                return;
-            }
-
-            UnsubscribeFailRequests();
-            _activeFailMenu.Closed -= OnFailMenuClosed;
-            _activeFailMenu.BeginClose();
-            _uiSpawner.Release(_activeFailMenu);
-            _activeFailMenu = null;
+            UniTask.FromException(exception).Forget();
         }
     }
 }

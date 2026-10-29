@@ -1,11 +1,17 @@
 using System;
 using System.Threading;
-using Audio;
 using Cysharp.Threading.Tasks;
-using Game;
+using MadSlime.Audio.Data;
+using MadSlime.Audio.Interfaces;
+using MadSlime.ShapeFill.FillStateMachine.Interfaces;
+using MadSlime.ShapeFill.FillStateMachine.States;
+using MadSlime.ShapeFill.Logic;
+using MadSlime.StateMachine.Interfaces;
+using MadSlime.StateMachine.Logic;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace ShapeFill
+namespace MadSlime.ShapeFill.FillStateMachine.Logic
 {
     public class FillStateMachine : BaseStateMachine<IFillState>, ISessionStateMachine, IDisposable
     {
@@ -17,6 +23,7 @@ namespace ShapeFill
         private ShapeFillOrchestrator _fill;
         private LevelThemeApplier _theme;
         private GridCameraFitter _camera;
+        private FillPlayerPresenter _player;
         private IMusicPlayer _music;
         private Playlist _playlist;
         private MeshRenderer _floor;
@@ -31,6 +38,7 @@ namespace ShapeFill
             ShapeFillOrchestrator fill,
             LevelThemeApplier theme,
             GridCameraFitter camera,
+            FillPlayerPresenter player,
             IMusicPlayer music)
         {
             ArgumentGuard.CheckNotNull(filling, nameof(filling));
@@ -41,6 +49,7 @@ namespace ShapeFill
             ArgumentGuard.CheckNotNull(fill, nameof(fill));
             ArgumentGuard.CheckNotNull(theme, nameof(theme));
             ArgumentGuard.CheckNotNull(camera, nameof(camera));
+            ArgumentGuard.CheckNotNull(player, nameof(player));
             ArgumentGuard.CheckNotNull(music, nameof(music));
 
             _filling = filling;
@@ -51,22 +60,35 @@ namespace ShapeFill
             _fill = fill;
             _theme = theme;
             _camera = camera;
+            _player = player;
             _music = music;
 
             RegisterState(_filling);
             RegisterState(_result);
             RegisterState(_rescuingPrepare);
-            _filling.Completed += OnFillCompleted;
-            _result.RescueRequested += OnRescueRequested;
-            _result.Win += OnWin;
-            _result.Failed += OnFailed;
-            _rescuingPrepare.Prepared += OnRescuePrepared;
-            _rescuingPrepare.PreparationFailed += OnPreparationFailed;
+            Subscribe();
         }
 
-        public event Action<int> Win;
+        public event Action<int> Succeeded;
         public event Action<int, bool> Failed;
         public event Action<Exception> PreparationFailed;
+
+        public void Start()
+        {
+            if (_isPrepared == false)
+            {
+                throw new InvalidOperationException("FillStateMachine must be prepared before starting.");
+            }
+
+            if (CurrentState != null)
+            {
+                return;
+            }
+
+            _player.Start();
+            _music.Play(_playlist);
+            SwitchState<FillingState>();
+        }
 
         public void Configure(Playlist playlist, MeshRenderer floor)
         {
@@ -93,31 +115,17 @@ namespace ShapeFill
             FillResult result = _fill.CalculateResult();
 
             _fill.FitCamera(_camera);
+            await _player.PrepareAsync(cancellationToken);
             _session.Prepare(result);
             await _saver.CommitFillAndSave(result, cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
             _isPrepared = true;
         }
 
-        public void Start()
-        {
-            if (_isPrepared == false)
-            {
-                throw new InvalidOperationException("FillStateMachine must be prepared before starting.");
-            }
-
-            if (CurrentState != null)
-            {
-                return;
-            }
-
-            _music.Play(_playlist);
-            SwitchState<FillingState>();
-        }
-
         public override void Stop()
         {
             base.Stop();
+            _player.Stop();
             _isPrepared = false;
         }
 
@@ -140,9 +148,24 @@ namespace ShapeFill
         public void Dispose()
         {
             Stop();
+            Unsubscribe();
+        }
+
+        private void Subscribe()
+        {
+            _filling.Completed += OnFillCompleted;
+            _result.RescueRequested += OnRescueRequested;
+            _result.Succeeded += OnWin;
+            _result.Failed += OnFailed;
+            _rescuingPrepare.Prepared += OnRescuePrepared;
+            _rescuingPrepare.PreparationFailed += OnPreparationFailed;
+        }
+
+        private void Unsubscribe()
+        {
             _filling.Completed -= OnFillCompleted;
             _result.RescueRequested -= OnRescueRequested;
-            _result.Win -= OnWin;
+            _result.Succeeded -= OnWin;
             _result.Failed -= OnFailed;
             _rescuingPrepare.Prepared -= OnRescuePrepared;
             _rescuingPrepare.PreparationFailed -= OnPreparationFailed;
@@ -174,12 +197,12 @@ namespace ShapeFill
 
         private void OnWin(int reward)
         {
-            Win?.Invoke(reward);
+            Succeeded?.Invoke(reward);
         }
 
-        private void OnFailed(int reward, bool canRescue)
+        private void OnFailed(int reward, bool isRescueAvailable)
         {
-            Failed?.Invoke(reward, canRescue);
+            Failed?.Invoke(reward, isRescueAvailable);
         }
 
         private void OnPreparationFailed(Exception exception)
