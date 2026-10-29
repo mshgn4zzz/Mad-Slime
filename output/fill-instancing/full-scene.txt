@@ -1,0 +1,5 @@
+Actual Fill scene, Menu -> Game -> Fill, full fill, native gameplay and UI.
+Unity=2022.3.62f2 GPU=NVIDIA GeForce RTX 4060/PCIe/SSE2 API=OpenGLCore
+Cubes=1016
+instancing=False batchesMean=1029 min=1029 max=1029 samples=60
+instancing=True batchesMean=15 min=15 max=15 samples=60
