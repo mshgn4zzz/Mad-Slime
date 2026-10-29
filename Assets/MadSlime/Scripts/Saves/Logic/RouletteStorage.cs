@@ -1,8 +1,8 @@
-using System;
 using System.Collections.Generic;
-using YG;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Validation;
 
-namespace Saves
+namespace MadSlime.Saves.Logic
 {
     public class RouletteStorage : IRouletteStorage
     {
@@ -10,11 +10,7 @@ namespace Saves
 
         public RouletteStorage(SavesCore core)
         {
-            if (core == null)
-            {
-                throw new ArgumentNullException(nameof(core),
-                    "RouletteStorage requires a SavesCore instance.");
-            }
+            ArgumentGuard.CheckNotNull(core, nameof(core));
 
             _core = core;
         }
@@ -48,18 +44,18 @@ namespace Saves
         public void PruneAdSpinsBefore(long cutoffUnixTime)
         {
             List<long> spinTimes = _core.LoadData().RouletteAdSpinTimes;
-            bool removedAny = false;
+            bool isAnyRemoved = false;
 
             for (int i = spinTimes.Count - 1; i >= 0; i--)
             {
                 if (spinTimes[i] < cutoffUnixTime)
                 {
                     spinTimes.RemoveAt(i);
-                    removedAny = true;
+                    isAnyRemoved = true;
                 }
             }
 
-            if (removedAny == true)
+            if (isAnyRemoved)
             {
                 _core.SaveChanges();
             }
@@ -73,12 +69,7 @@ namespace Saves
 
         public void SetSkinSpinCount(int count)
         {
-            if (count < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(count),
-                    count,
-                    "RouletteStorage.SetSkinSpinCount requires a non-negative spin count.");
-            }
+            ArgumentGuard.CheckNonNegative(count, nameof(count));
 
             _core.LoadData().SkinSpinCount = count;
             _core.SaveChanges();

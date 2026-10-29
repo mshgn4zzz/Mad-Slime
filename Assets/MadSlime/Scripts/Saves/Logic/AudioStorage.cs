@@ -1,8 +1,9 @@
-using System;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Validation;
 using UnityEngine;
 using YG;
 
-namespace Saves
+namespace MadSlime.Saves.Logic
 {
     public class AudioStorage : IAudioStorage
     {
@@ -12,48 +13,28 @@ namespace Saves
 
         public AudioStorage(SavesCore core)
         {
-            if (core == null)
-            {
-                throw new ArgumentNullException(nameof(core),
-                    "AudioStorage requires a SavesCore instance.");
-            }
+            ArgumentGuard.CheckNotNull(core, nameof(core));
 
             _core = core;
         }
 
         public int GetMusicVolume()
         {
-            return ToVolumePercent(_core.LoadData().musicVolume);
+            return Mathf.Clamp(_core.LoadData().MusicVolume, 0, MaxVolumePercent);
         }
 
         public int GetSfxVolume()
         {
-            return ToVolumePercent(_core.LoadData().sfxVolume);
+            return Mathf.Clamp(_core.LoadData().SfxVolume, 0, MaxVolumePercent);
         }
 
         public void SetVolumes(int musicVolume, int sfxVolume)
         {
             SavesYG data = _core.LoadData();
 
-            data.musicVolume = Mathf.Clamp(musicVolume, 0, MaxVolumePercent);
-            data.sfxVolume = Mathf.Clamp(sfxVolume, 0, MaxVolumePercent);
+            data.MusicVolume = Mathf.Clamp(musicVolume, 0, MaxVolumePercent);
+            data.SfxVolume = Mathf.Clamp(sfxVolume, 0, MaxVolumePercent);
             _core.SaveChanges();
-        }
-
-        private static int ToVolumePercent(float storedVolume)
-        {
-            float percent;
-
-            if (storedVolume < 1f)
-            {
-                percent = storedVolume * 100f;
-            }
-            else
-            {
-                percent = storedVolume;
-            }
-
-            return Mathf.Clamp(Mathf.RoundToInt(percent), 0, MaxVolumePercent);
         }
     }
 }

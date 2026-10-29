@@ -1,11 +1,11 @@
 using System;
 
-namespace Localization
+namespace MadSlime.Localization.Interfaces
 {
     public interface ILanguageProvider
     {
-        string Language { get; }
-
         event Action<string> LanguageSwitched;
+
+        string Language { get; }
     }
 }

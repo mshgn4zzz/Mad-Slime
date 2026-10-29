@@ -1,24 +1,25 @@
+using System;
 using System.Collections.Generic;
-using Skins;
-using Upgrades;
+using MadSlime.Skins.Data;
+using MadSlime.Upgrades.Data;
 
-namespace YG
+namespace MadSlime.Saves.Data
 {
-    public partial class SavesYG
+    [Serializable]
+    public class PlayerSaveData
     {
+        public int MusicVolume = 50;
+        public int SfxVolume = 35;
+        public List<string> OpenSkinIds = new List<string> { SkinInventory.InitialSkinId };
+        public List<string> ShowcaseSkinIds = new List<string>();
         public int CurrentLevel = 1;
         public int MaxLevel = 1;
         public int CollectedItemsCount;
         public string Language = "";
 
-        public float musicVolume = 50f;
-        public float sfxVolume = 35f;
-
         public int Balance;
 
         public string SelectedSkinId = SkinInventory.InitialSkinId;
-        public List<string> _openSkinIds = new List<string> { SkinInventory.InitialSkinId };
-        public List<string> _showcaseSkinIds = new List<string>();
 
         public int SpeedLevel;
         public int AppetiteLevel;

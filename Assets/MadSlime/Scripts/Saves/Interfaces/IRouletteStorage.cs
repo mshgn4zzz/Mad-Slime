@@ -1,8 +1,10 @@
-namespace Saves
+namespace MadSlime.Saves.Interfaces
 {
     public interface IRouletteStorage
     {
         long LastFreeSpinUnixTime { get; }
+
+        int SkinSpinCount { get; }
 
         void SetLastFreeSpinUnixTime(long unixTime);
 
@@ -11,8 +13,6 @@ namespace Saves
         void PruneAdSpinsBefore(long cutoffUnixTime);
 
         void RegisterAdSpin(long unixTime);
-
-        int SkinSpinCount { get; }
 
         void SetSkinSpinCount(int count);
     }

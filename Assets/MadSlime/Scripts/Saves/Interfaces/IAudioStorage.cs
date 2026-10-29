@@ -1,4 +1,4 @@
-namespace Saves
+namespace MadSlime.Saves.Interfaces
 {
     public interface IAudioStorage
     {

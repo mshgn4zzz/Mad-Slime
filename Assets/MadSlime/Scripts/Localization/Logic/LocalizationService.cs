@@ -1,65 +1,67 @@
-using System;
-using Saves;
+using MadSlime.Localization.Data;
+using MadSlime.Localization.Interfaces;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace Localization
+namespace MadSlime.Localization.Logic
 {
     public class LocalizationService : MonoBehaviour
     {
         [SerializeField] private LocalizationTable _table;
 
+        private Localization _localization = new Localization();
+
         private ILanguageStorage _languageStorage;
         private ISavesReadiness _savesReadiness;
         private ILanguageProvider _languageProvider;
-        private bool _suppressPersist;
+        private bool _isPersistenceSuppressed;
 
-        [Inject]
-        public void Construct(ILanguageStorage languageStorage, ISavesReadiness savesReadiness, ILanguageProvider languageProvider)
-        {
-            _languageStorage = languageStorage;
-            _savesReadiness = savesReadiness;
-            _languageProvider = languageProvider;
-        }
+        public Localization Translations => _localization;
 
         private void Awake()
         {
-            if (_table == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: LocalizationTable is not assigned. Drag the Localization asset into the _table field.");
-            }
+            ArgumentGuard.CheckAssigned(_table, name, nameof(_table));
         }
 
         private void OnEnable()
         {
-            if (_languageStorage == null || _savesReadiness == null || _languageProvider == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: dependencies were not injected. Check that ProjectScope is the "
-                        + $"first root object of the project.");
-            }
+            ArgumentGuard.CheckAssigned(_languageStorage, name, nameof(_languageStorage));
+            ArgumentGuard.CheckAssigned(_savesReadiness, name, nameof(_savesReadiness));
+            ArgumentGuard.CheckAssigned(_languageProvider, name, nameof(_languageProvider));
 
-            Localization.Initialize(_table, "");
-            Localization.LanguageChanged += OnLanguageChanged;
-            _savesReadiness.Ready += OnSavesReady;
+            _localization.Initialize(_table, "");
+            _localization.LanguageChanged += OnLanguageChanged;
+            _savesReadiness.Prepared += OnSavesReady;
             _languageProvider.LanguageSwitched += OnYandexLangChanged;
             ApplyLanguage();
         }
 
         private void OnDisable()
         {
-            Localization.LanguageChanged -= OnLanguageChanged;
+            _localization.LanguageChanged -= OnLanguageChanged;
 
             if (_savesReadiness != null)
             {
-                _savesReadiness.Ready -= OnSavesReady;
+                _savesReadiness.Prepared -= OnSavesReady;
             }
 
             if (_languageProvider != null)
             {
                 _languageProvider.LanguageSwitched -= OnYandexLangChanged;
             }
+        }
+
+        [Inject]
+        public void Construct(
+            ILanguageStorage languageStorage,
+            ISavesReadiness savesReadiness,
+            ILanguageProvider languageProvider)
+        {
+            _languageStorage = languageStorage;
+            _savesReadiness = savesReadiness;
+            _languageProvider = languageProvider;
         }
 
         private void ApplyLanguage()
@@ -74,7 +76,7 @@ namespace Localization
 
             if (string.IsNullOrEmpty(savedLanguage) == false)
             {
-                Localization.SetLanguage(savedLanguage);
+                _localization.SetLanguage(savedLanguage);
                 return;
             }
 
@@ -83,9 +85,9 @@ namespace Localization
 
         private void SetSuppressedLanguage(string language)
         {
-            _suppressPersist = true;
-            Localization.SetLanguage(language);
-            _suppressPersist = false;
+            _isPersistenceSuppressed = true;
+            _localization.SetLanguage(language);
+            _isPersistenceSuppressed = false;
         }
 
         private void OnSavesReady()
@@ -95,7 +97,7 @@ namespace Localization
 
         private void OnYandexLangChanged(string language)
         {
-            if (_savesReadiness.IsReady == true && string.IsNullOrEmpty(_languageStorage.Language) == false)
+            if (_savesReadiness.IsReady && string.IsNullOrEmpty(_languageStorage.Language) == false)
             {
                 return;
             }
@@ -105,12 +107,12 @@ namespace Localization
 
         private void OnLanguageChanged()
         {
-            if (_suppressPersist)
+            if (_isPersistenceSuppressed)
             {
                 return;
             }
 
-            _languageStorage.SetLanguage(Localization.CurrentLanguage);
+            _languageStorage.SetLanguage(_localization.CurrentLanguage);
         }
     }
 }

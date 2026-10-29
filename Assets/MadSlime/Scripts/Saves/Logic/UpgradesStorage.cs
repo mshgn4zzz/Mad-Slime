@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Upgrades;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Upgrades.Data;
+using MadSlime.Validation;
 using YG;
 
-namespace Saves
+namespace MadSlime.Saves.Logic
 {
     public class UpgradesStorage : IUpgradesStorage
     {
@@ -11,11 +13,7 @@ namespace Saves
 
         public UpgradesStorage(SavesCore core)
         {
-            if (core == null)
-            {
-                throw new ArgumentNullException(nameof(core),
-                    "UpgradesStorage requires a SavesCore instance.");
-            }
+            ArgumentGuard.CheckNotNull(core, nameof(core));
 
             _core = core;
         }
@@ -40,20 +38,15 @@ namespace Saves
 
                 default:
                     throw new ArgumentOutOfRangeException(
-                        nameof(type),
-                        type,
-                        "UpgradesStorage.GetUpgradeLevel received an unknown upgrade type.");
+                    nameof(type),
+                    type,
+                    "UpgradesStorage.GetUpgradeLevel received an unknown upgrade type.");
             }
         }
 
         public void SetUpgradeLevel(UpgradeType type, int level)
         {
-            if (level < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(level),
-                    level,
-                    "UpgradesStorage.SetUpgradeLevel requires a non-negative level.");
-            }
+            ArgumentGuard.CheckNonNegative(level, nameof(level));
 
             SavesYG data = _core.LoadData();
 
@@ -77,9 +70,9 @@ namespace Saves
 
                 default:
                     throw new ArgumentOutOfRangeException(
-                        nameof(type),
-                        type,
-                        "UpgradesStorage.SetUpgradeLevel received an unknown upgrade type.");
+                    nameof(type),
+                    type,
+                    "UpgradesStorage.SetUpgradeLevel received an unknown upgrade type.");
             }
 
             _core.SaveChanges();
@@ -94,7 +87,7 @@ namespace Saves
         {
             List<PerkType> purchasedPerks = _core.LoadData().PurchasedPerks;
 
-            if (purchasedPerks.Contains(type) == true)
+            if (purchasedPerks.Contains(type))
             {
                 throw new InvalidOperationException(
                     $"UpgradesStorage.PurchasePerk: perk '{type}' is already purchased.");

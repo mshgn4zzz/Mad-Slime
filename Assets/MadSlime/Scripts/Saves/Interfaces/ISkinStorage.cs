@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Saves
+namespace MadSlime.Saves.Interfaces
 {
     public interface ISkinStorage
     {

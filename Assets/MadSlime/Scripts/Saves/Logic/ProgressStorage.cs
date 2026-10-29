@@ -1,8 +1,9 @@
-using System;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Validation;
 using UnityEngine;
 using YG;
 
-namespace Saves
+namespace MadSlime.Saves.Logic
 {
     public class ProgressStorage : ILevelStorage, IPlayerProgressStorage
     {
@@ -11,11 +12,8 @@ namespace Saves
 
         public ProgressStorage(SavesCore core, CollectedItemsStorage collectedItems)
         {
-            if (core == null || collectedItems == null)
-            {
-                throw new ArgumentNullException(nameof(core),
-                    "ProgressStorage requires a SavesCore and a CollectedItemsStorage instance.");
-            }
+            ArgumentGuard.CheckNotNull(core, nameof(core));
+            ArgumentGuard.CheckNotNull(collectedItems, nameof(collectedItems));
 
             _core = core;
             _collectedItems = collectedItems;
@@ -27,19 +25,9 @@ namespace Saves
 
         public void SetLevelProgress(int currentLevel, int maxLevel)
         {
-            if (currentLevel <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(currentLevel),
-                    currentLevel,
-                    "ProgressStorage.SetLevelProgress requires a positive current level.");
-            }
+            ArgumentGuard.CheckPositive(currentLevel, nameof(currentLevel));
 
-            if (maxLevel < currentLevel)
-            {
-                throw new ArgumentOutOfRangeException(nameof(maxLevel),
-                    maxLevel,
-                    "ProgressStorage.SetLevelProgress requires maxLevel to be greater or equal to currentLevel.");
-            }
+            ArgumentGuard.CheckRange(maxLevel, currentLevel, int.MaxValue, nameof(maxLevel));
 
             SavesYG data = _core.LoadData();
 
@@ -61,8 +49,8 @@ namespace Saves
 
             initialData.idSave = data.idSave;
             initialData.Language = data.Language;
-            initialData.musicVolume = data.musicVolume;
-            initialData.sfxVolume = data.sfxVolume;
+            initialData.MusicVolume = data.MusicVolume;
+            initialData.SfxVolume = data.SfxVolume;
             initialData.Balance = 0;
             JsonUtility.FromJsonOverwrite(JsonUtility.ToJson(initialData), data);
         }

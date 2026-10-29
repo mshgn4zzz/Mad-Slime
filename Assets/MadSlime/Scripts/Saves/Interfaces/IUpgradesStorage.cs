@@ -1,6 +1,6 @@
-using Upgrades;
+using MadSlime.Upgrades.Data;
 
-namespace Saves
+namespace MadSlime.Saves.Interfaces
 {
     public interface IUpgradesStorage
     {

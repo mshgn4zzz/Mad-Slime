@@ -1,7 +1,7 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 
-namespace Saves
+namespace MadSlime.Saves.Interfaces
 {
     public interface ISaveConfirmation
     {

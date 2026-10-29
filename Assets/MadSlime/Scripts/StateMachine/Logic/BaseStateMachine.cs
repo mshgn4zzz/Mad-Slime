@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using MadSlime.StateMachine.Interfaces;
+using MadSlime.Validation;
 
-namespace Game
+namespace MadSlime.StateMachine.Logic
 {
     public class BaseStateMachine<TState> where TState : IState
     {
@@ -18,17 +20,14 @@ namespace Game
             state?.Exit();
         }
 
-        public void RegisterState(TState state)
+        protected void RegisterState(TState state)
         {
-            if (state == null)
-            {
-                throw new ArgumentNullException(nameof(state));
-            }
+            ArgumentGuard.CheckNotNull(state, nameof(state));
 
             _states.Add(state.GetType(), state);
         }
 
-        public void SwitchState<TTarget>() where TTarget : TState
+        protected void SwitchState<TTarget>() where TTarget : TState
         {
             if (_currentSceneState != null && typeof(TTarget) == _currentSceneState.GetType())
             {

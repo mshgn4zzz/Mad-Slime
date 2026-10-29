@@ -1,7 +1,8 @@
-using System;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Validation;
 using YG;
 
-namespace Saves
+namespace MadSlime.Saves.Logic
 {
     public class BalanceStorage : IBalanceStorage
     {
@@ -9,11 +10,7 @@ namespace Saves
 
         public BalanceStorage(SavesCore core)
         {
-            if (core == null)
-            {
-                throw new ArgumentNullException(nameof(core),
-                    "BalanceStorage requires a SavesCore instance.");
-            }
+            ArgumentGuard.CheckNotNull(core, nameof(core));
 
             _core = core;
         }
@@ -22,12 +19,7 @@ namespace Saves
 
         public void SetBalance(int balance)
         {
-            if (balance < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(balance),
-                    balance,
-                    "BalanceStorage.SetBalance requires a non-negative balance.");
-            }
+            ArgumentGuard.CheckNonNegative(balance, nameof(balance));
 
             SavesYG data = _core.LoadData();
 

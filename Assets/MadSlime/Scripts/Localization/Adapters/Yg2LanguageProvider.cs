@@ -1,12 +1,11 @@
 using System;
+using MadSlime.Localization.Interfaces;
 using YG;
 
-namespace Localization
+namespace MadSlime.Localization.Adapters
 {
     public class Yg2LanguageProvider : ILanguageProvider
     {
-        public string Language => YG2.lang;
-
         public event Action<string> LanguageSwitched
         {
             add
@@ -18,5 +17,7 @@ namespace Localization
                 YG2.onSwitchLang -= value;
             }
         }
+
+        public string Language => YG2.lang;
     }
 }

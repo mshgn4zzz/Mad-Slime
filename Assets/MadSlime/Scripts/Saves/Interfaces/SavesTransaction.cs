@@ -1,6 +1,6 @@
 using System;
 
-namespace Saves
+namespace MadSlime.Saves.Interfaces
 {
     public delegate void SavesTransaction(Action saveAction);
 }

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Validation;
 
-namespace Saves
+namespace MadSlime.Saves.Logic
 {
     public class SkinsStorage : ISkinStorage
     {
@@ -9,11 +11,7 @@ namespace Saves
 
         public SkinsStorage(SavesCore core)
         {
-            if (core == null)
-            {
-                throw new ArgumentNullException(nameof(core),
-                    "SkinsStorage requires a SavesCore instance.");
-            }
+            ArgumentGuard.CheckNotNull(core, nameof(core));
 
             _core = core;
         }
@@ -22,12 +20,7 @@ namespace Saves
 
         public void SelectSkin(string skinId)
         {
-            if (string.IsNullOrEmpty(skinId) == true)
-            {
-                throw new ArgumentException(
-                    "SkinsStorage.SelectSkin requires a non-empty skin id.",
-                    nameof(skinId));
-            }
+            ArgumentGuard.CheckNotEmpty(skinId, nameof(skinId));
 
             _core.LoadData().SelectedSkinId = skinId;
             _core.SaveChanges();
@@ -35,14 +28,14 @@ namespace Saves
 
         public bool IsSkinOpen(string skinId)
         {
-            return _core.LoadData()._openSkinIds.Contains(skinId);
+            return _core.LoadData().OpenSkinIds.Contains(skinId);
         }
 
         public void OpenSkin(string skinId)
         {
-            List<string> openSkinIds = _core.LoadData()._openSkinIds;
+            List<string> openSkinIds = _core.LoadData().OpenSkinIds;
 
-            if (openSkinIds.Contains(skinId) == true)
+            if (openSkinIds.Contains(skinId))
             {
                 throw new InvalidOperationException(
                     $"SkinsStorage.OpenSkin: skin '{skinId}' is already open.");
@@ -54,23 +47,19 @@ namespace Saves
 
         public List<string> ReadOpenSkinIds()
         {
-            return new List<string>(_core.LoadData()._openSkinIds);
+            return new List<string>(_core.LoadData().OpenSkinIds);
         }
 
         public List<string> ReadShowcaseSkinIds()
         {
-            return new List<string>(_core.LoadData()._showcaseSkinIds);
+            return new List<string>(_core.LoadData().ShowcaseSkinIds);
         }
 
         public void SetShowcaseSkinIds(IReadOnlyList<string> showcaseSkinIds)
         {
-            if (showcaseSkinIds == null)
-            {
-                throw new ArgumentNullException(nameof(showcaseSkinIds),
-                    "SkinsStorage.SetShowcaseSkinIds requires a showcase id list.");
-            }
+            ArgumentGuard.CheckNotNull(showcaseSkinIds, nameof(showcaseSkinIds));
 
-            List<string> savedShowcase = _core.LoadData()._showcaseSkinIds;
+            List<string> savedShowcase = _core.LoadData().ShowcaseSkinIds;
 
             savedShowcase.Clear();
 

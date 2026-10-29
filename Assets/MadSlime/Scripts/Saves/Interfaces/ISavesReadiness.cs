@@ -1,11 +1,11 @@
 using System;
 
-namespace Saves
+namespace MadSlime.Saves.Interfaces
 {
     public interface ISavesReadiness
     {
-        bool IsReady { get; }
+        event Action Prepared;
 
-        event Action Ready;
+        bool IsReady { get; }
     }
 }

@@ -1,75 +1,89 @@
 using System;
+using MadSlime.Localization.Data;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace Localization
+namespace MadSlime.Localization.Logic
 {
-    public static class Localization
+    public class Localization
     {
         public const string Russian = LocalizationTable.Russian;
         public const string English = LocalizationTable.English;
         public const string Turkish = LocalizationTable.Turkish;
 
-        private static string[] s_languageOrder = { Russian, English, Turkish };
+        private string[] _languageOrder = { Russian, English, Turkish };
 
-        private static LocalizationTable s_table;
-        private static string s_language = Russian;
+        private LocalizationTable _table;
+        private string _language = Russian;
 
-        public static event Action LanguageChanged;
+        public event Action LanguageChanged;
 
-        public static string CurrentLanguage => s_language;
+        public string CurrentLanguage => _language;
 
-        public static void Initialize(LocalizationTable table, string savedLanguage)
+        public void Initialize(LocalizationTable table, string savedLanguage)
         {
-            if (table == null)
-            {
-                throw new ArgumentNullException(nameof(table));
-            }
+            ArgumentGuard.CheckNotNull(table, nameof(table));
 
-            s_table = table;
-            s_language = ResolveLanguage(savedLanguage);
+            _table = table;
+            _language = ResolveLanguage(savedLanguage);
         }
 
-        public static string Get(string key)
+        public string Get(string key)
         {
-            if (s_table == null)
+            if (_table == null)
             {
                 throw new InvalidOperationException(
                     "Localization is not initialized. LocalizationService must exist on the ProjectScope.");
             }
 
-            return s_table.Get(key, s_language);
+            return GetTranslation(key);
         }
 
-        public static void SetLanguage(string language)
+        public void SetLanguage(string language)
         {
             string resolved = ResolveLanguage(language);
 
-            if (resolved == s_language)
+            if (resolved == _language)
             {
                 return;
             }
 
-            s_language = resolved;
+            _language = resolved;
             LanguageChanged?.Invoke();
         }
 
-        public static void CycleLanguage()
+        public void CycleLanguage()
         {
-            int next = (Array.IndexOf(s_languageOrder, s_language) + 1) % s_languageOrder.Length;
+            int next = (Array.IndexOf(_languageOrder, _language) + 1) % _languageOrder.Length;
 
-            SetLanguage(s_languageOrder[next]);
+            SetLanguage(_languageOrder[next]);
         }
 
-        private static string ResolveLanguage(string language)
+        private string GetTranslation(string key)
+        {
+            foreach (LocaleEntry entry in _table.Entries)
+            {
+                if (entry.Key != key)
+                {
+                    continue;
+                }
+
+                return entry.Get(_language);
+            }
+
+            return key;
+        }
+
+        private string ResolveLanguage(string language)
         {
             if (string.IsNullOrEmpty(language))
             {
                 return FromSystemLanguage();
             }
 
-            for (int i = 0; i < s_languageOrder.Length; i++)
+            for (int i = 0; i < _languageOrder.Length; i++)
             {
-                if (s_languageOrder[i] == language)
+                if (_languageOrder[i] == language)
                 {
                     return language;
                 }
@@ -78,7 +92,7 @@ namespace Localization
             return English;
         }
 
-        private static string FromSystemLanguage()
+        private string FromSystemLanguage()
         {
             switch (Application.systemLanguage)
             {

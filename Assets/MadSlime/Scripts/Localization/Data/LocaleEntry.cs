@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Localization
+namespace MadSlime.Localization.Data
 {
     [Serializable]
     public class LocaleEntry
@@ -31,7 +31,7 @@ namespace Localization
             return Pick(_ru, _en);
         }
 
-        private static string Pick(string preferred, string fallback)
+        private string Pick(string preferred, string fallback)
         {
             if (string.IsNullOrEmpty(preferred) == false)
             {

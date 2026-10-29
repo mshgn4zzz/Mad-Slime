@@ -1,14 +1,21 @@
+#if UNITY_WEBGL && !UNITY_EDITOR
+using System.Runtime.InteropServices;
+#endif
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace Saves
+namespace MadSlime.Saves.Adapters
 {
     public class SaveConfirmation : MonoBehaviour
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [DllImport("__Internal")]
+        private static extern void MadSlimeConfirmSave(string target, int requestId, string json);
+#endif
+
         private const int TimeoutSeconds = 15;
         private const char ResultSeparator = '|';
 
@@ -17,10 +24,20 @@ namespace Saves
         private int _nextId;
         private bool _isProcessing;
 
-#if UNITY_WEBGL && UNITY_EDITOR == false
-        [DllImport("__Internal")]
-        private static extern void MadSlimeConfirmSave(string target, int requestId, string json);
-#endif
+        private void OnDestroy()
+        {
+            OperationCanceledException exception = new OperationCanceledException("Save confirmation was destroyed.");
+
+            if (_activeRequest != null)
+            {
+                _activeRequest.Completion.TrySetException(exception);
+            }
+
+            while (_requests.Count > 0)
+            {
+                _requests.Dequeue().Completion.TrySetException(exception);
+            }
+        }
 
         public UniTask ConfirmAsync(string json, CancellationToken cancellationToken)
         {
@@ -51,8 +68,9 @@ namespace Saves
 
                 try
                 {
-#if UNITY_WEBGL && UNITY_EDITOR == false
-                    MadSlimeConfirmSave(gameObject.name, request.Id, request.Json);
+#if UNITY_WEBGL && !UNITY_EDITOR
+                    MadSlimeConfirmSave(
+                        gameObject.name, request.Id, request.Json);
 #else
                     request.Completion.TrySetResult();
 #endif
@@ -93,21 +111,6 @@ namespace Saves
 
             _activeRequest.Completion.TrySetException(new InvalidOperationException(
                 "Cloud save was not confirmed: " + reason));
-        }
-
-        private void OnDestroy()
-        {
-            OperationCanceledException exception = new OperationCanceledException("Save confirmation was destroyed.");
-
-            if (_activeRequest != null)
-            {
-                _activeRequest.Completion.TrySetException(exception);
-            }
-
-            while (_requests.Count > 0)
-            {
-                _requests.Dequeue().Completion.TrySetException(exception);
-            }
         }
     }
 }

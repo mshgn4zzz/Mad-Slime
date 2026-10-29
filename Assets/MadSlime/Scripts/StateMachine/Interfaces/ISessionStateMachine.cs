@@ -1,13 +1,13 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 
-namespace Game
+namespace MadSlime.StateMachine.Interfaces
 {
     public interface ISessionStateMachine
     {
-        UniTask PrepareAsync(CancellationToken cancellationToken);
-
         void Start();
+
+        UniTask PrepareAsync(CancellationToken cancellationToken);
 
         void Stop();
     }

@@ -1,20 +1,17 @@
-using System;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Validation;
 using YG;
 
-namespace Saves
+namespace MadSlime.Saves.Logic
 {
     public class CollectedItemsStorage : ICollectedItemsStorage
     {
         private SavesCore _core;
-        private bool _isCountDirty;
+        private bool _isCountSavePending;
 
         public CollectedItemsStorage(SavesCore core)
         {
-            if (core == null)
-            {
-                throw new ArgumentNullException(nameof(core),
-                    "CollectedItemsStorage requires a SavesCore instance.");
-            }
+            ArgumentGuard.CheckNotNull(core, nameof(core));
 
             _core = core;
         }
@@ -26,23 +23,23 @@ namespace Saves
             SavesYG data = _core.LoadData();
 
             data.CollectedItemsCount = checked(data.CollectedItemsCount + 1);
-            _isCountDirty = true;
+            _isCountSavePending = true;
         }
 
         public void CommitCollectedItems()
         {
-            if (_isCountDirty == false)
+            if (_isCountSavePending == false)
             {
                 return;
             }
 
             _core.SaveChanges();
-            _isCountDirty = false;
+            _isCountSavePending = false;
         }
 
         public void ResetCountDirtyFlag()
         {
-            _isCountDirty = false;
+            _isCountSavePending = false;
         }
     }
 }

@@ -1,4 +1,4 @@
-namespace Game
+namespace MadSlime.StateMachine.Interfaces
 {
     public interface IState
     {

@@ -1,40 +1,39 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using MadSlime.Saves.Adapters;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Validation;
 using UnityEngine;
 using YG;
 
-namespace Saves
+namespace MadSlime.Saves.Logic
 {
     public class SavesCore : ISavesReadiness, ISaveConfirmation
     {
         private Yg2SavesAccess _access;
         private bool _isTransactionRunning;
 
-        public event Action Ready
+        public SavesCore(Yg2SavesAccess access)
+        {
+            ArgumentGuard.CheckNotNull(access, nameof(access));
+
+            _access = access;
+        }
+
+        public event Action Prepared
         {
             add
             {
-                _access.Ready += value;
+                _access.Prepared += value;
             }
             remove
             {
-                _access.Ready -= value;
+                _access.Prepared -= value;
             }
         }
 
         public bool IsReady => _access.IsReady;
-
-        public SavesCore(Yg2SavesAccess access)
-        {
-            if (access == null)
-            {
-                throw new ArgumentNullException(nameof(access),
-                    "SavesCore requires a Yg2SavesAccess instance.");
-            }
-
-            _access = access;
-        }
 
         public UniTask ConfirmSavedAsync(CancellationToken cancellationToken)
         {
@@ -43,12 +42,9 @@ namespace Saves
 
         public void ExecuteTransaction(Action operation)
         {
-            if (operation == null)
-            {
-                throw new ArgumentNullException(nameof(operation));
-            }
+            ArgumentGuard.CheckNotNull(operation, nameof(operation));
 
-            if (_isTransactionRunning == true)
+            if (_isTransactionRunning)
             {
                 throw new InvalidOperationException("SavesCore: nested transactions are not supported.");
             }
@@ -80,7 +76,7 @@ namespace Saves
             {
                 throw new InvalidOperationException(
                     "SavesCore: the save data is not ready yet. Wait for the Ready event before "
-                        + "reading or writing saves.");
+                    + "reading or writing saves.");
             }
 
             return _access.Data;

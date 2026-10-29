@@ -1,7 +1,7 @@
-using System;
-using YG;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Validation;
 
-namespace Saves
+namespace MadSlime.Saves.Logic
 {
     public class LanguageStorage : ILanguageStorage
     {
@@ -9,11 +9,7 @@ namespace Saves
 
         public LanguageStorage(SavesCore core)
         {
-            if (core == null)
-            {
-                throw new ArgumentNullException(nameof(core),
-                    "LanguageStorage requires a SavesCore instance.");
-            }
+            ArgumentGuard.CheckNotNull(core, nameof(core));
 
             _core = core;
         }
@@ -22,11 +18,7 @@ namespace Saves
 
         public void SetLanguage(string language)
         {
-            if (language == null)
-            {
-                throw new ArgumentNullException(nameof(language),
-                    "LanguageStorage.SetLanguage requires a language code.");
-            }
+            ArgumentGuard.CheckNotNull(language, nameof(language));
 
             _core.LoadData().Language = language;
             _core.SaveChanges();
