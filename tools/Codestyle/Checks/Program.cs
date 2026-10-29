@@ -28,8 +28,15 @@ internal class Program
 
         await Check(analyzers, "var is a suggestion", "class Sample { void Run() { var count = 1; } }", "MS0001", true, DiagnosticSeverity.Info);
         await Check(analyzers, "explicit types accepted", "class Sample { void Run() { int count = 1; } }", "MS0001", false);
-        await Check(analyzers, "boolean negation", "class Sample { bool Run(bool ready) { return !ready; } }", "MS0002", true);
-        await Check(analyzers, "explicit false accepted", "class Sample { bool Run(bool ready) { return ready == false; } }", "MS0002", false);
+        await Check(analyzers, "boolean negation rejected", "class Sample { bool Run(bool ready) { return !ready; } }", "MS0002", true);
+        await Check(analyzers, "explicit false comparison accepted", "class Sample { bool Run(bool ready) { return ready == false; } }", "MS0002", false);
+        await Check(analyzers, "explicit true comparison accepted", "class Sample { bool Run(bool ready) { return true == ready; } }", "MS0002", false);
+        await Check(analyzers, "negated TryGetComponent rejected", "class Sample { bool TryGetComponent(out object component) { component = null; return false; } void Awake() { if (!TryGetComponent(out object component)) { return; } } }", "MS0002", true);
+        await Check(analyzers, "explicit TryGetComponent comparison accepted", "class Sample { bool TryGetComponent(out object component) { component = null; return false; } void Awake() { if (TryGetComponent(out object component) == false) { return; } } }", "MS0002", false);
+        await Check(analyzers, "private Unity serialized naming accepted", "namespace UnityEngine { class SerializeField : System.Attribute {} } class Sample { [UnityEngine.SerializeField] private float _fovReturnSpeed; }", "MS0016", false);
+        await Check(analyzers, "private Unity serialized camelCase rejected", "namespace UnityEngine { class SerializeField : System.Attribute {} } class Sample { [UnityEngine.SerializeField] private float fovReturnSpeed; }", "MS0016", true);
+        await Check(analyzers, "nullable false comparison accepted", "class Sample { bool Run(bool? ready) { return ready == false; } }", "MS0002", false);
+        await Check(analyzers, "nullable true comparison accepted", "class Sample { bool Run(bool? ready) { return ready == true; } }", "MS0002", false);
         await Check(analyzers, "ternary rejected", "class Sample { int Run(bool ready) { return ready ? 1 : 0; } }", "MS0003", true);
         await Check(analyzers, "coalesce rejected", "class Sample { string Run(string text) { return text ?? string.Empty; } }", "MS0004", true);
         await Check(analyzers, "coalesce assignment rejected", "class Sample { void Run(string text) { text ??= string.Empty; } }", "MS0004", true);
@@ -77,6 +84,8 @@ internal class Program
         await Check(analyzers, "private readonly naming accepted", "class Sample { private readonly int _count; }", "MS0016", false);
         await Check(analyzers, "event handler naming", "class Sample { event System.Action Changed; void Run() { Changed += Run; } }", "MS0017", true);
         await Check(analyzers, "named On handler accepted", "class Sample { event System.Action Changed; void OnChanged() {} void Run() { Changed += OnChanged; } }", "MS0017", false);
+        await Check(analyzers, "120 character line accepted", "class Sample {}" + new string(' ', 105), "MS0012", false);
+        await Check(analyzers, "121 character line rejected", "class Sample {}" + new string(' ', 106), "MS0012", true);
         await Check(analyzers, "line limit", "class Sample { string _text = \"" + new string('a', 141) + "\"; }", "MS0012", true);
         await Check(analyzers, "actual type called var accepted", "class var {} class Sample { void Run() { var instance = new var(); } }", "MS0001", false);
         await Check(analyzers, "DTO contract naming accepted", "class YandexAdsBridge { public class LeaderboardEntry { private int x; } }", "MS0016", false);

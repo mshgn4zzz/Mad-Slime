@@ -25,7 +25,7 @@ namespace MadSlime.CodeStyle
             CreateRule("MS0009", "Use a descriptive name; i and j are allowed only as for-loop counters"),
             CreateRule("MS0010", "Use a C# Action event instead of UnityEvent"),
             CreateRule("MS0011", "Project rules prohibit calling {0}"),
-            CreateRule("MS0012", "Wrap this line at 140 characters"),
+            CreateRule("MS0012", "Wrap this line at 120 characters"),
             CreateRule("MS0013", "The file name must match the main type name"),
             CreateRule("MS0014", "Use one class per file, except Serializable companions of a ScriptableObject"),
             CreateRule("MS0015", "Use System.Action or System.Action<T> as the event type"),
@@ -78,9 +78,9 @@ namespace MadSlime.CodeStyle
             SourceText text = tree.GetText(context.CancellationToken);
             foreach (TextLine line in text.Lines)
             {
-                if (line.Span.Length > 140)
+                if (line.Span.Length > 120)
                 {
-                    Report(context, 12, Location.Create(tree, new TextSpan(line.Start + 140, line.Span.Length - 140)));
+                    Report(context, 12, Location.Create(tree, new TextSpan(line.Start + 120, line.Span.Length - 120)));
                 }
             }
 
