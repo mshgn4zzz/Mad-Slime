@@ -1,43 +1,38 @@
-using System;
+using MadSlime.Validation;
 using TMPro;
 using UnityEngine;
 
-namespace UI.HUD
+namespace MadSlime.UI.HUD
 {
-    using Localization = global::Localization.Localization;
+    using Localization = global::MadSlime.Localization.Logic.Localization;
 
     public class LevelLabelUI : MonoBehaviour
     {
+        [VContainer.Inject] private Localization _localization;
+
         [SerializeField] private TMP_Text _labelText;
 
         private int _level;
 
         private void Awake()
         {
-            if (_labelText == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: LabelText is not assigned. Drag a TMP_Text into the _labelText field.");
-            }
+            ArgumentGuard.CheckAssigned(_labelText, name, nameof(_labelText));
         }
 
         private void OnEnable()
         {
-            Localization.LanguageChanged += OnLanguageChanged;
+            _localization.LanguageChanged += OnLanguageChanged;
             OnLanguageChanged();
         }
 
         private void OnDisable()
         {
-            Localization.LanguageChanged -= OnLanguageChanged;
+            _localization.LanguageChanged -= OnLanguageChanged;
         }
 
         public void SetLevel(int level)
         {
-            if (level <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(level));
-            }
+            ArgumentGuard.CheckPositive(level, nameof(level));
 
             _level = level;
             OnLanguageChanged();
@@ -50,7 +45,7 @@ namespace UI.HUD
                 return;
             }
 
-            _labelText.text = string.Format(Localization.Get("level_label"), _level);
+            _labelText.text = string.Format(_localization.Get("level_label"), _level);
         }
     }
 }

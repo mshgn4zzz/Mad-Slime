@@ -1,15 +1,18 @@
 using System;
-using Skins;
+using MadSlime.Skins.Data;
+using MadSlime.Validation;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.Shop
+namespace MadSlime.UI.Shop
 {
-    using Localization = global::Localization.Localization;
+    using Localization = global::MadSlime.Localization.Logic.Localization;
 
     public class SkinRarityGroupView : MonoBehaviour
     {
+        [VContainer.Inject] private Localization _localization;
+
         [SerializeField] private TMP_Text _title;
         [SerializeField] private Image _background;
         [SerializeField] private Transform _itemsParent;
@@ -21,22 +24,20 @@ namespace UI.Shop
 
         private void Awake()
         {
-            if (_title == null || _background == null || _itemsParent == null)
-            {
-                                throw new InvalidOperationException($"{name}: assign the rarity group title, "
-                                        + $"background and items parent.");
-            }
+            ArgumentGuard.CheckAssigned(_title, name, nameof(_title));
+            ArgumentGuard.CheckAssigned(_background, name, nameof(_background));
+            ArgumentGuard.CheckAssigned(_itemsParent, name, nameof(_itemsParent));
         }
 
         private void OnEnable()
         {
-            Localization.LanguageChanged += OnLanguageChanged;
+            _localization.LanguageChanged += OnLanguageChanged;
             OnLanguageChanged();
         }
 
         private void OnDisable()
         {
-            Localization.LanguageChanged -= OnLanguageChanged;
+            _localization.LanguageChanged -= OnLanguageChanged;
         }
 
         public void Initialize(SkinRarity rarity, Color color)
@@ -51,19 +52,19 @@ namespace UI.Shop
             switch (_rarity)
             {
                 case SkinRarity.Common:
-                    _title.text = Localization.Get("skins_common");
+                    _title.text = _localization.Get("skins_common");
                     break;
 
                 case SkinRarity.Rare:
-                    _title.text = Localization.Get("skins_rare");
+                    _title.text = _localization.Get("skins_rare");
                     break;
 
                 case SkinRarity.Epic:
-                    _title.text = Localization.Get("skins_epic");
+                    _title.text = _localization.Get("skins_epic");
                     break;
 
                 case SkinRarity.Legendary:
-                    _title.text = Localization.Get("skins_legendary");
+                    _title.text = _localization.Get("skins_legendary");
                     break;
 
                 default:

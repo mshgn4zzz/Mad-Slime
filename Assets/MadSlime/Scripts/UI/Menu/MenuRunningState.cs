@@ -1,8 +1,9 @@
 using System;
-using Audio;
-using Game;
+using MadSlime.Audio.Data;
+using MadSlime.Audio.Interfaces;
+using MadSlime.Validation;
 
-namespace UI.Menu
+namespace MadSlime.UI.Menu
 {
     public class MenuRunningState : IMenuState
     {

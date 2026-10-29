@@ -1,45 +1,38 @@
 using System;
 using System.Collections.Generic;
-using UI.Spawning;
+using MadSlime.UI.Spawning;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace UI.Menu
+namespace MadSlime.UI.Menu
 {
     public class MenuPopupStack
     {
+        private MenuPopupInputFactory _inputFactory = new MenuPopupInputFactory();
         private UiSpawner _spawner;
         private GameObject[] _screens;
         private List<Component> _windows = new List<Component>();
         private List<MenuPopupInputState> _popupInput = new List<MenuPopupInputState>();
         private List<MenuPopupInputState> _screenInput = new List<MenuPopupInputState>();
 
-        public bool HasOpenPopups()
-        {
-            return _windows.Count > 0;
-        }
-
         public MenuPopupStack(UiSpawner spawner, params GameObject[] screens)
         {
-            if (spawner == null)
-            {
-                throw new ArgumentNullException(nameof(spawner));
-            }
+            ArgumentGuard.CheckNotNull(spawner, nameof(spawner));
 
-            if (screens == null)
-            {
-                throw new ArgumentNullException(nameof(screens));
-            }
+            ArgumentGuard.CheckNotNull(screens, nameof(screens));
 
             for (int i = 0; i < screens.Length; i++)
             {
-                if (screens[i] == null)
-                {
-                    throw new ArgumentNullException(nameof(screens), $"Screen #{i} is not assigned.");
-                }
+                ArgumentGuard.CheckNotNull(screens[i], nameof(screens));
             }
 
             _spawner = spawner;
             _screens = screens;
+        }
+
+        public bool IsPopupOpen()
+        {
+            return _windows.Count > 0;
         }
 
         public void Release<T>(T popup, Action<T> detach) where T : Component
@@ -55,7 +48,7 @@ namespace UI.Menu
 
         public bool IsTop(Component window)
         {
-            return HasOpenPopups() && _windows[_windows.Count - 1] == window;
+            return IsPopupOpen() && _windows[_windows.Count - 1] == window;
         }
 
         public void Push(Component window)
@@ -65,7 +58,7 @@ namespace UI.Menu
                 throw new InvalidOperationException("The popup is already open.");
             }
 
-            if (HasOpenPopups())
+            if (IsPopupOpen())
             {
                 _popupInput[_popupInput.Count - 1].Block();
             }
@@ -73,7 +66,7 @@ namespace UI.Menu
             {
                 foreach (GameObject screen in _screens)
                 {
-                    MenuPopupInputState input = new MenuPopupInputState(screen);
+                    MenuPopupInputState input = _inputFactory.Create(screen);
 
                     _screenInput.Add(input);
                     input.Block();
@@ -81,7 +74,7 @@ namespace UI.Menu
             }
 
             _windows.Add(window);
-            _popupInput.Add(new MenuPopupInputState(window.gameObject));
+            _popupInput.Add(_inputFactory.Create(window.gameObject));
         }
 
         public void Pop(Component window)
@@ -96,7 +89,7 @@ namespace UI.Menu
             _windows.RemoveAt(last);
             _popupInput.RemoveAt(last);
 
-            if (HasOpenPopups())
+            if (IsPopupOpen())
             {
                 _popupInput[_popupInput.Count - 1].Restore();
             }

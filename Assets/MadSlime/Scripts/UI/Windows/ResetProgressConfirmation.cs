@@ -1,8 +1,9 @@
 using System;
+using MadSlime.Validation;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.Windows
+namespace MadSlime.UI.Windows
 {
     public class ResetProgressConfirmation : MonoBehaviour
     {
@@ -15,10 +16,8 @@ namespace UI.Windows
 
         private void Awake()
         {
-            if (_confirmButton == null || _cancelButton == null)
-            {
-                throw new InvalidOperationException($"{name}: assign both confirmation buttons.");
-            }
+            ArgumentGuard.CheckAssigned(_confirmButton, name, nameof(_confirmButton));
+            ArgumentGuard.CheckAssigned(_cancelButton, name, nameof(_cancelButton));
         }
 
         private void OnEnable()

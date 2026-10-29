@@ -1,4 +1,4 @@
-namespace UI.Menu
+namespace MadSlime.UI.Menu
 {
     public class MenuSessionData
     {

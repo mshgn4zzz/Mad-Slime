@@ -1,59 +1,42 @@
 using System;
-using Saves;
-using Shop;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Shop.Data;
+using MadSlime.Skins.Data;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace Skins
+namespace MadSlime.Skins.Logic
 {
     public class SkinApplier : MonoBehaviour
     {
         [SerializeField] private ShopContent _shopContent;
         [SerializeField] private Transform _skinsContainer;
 
+        private ISkinStorage _skinStorage;
+        private SkinInventory _inventory;
+        private ISavesReadiness _savesReadiness;
+        private SkinModelFactory _modelFactory = new SkinModelFactory();
+        private GameObject _currentModel;
+
         public event Action<GameObject> ModelChanged;
 
         public GameObject CurrentModel => _currentModel;
 
-        private ISkinStorage _skinStorage;
-        private SkinInventory _inventory;
-        private ISavesReadiness _savesReadiness;
-        private GameObject _currentModel;
-
-        [Inject]
-        public void Construct(ISkinStorage skinStorage, ISavesReadiness savesReadiness, SkinInventory inventory)
-        {
-            _skinStorage = skinStorage;
-            _inventory = inventory;
-            _savesReadiness = savesReadiness;
-        }
-
         private void Awake()
         {
-            if (_shopContent == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: SkinApplier requires _shopContent to be assigned in the inspector.");
-            }
+            ArgumentGuard.CheckAssigned(_shopContent, name, nameof(_shopContent));
 
-            if (_skinsContainer == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: SkinApplier requires _skinsContainer to be assigned in the inspector.");
-            }
+            ArgumentGuard.CheckAssigned(_skinsContainer, name, nameof(_skinsContainer));
 
-            if (_skinStorage == null || _inventory == null || _savesReadiness == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: skin dependencies were not injected. Check that ProjectLifetimeScope "
-                        + $"registers SkinsStorage/ISavesReadiness and SkinInventory, and that "
-                        + $"SkinApplier is registered in a LifetimeScope.");
-            }
+            ArgumentGuard.CheckAssigned(_skinStorage, name, nameof(_skinStorage));
+            ArgumentGuard.CheckAssigned(_inventory, name, nameof(_inventory));
+            ArgumentGuard.CheckAssigned(_savesReadiness, name, nameof(_savesReadiness));
         }
 
         private void OnEnable()
         {
-            _savesReadiness.Ready += OnSavesLoaded;
+            _savesReadiness.Prepared += OnSavesLoaded;
         }
 
         private void Start()
@@ -63,7 +46,7 @@ namespace Skins
 
         private void OnDisable()
         {
-            _savesReadiness.Ready -= OnSavesLoaded;
+            _savesReadiness.Prepared -= OnSavesLoaded;
         }
 
         private void OnDestroy()
@@ -74,9 +57,12 @@ namespace Skins
             }
         }
 
-        private void OnSavesLoaded()
+        [Inject]
+        public void Construct(ISkinStorage skinStorage, ISavesReadiness savesReadiness, SkinInventory inventory)
         {
-            ApplySelectedSkin();
+            _skinStorage = skinStorage;
+            _inventory = inventory;
+            _savesReadiness = savesReadiness;
         }
 
         private void ApplySelectedSkin()
@@ -96,14 +82,10 @@ namespace Skins
             {
                 matchingItem = FindItem(SkinInventory.InitialSkinId);
 
-                if (matchingItem == null || matchingItem.Model == null)
-                {
-                    throw new InvalidOperationException(
-                        $"{name}: the initial skin '{SkinInventory.InitialSkinId}' and its "
-                            + $"model must exist in ShopContent.");
-                }
+                ArgumentGuard.CheckAssigned(matchingItem, name, nameof(matchingItem));
+                ArgumentGuard.CheckAssigned(matchingItem.Model, name, nameof(matchingItem.Model));
 
-                _inventory.Select(matchingItem.Id);
+                _inventory.TrySelect(matchingItem.Id);
             }
 
             if (_currentModel != null)
@@ -111,7 +93,7 @@ namespace Skins
                 Destroy(_currentModel);
             }
 
-            _currentModel = Instantiate(matchingItem.Model, _skinsContainer);
+            _currentModel = _modelFactory.Create(matchingItem.Model, _skinsContainer);
             ModelChanged?.Invoke(_currentModel);
         }
 
@@ -131,6 +113,11 @@ namespace Skins
             }
 
             return null;
+        }
+
+        private void OnSavesLoaded()
+        {
+            ApplySelectedSkin();
         }
     }
 }

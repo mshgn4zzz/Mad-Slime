@@ -1,13 +1,7 @@
-using System;
-
-namespace UI.Spawning
+namespace MadSlime.UI.Spawning
 {
     public interface IShowable
     {
-        event Action Closed;
-
         void Show();
-
-        void Hide();
     }
 }

@@ -1,20 +1,35 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using MadSlime.Validation;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.Windows
+namespace MadSlime.UI.Windows
 {
+    using Localization = global::MadSlime.Localization.Logic.Localization;
+
     public class WinMenu : BaseWindow
     {
-        [SerializeField] private TMP_Text _moneyCount;
-        [SerializeField] private Button _nextLevelButton;
-        [SerializeField] private Button _doubleRewardButton;
-        [SerializeField] private Button _menuButton;
+        [VContainer.Inject] private Localization _localization;
 
-        [SerializeField, Min(0.01f)] private float _countUpDuration = 0.8f;
+        [SerializeField]
+        private TMP_Text _moneyCount;
+        [SerializeField]
+        private Button _nextLevelButton;
+        [SerializeField]
+        private Button _doubleRewardButton;
+        [SerializeField]
+        private Button _menuButton;
+
+        [SerializeField, Min(0.01f)]
+        private float _countUpDuration = 0.8f;
+
+        private int _moneyCountShown;
+        private string _doubleRewardLabel;
+        private CancellationTokenSource _countUpCancellation;
+        private bool _isNavigationRequested;
 
         public event Action NextLevelRequested;
 
@@ -22,57 +37,53 @@ namespace UI.Windows
 
         public event Action MenuRequested;
 
-        private int _moneyCountShown;
-        private CancellationTokenSource _countUpCancellation;
-        private bool _isNavigationRequested;
-
         protected override void Awake()
         {
             base.Awake();
 
-            if (_moneyCount == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: MoneyCount is not assigned. Drag a TMP_Text into the _moneyCount field.");
-            }
+            ArgumentGuard.CheckAssigned(_moneyCount, name, nameof(_moneyCount));
 
-            if (_nextLevelButton == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: NextLevelButton is not assigned. Drag a Button into the _nextLevelButton field.");
-            }
+            ArgumentGuard.CheckAssigned(_nextLevelButton, name, nameof(_nextLevelButton));
 
-            if (_doubleRewardButton == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: DoubleRewardButton is not assigned. Drag a Button into the _doubleRewardButton field.");
-            }
+            ArgumentGuard.CheckAssigned(_doubleRewardButton, name, nameof(_doubleRewardButton));
 
-            if (_menuButton == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: MenuButton is not assigned. Drag a Button into the _menuButton field.");
-            }
+            ArgumentGuard.CheckAssigned(_menuButton, name, nameof(_menuButton));
         }
 
-        public void Initialize(int moneyCount, int previousMoneyCount, bool canDoubleReward)
+        protected override void OnDisable()
+        {
+            CancelCountUp();
+            base.OnDisable();
+            _nextLevelButton.onClick.RemoveListener(OnNextLevelClicked);
+            _doubleRewardButton.onClick.RemoveListener(OnDoubleRewardClicked);
+            _menuButton.onClick.RemoveListener(OnMenuClicked);
+        }
+
+        private void OnEnable()
+        {
+            _nextLevelButton.onClick.AddListener(OnNextLevelClicked);
+            _doubleRewardButton.onClick.AddListener(OnDoubleRewardClicked);
+            _menuButton.onClick.AddListener(OnMenuClicked);
+        }
+
+        public void Initialize(int moneyCount, int previousMoneyCount, bool isCanDoubleReward)
         {
             CancelCountUp();
             _isNavigationRequested = false;
             _nextLevelButton.interactable = true;
             _menuButton.interactable = true;
-            _doubleRewardButton.interactable = canDoubleReward;
+            _doubleRewardButton.interactable = isCanDoubleReward;
             _moneyCountShown = previousMoneyCount;
             _moneyCount.text = previousMoneyCount.ToString();
 
-            _doubleRewardButton.gameObject.SetActive(canDoubleReward);
+            _doubleRewardButton.gameObject.SetActive(isCanDoubleReward);
         }
 
         public void PlayRewardCountUp(int targetAmount)
         {
             CancelCountUp();
 
-            if (IsClosing == true)
+            if (IsClosing())
             {
                 return;
             }
@@ -89,7 +100,42 @@ namespace UI.Windows
             CountUpMoneyAsync(_moneyCountShown, targetAmount, _countUpCancellation.Token).Forget();
         }
 
-        private async UniTaskVoid CountUpMoneyAsync(int fromAmount, int toAmount, CancellationToken cancellationToken)
+        public void SetDoubleRewardAvailable(bool isAvailable)
+        {
+            _doubleRewardButton.interactable = isAvailable;
+        }
+
+        public void SetDoubleRewardRetry(bool isRetry)
+        {
+            TMP_Text label = _doubleRewardButton.GetComponentInChildren<TMP_Text>(true);
+
+            if (label == null)
+            {
+                return;
+            }
+
+            if (_doubleRewardLabel == null)
+            {
+                _doubleRewardLabel = label.text;
+            }
+
+            if (isRetry)
+            {
+                string error = _localization.Get("roulette_save_error");
+                string retryPrompt = _localization.Get("leaderboard_retry");
+
+                label.text = error + "\n" + retryPrompt;
+            }
+            else
+            {
+                label.text = _doubleRewardLabel;
+            }
+        }
+
+        private async UniTaskVoid CountUpMoneyAsync(
+            int fromAmount,
+            int toAmount,
+            CancellationToken cancellationToken)
         {
             float elapsedTime = 0f;
 
@@ -116,30 +162,6 @@ namespace UI.Windows
             _moneyCount.text = toAmount.ToString();
         }
 
-        private void OnEnable()
-        {
-            _nextLevelButton.onClick.AddListener(OnNextLevelClicked);
-            _doubleRewardButton.onClick.AddListener(OnDoubleRewardClicked);
-            _menuButton.onClick.AddListener(OnMenuClicked);
-        }
-
-        protected override void OnDisable()
-        {
-            CancelCountUp();
-            base.OnDisable();
-            _nextLevelButton.onClick.RemoveListener(OnNextLevelClicked);
-            _doubleRewardButton.onClick.RemoveListener(OnDoubleRewardClicked);
-            _menuButton.onClick.RemoveListener(OnMenuClicked);
-        }
-
-        protected override void OnClosing()
-        {
-            CancelCountUp();
-            _nextLevelButton.interactable = false;
-            _doubleRewardButton.interactable = false;
-            _menuButton.interactable = false;
-        }
-
         private void CancelCountUp()
         {
             if (_countUpCancellation == null)
@@ -152,9 +174,17 @@ namespace UI.Windows
             _countUpCancellation = null;
         }
 
+        protected override void OnClosing()
+        {
+            CancelCountUp();
+            _nextLevelButton.interactable = false;
+            _doubleRewardButton.interactable = false;
+            _menuButton.interactable = false;
+        }
+
         private void OnNextLevelClicked()
         {
-            if (_isNavigationRequested == true || IsClosing == true)
+            if (_isNavigationRequested || IsClosing())
             {
                 return;
             }
@@ -166,14 +196,9 @@ namespace UI.Windows
             nextLevelRequested?.Invoke();
         }
 
-        public void SetDoubleRewardAvailable(bool isAvailable)
-        {
-            _doubleRewardButton.interactable = isAvailable;
-        }
-
         private void OnDoubleRewardClicked()
         {
-            if (_isNavigationRequested == true || IsClosing == true)
+            if (_isNavigationRequested || IsClosing())
             {
                 return;
             }
@@ -185,7 +210,7 @@ namespace UI.Windows
 
         private void OnMenuClicked()
         {
-            if (_isNavigationRequested == true || IsClosing == true)
+            if (_isNavigationRequested || IsClosing())
             {
                 return;
             }

@@ -261,14 +261,14 @@ MonoBehaviour:
       AnchorMin: {x: 0.5, y: 0.5}
       AnchorMax: {x: 0.5, y: 0.5}
       Pivot: {x: 0.5, y: 0.5}
-      Position: {x: -300, y: -260}
+      Position: {x: 300, y: -260}
       Size: {x: 228, y: 228}
       Scale: 1
     Landscape:
       AnchorMin: {x: 0.5, y: 0.5}
       AnchorMax: {x: 0.5, y: 0.5}
       Pivot: {x: 0.5, y: 0.5}
-      Position: {x: -300, y: -260}
+      Position: {x: 300, y: -260}
       Size: {x: 228, y: 228}
       Scale: 1
   - Target: {fileID: 6206003864641862459}
@@ -278,14 +278,14 @@ MonoBehaviour:
       AnchorMin: {x: 0.5, y: 0.5}
       AnchorMax: {x: 0.5, y: 0.5}
       Pivot: {x: 0.5, y: 0.5}
-      Position: {x: 300, y: -260}
+      Position: {x: -300, y: -260}
       Size: {x: 228, y: 228}
       Scale: 1
     Landscape:
       AnchorMin: {x: 0.5, y: 0.5}
       AnchorMax: {x: 0.5, y: 0.5}
       Pivot: {x: 0.5, y: 0.5}
-      Position: {x: 300, y: -260}
+      Position: {x: -300, y: -260}
       Size: {x: 228, y: 228}
       Scale: 1
   - Target: {fileID: 8824675414419929043}
@@ -772,7 +772,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 300, y: -260}
+  m_AnchoredPosition: {x: -300, y: -260}
   m_SizeDelta: {x: 228, y: 228}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6523212795979773639
@@ -1043,7 +1043,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -300, y: -260}
+  m_AnchoredPosition: {x: 300, y: -260}
   m_SizeDelta: {x: 228, y: 228}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2193203202267390405

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using Skins;
+using MadSlime.Skins.Data;
 using UnityEngine;
 
-namespace Shop
+namespace MadSlime.Shop.Data
 {
     [CreateAssetMenu(menuName = "Mad Slime/Shop Content", fileName = "NewShopContent")]
     public class ShopContent : ScriptableObject

@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Skins
+namespace MadSlime.Skins.Data
 {
     [CreateAssetMenu(menuName = "Mad Slime/Skin Rarity Table", fileName = "SkinRarityTable")]
     public class SkinRarityTable : ScriptableObject

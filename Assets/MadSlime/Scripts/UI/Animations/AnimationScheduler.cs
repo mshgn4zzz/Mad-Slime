@@ -4,11 +4,16 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace UI.Animations
+namespace MadSlime.UI.Animations
 {
     public class AnimationScheduler : MonoBehaviour
     {
         private CancellationTokenSource _sequenceSource;
+
+        private void OnDisable()
+        {
+            Cancel();
+        }
 
         public void Play(IReadOnlyList<Action> animations, IReadOnlyList<float> delays)
         {
@@ -41,7 +46,10 @@ namespace UI.Animations
             {
                 for (int i = 0; i < animations.Count; i++)
                 {
-                    await UniTask.Delay(TimeSpan.FromSeconds(delays[i]), DelayType.Realtime, cancellationToken: cancellationToken);
+                    await UniTask.Delay(
+                        TimeSpan.FromSeconds(delays[i]),
+                        DelayType.Realtime,
+                        cancellationToken: cancellationToken);
                     cancellationToken.ThrowIfCancellationRequested();
                     animations[i].Invoke();
                 }
@@ -50,11 +58,6 @@ namespace UI.Animations
             {
                 return;
             }
-        }
-
-        private void OnDisable()
-        {
-            Cancel();
         }
     }
 }

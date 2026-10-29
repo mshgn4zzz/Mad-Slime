@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UI.Menu
+namespace MadSlime.UI.Menu
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(RectTransform))]
@@ -8,7 +8,8 @@ namespace UI.Menu
     {
         [SerializeField, Min(0f)] private float _swing = 10f;
         [SerializeField, Min(0.1f)] private float _period = 4.5f;
-        [SerializeField] private bool _useUnscaledTime = true;
+        [UnityEngine.Serialization.FormerlySerializedAs("_useUnscaledTime")]
+        [SerializeField] private bool _isUnscaledTimeUsed = true;
 
         private RectTransform _rect;
         private Vector2 _restPosition;
@@ -25,7 +26,7 @@ namespace UI.Menu
         {
             float deltaTime = Time.deltaTime;
 
-            if (_useUnscaledTime)
+            if (_isUnscaledTimeUsed)
             {
                 deltaTime = Time.unscaledDeltaTime;
             }

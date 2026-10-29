@@ -1,10 +1,11 @@
 using System;
-using UI.Audio;
-using UI.ResponsiveUI;
+using MadSlime.UI.Audio;
+using MadSlime.UI.ResponsiveUI.Runtime;
+using MadSlime.Validation;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.Windows
+namespace MadSlime.UI.Windows
 {
     public class PauseMenu : BaseWindow
     {
@@ -31,35 +32,36 @@ namespace UI.Windows
         {
             base.Awake();
 
-            if (_closeButton == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: CloseButton is not assigned. Drag a Button into the _closeButton field.");
-            }
+            ArgumentGuard.CheckAssigned(_closeButton, name, nameof(_closeButton));
 
-            if (_menuButton == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: MenuButton is not assigned. Drag a Button into the _menuButton field.");
-            }
+            ArgumentGuard.CheckAssigned(_menuButton, name, nameof(_menuButton));
 
-            if (_settingsPanel == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: SettingsPanel is not assigned. Drag an AudioSettingsPanel into "
-                        + $"the _settingsPanel field.");
-            }
+            ArgumentGuard.CheckAssigned(_settingsPanel, name, nameof(_settingsPanel));
 
-            if (_languageButton == null)
-            {
-                throw new InvalidOperationException($"{name}: assign the language button RectTransform.");
-            }
+            ArgumentGuard.CheckAssigned(_languageButton, name, nameof(_languageButton));
 
-            if (_resetButton == null || _resetConfirmation == null || _settingsInput == null)
-            {
-                                throw new InvalidOperationException($"{name}: assign the reset button, confirmation "
-                                        + $"and settings input group.");
-            }
+            ArgumentGuard.CheckAssigned(_resetButton, name, nameof(_resetButton));
+            ArgumentGuard.CheckAssigned(_resetConfirmation, name, nameof(_resetConfirmation));
+            ArgumentGuard.CheckAssigned(_settingsInput, name, nameof(_settingsInput));
+        }
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            _closeButton.onClick.RemoveListener(OnCloseClicked);
+            _menuButton.onClick.RemoveListener(OnMenuClicked);
+            _resetButton.onClick.RemoveListener(OnResetClicked);
+            _resetConfirmation.Confirmed -= OnResetConfirmed;
+            _resetConfirmation.Canceled -= OnResetCanceled;
+        }
+
+        private void OnEnable()
+        {
+            _closeButton.onClick.AddListener(OnCloseClicked);
+            _menuButton.onClick.AddListener(OnMenuClicked);
+            _resetButton.onClick.AddListener(OnResetClicked);
+            _resetConfirmation.Confirmed += OnResetConfirmed;
+            _resetConfirmation.Canceled += OnResetCanceled;
         }
 
         public void Initialize(bool isMenuButtonNeeded, bool isResetAvailable = false)
@@ -74,12 +76,12 @@ namespace UI.Windows
 
             _menuButton.gameObject.SetActive(isMenuButtonNeeded);
 
-            if (TryGetComponent(out ResponsiveCanvasLayout profiles) && profiles.Manages(_languageButton))
+            if (TryGetComponent(out ResponsiveCanvasLayout profiles) && profiles.IsManaging(_languageButton))
             {
                 return;
             }
 
-            if (isMenuButtonNeeded == true || isResetAvailable == true)
+            if (isMenuButtonNeeded || isResetAvailable)
             {
                 _languageButton.anchoredPosition = _languagePositionWithMenuButton;
             }
@@ -87,25 +89,6 @@ namespace UI.Windows
             {
                 _languageButton.anchoredPosition = _languagePositionWithoutMenuButton;
             }
-        }
-
-        private void OnEnable()
-        {
-            _closeButton.onClick.AddListener(OnCloseClicked);
-            _menuButton.onClick.AddListener(OnMenuClicked);
-            _resetButton.onClick.AddListener(OnResetClicked);
-            _resetConfirmation.Confirmed += OnResetConfirmed;
-            _resetConfirmation.Canceled += OnResetCanceled;
-        }
-
-        protected override void OnDisable()
-        {
-            base.OnDisable();
-            _closeButton.onClick.RemoveListener(OnCloseClicked);
-            _menuButton.onClick.RemoveListener(OnMenuClicked);
-            _resetButton.onClick.RemoveListener(OnResetClicked);
-            _resetConfirmation.Confirmed -= OnResetConfirmed;
-            _resetConfirmation.Canceled -= OnResetCanceled;
         }
 
         protected override void OnClosing()
@@ -117,7 +100,7 @@ namespace UI.Windows
 
         private void OnResetClicked()
         {
-            if (_isResetAvailable == false || _isActionRequested == true || IsClosing == true)
+            if (_isResetAvailable == false || _isActionRequested || IsClosing())
             {
                 return;
             }
@@ -133,7 +116,7 @@ namespace UI.Windows
             _settingsInput.interactable = true;
             _settingsInput.blocksRaycasts = true;
 
-            if (_resetButton.gameObject.activeInHierarchy == true)
+            if (_resetButton.gameObject.activeInHierarchy)
             {
                 _resetButton.Select();
             }
@@ -141,7 +124,7 @@ namespace UI.Windows
 
         private void OnResetConfirmed()
         {
-            if (_isResetAvailable == false || _isActionRequested == true || IsClosing == true)
+            if (_isResetAvailable == false || _isActionRequested || IsClosing())
             {
                 return;
             }
@@ -153,7 +136,7 @@ namespace UI.Windows
 
         private void OnCloseClicked()
         {
-            if (_isActionRequested == true || IsClosing == true)
+            if (_isActionRequested || IsClosing())
             {
                 return;
             }
@@ -167,7 +150,7 @@ namespace UI.Windows
 
         private void OnMenuClicked()
         {
-            if (_isActionRequested == true || IsClosing == true)
+            if (_isActionRequested || IsClosing())
             {
                 return;
             }

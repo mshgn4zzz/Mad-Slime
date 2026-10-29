@@ -1,19 +1,21 @@
-using System;
 using DG.Tweening;
-using Items;
-using Player;
+using MadSlime.Items.Data;
+using MadSlime.Player.Logic;
+using MadSlime.UI.Common;
+using MadSlime.Validation;
 using TMPro;
-using UI.Common;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-namespace UI.Player
+namespace MadSlime.UI.Player
 {
-    using Localization = global::Localization.Localization;
+    using Localization = global::MadSlime.Localization.Logic.Localization;
 
     public class GrowthBarView : MonoBehaviour
     {
+        [VContainer.Inject] private Localization _localization;
+
         [SerializeField] private Image _progressBar;
         [SerializeField] private TMP_Text _tierText;
         [SerializeField, Min(0.01f)] private float _fillSmoothDuration = 0.25f;
@@ -23,40 +25,15 @@ namespace UI.Player
         private Tween _fillTween;
         private BarFiller _barFiller;
 
-        [Inject]
-        public void Construct(PlayerTier playerTier, TierResolver tierResolver)
-        {
-            _playerTier = playerTier;
-            _tierResolver = tierResolver;
-        }
-
         private void Awake()
         {
-            if (_playerTier == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerTier was not injected. Check that GameLifetimeScope "
-                        + $"registers PlayerTier and GrowthBarView.");
-            }
+            ArgumentGuard.CheckAssigned(_playerTier, name, nameof(_playerTier));
 
-            if (_tierResolver == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: TierResolver was not injected. Check that GameLifetimeScope "
-                        + $"registers TierResolver and GrowthBarView.");
-            }
+            ArgumentGuard.CheckAssigned(_tierResolver, name, nameof(_tierResolver));
 
-            if (_progressBar == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: ProgressBar is not assigned. Drag an Image into the _progressBar field.");
-            }
+            ArgumentGuard.CheckAssigned(_progressBar, name, nameof(_progressBar));
 
-            if (_tierText == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: TierText is not assigned. Drag a TMP_Text into the _tierText field.");
-            }
+            ArgumentGuard.CheckAssigned(_tierText, name, nameof(_tierText));
 
             _barFiller = new BarFiller(_progressBar);
         }
@@ -84,21 +61,18 @@ namespace UI.Player
             }
         }
 
-        private void OnMassChanged(int previousMass, int currentMass)
+        [Inject]
+        public void Construct(PlayerTier playerTier, TierResolver tierResolver)
         {
-            Refresh(currentMass);
-        }
-
-        private void OnTierChanged(SizeTier previousTier, SizeTier currentTier)
-        {
-            Refresh(_playerTier.Mass);
+            _playerTier = playerTier;
+            _tierResolver = tierResolver;
         }
 
         private void Refresh(int mass)
         {
             float targetFill = _tierResolver.GetTierProgress(mass);
 
-            _tierText.text = Localization.Get($"tier_{_playerTier.CurrentTier}");
+            _tierText.text = _localization.Get($"tier_{_playerTier.CurrentTier}");
 
             if (_fillTween != null)
             {
@@ -118,6 +92,16 @@ namespace UI.Player
         private void ApplyFillAmount(float fillAmount)
         {
             _barFiller.SetFill(fillAmount);
+        }
+
+        private void OnMassChanged(int previousMass, int currentMass)
+        {
+            Refresh(currentMass);
+        }
+
+        private void OnTierChanged(SizeTier previousTier, SizeTier currentTier)
+        {
+            Refresh(_playerTier.Mass);
         }
     }
 }

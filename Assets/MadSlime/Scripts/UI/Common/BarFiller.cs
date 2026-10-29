@@ -1,8 +1,8 @@
-using Game;
+using MadSlime.Validation;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.Common
+namespace MadSlime.UI.Common
 {
     public class BarFiller
     {

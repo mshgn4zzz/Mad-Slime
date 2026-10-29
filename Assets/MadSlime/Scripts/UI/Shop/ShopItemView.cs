@@ -1,9 +1,8 @@
 using System;
-using Game;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.Shop
+namespace MadSlime.UI.Shop
 {
     [RequireComponent(typeof(Image), typeof(Button))]
     public class ShopItemView : MonoBehaviour
@@ -19,7 +18,7 @@ namespace UI.Shop
         private Button _button;
         private string _skinId;
 
-        public event Action<ShopItemView> Click;
+        public event Action<ShopItemView> Clicked;
 
         public string SkinId => _skinId;
 
@@ -37,7 +36,7 @@ namespace UI.Shop
             {
                 throw new InvalidOperationException(
                     $"{name}: assign all shop item references (_backgroundImage, _contentImage, _lockImage, "
-                        + $"_selectedMark) and keep a Button on the same object.");
+                    + $"_selectedMark) and keep a Button on the same object.");
             }
         }
 
@@ -73,7 +72,7 @@ namespace UI.Shop
 
         public void SetHighlighted(bool isHighlighted)
         {
-            if (isHighlighted == true)
+            if (isHighlighted)
             {
                 _backgroundImage.color = _highlightColor;
                 return;
@@ -84,7 +83,7 @@ namespace UI.Shop
 
         private void OnClick()
         {
-            Click?.Invoke(this);
+            Clicked?.Invoke(this);
         }
     }
 }

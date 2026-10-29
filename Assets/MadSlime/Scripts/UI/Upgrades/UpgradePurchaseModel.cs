@@ -1,10 +1,11 @@
 using System;
-using Economy;
-using Game;
-using Saves;
-using Upgrades;
+using MadSlime.Economy.Logic;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Upgrades.Data;
+using MadSlime.Upgrades.Logic;
+using MadSlime.Validation;
 
-namespace UI.Upgrades
+namespace MadSlime.UI.Upgrades
 {
     public class UpgradePurchaseModel
     {
@@ -23,37 +24,39 @@ namespace UI.Upgrades
             _transaction = transaction;
         }
 
-        public bool CanPurchase(UpgradeType type)
+        public bool IsPurchaseAvailable(UpgradeType type)
         {
             return _upgrades.IsMaxed(type) == false && _wallet.Balance >= _upgrades.GetNextCost(type);
         }
 
-        public bool CanPurchase(PerkType type)
+        public bool IsPurchaseAvailable(PerkType type)
         {
             return _upgrades.IsPerkPurchased(type) == false && _wallet.Balance >= _upgrades.GetPerkCost(type);
         }
 
-        public bool Purchase(UpgradeType type)
+        public bool TryPurchase(UpgradeType type)
         {
-            if (CanPurchase(type) == false)
+            if (IsPurchaseAvailable(type) == false)
             {
                 return false;
             }
 
-            return PurchaseChecked(_upgrades.GetNextCost(type), () => _upgrades.PurchaseStepped(type));
+            Purchase(_upgrades.GetNextCost(type), () => _upgrades.PurchaseStepped(type));
+            return true;
         }
 
-        public bool Purchase(PerkType type)
+        public bool TryPurchase(PerkType type)
         {
-            if (CanPurchase(type) == false)
+            if (IsPurchaseAvailable(type) == false)
             {
                 return false;
             }
 
-            return PurchaseChecked(_upgrades.GetPerkCost(type), () => _upgrades.PurchasePerk(type));
+            Purchase(_upgrades.GetPerkCost(type), () => _upgrades.PurchasePerk(type));
+            return true;
         }
 
-        private bool PurchaseChecked(int cost, Action purchaseStep)
+        private void Purchase(int cost, Action purchaseStep)
         {
             _transaction.Invoke(() =>
             {
@@ -64,8 +67,6 @@ namespace UI.Upgrades
 
                 purchaseStep();
             });
-
-            return true;
         }
     }
 }

@@ -1,10 +1,9 @@
-using System;
-using Game;
+using MadSlime.Validation;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.Quota
+namespace MadSlime.UI.Quota
 {
     [RequireComponent(typeof(QuotaPlateAnimator))]
     public class QuotaPlateUI : MonoBehaviour
@@ -14,11 +13,8 @@ namespace UI.Quota
 
         private void Awake()
         {
-            if (_icon == null || _text == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: assign the quota plate references (_icon, _text).");
-            }
+            ArgumentGuard.CheckAssigned(_icon, name, nameof(_icon));
+            ArgumentGuard.CheckAssigned(_text, name, nameof(_text));
         }
 
         public void Setup(Sprite icon, int remaining)

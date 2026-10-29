@@ -1,30 +1,23 @@
-using System;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace UI.Upgrades
+namespace MadSlime.UI.Upgrades
 {
-    public class UpgradeItemViewFactory : MonoBehaviour
+    public class UpgradeItemViewFactory
     {
-        [SerializeField] private UpgradeItemView _upgradeItemViewPrefab;
+        private readonly UpgradeItemView _upgradeItemViewPrefab;
 
-        private IObjectResolver _resolver;
+        private readonly IObjectResolver _resolver;
 
-        [Inject]
-        public void Construct(IObjectResolver resolver)
+        public UpgradeItemViewFactory(IObjectResolver resolver, UpgradeItemView upgradeItemViewPrefab)
         {
+            ArgumentGuard.CheckNotNull(resolver, nameof(resolver));
+            ArgumentGuard.CheckNotNull(upgradeItemViewPrefab, nameof(upgradeItemViewPrefab));
+
             _resolver = resolver;
-        }
-
-        private void Awake()
-        {
-            if (_resolver == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Resolver was not injected. MenuLifetimeScope must be the first "
-                        + $"object in the scene hierarchy.");
-            }
+            _upgradeItemViewPrefab = upgradeItemViewPrefab;
         }
 
         public UpgradeItemView Create(Transform parent)

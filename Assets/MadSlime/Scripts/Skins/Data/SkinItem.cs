@@ -1,8 +1,6 @@
-using Items;
-using Roulette;
 using UnityEngine;
 
-namespace Skins
+namespace MadSlime.Skins.Data
 {
     [CreateAssetMenu(menuName = "Mad Slime/Shop Item", fileName = "NewShopItem")]
     public class SkinItem : ScriptableObject

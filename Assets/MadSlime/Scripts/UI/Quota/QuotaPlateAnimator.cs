@@ -2,7 +2,7 @@ using System;
 using DG.Tweening;
 using UnityEngine;
 
-namespace UI.Quota
+namespace MadSlime.UI.Quota
 {
     public class QuotaPlateAnimator : MonoBehaviour
     {

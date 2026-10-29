@@ -1,6 +1,7 @@
 using System;
+using MadSlime.Validation;
 
-namespace Skins
+namespace MadSlime.Skins.Data
 {
     public class SkinRarityLookup
     {
@@ -8,10 +9,7 @@ namespace Skins
 
         public SkinRarityLookup(SkinRarityTable table)
         {
-            if (table == null)
-            {
-                throw new ArgumentNullException(nameof(table));
-            }
+            ArgumentGuard.CheckNotNull(table, nameof(table));
 
             _table = table;
         }

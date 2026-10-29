@@ -1,8 +1,8 @@
-using System;
 using DG.Tweening;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace UI.Animations
+namespace MadSlime.UI.Animations
 {
     public class UiMoveAnimator : TweenAnimatorBase
     {
@@ -15,10 +15,7 @@ namespace UI.Animations
         {
             base.Awake();
 
-            if (_target == null)
-            {
-                throw new InvalidOperationException($"{name}: assign the move animation target.");
-            }
+            ArgumentGuard.CheckAssigned(_target, name, nameof(_target));
 
             _enabledPosition = _target.anchoredPosition;
         }
@@ -33,16 +30,6 @@ namespace UI.Animations
             return DOTween.To(ReadPosition, ApplyPosition, _enabledPosition + _disabledOffset, HideDuration);
         }
 
-        private Vector2 ReadPosition()
-        {
-            return _target.anchoredPosition;
-        }
-
-        private void ApplyPosition(Vector2 position)
-        {
-            _target.anchoredPosition = position;
-        }
-
         protected override void ApplyEnabledState()
         {
             _target.anchoredPosition = _enabledPosition;
@@ -51,6 +38,16 @@ namespace UI.Animations
         protected override void ApplyDisabledState()
         {
             _target.anchoredPosition = _enabledPosition + _disabledOffset;
+        }
+
+        private Vector2 ReadPosition()
+        {
+            return _target.anchoredPosition;
+        }
+
+        private void ApplyPosition(Vector2 position)
+        {
+            _target.anchoredPosition = position;
         }
     }
 }

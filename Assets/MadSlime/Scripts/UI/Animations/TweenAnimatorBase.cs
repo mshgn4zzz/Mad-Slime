@@ -2,7 +2,7 @@ using System;
 using DG.Tweening;
 using UnityEngine;
 
-namespace UI.Animations
+namespace MadSlime.UI.Animations
 {
     [RequireComponent(typeof(ReactiveUIView))]
     public abstract class TweenAnimatorBase : MonoBehaviour
@@ -23,11 +23,6 @@ namespace UI.Animations
 
         protected ReactiveUIView View => _reactiveView;
 
-        protected bool IsAnimating()
-        {
-            return _currentTween != null;
-        }
-
         protected virtual void Awake()
         {
             if (TryGetComponent(out _reactiveView) == false)
@@ -40,7 +35,7 @@ namespace UI.Animations
         {
             _reactiveView.EnableRequested += OnEnableRequested;
             _reactiveView.DisableRequested += OnDisableRequested;
-            _reactiveView.StateReset += OnStateReset;
+            _reactiveView.ResetCompleted += OnStateReset;
             OnStateReset(_reactiveView.IsActive);
         }
 
@@ -48,8 +43,13 @@ namespace UI.Animations
         {
             _reactiveView.EnableRequested -= OnEnableRequested;
             _reactiveView.DisableRequested -= OnDisableRequested;
-            _reactiveView.StateReset -= OnStateReset;
+            _reactiveView.ResetCompleted -= OnStateReset;
             KillTween();
+        }
+
+        protected bool IsAnimating()
+        {
+            return _currentTween != null;
         }
 
         protected abstract Tween CreateEnableTween();
@@ -59,6 +59,15 @@ namespace UI.Animations
         protected abstract void ApplyEnabledState();
 
         protected abstract void ApplyDisabledState();
+
+        private void KillTween()
+        {
+            if (_currentTween != null)
+            {
+                _currentTween.Kill();
+                _currentTween = null;
+            }
+        }
 
         private void OnEnableRequested()
         {
@@ -86,22 +95,13 @@ namespace UI.Animations
         {
             KillTween();
 
-            if (isActive == true)
+            if (isActive)
             {
                 ApplyEnabledState();
             }
             else
             {
                 ApplyDisabledState();
-            }
-        }
-
-        private void KillTween()
-        {
-            if (_currentTween != null)
-            {
-                _currentTween.Kill();
-                _currentTween = null;
             }
         }
     }

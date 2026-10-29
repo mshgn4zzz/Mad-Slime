@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using MadSlime.Skins.Logic;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace Shop
+namespace MadSlime.Shop.View
 {
     public class ModelPlacer : MonoBehaviour
     {
@@ -23,27 +25,17 @@ namespace Shop
         private List<Vector3> _worldCorners = new List<Vector3>();
         private List<Vector3> _modelCorners = new List<Vector3>();
 
+        private SkinModelFactory _modelFactory = new SkinModelFactory();
         private GameObject _currentModel;
         private Vector3 _rotationAnchor;
 
         private void Awake()
         {
-            if (_rotator == null)
-            {
-                throw new InvalidOperationException($"{name}: PreviewRotator is required.");
-            }
+            ArgumentGuard.CheckAssigned(_rotator, name, nameof(_rotator));
 
-            if (_modelsParent == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: ModelPlacer requires _modelsParent to be assigned in the inspector.");
-            }
+            ArgumentGuard.CheckAssigned(_modelsParent, name, nameof(_modelsParent));
 
-            if (_camera == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: ModelPlacer requires _camera to be assigned in the inspector.");
-            }
+            ArgumentGuard.CheckAssigned(_camera, name, nameof(_camera));
         }
 
         private void OnEnable()
@@ -58,23 +50,20 @@ namespace Shop
 
         public void SetModel(GameObject model)
         {
-            if (model == null)
-            {
-                throw new ArgumentNullException(nameof(model), $"{name}: SetModel requires a non-null model.");
-            }
+            ArgumentGuard.CheckNotNull(model, nameof(model));
 
             if (_currentModel != null)
             {
                 Destroy(_currentModel);
             }
 
-            _currentModel = Instantiate(model, _modelsParent);
+            _currentModel = _modelFactory.Create(model, _modelsParent);
 
             if (_currentModel.TryGetComponent(out SkinModel skinModel) == false)
             {
                 throw new InvalidOperationException(
                     $"{name}: Model '{model.name}' has no SkinModel component. Add a SkinModel "
-                        + $"component to the model prefab root.");
+                    + $"component to the model prefab root.");
             }
 
             SetPreviewLayer(_currentModel);
@@ -100,8 +89,8 @@ namespace Shop
 
             if (layer < 0)
             {
-                                throw new InvalidOperationException($"{name}: layer '{PreviewLayerName}' is "
-                                        + $"required for skin previews.");
+                throw new InvalidOperationException($"{name}: layer '{PreviewLayerName}' is "
+                    + $"required for skin previews.");
             }
 
             Transform[] transforms = model.GetComponentsInChildren<Transform>(true);
@@ -122,7 +111,7 @@ namespace Shop
             {
                 throw new InvalidOperationException(
                     $"{name}: the preview camera is directly above the spawn point. Move the "
-                        + $"camera so the model can face it.");
+                    + $"camera so the model can face it.");
             }
 
             float yaw = Mathf.Atan2(toCamera.x, toCamera.z) * Mathf.Rad2Deg;
@@ -199,11 +188,6 @@ namespace Shop
             return requiredSize / fill;
         }
 
-        private void OnModelRotated()
-        {
-            AlignToCameraBottom();
-        }
-
         private void AlignToCameraBottom()
         {
             if (_currentModel == null)
@@ -231,7 +215,7 @@ namespace Shop
             _rotator.Setup(modelTransform, _rotationAnchor);
         }
 
-        private static float ProjectCylinder(float radius, float halfHeight, Vector3 axis)
+        private float ProjectCylinder(float radius, float halfHeight, Vector3 axis)
         {
             return (radius * new Vector2(axis.x, axis.z).magnitude) + (halfHeight * Mathf.Abs(axis.y));
         }
@@ -294,6 +278,11 @@ namespace Shop
                     }
                 }
             }
+        }
+
+        private void OnModelRotated()
+        {
+            AlignToCameraBottom();
         }
     }
 }

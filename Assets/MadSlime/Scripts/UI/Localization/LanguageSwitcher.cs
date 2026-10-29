@@ -1,14 +1,17 @@
 using System;
+using MadSlime.Validation;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.Localization
+namespace MadSlime.UI.Localization
 {
-    using Localization = global::Localization.Localization;
+    using Localization = global::MadSlime.Localization.Logic.Localization;
 
     public class LanguageSwitcher : MonoBehaviour
     {
+        [VContainer.Inject] private Localization _localization;
+
         [SerializeField] private Button _button;
         [SerializeField] private TMP_Text _label;
         [SerializeField] private Image _flag;
@@ -18,17 +21,9 @@ namespace UI.Localization
 
         private void Awake()
         {
-            if (_button == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Button is not assigned. Drag a Button into the _button field.");
-            }
+            ArgumentGuard.CheckAssigned(_button, name, nameof(_button));
 
-            if (_label == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Label is not assigned. Drag a TMP_Text into the _label field.");
-            }
+            ArgumentGuard.CheckAssigned(_label, name, nameof(_label));
 
             if (_flag == null || _russianFlag == null || _englishFlag == null || _turkishFlag == null)
             {
@@ -39,26 +34,26 @@ namespace UI.Localization
         private void OnEnable()
         {
             _button.onClick.AddListener(OnButtonClick);
-            Localization.LanguageChanged += OnLanguageChanged;
+            _localization.LanguageChanged += OnLanguageChanged;
             OnLanguageChanged();
         }
 
         private void OnDisable()
         {
             _button.onClick.RemoveListener(OnButtonClick);
-            Localization.LanguageChanged -= OnLanguageChanged;
+            _localization.LanguageChanged -= OnLanguageChanged;
         }
 
         private void OnButtonClick()
         {
-            Localization.CycleLanguage();
+            _localization.CycleLanguage();
         }
 
         private void OnLanguageChanged()
         {
-            _label.text = Localization.Get($"lang_self_{Localization.CurrentLanguage}");
+            _label.text = _localization.Get($"lang_self_{_localization.CurrentLanguage}");
 
-            switch (Localization.CurrentLanguage)
+            switch (_localization.CurrentLanguage)
             {
                 case Localization.Russian:
                     _flag.sprite = _russianFlag;
@@ -73,8 +68,8 @@ namespace UI.Localization
                     break;
 
                 default:
-                                        throw new InvalidOperationException($"{name}: Unsupported language "
-                                                + $"{Localization.CurrentLanguage}.");
+                    throw new InvalidOperationException($"{name}: Unsupported language "
+                    + $"{_localization.CurrentLanguage}.");
             }
         }
     }

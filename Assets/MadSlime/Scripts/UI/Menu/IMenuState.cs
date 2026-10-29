@@ -1,6 +1,6 @@
-using Game;
+using MadSlime.StateMachine.Interfaces;
 
-namespace UI.Menu
+namespace MadSlime.UI.Menu
 {
     public interface IMenuState : IState
     {

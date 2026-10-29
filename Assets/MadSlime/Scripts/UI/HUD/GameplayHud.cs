@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Game;
-using UI.Animations;
+using MadSlime.GameFSM.Scenes;
+using MadSlime.UI.Animations;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace UI.HUD
+namespace MadSlime.UI.HUD
 {
     public class GameplayHud : MonoBehaviour
     {
@@ -22,18 +23,10 @@ namespace UI.HUD
         private List<float> _gameplayDelays = new List<float>();
         private bool _isGameplayShown;
 
-        [Inject]
-        public void Construct(GameSceneState session)
-        {
-            _session = session;
-        }
-
         private void Awake()
         {
-            if (_sceneScheduler == null || _gameplayScheduler == null)
-            {
-                throw new InvalidOperationException($"{name}: assign both animation schedulers.");
-            }
+            ArgumentGuard.CheckAssigned(_sceneScheduler, name, nameof(_sceneScheduler));
+            ArgumentGuard.CheckAssigned(_gameplayScheduler, name, nameof(_gameplayScheduler));
 
             RegisterTargets(_sceneStartTargets, _sceneAnimations, _sceneDelays);
             RegisterTargets(_sessionStartTargets, _gameplayAnimations, _gameplayDelays);
@@ -66,6 +59,38 @@ namespace UI.HUD
             }
         }
 
+        [Inject]
+        public void Construct(GameSceneState session)
+        {
+            _session = session;
+        }
+
+        private void RegisterTargets(UiEnableTarget[] targets, List<Action> animations, List<float> delays)
+        {
+            ArgumentGuard.CheckAssigned(targets, name, nameof(targets));
+
+            for (int i = 0; i < targets.Length; i++)
+            {
+                ReactiveUIView view = targets[i].View;
+
+                ArgumentGuard.CheckAssigned(view, name, nameof(view));
+
+                animations.Add(view.Enable);
+                delays.Add(targets[i].Delay);
+
+                if (_views.Contains(view) == false)
+                {
+                    _views.Add(view);
+                }
+            }
+        }
+
+        private void CancelSequences()
+        {
+            _sceneScheduler.Cancel();
+            _gameplayScheduler.Cancel();
+        }
+
         private void OnPrepared()
         {
             CancelSequences();
@@ -85,7 +110,7 @@ namespace UI.HUD
 
         private void OnGameplayStarted()
         {
-            if (_isGameplayShown == true)
+            if (_isGameplayShown)
             {
                 return;
             }
@@ -107,38 +132,6 @@ namespace UI.HUD
         private void OnTargetHidden(ReactiveUIView view)
         {
             view.gameObject.SetActive(false);
-        }
-
-        private void RegisterTargets(UiEnableTarget[] targets, List<Action> animations, List<float> delays)
-        {
-            if (targets == null)
-            {
-                throw new InvalidOperationException($"{name}: HUD target list is required.");
-            }
-
-            for (int i = 0; i < targets.Length; i++)
-            {
-                ReactiveUIView view = targets[i].View;
-
-                if (view == null)
-                {
-                    throw new InvalidOperationException($"{name}: HUD target {i} requires ReactiveUIView.");
-                }
-
-                animations.Add(view.Enable);
-                delays.Add(targets[i].Delay);
-
-                if (_views.Contains(view) == false)
-                {
-                    _views.Add(view);
-                }
-            }
-        }
-
-        private void CancelSequences()
-        {
-            _sceneScheduler.Cancel();
-            _gameplayScheduler.Cancel();
         }
     }
 }

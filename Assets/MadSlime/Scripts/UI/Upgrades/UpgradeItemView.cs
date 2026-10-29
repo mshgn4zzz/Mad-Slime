@@ -1,10 +1,9 @@
 using System;
-using Game;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.Upgrades
+namespace MadSlime.UI.Upgrades
 {
     [RequireComponent(typeof(Image), typeof(Button))]
     public class UpgradeItemView : MonoBehaviour
@@ -17,7 +16,7 @@ namespace UI.Upgrades
 
         private Button _button;
 
-        public event Action<UpgradeItemView> Click;
+        public event Action<UpgradeItemView> Clicked;
 
         private void Awake()
         {
@@ -28,7 +27,7 @@ namespace UI.Upgrades
             {
                 throw new InvalidOperationException(
                     $"{name}: assign all upgrade item references (_icon, _stepText, _titleText, _effectText, "
-                        + $"_priceText) and keep a Button on the same object.");
+                    + $"_priceText) and keep a Button on the same object.");
             }
         }
 
@@ -42,13 +41,13 @@ namespace UI.Upgrades
             _button.onClick.RemoveListener(OnClick);
         }
 
-        public void Initialize(Sprite icon, string title, string effect, bool showStep)
+        public void Initialize(Sprite icon, string title, string effect, bool isStepVisible)
         {
             _icon.sprite = icon;
             _icon.enabled = icon != null;
             _titleText.text = title;
             _effectText.text = effect;
-            _stepText.gameObject.SetActive(showStep);
+            _stepText.gameObject.SetActive(isStepVisible);
         }
 
         public void SetProgress(string step, string effect)
@@ -65,7 +64,7 @@ namespace UI.Upgrades
 
         private void OnClick()
         {
-            Click?.Invoke(this);
+            Clicked?.Invoke(this);
         }
     }
 }

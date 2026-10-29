@@ -1,10 +1,10 @@
-using System;
-using Game;
+using MadSlime.Game.Logic;
+using MadSlime.Validation;
 using TMPro;
 using UnityEngine;
 using VContainer;
 
-namespace UI.HUD
+namespace MadSlime.UI.HUD
 {
     public class TimerUI : MonoBehaviour
     {
@@ -12,25 +12,11 @@ namespace UI.HUD
 
         private Timer _timer;
 
-        [Inject]
-        public void Construct(Timer timer)
-        {
-            _timer = timer;
-        }
-
         private void Awake()
         {
-            if (_timer == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Timer was not injected. Check that GameLifetimeScope registers Timer and TimerUI.");
-            }
+            ArgumentGuard.CheckAssigned(_timer, name, nameof(_timer));
 
-            if (_timerText == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: TMP_Text is not assigned. Drag a TMP_Text component into the _timerText field.");
-            }
+            ArgumentGuard.CheckAssigned(_timerText, name, nameof(_timerText));
         }
 
         private void OnEnable()
@@ -41,6 +27,12 @@ namespace UI.HUD
         private void OnDisable()
         {
             _timer.Ticked -= OnTimerTicked;
+        }
+
+        [Inject]
+        public void Construct(Timer timer)
+        {
+            _timer = timer;
         }
 
         private void OnTimerTicked(float remaining)

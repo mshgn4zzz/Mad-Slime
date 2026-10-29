@@ -1,11 +1,10 @@
-using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Game;
-using Saves;
-using Skins;
+using MadSlime.GameFSM;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Skins.Data;
 
-namespace UI.Menu
+namespace MadSlime.UI.Menu
 {
     public class ResetProgressFlow
     {
@@ -37,27 +36,12 @@ namespace UI.Menu
 
             IsRunning = true;
 
-            try
-            {
-                await _saveConfirmation.ConfirmSavedAsync(cancellationToken);
-                cancellationToken.ThrowIfCancellationRequested();
-                _progress.ResetProgress();
-                _inventory.Initialize();
-                await _scenes.RestartCurrentAsync();
-            }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-            {
-                _scenes.Stop();
-            }
-            catch (Exception exception)
-            {
-                _scenes.Fail(exception);
-                throw;
-            }
-            finally
-            {
-                IsRunning = false;
-            }
+            await _saveConfirmation.ConfirmSavedAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+            _progress.ResetProgress();
+            _inventory.Initialize();
+            await _scenes.RestartCurrentAsync();
+            IsRunning = false;
         }
     }
 }

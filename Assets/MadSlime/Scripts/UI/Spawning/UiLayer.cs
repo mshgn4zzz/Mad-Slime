@@ -1,4 +1,4 @@
-namespace UI.Spawning
+namespace MadSlime.UI.Spawning
 {
     public enum UiLayer
     {

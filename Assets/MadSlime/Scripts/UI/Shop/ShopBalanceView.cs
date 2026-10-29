@@ -1,8 +1,9 @@
-using Economy;
+using MadSlime.Economy.Logic;
+using MadSlime.Validation;
 using TMPro;
 using UnityEngine;
 
-namespace UI.Shop
+namespace MadSlime.UI.Shop
 {
     public class ShopBalanceView : MonoBehaviour
     {
@@ -10,41 +11,41 @@ namespace UI.Shop
 
         private Wallet _wallet;
 
-        public void Setup(Wallet wallet)
+        private void Awake()
         {
-            Unsubscribe();
-            _wallet = wallet;
-
-            if (isActiveAndEnabled == true)
-            {
-                Subscribe();
-            }
+            ArgumentGuard.CheckAssigned(_moneyText, name, nameof(_moneyText));
         }
 
         private void OnEnable()
         {
-            if (_wallet != null)
+            if (_wallet == null)
             {
-                Subscribe();
+                return;
             }
-        }
 
-        private void OnDisable()
-        {
-            Unsubscribe();
-        }
-
-        private void Subscribe()
-        {
+            _wallet.BalanceChanged -= OnBalanceChanged;
             _wallet.BalanceChanged += OnBalanceChanged;
             OnBalanceChanged(_wallet.Balance, _wallet.Balance);
         }
 
-        private void Unsubscribe()
+        private void OnDisable()
         {
             if (_wallet != null)
             {
                 _wallet.BalanceChanged -= OnBalanceChanged;
+            }
+        }
+
+        public void Setup(Wallet wallet)
+        {
+            ArgumentGuard.CheckNotNull(wallet, nameof(wallet));
+
+            OnDisable();
+            _wallet = wallet;
+
+            if (isActiveAndEnabled)
+            {
+                OnEnable();
             }
         }
 

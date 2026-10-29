@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
-using Quota;
-using UI.Animations;
+using MadSlime.Quota.Data;
+using MadSlime.Quota.Logic;
+using MadSlime.UI.Animations;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace UI.Quota
+namespace MadSlime.UI.Quota
 {
     [RequireComponent(typeof(AnimationScheduler))]
     public class QuotaUI : MonoBehaviour
@@ -20,6 +22,7 @@ namespace UI.Quota
 
         private List<QuotaPlateUI> _plates = new List<QuotaPlateUI>();
         private List<QuotaPlateAnimator> _animators = new List<QuotaPlateAnimator>();
+        private List<QuotaPlateAnimator> _observedAnimators = new List<QuotaPlateAnimator>();
         private List<QuotaPlateAnimator> _removing = new List<QuotaPlateAnimator>();
         private Dictionary<QuotaEntry, QuotaPlateUI> _platesByEntry = new Dictionary<QuotaEntry, QuotaPlateUI>();
         private QuotaBoard _board;
@@ -28,18 +31,11 @@ namespace UI.Quota
         private List<Action> _introAnimations = new List<Action>();
         private List<float> _introDelays = new List<float>();
 
-        [Inject]
-        public void Construct(QuotaBoard board)
-        {
-            _board = board;
-        }
-
         private void Awake()
         {
-            if (_platePrefab == null || _container == null || _board == null)
-            {
-                throw new InvalidOperationException($"{name}: quota board, plate prefab and container are required.");
-            }
+            ArgumentGuard.CheckAssigned(_platePrefab, name, nameof(_platePrefab));
+            ArgumentGuard.CheckAssigned(_container, name, nameof(_container));
+            ArgumentGuard.CheckAssigned(_board, name, nameof(_board));
 
             if (TryGetComponent(out _introSequence) == false)
             {
@@ -53,7 +49,13 @@ namespace UI.Quota
         {
             _board.QuotaChanged += OnQuotaChanged;
             _board.ResetCompleted += OnQuotaResetCompleted;
-            OnQuotaResetCompleted();
+            Rebuild();
+
+            foreach (QuotaPlateAnimator animator in _animators)
+            {
+                animator.RemovalCompleted += OnRemovalCompleted;
+                _observedAnimators.Add(animator);
+            }
         }
 
         private void OnDisable()
@@ -64,10 +66,51 @@ namespace UI.Quota
                 _board.ResetCompleted -= OnQuotaResetCompleted;
             }
 
+            foreach (QuotaPlateAnimator animator in _observedAnimators)
+            {
+                animator.RemovalCompleted -= OnRemovalCompleted;
+            }
+
+            _observedAnimators.Clear();
             Clear();
         }
 
-        private void OnQuotaResetCompleted()
+        [Inject]
+        public void Construct(QuotaBoard board)
+        {
+            _board = board;
+        }
+
+        private void Clear()
+        {
+            if (_introSequence != null)
+            {
+                _introSequence.Cancel();
+            }
+
+            foreach (QuotaPlateAnimator animator in _animators)
+            {
+                animator.Cancel();
+                animator.gameObject.SetActive(false);
+                Destroy(animator.gameObject);
+            }
+
+            foreach (QuotaPlateAnimator animator in _removing)
+            {
+                animator.Cancel();
+                animator.gameObject.SetActive(false);
+                Destroy(animator.gameObject);
+            }
+
+            _introAnimations.Clear();
+            _introDelays.Clear();
+            _plates.Clear();
+            _animators.Clear();
+            _removing.Clear();
+            _platesByEntry.Clear();
+        }
+
+        private void Rebuild()
         {
             Clear();
 
@@ -135,14 +178,16 @@ namespace UI.Quota
             _plates.RemoveAt(index);
             _animators.RemoveAt(index);
             _removing.Add(animator);
-            animator.RemovalCompleted += OnRemovalCompleted;
             animator.PlayRemoval(_removeDuration, _removalSlideOffset);
         }
 
         private void OnRemovalCompleted(QuotaPlateAnimator animator)
         {
-            animator.RemovalCompleted -= OnRemovalCompleted;
-            _removing.Remove(animator);
+            if (_removing.Remove(animator) == false)
+            {
+                return;
+            }
+
             Destroy(animator.gameObject);
 
             for (int i = 0; i < _animators.Count; i++)
@@ -151,34 +196,10 @@ namespace UI.Quota
             }
         }
 
-        private void Clear()
+        private void OnQuotaResetCompleted()
         {
-            if (_introSequence != null)
-            {
-                _introSequence.Cancel();
-            }
-
-            foreach (QuotaPlateAnimator animator in _animators)
-            {
-                animator.Cancel();
-                animator.gameObject.SetActive(false);
-                Destroy(animator.gameObject);
-            }
-
-            foreach (QuotaPlateAnimator animator in _removing)
-            {
-                animator.RemovalCompleted -= OnRemovalCompleted;
-                animator.Cancel();
-                animator.gameObject.SetActive(false);
-                Destroy(animator.gameObject);
-            }
-
-            _introAnimations.Clear();
-            _introDelays.Clear();
-            _plates.Clear();
-            _animators.Clear();
-            _removing.Clear();
-            _platesByEntry.Clear();
+            OnDisable();
+            OnEnable();
         }
     }
 }

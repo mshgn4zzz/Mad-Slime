@@ -1,22 +1,16 @@
 using System;
 using UnityEngine;
 
-namespace Shop
+namespace MadSlime.Shop.View
 {
     public class PreviewRotator : MonoBehaviour
     {
         [SerializeField] private float _rotationSpeed = 45f;
 
-        public event Action Rotated;
-
         private Transform _model;
         private Vector3 _anchor;
 
-        public void Setup(Transform model, Vector3 anchor)
-        {
-            _model = model;
-            _anchor = anchor;
-        }
+        public event Action Rotated;
 
         private void Update()
         {
@@ -27,6 +21,12 @@ namespace Shop
 
             _model.RotateAround(_anchor, Vector3.up, _rotationSpeed * Time.unscaledDeltaTime);
             Rotated?.Invoke();
+        }
+
+        public void Setup(Transform model, Vector3 anchor)
+        {
+            _model = model;
+            _anchor = anchor;
         }
     }
 }

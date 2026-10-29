@@ -1,10 +1,12 @@
 using System.Collections.Generic;
-using Shop;
-using Skins;
+using MadSlime.Shop.View;
+using MadSlime.Skins.Data;
+using MadSlime.Validation;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
-namespace UI.Shop
+namespace MadSlime.UI.Shop
 {
     public class SkinsPagePresenter : MonoBehaviour
     {
@@ -12,7 +14,7 @@ namespace UI.Shop
 
         [SerializeField] private Transform _itemsParent;
         [SerializeField] private ScrollRect _scroll;
-        [SerializeField] private ShopItemViewFactory _factory;
+        private ShopItemViewFactory _factory;
 
         private SkinInventory _inventory;
         private SkinRarityLookup _rarityLookup;
@@ -24,57 +26,35 @@ namespace UI.Shop
         private int _scrollLayoutFrames;
         private Vector2 _pendingScrollPosition;
 
-        public void Setup(
-            SkinInventory inventory,
-            IEnumerable<SkinItem> skins,
-            IEnumerable<SkinItem> exclusiveSkins,
-            SkinRarityTable rarityTable,
-            ModelPlacer preview)
+        private void Awake()
         {
-            Clear();
-            _inventory = inventory;
-            _rarityLookup = new SkinRarityLookup(rarityTable);
-            _preview = preview;
-            _skins.Clear();
-            AddSkins(skins);
-            AddSkins(exclusiveSkins);
-            _skins.Sort(CompareRarity);
-            _isSetup = true;
-
-            if (isActiveAndEnabled == true)
-            {
-                Show();
-            }
-        }
-
-        private int CompareRarity(SkinItem left, SkinItem right)
-        {
-            return left.Rarity.CompareTo(right.Rarity);
-        }
-
-        private void AddSkins(IEnumerable<SkinItem> skins)
-        {
-            foreach (SkinItem skin in skins)
-            {
-                if (skin == null || FindSkin(skin.Id) != null)
-                {
-                    continue;
-                }
-
-                _skins.Add(skin);
-            }
+            ArgumentGuard.CheckAssigned(_itemsParent, name, nameof(_itemsParent));
+            ArgumentGuard.CheckAssigned(_scroll, name, nameof(_scroll));
         }
 
         private void OnEnable()
         {
-            if (_isSetup == true)
+            if (_isSetup == false)
             {
-                Show();
+                return;
+            }
+
+            Show();
+
+            foreach (ShopItemView view in _views)
+            {
+                view.Clicked -= OnClicked;
+                view.Clicked += OnClicked;
             }
         }
 
         private void OnDisable()
         {
+            foreach (ShopItemView view in _views)
+            {
+                view.Clicked -= OnClicked;
+            }
+
             Clear();
 
             if (_preview != null)
@@ -96,6 +76,88 @@ namespace UI.Shop
             {
                 Canvas.ForceUpdateCanvases();
                 _scroll.normalizedPosition = _pendingScrollPosition;
+            }
+        }
+
+        [Inject]
+        public void Construct(ShopItemViewFactory factory)
+        {
+            ArgumentGuard.CheckNotNull(factory, nameof(factory));
+
+            _factory = factory;
+        }
+
+        public void Setup(
+            SkinInventory inventory,
+            IEnumerable<SkinItem> skins,
+            IEnumerable<SkinItem> exclusiveSkins,
+            SkinRarityTable rarityTable,
+            ModelPlacer preview)
+        {
+            ArgumentGuard.CheckNotNull(inventory, nameof(inventory));
+            ArgumentGuard.CheckNotNull(skins, nameof(skins));
+            ArgumentGuard.CheckNotNull(exclusiveSkins, nameof(exclusiveSkins));
+            ArgumentGuard.CheckNotNull(rarityTable, nameof(rarityTable));
+            ArgumentGuard.CheckNotNull(preview, nameof(preview));
+
+            OnDisable();
+            _inventory = inventory;
+            _rarityLookup = new SkinRarityLookup(rarityTable);
+            _preview = preview;
+            _skins.Clear();
+            AddSkins(skins);
+            AddSkins(exclusiveSkins);
+            _skins.Sort(CompareRarity);
+            _isSetup = true;
+
+            if (isActiveAndEnabled)
+            {
+                OnEnable();
+            }
+        }
+
+        public void Refresh(string rewardSkinId)
+        {
+            Vector2 position;
+
+            if (rewardSkinId == null)
+            {
+                position = new Vector2(0f, 1f);
+            }
+            else
+            {
+                position = _scroll.normalizedPosition;
+            }
+
+            OnDisable();
+            OnEnable();
+
+            foreach (ShopItemView view in _views)
+            {
+                view.SetHighlighted(view.SkinId == rewardSkinId);
+            }
+
+            Canvas.ForceUpdateCanvases();
+            _scroll.normalizedPosition = position;
+            _pendingScrollPosition = position;
+            _scrollLayoutFrames = ScrollLayoutFrameCount;
+        }
+
+        private int CompareRarity(SkinItem left, SkinItem right)
+        {
+            return left.Rarity.CompareTo(right.Rarity);
+        }
+
+        private void AddSkins(IEnumerable<SkinItem> skins)
+        {
+            foreach (SkinItem skin in skins)
+            {
+                if (skin == null || FindSkin(skin.Id) != null)
+                {
+                    continue;
+                }
+
+                _skins.Add(skin);
             }
         }
 
@@ -159,52 +221,7 @@ namespace UI.Shop
                     _rarityLookup.Get(skin.Rarity).PlateColor,
                     isOpen,
                     _inventory.SelectedSkinId == skin.Id);
-                view.Click += OnClicked;
                 _views.Add(view);
-            }
-        }
-
-        public void Refresh(string rewardSkinId)
-        {
-            Vector2 position;
-
-            if (rewardSkinId == null)
-            {
-                position = new Vector2(0f, 1f);
-            }
-            else
-            {
-                position = _scroll.normalizedPosition;
-            }
-
-            Clear();
-            Show();
-
-            foreach (ShopItemView view in _views)
-            {
-                view.SetHighlighted(view.SkinId == rewardSkinId);
-            }
-
-            Canvas.ForceUpdateCanvases();
-            _scroll.normalizedPosition = position;
-            _pendingScrollPosition = position;
-            _scrollLayoutFrames = ScrollLayoutFrameCount;
-        }
-
-        private void OnClicked(ShopItemView view)
-        {
-            SkinItem skin = FindSkin(view.SkinId);
-
-            _preview.SetModel(skin.Model);
-
-            if (_inventory.Select(skin.Id) == false)
-            {
-                return;
-            }
-
-            foreach (ShopItemView item in _views)
-            {
-                item.SetSelected(item.SkinId == _inventory.SelectedSkinId);
             }
         }
 
@@ -225,7 +242,6 @@ namespace UI.Shop
         {
             foreach (ShopItemView view in _views)
             {
-                view.Click -= OnClicked;
                 view.gameObject.SetActive(false);
             }
 
@@ -238,6 +254,23 @@ namespace UI.Shop
             }
 
             _groups.Clear();
+        }
+
+        private void OnClicked(ShopItemView view)
+        {
+            SkinItem skin = FindSkin(view.SkinId);
+
+            _preview.SetModel(skin.Model);
+
+            if (_inventory.TrySelect(skin.Id) == false)
+            {
+                return;
+            }
+
+            foreach (ShopItemView item in _views)
+            {
+                item.SetSelected(item.SkinId == _inventory.SelectedSkinId);
+            }
         }
     }
 }

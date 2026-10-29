@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Shop
+namespace MadSlime.Shop.View
 {
     public class SkinModel : MonoBehaviour
     {

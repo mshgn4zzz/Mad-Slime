@@ -1,7 +1,7 @@
-using System;
-using Saves;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Validation;
 
-namespace Skins
+namespace MadSlime.Skins.Data
 {
     public class SkinInventory
     {
@@ -9,17 +9,14 @@ namespace Skins
 
         private ISkinStorage _storage;
 
-        public string SelectedSkinId => _storage.SelectedSkinId;
-
         public SkinInventory(ISkinStorage storage)
         {
-            if (storage == null)
-            {
-                throw new ArgumentNullException(nameof(storage));
-            }
+            ArgumentGuard.CheckNotNull(storage, nameof(storage));
 
             _storage = storage;
         }
+
+        public string SelectedSkinId => _storage.SelectedSkinId;
 
         public void Initialize()
         {
@@ -28,7 +25,7 @@ namespace Skins
                 _storage.OpenSkin(InitialSkinId);
             }
 
-            if (string.IsNullOrWhiteSpace(_storage.SelectedSkinId) == true || IsOpen(_storage.SelectedSkinId) == false)
+            if (string.IsNullOrWhiteSpace(_storage.SelectedSkinId) || IsOpen(_storage.SelectedSkinId) == false)
             {
                 _storage.SelectSkin(InitialSkinId);
             }
@@ -39,9 +36,9 @@ namespace Skins
             return skinId == InitialSkinId || _storage.IsSkinOpen(skinId);
         }
 
-        public bool Grant(string skinId)
+        public bool TryGrant(string skinId)
         {
-            if (IsOpen(skinId) == true)
+            if (IsOpen(skinId))
             {
                 return false;
             }
@@ -50,7 +47,7 @@ namespace Skins
             return true;
         }
 
-        public bool Select(string skinId)
+        public bool TrySelect(string skinId)
         {
             if (IsOpen(skinId) == false)
             {

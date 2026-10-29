@@ -1,12 +1,14 @@
 using System;
 using System.Threading;
-using Audio;
 using Cysharp.Threading.Tasks;
-using Game;
-using Roulette;
-using UI.Shop;
+using MadSlime.Audio.Data;
+using MadSlime.Roulette.Logic;
+using MadSlime.StateMachine.Interfaces;
+using MadSlime.StateMachine.Logic;
+using MadSlime.UI.Shop;
+using MadSlime.Validation;
 
-namespace UI.Menu
+namespace MadSlime.UI.Menu
 {
     public class MenuStateMachine : BaseStateMachine<IMenuState>, ISessionStateMachine, IDisposable
     {
@@ -38,6 +40,11 @@ namespace UI.Menu
 
         public event Action PlayRequested;
 
+        public void Start()
+        {
+            SwitchState<MenuRunningState>();
+        }
+
         public void Configure(Playlist playlist)
         {
             ArgumentGuard.CheckNotNull(playlist, nameof(playlist));
@@ -61,11 +68,6 @@ namespace UI.Menu
             _running.Configure(_playlist);
 
             return UniTask.CompletedTask;
-        }
-
-        public void Start()
-        {
-            SwitchState<MenuRunningState>();
         }
 
         public void Dispose()

@@ -1,10 +1,12 @@
-using System;
-using Audio;
+using MadSlime.Audio.Data;
+using MadSlime.Audio.Interfaces;
+using MadSlime.Audio.Logic;
+using MadSlime.Validation;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-namespace UI.Audio
+namespace MadSlime.UI.Audio
 {
     public class AudioSettingsPanel : MonoBehaviour
     {
@@ -20,46 +22,17 @@ namespace UI.Audio
         private IUISoundPlayer _soundPlayer;
         private float _lastTickTime;
 
-        [Inject]
-        public void Construct(AudioMixerController mixerController, IUISoundPlayer soundPlayer)
-        {
-            _mixerController = mixerController;
-            _soundPlayer = soundPlayer;
-        }
-
         private void Awake()
         {
-            if (_mixerController == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: AudioMixerController was not injected. The settings prefab must be "
-                        + $"instantiated through the DI container (IObjectResolver.Instantiate).");
-            }
+            ArgumentGuard.CheckAssigned(_mixerController, name, nameof(_mixerController));
 
-            if (_soundPlayer == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: IUISoundPlayer was not injected. The settings prefab must be "
-                        + $"instantiated through the DI container (IObjectResolver.Instantiate).");
-            }
+            ArgumentGuard.CheckAssigned(_soundPlayer, name, nameof(_soundPlayer));
 
-            if (_musicSlider == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Music Slider is not assigned. Drag a Slider into the _musicSlider field.");
-            }
+            ArgumentGuard.CheckAssigned(_musicSlider, name, nameof(_musicSlider));
 
-            if (_sfxSlider == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: SFX Slider is not assigned. Drag a Slider into the _sfxSlider field.");
-            }
+            ArgumentGuard.CheckAssigned(_sfxSlider, name, nameof(_sfxSlider));
 
-            if (_tickClip == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Tick Clip is not assigned. Drag a SfxClip asset into the _tickClip field.");
-            }
+            ArgumentGuard.CheckAssigned(_tickClip, name, nameof(_tickClip));
 
             _musicSlider.minValue = 0f;
             _sfxSlider.minValue = 0f;
@@ -88,6 +61,26 @@ namespace UI.Audio
             _mixerController.CommitVolumes();
         }
 
+        [Inject]
+        public void Construct(AudioMixerController mixerController, IUISoundPlayer soundPlayer)
+        {
+            _mixerController = mixerController;
+            _soundPlayer = soundPlayer;
+        }
+
+        private void PlayTick()
+        {
+            float currentTime = Time.unscaledTime;
+
+            if (currentTime - _lastTickTime < TickThrottleSeconds)
+            {
+                return;
+            }
+
+            _lastTickTime = currentTime;
+            _soundPlayer.Play(_tickClip);
+        }
+
         private void OnVolumesChanged()
         {
             _musicSlider.SetValueWithoutNotify(_mixerController.MusicVolume / (float)VolumeStepPercent);
@@ -105,19 +98,6 @@ namespace UI.Audio
         {
             _mixerController.SetSfxVolume((int)value * VolumeStepPercent);
             PlayTick();
-        }
-
-        private void PlayTick()
-        {
-            float currentTime = Time.unscaledTime;
-
-            if (currentTime - _lastTickTime < TickThrottleSeconds)
-            {
-                return;
-            }
-
-            _lastTickTime = currentTime;
-            _soundPlayer.Play(_tickClip);
         }
     }
 }

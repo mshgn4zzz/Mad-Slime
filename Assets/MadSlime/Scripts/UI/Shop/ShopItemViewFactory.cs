@@ -1,31 +1,29 @@
-using System;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace UI.Shop
+namespace MadSlime.UI.Shop
 {
-    public class ShopItemViewFactory : MonoBehaviour
+    public class ShopItemViewFactory
     {
-        [SerializeField] private ShopItemView _shopItemViewPrefab;
-        [SerializeField] private SkinRarityGroupView _rarityGroupPrefab;
+        private readonly ShopItemView _shopItemViewPrefab;
+        private readonly SkinRarityGroupView _rarityGroupPrefab;
 
-        private IObjectResolver _resolver;
+        private readonly IObjectResolver _resolver;
 
-        [Inject]
-        public void Construct(IObjectResolver resolver)
+        public ShopItemViewFactory(
+            IObjectResolver resolver,
+            ShopItemView shopItemViewPrefab,
+            SkinRarityGroupView rarityGroupPrefab)
         {
+            ArgumentGuard.CheckNotNull(resolver, nameof(resolver));
+            ArgumentGuard.CheckNotNull(shopItemViewPrefab, nameof(shopItemViewPrefab));
+            ArgumentGuard.CheckNotNull(rarityGroupPrefab, nameof(rarityGroupPrefab));
+
             _resolver = resolver;
-        }
-
-        private void Awake()
-        {
-            if (_resolver == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Resolver was not injected. MenuLifetimeScope must be the first "
-                        + $"object in the scene hierarchy.");
-            }
+            _shopItemViewPrefab = shopItemViewPrefab;
+            _rarityGroupPrefab = rarityGroupPrefab;
         }
 
         public SkinRarityGroupView CreateRarityGroup(Transform parent)

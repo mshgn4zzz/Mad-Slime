@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace UI.Spawning
+namespace MadSlime.UI.Spawning
 {
     public class UiSpawner
     {
+        private readonly List<Canvas> _canvases = new List<Canvas>();
         private IObjectResolver _resolver;
         private Transform _parent;
 
@@ -17,7 +19,7 @@ namespace UI.Spawning
             {
                 throw new InvalidOperationException(
                     "UiSpawner: IObjectResolver was not injected. Check that the scene "
-                        + "LifetimeScope registers UiSpawner.");
+                    + "LifetimeScope registers UiSpawner.");
             }
 
             _resolver = resolver;
@@ -25,10 +27,7 @@ namespace UI.Spawning
 
         public void SetParent(Transform parent)
         {
-            if (parent == null)
-            {
-                throw new ArgumentNullException(nameof(parent));
-            }
+            ArgumentGuard.CheckNotNull(parent, nameof(parent));
 
             _parent = parent;
             _parent.gameObject.SetActive(true);
@@ -36,12 +35,7 @@ namespace UI.Spawning
 
         public T Spawn<T>(T prefab, UiLayer layer) where T : Component, IShowable
         {
-            if (prefab == null)
-            {
-                throw new ArgumentNullException(
-                    nameof(prefab),
-                    "UiSpawner: the spawned prefab is null. Drag a prefab into the caller's serialized field.");
-            }
+            ArgumentGuard.CheckNotNull(prefab, nameof(prefab));
 
             T instance;
 
@@ -61,10 +55,7 @@ namespace UI.Spawning
 
         public void Release(Component window)
         {
-            if (window == null)
-            {
-                throw new ArgumentNullException(nameof(window), "UiSpawner.Release: the released window is null.");
-            }
+            ArgumentGuard.CheckNotNull(window, nameof(window));
 
             window.gameObject.SetActive(false);
             UnityEngine.Object.Destroy(window.gameObject);
@@ -72,12 +63,7 @@ namespace UI.Spawning
 
         public void Show(IShowable showable)
         {
-            if (showable == null)
-            {
-                throw new ArgumentNullException(
-                    nameof(showable),
-                    "UiSpawner: the shown element is null. Assign the element in the caller's serialized field.");
-            }
+            ArgumentGuard.CheckNotNull(showable, nameof(showable));
 
             showable.Show();
         }
@@ -88,23 +74,35 @@ namespace UI.Spawning
             {
                 throw new InvalidOperationException(
                     $"{showable.name}: no Canvas on the shown object root. Add a root Canvas so "
-                        + $"UiSpawner can apply the {layer} layer.");
+                    + $"UiSpawner can apply the {layer} layer.");
             }
 
             canvas.overrideSorting = true;
             canvas.sortingOrder = TakeFreeSortingOrder((int)layer, canvas);
+            _canvases.Add(canvas);
+        }
+
+        private bool IsReleased(Canvas canvas)
+        {
+            return canvas == null;
         }
 
         private int TakeFreeSortingOrder(int startOrder, Canvas ownCanvas)
         {
-            Canvas[] canvases = UnityEngine.Object.FindObjectsOfType<Canvas>();
+            _canvases.RemoveAll(IsReleased);
+
             HashSet<int> occupiedOrders = new HashSet<int>();
 
-            for (int i = 0; i < canvases.Length; i++)
+            if (_parent != null)
             {
-                Canvas canvas = canvases[i];
+                _parent.GetComponentsInChildren(false, _canvases);
+            }
 
-                if (canvas != ownCanvas && canvas.isRootCanvas == true)
+            for (int i = 0; i < _canvases.Count; i++)
+            {
+                Canvas canvas = _canvases[i];
+
+                if (canvas != ownCanvas && canvas.isActiveAndEnabled)
                 {
                     occupiedOrders.Add(canvas.sortingOrder);
                 }
@@ -112,7 +110,7 @@ namespace UI.Spawning
 
             int order = startOrder;
 
-            while (occupiedOrders.Contains(order) == true)
+            while (occupiedOrders.Contains(order))
             {
                 order++;
             }

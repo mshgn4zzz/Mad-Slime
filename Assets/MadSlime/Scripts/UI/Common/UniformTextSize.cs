@@ -1,8 +1,8 @@
-using System;
+using MadSlime.Validation;
 using TMPro;
 using UnityEngine;
 
-namespace UI.Common
+namespace MadSlime.UI.Common
 {
     [ExecuteAlways]
     public class UniformTextSize : MonoBehaviour
@@ -13,42 +13,21 @@ namespace UI.Common
         private Vector2[] _sizes;
         private bool[] _visibility;
         private float[] _maximumSizes;
-        private bool _isDirty;
+        private bool _isRecalculationRequired;
 
         private void Awake()
         {
             InitializeCache();
         }
 
-        private void InitializeCache()
-        {
-            if (_texts == null || _texts.Length == 0)
-            {
-                throw new InvalidOperationException($"{name}: assign the related text fields.");
-            }
-
-            foreach (TMP_Text text in _texts)
-            {
-                if (text == null)
-                {
-                    throw new InvalidOperationException($"{name}: a related text field is missing.");
-                }
-            }
-
-            _contents = new string[_texts.Length];
-            _sizes = new Vector2[_texts.Length];
-            _visibility = new bool[_texts.Length];
-            _maximumSizes = new float[_texts.Length];
-        }
-
         private void OnEnable()
         {
-            _isDirty = true;
+            _isRecalculationRequired = true;
         }
 
         private void OnValidate()
         {
-            _isDirty = true;
+            _isRecalculationRequired = true;
         }
 
         private void LateUpdate()
@@ -56,10 +35,10 @@ namespace UI.Common
             if (_texts == null || _contents == null || _contents.Length != _texts.Length)
             {
                 InitializeCache();
-                _isDirty = true;
+                _isRecalculationRequired = true;
             }
 
-            if (HasChanges() == false)
+            if (IsRefreshRequired() == false)
             {
                 return;
             }
@@ -90,9 +69,24 @@ namespace UI.Common
             RememberState();
         }
 
-        private bool HasChanges()
+        private void InitializeCache()
         {
-            if (_isDirty)
+            ArgumentGuard.CheckNotEmpty(_texts, name, nameof(_texts));
+
+            foreach (TMP_Text text in _texts)
+            {
+                ArgumentGuard.CheckAssigned(text, name, nameof(text));
+            }
+
+            _contents = new string[_texts.Length];
+            _sizes = new Vector2[_texts.Length];
+            _visibility = new bool[_texts.Length];
+            _maximumSizes = new float[_texts.Length];
+        }
+
+        private bool IsRefreshRequired()
+        {
+            if (_isRecalculationRequired)
             {
                 return true;
             }
@@ -123,7 +117,7 @@ namespace UI.Common
                 _maximumSizes[i] = text.fontSizeMax;
             }
 
-            _isDirty = false;
+            _isRecalculationRequired = false;
         }
     }
 }

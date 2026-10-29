@@ -1,7 +1,7 @@
-using System;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace UI.Common
+namespace MadSlime.UI.Common
 {
     public class WindowParticles : MonoBehaviour
     {
@@ -9,17 +9,11 @@ namespace UI.Common
 
         private void Awake()
         {
-            if (_systems == null || _systems.Length == 0)
-            {
-                throw new InvalidOperationException($"{name}: assign the window particle systems.");
-            }
+            ArgumentGuard.CheckNotEmpty(_systems, name, nameof(_systems));
 
             foreach (ParticleSystem system in _systems)
             {
-                if (system == null)
-                {
-                    throw new InvalidOperationException($"{name}: a window particle system is missing.");
-                }
+                ArgumentGuard.CheckAssigned(system, name, nameof(system));
             }
         }
 

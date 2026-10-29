@@ -1,9 +1,10 @@
 using System;
+using MadSlime.Validation;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.Windows
+namespace MadSlime.UI.Windows
 {
     public class FailMenu : BaseWindow
     {
@@ -24,50 +25,21 @@ namespace UI.Windows
         {
             base.Awake();
 
-            if (_moneyCount == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: MoneyCount is not assigned. Drag a TMP_Text into the _moneyCount field.");
-            }
+            ArgumentGuard.CheckAssigned(_moneyCount, name, nameof(_moneyCount));
 
-            if (_rescueButton == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: RescueButton is not assigned. Drag a Button into the _rescueButton field.");
-            }
+            ArgumentGuard.CheckAssigned(_rescueButton, name, nameof(_rescueButton));
 
-            if (_restartButton == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: RestartButton is not assigned. Drag a Button into the _restartButton field.");
-            }
+            ArgumentGuard.CheckAssigned(_restartButton, name, nameof(_restartButton));
 
-            if (_menuButton == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: MenuButton is not assigned. Drag a Button into the _menuButton field.");
-            }
+            ArgumentGuard.CheckAssigned(_menuButton, name, nameof(_menuButton));
         }
 
-        public void Initialize(int moneyCount, bool canRescue)
+        protected override void OnDisable()
         {
-            _isNavigationRequested = false;
-            _restartButton.interactable = true;
-            _menuButton.interactable = true;
-            _moneyCount.text = moneyCount.ToString();
-
-            _rescueButton.interactable = canRescue;
-            _rescueButton.gameObject.SetActive(canRescue);
-        }
-
-        public void LockRescue()
-        {
-            _rescueButton.interactable = false;
-        }
-
-        public void SetRescueAvailable(bool isAvailable)
-        {
-            _rescueButton.interactable = isAvailable;
+            base.OnDisable();
+            _rescueButton.onClick.RemoveListener(OnRescueClicked);
+            _restartButton.onClick.RemoveListener(OnRestartClicked);
+            _menuButton.onClick.RemoveListener(OnMenuClicked);
         }
 
         private void OnEnable()
@@ -77,12 +49,20 @@ namespace UI.Windows
             _menuButton.onClick.AddListener(OnMenuClicked);
         }
 
-        protected override void OnDisable()
+        public void Initialize(int moneyCount, bool isRescueAvailable)
         {
-            base.OnDisable();
-            _rescueButton.onClick.RemoveListener(OnRescueClicked);
-            _restartButton.onClick.RemoveListener(OnRestartClicked);
-            _menuButton.onClick.RemoveListener(OnMenuClicked);
+            _isNavigationRequested = false;
+            _restartButton.interactable = true;
+            _menuButton.interactable = true;
+            _moneyCount.text = moneyCount.ToString();
+
+            _rescueButton.interactable = isRescueAvailable;
+            _rescueButton.gameObject.SetActive(isRescueAvailable);
+        }
+
+        public void SetRescueAvailable(bool isAvailable)
+        {
+            _rescueButton.interactable = isAvailable;
         }
 
         protected override void OnClosing()
@@ -94,7 +74,7 @@ namespace UI.Windows
 
         private void OnRescueClicked()
         {
-            if (_isNavigationRequested == true || IsClosing == true)
+            if (_isNavigationRequested || IsClosing())
             {
                 return;
             }
@@ -106,7 +86,7 @@ namespace UI.Windows
 
         private void OnRestartClicked()
         {
-            if (_isNavigationRequested == true || IsClosing == true)
+            if (_isNavigationRequested || IsClosing())
             {
                 return;
             }
@@ -120,7 +100,7 @@ namespace UI.Windows
 
         private void OnMenuClicked()
         {
-            if (_isNavigationRequested == true || IsClosing == true)
+            if (_isNavigationRequested || IsClosing())
             {
                 return;
             }

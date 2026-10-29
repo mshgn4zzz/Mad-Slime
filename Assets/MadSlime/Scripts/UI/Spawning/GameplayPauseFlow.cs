@@ -1,11 +1,11 @@
-using System;
-using Game;
-using UI.Windows;
+using MadSlime.GameFSM.Scenes;
+using MadSlime.UI.Windows;
+using MadSlime.Validation;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-namespace UI.Spawning
+namespace MadSlime.UI.Spawning
 {
     public class GameplayPauseFlow : MonoBehaviour
     {
@@ -15,42 +15,17 @@ namespace UI.Spawning
         private UiSpawner _uiSpawner;
         private GameSceneState _orchestrator;
         private PauseMenu _activePauseMenu;
-
-        [Inject]
-        public void Construct(UiSpawner uiSpawner, GameSceneState orchestrator)
-        {
-            _uiSpawner = uiSpawner;
-            _orchestrator = orchestrator;
-        }
+        private PauseMenuSubscription _pauseSubscription;
 
         private void Awake()
         {
-            if (_uiSpawner == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: UiSpawner was not injected. Check that GameLifetimeScope "
-                        + $"registers UiSpawner and GameplayPauseFlow.");
-            }
+            ArgumentGuard.CheckAssigned(_uiSpawner, name, nameof(_uiSpawner));
 
-            if (_orchestrator == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: GameSceneState was not injected. Check that GameLifetimeScope "
-                        + $"registers GameSceneState and GameplayPauseFlow.");
-            }
+            ArgumentGuard.CheckAssigned(_orchestrator, name, nameof(_orchestrator));
 
-            if (_pauseButton == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PauseButton is not assigned. Drag a Button into the _pauseButton field.");
-            }
+            ArgumentGuard.CheckAssigned(_pauseButton, name, nameof(_pauseButton));
 
-            if (_pauseMenuPrefab == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PauseMenu prefab is not assigned. Drag the PauseMenu prefab into "
-                        + $"the _pauseMenuPrefab field.");
-            }
+            ArgumentGuard.CheckAssigned(_pauseMenuPrefab, name, nameof(_pauseMenuPrefab));
         }
 
         private void OnEnable()
@@ -62,14 +37,13 @@ namespace UI.Spawning
         {
             _pauseButton.onClick.RemoveListener(OnPauseButtonClick);
 
+            _pauseSubscription?.Dispose();
+            _pauseSubscription = null;
+
             if (_activePauseMenu == null)
             {
                 return;
             }
-
-            _activePauseMenu.CloseButtonClicked -= OnPauseMenuCloseClicked;
-            _activePauseMenu.MenuButtonClicked -= OnPauseMenuMenuClicked;
-            _activePauseMenu.Closed -= OnPauseMenuClosed;
 
             if (_orchestrator != null)
             {
@@ -78,6 +52,13 @@ namespace UI.Spawning
 
             _uiSpawner.Release(_activePauseMenu);
             _activePauseMenu = null;
+        }
+
+        [Inject]
+        public void Construct(UiSpawner uiSpawner, GameSceneState orchestrator)
+        {
+            _uiSpawner = uiSpawner;
+            _orchestrator = orchestrator;
         }
 
         private void OnPauseButtonClick()
@@ -91,17 +72,14 @@ namespace UI.Spawning
 
             _activePauseMenu = _uiSpawner.Spawn(_pauseMenuPrefab, UiLayer.Popup);
             _activePauseMenu.Initialize(true);
-            _activePauseMenu.Closed += OnPauseMenuClosed;
+            _pauseSubscription = new PauseMenuSubscription(
+                _activePauseMenu, OnPauseMenuCloseClicked, OnPauseMenuMenuClicked, OnPauseMenuClosed);
             _uiSpawner.Show(_activePauseMenu);
-
-            _activePauseMenu.CloseButtonClicked += OnPauseMenuCloseClicked;
-            _activePauseMenu.MenuButtonClicked += OnPauseMenuMenuClicked;
         }
 
         private void OnPauseMenuCloseClicked()
         {
-            _activePauseMenu.CloseButtonClicked -= OnPauseMenuCloseClicked;
-            _activePauseMenu.MenuButtonClicked -= OnPauseMenuMenuClicked;
+            _pauseSubscription.DisableInput();
 
             _orchestrator.ResumeByRequest();
             _activePauseMenu.BeginClose();
@@ -109,15 +87,15 @@ namespace UI.Spawning
 
         private void OnPauseMenuClosed()
         {
-            _activePauseMenu.Closed -= OnPauseMenuClosed;
+            _pauseSubscription?.Dispose();
+            _pauseSubscription = null;
             _uiSpawner.Release(_activePauseMenu);
             _activePauseMenu = null;
         }
 
         private void OnPauseMenuMenuClicked()
         {
-            _activePauseMenu.CloseButtonClicked -= OnPauseMenuCloseClicked;
-            _activePauseMenu.MenuButtonClicked -= OnPauseMenuMenuClicked;
+            _pauseSubscription.DisableInput();
 
             _orchestrator.ResumeByRequest();
             _activePauseMenu.BeginClose();

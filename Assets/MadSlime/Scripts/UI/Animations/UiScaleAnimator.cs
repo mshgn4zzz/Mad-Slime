@@ -1,8 +1,9 @@
 using System;
 using DG.Tweening;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace UI.Animations
+namespace MadSlime.UI.Animations
 {
     public class UiScaleAnimator : TweenAnimatorBase
     {
@@ -15,16 +16,13 @@ namespace UI.Animations
 
         private Vector3 _baseScale;
         private RectTransform _targetRect;
-        private bool _needsScaleRefresh;
+        private bool _isScaleRefreshRequired;
 
         protected override void Awake()
         {
             base.Awake();
 
-            if (_target == null)
-            {
-                throw new InvalidOperationException($"{name}: assign the scale animation target.");
-            }
+            ArgumentGuard.CheckAssigned(_target, name, nameof(_target));
 
             _baseScale = _target.localScale;
 
@@ -35,8 +33,24 @@ namespace UI.Animations
                     throw new InvalidOperationException($"{name}: fitting to bounds requires a RectTransform target.");
                 }
 
-                _needsScaleRefresh = true;
+                _isScaleRefreshRequired = true;
             }
+        }
+
+        private void LateUpdate()
+        {
+            if (_isScaleRefreshRequired == false || View == null || View.IsActive == false || IsAnimating())
+            {
+                return;
+            }
+
+            _isScaleRefreshRequired = false;
+            ApplyEnabledState();
+        }
+
+        private void OnRectTransformDimensionsChange()
+        {
+            _isScaleRefreshRequired = _bounds != null;
         }
 
         protected override Tween CreateEnableTween()
@@ -81,22 +95,6 @@ namespace UI.Animations
             float fit = Mathf.Min(1f, Mathf.Min(horizontalFit, verticalFit));
 
             return scale * fit;
-        }
-
-        private void OnRectTransformDimensionsChange()
-        {
-            _needsScaleRefresh = _bounds != null;
-        }
-
-        private void LateUpdate()
-        {
-            if (_needsScaleRefresh == false || View == null || View.IsActive == false || IsAnimating() == true)
-            {
-                return;
-            }
-
-            _needsScaleRefresh = false;
-            ApplyEnabledState();
         }
     }
 }

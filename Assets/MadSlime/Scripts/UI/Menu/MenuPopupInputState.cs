@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UI.Menu
+namespace MadSlime.UI.Menu
 {
     internal class MenuPopupInputState
     {
@@ -8,13 +8,9 @@ namespace UI.Menu
         private bool _isInteractable;
         private bool _isBlockingRaycasts;
 
-        public MenuPopupInputState(GameObject root)
+        public MenuPopupInputState(CanvasGroup group)
         {
-            if (root.TryGetComponent(out _group) == false)
-            {
-                _group = root.AddComponent<CanvasGroup>();
-            }
-
+            _group = group;
             _isInteractable = _group.interactable;
             _isBlockingRaycasts = _group.blocksRaycasts;
         }

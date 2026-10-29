@@ -1,8 +1,8 @@
-using System;
-using Quota;
+using MadSlime.Quota.Data;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace UI.Quota
+namespace MadSlime.UI.Quota
 {
     public class QuotaPlateSpawner
     {
@@ -11,15 +11,9 @@ namespace UI.Quota
 
         public QuotaPlateSpawner(QuotaPlateUI platePrefab, RectTransform container)
         {
-            if (platePrefab == null)
-            {
-                throw new ArgumentNullException(nameof(platePrefab), "QuotaPlateSpawner requires a plate prefab.");
-            }
+            ArgumentGuard.CheckNotNull(platePrefab, nameof(platePrefab));
 
-            if (container == null)
-            {
-                throw new ArgumentNullException(nameof(container), "QuotaPlateSpawner requires a container.");
-            }
+            ArgumentGuard.CheckNotNull(container, nameof(container));
 
             _platePrefab = platePrefab;
             _container = container;

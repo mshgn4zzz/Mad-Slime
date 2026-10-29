@@ -1,7 +1,8 @@
 using System;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace UI.Animations
+namespace MadSlime.UI.Animations
 {
     public class ReactiveUIView : MonoBehaviour
     {
@@ -15,7 +16,7 @@ namespace UI.Animations
 
         public event Action DisableRequested;
 
-        public event Action<bool> StateReset;
+        public event Action<bool> ResetCompleted;
 
         public event Action<ReactiveUIView> DisableCompleted;
 
@@ -23,10 +24,7 @@ namespace UI.Animations
 
         private void Awake()
         {
-            if (_animators == null)
-            {
-                throw new InvalidOperationException($"{name}: assign the view animators in the prefab.");
-            }
+            ArgumentGuard.CheckAssigned(_animators, name, nameof(_animators));
 
             TryGetComponent(out _canvasGroup);
         }
@@ -35,10 +33,7 @@ namespace UI.Animations
         {
             for (int i = 0; i < _animators.Length; i++)
             {
-                if (_animators[i] == null)
-                {
-                    throw new InvalidOperationException($"{name}: animator {i} is missing.");
-                }
+                ArgumentGuard.CheckAssigned(_animators[i], name, nameof(_animators));
 
                 _animators[i].Completed += OnAnimationCompleted;
             }
@@ -60,7 +55,7 @@ namespace UI.Animations
         {
             gameObject.SetActive(true);
 
-            if (_isActive == true)
+            if (_isActive)
             {
                 return;
             }
@@ -96,7 +91,7 @@ namespace UI.Animations
             _isActive = isActive;
             _pendingAnimations = 0;
             SetInteraction(isActive);
-            StateReset?.Invoke(isActive);
+            ResetCompleted?.Invoke(isActive);
         }
 
         private void SetInteraction(bool isActive)
@@ -116,6 +111,29 @@ namespace UI.Animations
             }
         }
 
+        private int CountActiveAnimators()
+        {
+            int count = 0;
+
+            for (int i = 0; i < _animators.Length; i++)
+            {
+                if (_animators[i].isActiveAndEnabled)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        private void NotifyCompleted()
+        {
+            if (_isActive == false)
+            {
+                DisableCompleted?.Invoke(this);
+            }
+        }
+
         private void OnAnimationCompleted()
         {
             if (_pendingAnimations <= 0)
@@ -128,32 +146,6 @@ namespace UI.Animations
             if (_pendingAnimations == 0)
             {
                 NotifyCompleted();
-            }
-        }
-
-        private int CountActiveAnimators()
-        {
-            int count = 0;
-
-            for (int i = 0; i < _animators.Length; i++)
-            {
-                if (_animators[i].isActiveAndEnabled == true)
-                {
-                    count++;
-                }
-            }
-
-            return count;
-        }
-
-        private void NotifyCompleted()
-        {
-            if (_isActive == true)
-            {
-            }
-            else
-            {
-                DisableCompleted?.Invoke(this);
             }
         }
     }

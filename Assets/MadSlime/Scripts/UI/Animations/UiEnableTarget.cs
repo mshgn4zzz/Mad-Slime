@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace UI.Animations
+namespace MadSlime.UI.Animations
 {
     [Serializable]
     public class UiEnableTarget

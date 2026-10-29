@@ -1,8 +1,8 @@
-using System;
+using MadSlime.Validation;
 using TMPro;
 using UnityEngine;
 
-namespace UI.Common
+namespace MadSlime.UI.Common
 {
     [ExecuteAlways, RequireComponent(typeof(RectTransform)), DisallowMultipleComponent]
     public class CurrencyAmountLayout : MonoBehaviour
@@ -19,26 +19,24 @@ namespace UI.Common
         private Vector2 _lastSize;
         private Vector2 _lastIconSize;
         private float _lastMaximumSize;
-        private bool _isDirty;
+        private bool _isRecalculationRequired;
 
         private void Awake()
         {
-            if (_icon == null || _amount == null)
-            {
-                throw new InvalidOperationException($"{name}: assign the currency icon and amount.");
-            }
+            ArgumentGuard.CheckAssigned(_icon, name, nameof(_icon));
+            ArgumentGuard.CheckAssigned(_amount, name, nameof(_amount));
 
             _rect = (RectTransform)transform;
         }
 
         private void OnEnable()
         {
-            _isDirty = true;
+            _isRecalculationRequired = true;
         }
 
         private void OnValidate()
         {
-            _isDirty = true;
+            _isRecalculationRequired = true;
         }
 
         private void LateUpdate()
@@ -46,7 +44,8 @@ namespace UI.Common
             Vector2 size = _rect.rect.size;
             Vector2 iconSize = _icon.rect.size;
 
-            if (_isDirty == false && _lastText == _amount.text && _lastSize == size && _lastIconSize == iconSize
+            if (_isRecalculationRequired == false && _lastText == _amount.text && _lastSize == size
+                && _lastIconSize == iconSize
                 && _lastMaximumSize == _amount.fontSizeMax)
             {
                 return;
@@ -89,7 +88,7 @@ namespace UI.Common
             _lastSize = size;
             _lastIconSize = iconSize;
             _lastMaximumSize = _amount.fontSizeMax;
-            _isDirty = false;
+            _isRecalculationRequired = false;
         }
     }
 }

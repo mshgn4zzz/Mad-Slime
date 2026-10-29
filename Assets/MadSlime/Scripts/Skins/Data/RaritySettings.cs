@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Skins
+namespace MadSlime.Skins.Data
 {
     [Serializable]
     public class RaritySettings
