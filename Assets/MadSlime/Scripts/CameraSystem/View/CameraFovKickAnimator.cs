@@ -1,39 +1,30 @@
-using System;
-using Items;
-using Player;
+using MadSlime.CameraSystem.Data;
+using MadSlime.Items.Data;
+using MadSlime.Player.Logic;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace CameraSystem
+namespace MadSlime.CameraSystem.View
 {
+    [RequireComponent(typeof(Camera))]
     public class CameraFovKickAnimator : CameraImpulseAnimator
     {
         [SerializeField] private CameraConfig _config;
 
         private PlayerTier _playerTier;
+        private Camera _camera;
 
         public float FovKick => Impulse;
 
-        [Inject]
-        public void Construct(PlayerTier playerTier)
-        {
-            _playerTier = playerTier;
-        }
-
         private void Awake()
         {
-            if (_config == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: CameraConfig is not assigned. Drag the CameraConfig asset into the _config field.");
-            }
+            _camera = GetComponent<Camera>();
+            _camera.fieldOfView = _config.BaseFov;
 
-            if (_playerTier == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerTier was not injected. Check that GameLifetimeScope "
-                        + $"registers PlayerTier and CameraFovKickAnimator.");
-            }
+            ArgumentGuard.CheckAssigned(_config, name, nameof(_config));
+
+            ArgumentGuard.CheckAssigned(_playerTier, name, nameof(_playerTier));
         }
 
         private void OnEnable()
@@ -46,6 +37,21 @@ namespace CameraSystem
             _playerTier.TierChanged -= OnTierChanged;
 
             KillRecoverTween();
+            _camera.fieldOfView = _config.BaseFov;
+        }
+
+        private void LateUpdate()
+        {
+            if (Time.deltaTime > 0f)
+            {
+                _camera.fieldOfView = _config.BaseFov + FovKick;
+            }
+        }
+
+        [Inject]
+        public void Construct(PlayerTier playerTier)
+        {
+            _playerTier = playerTier;
         }
 
         private void OnTierChanged(SizeTier previousTier, SizeTier currentTier)

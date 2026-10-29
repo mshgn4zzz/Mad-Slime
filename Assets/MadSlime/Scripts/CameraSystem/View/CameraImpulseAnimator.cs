@@ -1,7 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-namespace CameraSystem
+namespace MadSlime.CameraSystem.View
 {
     public abstract class CameraImpulseAnimator : MonoBehaviour
     {
@@ -24,6 +24,8 @@ namespace CameraSystem
 
         protected void KillRecoverTween()
         {
+            _impulse = 0f;
+
             if (_recoverTween == null)
             {
                 return;

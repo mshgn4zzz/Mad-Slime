@@ -1,48 +1,30 @@
-using System;
-using Collectables;
-using Items;
+using DG.Tweening;
+using MadSlime.CameraSystem.Data;
+using MadSlime.Collectables.Logic;
+using MadSlime.Items.View;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace CameraSystem
+namespace MadSlime.CameraSystem.View
 {
-    public class CameraShakeAnimator : CameraImpulseAnimator
+    [DefaultExecutionOrder(30)]
+    public class CameraShakeAnimator : MonoBehaviour
     {
         [SerializeField] private CameraConfig _config;
 
         private ItemCollector _itemCollector;
-        private TierLookup _tierLookup;
+        private Vector3 _restPosition;
 
-        public float Shake => Impulse;
-
-        [Inject]
-        public void Construct(ItemCollector itemCollector, TierTable tierTable)
-        {
-            _itemCollector = itemCollector;
-            _tierLookup = new TierLookup(tierTable);
-        }
+        private Tween _shakeTween;
 
         private void Awake()
         {
-            if (_config == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: CameraConfig is not assigned. Drag the CameraConfig asset into the _config field.");
-            }
+            _restPosition = transform.localPosition;
 
-            if (_itemCollector == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: ItemCollector was not injected. Check that GameLifetimeScope "
-                        + $"registers ItemCollector and CameraShakeAnimator.");
-            }
+            ArgumentGuard.CheckAssigned(_config, name, nameof(_config));
 
-            if (_tierLookup == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: TierTable was not injected. Check that ProjectLifetimeScope has "
-                        + $"the TierTable asset assigned.");
-            }
+            ArgumentGuard.CheckAssigned(_itemCollector, name, nameof(_itemCollector));
         }
 
         private void OnEnable()
@@ -54,29 +36,45 @@ namespace CameraSystem
         {
             _itemCollector.ItemCollected -= OnItemCollected;
 
-            KillRecoverTween();
+            StopShake();
+        }
+
+        [Inject]
+        public void Construct(ItemCollector itemCollector)
+        {
+            _itemCollector = itemCollector;
         }
 
         private void OnItemCollected(Item item)
         {
-            if (item.Definition == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: collected item '{item.name}' has no Definition assigned. " +
-                    "Assign a definition to its prefab or delete the item from the scene.");
-            }
+            ArgumentGuard.CheckAssigned(item.Definition, item.name, nameof(item.Definition));
 
-            float mass = _tierLookup.Get(item.Definition.Tier).Mass;
-
-            if (mass < _config.ShakeMassThreshold)
+            if (item.Definition.Tier < _config.ShakeMinimumTier)
             {
                 return;
             }
 
-            float newShake = Mathf.Min(Shake + _config.ShakeStrength, _config.MaxShake);
-            float recoverDuration = 1f / _config.ShakeRecoverSpeed;
+            StopShake();
 
-            PlayRecoverFrom(newShake, recoverDuration);
+            Vector2 axes = _config.ShakeAxes * _config.ShakeStrength;
+
+            _shakeTween = transform.DOShakePosition(
+                    _config.ShakeDuration,
+                    new Vector3(axes.x, axes.y, 0f),
+                    _config.ShakeVibrato,
+                    randomness: 90f,
+                    snapping: false,
+                    fadeOut: true,
+                    randomnessMode: _config.ShakeMode)
+                .SetEase(Ease.Linear)
+                .SetLink(gameObject, LinkBehaviour.KillOnDisable);
+        }
+
+        private void StopShake()
+        {
+            _shakeTween?.Kill();
+            _shakeTween = null;
+            transform.localPosition = _restPosition;
         }
     }
 }

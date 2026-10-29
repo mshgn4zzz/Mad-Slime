@@ -14,41 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _catchUpTime: 0.25
   _maxSpeed: 500
-  _minDistance: 1
   _baseFov: 75
-  _pullByMass:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0.4
-      inSlope: 0
-      outSlope: 0.042
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 50
-      value: 2.5
-      inSlope: 0.042
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  _maxPull: 10
-  _tierPush: 6
-  _maxPush: 10
-  _returnSpeed: 5
-  _shakeSpeed: 40
-  _shakeAxes: {x: 1, y: 1}
-  _shakeFromMass: 2000
-  _shakeStep: 0.3
-  _maxShake: 0.48
-  _shakeFadeSpeed: 6
+  _shakeDuration: 0.3
+  _shakeVibrato: 20
+  _shakeMode: 0
+  _shakeAxes: {x: 10, y: 10}
+  _shakeFromTier: 2
+  _shakeStrength: 0.15
   _tierFovKick: 10
   _fovReturnSpeed: 5
