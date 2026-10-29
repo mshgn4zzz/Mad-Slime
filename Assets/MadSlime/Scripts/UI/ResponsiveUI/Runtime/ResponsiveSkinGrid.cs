@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.ResponsiveUI
+namespace MadSlime.UI.ResponsiveUI.Runtime
 {
     [DisallowMultipleComponent, RequireComponent(typeof(GridLayoutGroup))]
     public class ResponsiveSkinGrid : MonoBehaviour

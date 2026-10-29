@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.ResponsiveUI
+namespace MadSlime.UI.ResponsiveUI.Runtime
 {
     [DefaultExecutionOrder(-2000), DisallowMultipleComponent]
     public class ResponsiveCanvasLayout : MonoBehaviour
@@ -10,56 +10,9 @@ namespace UI.ResponsiveUI
         private const float PortraitWidth = 1080f;
         private const float PortraitHeight = 1920f;
 
-        [Serializable]
-        public struct Placement
-        {
-            public Vector2 AnchorMin;
-            public Vector2 AnchorMax;
-            public Vector2 Pivot;
-            public Vector2 Position;
-            public Vector2 Size;
-            public float Scale;
-
-            public void Apply(RectTransform target)
-            {
-                target.anchorMin = AnchorMin;
-                target.anchorMax = AnchorMax;
-                target.pivot = Pivot;
-                target.sizeDelta = Size;
-                target.anchoredPosition = Position;
-
-                float scale = 1f;
-
-                if (Scale > 0f)
-                {
-                    scale = Scale;
-                }
-
-                target.localScale = Vector3.one * scale;
-            }
-        }
-
-        [Serializable]
-        public struct Element
-        {
-            public RectTransform Target;
-            public Transform PortraitParent;
-            public Transform LandscapeParent;
-            public Placement Portrait;
-            public Placement Landscape;
-        }
-
-        [Serializable]
-        public struct Visibility
-        {
-            public GameObject Target;
-            public bool Portrait;
-            public bool Landscape;
-        }
-
         [SerializeField] private CanvasScaler _scaler;
-        [SerializeField] private Element[] _elements = Array.Empty<Element>();
-        [SerializeField] private Visibility[] _visibility = Array.Empty<Visibility>();
+        [SerializeField] private CanvasElement[] _elements = Array.Empty<CanvasElement>();
+        [SerializeField] private CanvasVisibility[] _visibility = Array.Empty<CanvasVisibility>();
 
         private Vector2Int _screen;
 
@@ -81,9 +34,9 @@ namespace UI.ResponsiveUI
             }
         }
 
-        public bool Manages(RectTransform target)
+        public bool IsManaging(RectTransform target)
         {
-            foreach (Element element in _elements)
+            foreach (CanvasElement element in _elements)
             {
                 if (element.Target == target)
                 {
@@ -100,7 +53,7 @@ namespace UI.ResponsiveUI
             ApplyOrientation(_screen.x > _screen.y);
         }
 
-        public void ApplyOrientation(bool landscape)
+        public void ApplyOrientation(bool isLandscape)
         {
             if (_scaler != null)
             {
@@ -109,7 +62,7 @@ namespace UI.ResponsiveUI
 
                 Vector2 referenceResolution = new Vector2(PortraitWidth, PortraitHeight);
 
-                if (landscape)
+                if (isLandscape)
                 {
                     referenceResolution = new Vector2(PortraitHeight, PortraitWidth);
                 }
@@ -117,7 +70,7 @@ namespace UI.ResponsiveUI
                 _scaler.referenceResolution = referenceResolution;
             }
 
-            foreach (Element element in _elements)
+            foreach (CanvasElement element in _elements)
             {
                 if (element.Target == null)
                 {
@@ -125,9 +78,9 @@ namespace UI.ResponsiveUI
                 }
 
                 Transform parent = element.PortraitParent;
-                Placement placement = element.Portrait;
+                CanvasPlacement placement = element.Portrait;
 
-                if (landscape)
+                if (isLandscape)
                 {
                     parent = element.LandscapeParent;
                     placement = element.Landscape;
@@ -142,18 +95,18 @@ namespace UI.ResponsiveUI
                 placement.Apply(element.Target);
             }
 
-            foreach (Visibility entry in _visibility)
+            foreach (CanvasVisibility entry in _visibility)
             {
                 if (entry.Target == null)
                 {
                     continue;
                 }
 
-                bool isVisible = entry.Portrait;
+                bool isVisible = entry.IsPortraitVisible;
 
-                if (landscape)
+                if (isLandscape)
                 {
-                    isVisible = entry.Landscape;
+                    isVisible = entry.IsLandscapeVisible;
                 }
 
                 entry.Target.SetActive(isVisible);

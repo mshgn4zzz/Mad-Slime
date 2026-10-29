@@ -1,8 +1,9 @@
+using MadSlime.UI.ResponsiveUI.Runtime;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-namespace UI.ResponsiveUI
+namespace MadSlime.UI.ResponsiveUI.Editor
 {
     [CustomEditor(typeof(ResponsiveCanvasLayout))]
     public class ResponsiveCanvasLayoutEditor : UnityEditor.Editor
@@ -14,36 +15,27 @@ namespace UI.ResponsiveUI
         private const string LandscapeProfile = "Landscape";
         private const int SkinRouletteMode = 1;
 
-        private static string[] s_rouletteOptions = { "С кнопками (ежедневная)", "Без кнопок (скины)" };
-        private static string[] s_surfaceOptions =
+        private string[] _rouletteOptions = { "С кнопками (ежедневная)", "Без кнопок (скины)" };
+        private string[] _surfaceOptions =
         {
             "Из Game View (автоматически)",
             "Portrait · 1080 × 1920",
             "Landscape · 1920 × 1080"
         };
 
+        private PrefabLayoutPreview _prefabPreview = new PrefabLayoutPreview();
+        private SceneLayoutPreview _scenePreview = new SceneLayoutPreview();
         private ResponsiveCanvasLayout _layout;
         private RoulettePopupLayout _roulette;
         private string _rouletteModeKey;
         private string _messageKey;
 
-        private void OnEnable()
-        {
-            _layout = (ResponsiveCanvasLayout)target;
-            _layout.TryGetComponent(out _roulette);
-
-            string stateKey = "ResponsiveCanvasLayout.Capture." + target.GetInstanceID();
-
-            _rouletteModeKey = stateKey + ".RouletteMode";
-            _messageKey = stateKey + ".Message";
-        }
-
         public override void OnInspectorGUI()
         {
-            SceneLayoutPreview.ApplyCurrentOrientation();
+            _scenePreview.ApplyCurrentOrientation();
             serializedObject.Update();
 
-            if (DrawRouletteVariant())
+            if (TryChangeRouletteVariant())
             {
                 return;
             }
@@ -74,7 +66,26 @@ namespace UI.ResponsiveUI
             DrawDefaultInspector();
         }
 
-        private bool DrawRouletteVariant()
+        private void OnEnable()
+        {
+            _prefabPreview.Subscribe();
+            _scenePreview.Subscribe();
+            _layout = (ResponsiveCanvasLayout)target;
+            _layout.TryGetComponent(out _roulette);
+
+            string stateKey = "ResponsiveCanvasLayout.Capture." + target.GetInstanceID();
+
+            _rouletteModeKey = stateKey + ".RouletteMode";
+            _messageKey = stateKey + ".Message";
+        }
+
+        private void OnDisable()
+        {
+            _prefabPreview.Unsubscribe();
+            _scenePreview.Unsubscribe();
+        }
+
+        private bool TryChangeRouletteVariant()
         {
             if (_roulette == null)
             {
@@ -82,7 +93,7 @@ namespace UI.ResponsiveUI
             }
 
             int mode = SessionState.GetInt(_rouletteModeKey, 0);
-            int selected = EditorGUILayout.Popup("Вариант рулетки", mode, s_rouletteOptions);
+            int selected = EditorGUILayout.Popup("Вариант рулетки", mode, _rouletteOptions);
 
             if (selected == mode)
             {
@@ -93,9 +104,9 @@ namespace UI.ResponsiveUI
 
             if (PrefabStageUtility.GetPrefabStage(_layout.gameObject) != null)
             {
-                PrefabLayoutPreview.PreviewSource source = PrefabLayoutPreview.GetSource(_layout);
+                PreviewSource source = _prefabPreview.GetSource(_layout);
 
-                PrefabLayoutPreview.Configure(_layout, source, selected == SkinRouletteMode, true);
+                _prefabPreview.Configure(_layout, source, selected == SkinRouletteMode, true);
             }
 
             Repaint();
@@ -104,14 +115,17 @@ namespace UI.ResponsiveUI
 
         private void DrawSurfaceSource()
         {
-            PrefabLayoutPreview.PreviewSource source = PrefabLayoutPreview.GetSource(_layout);
-            int selected = EditorGUILayout.Popup("Размер области", (int)source, s_surfaceOptions);
+            PreviewSource source = _prefabPreview.GetSource(_layout);
+            int selected = EditorGUILayout.Popup("Размер области", (int)source, _surfaceOptions);
 
-            PrefabLayoutPreview.Configure(_layout, (PrefabLayoutPreview.PreviewSource)selected, IsWithoutControls());
+            _prefabPreview.Configure(
+                _layout,
+                (PreviewSource)selected,
+                IsWithoutControls());
 
             string profile = PortraitProfile;
 
-            if (PrefabLayoutPreview.IsLandscape)
+            if (_prefabPreview.IsLandscape)
             {
                 profile = LandscapeProfile;
             }
@@ -129,7 +143,7 @@ namespace UI.ResponsiveUI
             {
                 instructions = "Prefab Mode: по умолчанию область в Scene следует за разрешением Game View. "
                     + "При смене ориентации применяется сохранённый профиль. Перед сменой ориентации запишите "
-                            + "ручные правки, затем сохраните префаб (Ctrl+S).";
+                    + "ручные правки, затем сохраните префаб (Ctrl+S).";
             }
 
             EditorGUILayout.HelpBox(instructions, MessageType.Info);
@@ -203,7 +217,7 @@ namespace UI.ResponsiveUI
             return serializedObject;
         }
 
-        private static int CountTargets(SerializedProperty elements)
+        private int CountTargets(SerializedProperty elements)
         {
             int count = 0;
 
@@ -262,7 +276,7 @@ namespace UI.ResponsiveUI
             RefreshViews();
         }
 
-        private static void CapturePlacement(SerializedProperty placement, RectTransform rect)
+        private void CapturePlacement(SerializedProperty placement, RectTransform rect)
         {
             placement.FindPropertyRelative("AnchorMin").vector2Value = rect.anchorMin;
             placement.FindPropertyRelative("AnchorMax").vector2Value = rect.anchorMax;

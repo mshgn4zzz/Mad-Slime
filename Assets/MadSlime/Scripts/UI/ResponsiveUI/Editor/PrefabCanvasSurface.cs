@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.ResponsiveUI
+namespace MadSlime.UI.ResponsiveUI.Editor
 {
     internal class PrefabCanvasSurface
     {
@@ -18,8 +18,6 @@ namespace UI.ResponsiveUI
         private Vector2 _size;
         private Vector2 _position;
         private Vector3 _scale;
-
-        public Canvas Canvas => _canvas;
 
         public PrefabCanvasSurface(Canvas canvas)
         {
@@ -43,6 +41,8 @@ namespace UI.ResponsiveUI
             _position = rect.anchoredPosition;
             _scale = rect.localScale;
         }
+
+        public Canvas Canvas => _canvas;
 
         public void Show(Vector2 size)
         {
