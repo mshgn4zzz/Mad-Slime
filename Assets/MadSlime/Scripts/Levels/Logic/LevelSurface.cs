@@ -1,8 +1,8 @@
-using System;
+using MadSlime.Levels.Data;
+using MadSlime.Validation;
 using UnityEngine;
-using UnityEngine.Rendering;
 
-namespace Levels
+namespace MadSlime.Levels.Logic
 {
     public class LevelSurface
     {
@@ -13,25 +13,30 @@ namespace Levels
         private MeshRenderer _edge;
         private Vector3 _meshSize;
 
-        public LevelSurface(Mesh mesh, Transform parent)
+        public LevelSurface(MeshRenderer background, MeshRenderer edge, Vector3 meshSize)
         {
-            _meshSize = mesh.bounds.size;
-            _background = CreateSurface("LowerEnvironment", mesh, parent);
-            _edge = CreateSurface("PlatformEdge", mesh, parent);
+            _background = background;
+            _edge = edge;
+            _meshSize = meshSize;
         }
 
         public void Apply(LevelTheme theme, Bounds floorBounds)
         {
-            if (theme.BackgroundMaterial == null || theme.EdgeMaterial == null)
-            {
-                throw new InvalidOperationException($"{theme.name}: background and edge materials are required.");
-            }
+            ArgumentGuard.CheckAssigned(theme.BackgroundMaterial, theme.name, nameof(theme.BackgroundMaterial));
+            ArgumentGuard.CheckAssigned(theme.EdgeMaterial, theme.name, nameof(theme.EdgeMaterial));
 
             float edgeTop = floorBounds.min.y;
             Vector3 edgeCenter = floorBounds.center;
 
             edgeCenter.y = edgeTop - (theme.PlatformDepth * 0.5f);
-            SetSurface(_edge, theme.EdgeMaterial, edgeCenter, new Vector3(floorBounds.size.x, theme.PlatformDepth, floorBounds.size.z));
+            SetSurface(
+                _edge,
+                theme.EdgeMaterial,
+                edgeCenter,
+                new Vector3(
+                floorBounds.size.x,
+                theme.PlatformDepth,
+                floorBounds.size.z));
             _edge.enabled = theme.EnvironmentPrefab == null;
 
             Vector3 backgroundCenter = floorBounds.center;
@@ -42,23 +47,9 @@ namespace Levels
                 theme.BackgroundMaterial,
                 backgroundCenter,
                 new Vector3(
-                    floorBounds.size.x * BackgroundSizeMultiplier,
-                    BackgroundThickness,
-                    floorBounds.size.z * BackgroundSizeMultiplier));
-        }
-
-        private MeshRenderer CreateSurface(string name, Mesh mesh, Transform parent)
-        {
-            GameObject surface = new GameObject(name);
-
-            surface.transform.SetParent(parent, false);
-            surface.AddComponent<MeshFilter>().sharedMesh = mesh;
-
-            MeshRenderer renderer = surface.AddComponent<MeshRenderer>();
-
-            renderer.shadowCastingMode = ShadowCastingMode.Off;
-            renderer.receiveShadows = true;
-            return renderer;
+                floorBounds.size.x * BackgroundSizeMultiplier,
+                BackgroundThickness,
+                floorBounds.size.z * BackgroundSizeMultiplier));
         }
 
         private void SetSurface(MeshRenderer renderer, Material material, Vector3 position, Vector3 size)

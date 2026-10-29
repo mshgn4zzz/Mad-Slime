@@ -1,16 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Collectables;
 using Cysharp.Threading.Tasks;
-using Items;
-using Player;
-using Quota;
-using Saves;
+using MadSlime.Collectables.Logic;
+using MadSlime.Items.Data;
+using MadSlime.Items.Logic;
+using MadSlime.Items.View;
+using MadSlime.Levels.Data;
+using MadSlime.Player.Logic;
+using MadSlime.Quota.Data;
+using MadSlime.Quota.Logic;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace Levels
+namespace MadSlime.Levels.Logic
 {
     public class LevelGenerator : MonoBehaviour
     {
@@ -34,6 +39,54 @@ namespace Levels
 
         public IReadOnlyList<Item> SpawnedItems => _itemsSpawner.ActiveItems;
 
+        private void Awake()
+        {
+            ArgumentGuard.CheckAssigned(_itemsRoot, name, nameof(_itemsRoot));
+
+            ArgumentGuard.CheckAssigned(_configResolver, name, nameof(_configResolver));
+
+            ArgumentGuard.CheckAssigned(_floorRenderer, name, nameof(_floorRenderer));
+
+            ArgumentGuard.CheckAssigned(_clamper, name, nameof(_clamper));
+
+            ArgumentGuard.CheckAssigned(_quotaBoard, name, nameof(_quotaBoard));
+
+            ArgumentGuard.CheckAssigned(_itemCollector, name, nameof(_itemCollector));
+
+            _itemsSpawner = new LevelItemsSpawner(new ItemFactory(), _itemsRoot);
+
+            if (_floorRenderer.TryGetComponent(out MeshFilter floorMesh) == false || floorMesh.sharedMesh == null)
+            {
+                throw new InvalidOperationException($"{name}: the floor must have a mesh.");
+            }
+
+            _surface = new LevelSurfaceFactory().Create(floorMesh.sharedMesh, transform);
+            _environment = new LevelEnvironment(transform, new LevelEnvironmentFactory());
+        }
+
+        private void OnEnable()
+        {
+            _itemsSpawner.Attach(_itemCollector);
+        }
+
+        private void OnDisable()
+        {
+            _itemsSpawner.Detach();
+        }
+
+        private void OnDestroy()
+        {
+            if (_itemsSpawner != null)
+            {
+                _itemsSpawner.Clear();
+            }
+
+            if (_environment != null)
+            {
+                _environment.Clear();
+            }
+        }
+
         [Inject]
         public void Construct(
             LevelConfigResolver configResolver,
@@ -53,79 +106,6 @@ namespace Levels
             _layoutsLibrary = layoutsLibrary;
             _clamper = clamper;
             _itemCollector = itemCollector;
-        }
-
-        private void Awake()
-        {
-            if (_itemsRoot == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: ItemsRoot is not assigned. Drag a Transform into the _itemsRoot field.");
-            }
-
-            if (_configResolver == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: dependencies were not injected. GameLifetimeScope must be the "
-                        + $"first object in the scene hierarchy.");
-            }
-
-            if (_floorRenderer == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: FloorRenderer is not assigned. Drag a MeshRenderer into the _floorRenderer field.");
-            }
-
-            if (_clamper == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Clamper was not injected. Check that GameLifetimeScope registers "
-                        + $"Clamper and LevelGenerator.");
-            }
-
-            if (_quotaBoard == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: QuotaBoard was not injected. Check that ProjectLifetimeScope "
-                        + $"registers QuotaBoard and LevelGenerator.");
-            }
-
-            if (_itemCollector == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: ItemCollector was not injected. Check that GameLifetimeScope "
-                        + $"registers ItemCollector and LevelGenerator.");
-            }
-
-            _itemsSpawner = new LevelItemsSpawner(new ItemFactory(), _itemsRoot);
-
-            if (_floorRenderer.TryGetComponent(out MeshFilter floorMesh) == false || floorMesh.sharedMesh == null)
-            {
-                throw new InvalidOperationException($"{name}: the floor must have a mesh.");
-            }
-
-            _surface = new LevelSurface(floorMesh.sharedMesh, transform);
-            _environment = new LevelEnvironment(transform);
-        }
-
-        private void OnEnable()
-        {
-            _itemsSpawner.Attach(_itemCollector);
-        }
-
-        private void OnDisable()
-        {
-            _itemsSpawner.Detach();
-        }
-
-        private void OnDestroy()
-        {
-            _itemsSpawner?.Clear();
-
-            if (_environment != null)
-            {
-                _environment.Clear();
-            }
         }
 
         public Bounds GetFloorBounds()
@@ -162,23 +142,12 @@ namespace Levels
 
         private void ApplyTheme(LevelConfig config)
         {
-            if (config.Theme == null)
-            {
-                throw new InvalidOperationException(
-                    $"{config.name}: LevelTheme is not assigned. Assign a theme asset in the level config.");
-            }
+            ArgumentGuard.CheckAssigned(config.Theme, config.name, nameof(config.Theme));
 
-            if (config.Theme.FloorMaterial == null)
-            {
-                throw new InvalidOperationException(
-                    $"{config.Theme.name}: floor material is required. Assign it in the LevelTheme asset.");
-            }
+            ArgumentGuard.CheckAssigned(
+                config.Theme.FloorMaterial, config.Theme.name, nameof(config.Theme.FloorMaterial));
 
-            if (_floorRenderer == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: floor renderer is not assigned. Drag the floor MeshRenderer into LevelGenerator.");
-            }
+            ArgumentGuard.CheckAssigned(_floorRenderer, name, nameof(_floorRenderer));
 
             _floorRenderer.sharedMaterial = config.Theme.FloorMaterial;
             _surface.Apply(config.Theme, GetFloorBounds());

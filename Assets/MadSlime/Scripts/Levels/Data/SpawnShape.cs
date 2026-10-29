@@ -1,4 +1,4 @@
-namespace Levels
+namespace MadSlime.Levels.Data
 {
     public enum SpawnShape
     {

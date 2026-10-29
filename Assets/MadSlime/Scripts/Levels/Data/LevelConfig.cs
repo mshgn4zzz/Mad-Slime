@@ -1,8 +1,7 @@
-using System.Collections.Generic;
-using Items;
+using MadSlime.Items.Data;
 using UnityEngine;
 
-namespace Levels
+namespace MadSlime.Levels.Data
 {
     [CreateAssetMenu(menuName = "Mad Slime/Level Config", fileName = "NewLevelConfig")]
     public class LevelConfig : ScriptableObject
@@ -16,6 +15,10 @@ namespace Levels
         [SerializeField] private SizeTier _maxTier = SizeTier.Huge;
 
         [SerializeField] private float _levelTime = 90f;
+
+        [SerializeField, Min(0)] private int _maximumBossCount = 10;
+
+        public int MaximumBossCount => _maximumBossCount;
 
         [Header("Quota Generation")]
         [SerializeField, Min(1)] private int _quotaTypesMin = 1;

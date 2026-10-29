@@ -1,19 +1,20 @@
 using System;
 using System.Collections.Generic;
-using Items;
+using MadSlime.Items.Data;
+using MadSlime.Items.View;
+using MadSlime.Levels.Data;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Levels
+namespace MadSlime.Levels.Logic
 {
     public class LevelPlacementPlanner
     {
         private const SizeTier LargeItemGapMinimumTier = SizeTier.Large;
-        private const int MaximumBossCount = 10;
 
         private PlacementOccupancy _occupancy = new PlacementOccupancy();
         private TierLookup _tierLookup;
-        private ZoneLayoutPlanner _layoutPlanner = new ZoneLayoutPlanner(new System.Random());
+        private ZoneLayoutPlanner _layoutPlanner = new ZoneLayoutPlanner();
         private List<Item> _zonePool = new List<Item>(16);
         private List<float> _zoneRadii = new List<float>(16);
         private List<LevelPlacement> _placements = new List<LevelPlacement>(256);
@@ -23,8 +24,8 @@ namespace Levels
         {
             if (library == null || library.Layouts.Count == 0)
             {
-                                throw new InvalidOperationException("LevelPlacementPlanner: layouts library is "
-                                        + "required and cannot be empty.");
+                throw new InvalidOperationException("LevelPlacementPlanner: layouts library is "
+                    + "required and cannot be empty.");
             }
 
             for (int i = 0; i < library.Layouts.Count; i++)
@@ -53,14 +54,14 @@ namespace Levels
             _occupancy.Clear();
             _bossCount = 0;
 
-            bool mirrorX = layout.AllowMirroring == true && Random.value > 0.5f;
-            bool mirrorZ = layout.AllowMirroring == true && Random.value > 0.5f;
+            bool isMirroredX = layout.IsMirroringAllowed && Random.value > 0.5f;
+            bool isMirroredZ = layout.IsMirroringAllowed && Random.value > 0.5f;
 
             if (config.MinTier > config.MaxTier)
             {
                 throw new InvalidOperationException(
                     $"{layout.name}: level config '{config.name}' has MinTier {config.MinTier} above MaxTier "
-                        + $"{config.MaxTier}, so no tier loop can run. Fix the tier bounds of the level config.");
+                    + $"{config.MaxTier}, so no tier loop can run. Fix the tier bounds of the level config.");
             }
 
             for (int tierIndex = (int)config.MaxTier; tierIndex >= (int)config.MinTier; tierIndex--)
@@ -83,28 +84,28 @@ namespace Levels
                         continue;
                     }
 
-                    float spacing = ZoneLayoutPlanner.ResolveSpacing(zone, layout, _zoneRadii);
+                    float spacing = ZoneSpacing.ResolveSpacing(zone, layout, _zoneRadii);
                     Vector2 center = zone.Center;
 
-                    if (mirrorX == true)
+                    if (isMirroredX)
                     {
                         center.x = -center.x;
                     }
 
-                    if (mirrorZ == true)
+                    if (isMirroredZ)
                     {
                         center.y = -center.y;
                     }
 
-                    _layoutPlanner.CollectPlacements(zone, center, spacing, layout, _zoneRadii, zone.SingleType);
-                    AppendPlacements(assignedVariants, origin, floorBounds, layout);
+                    _layoutPlanner.CollectPlacements(zone, center, spacing, layout, _zoneRadii, zone.IsSingleType);
+                    AppendPlacements(assignedVariants, origin, floorBounds, layout, config.MaximumBossCount);
                 }
             }
 
             if (_placements.Count == 0)
             {
-                                throw new InvalidOperationException($"{layout.name}: no zones match the item tiers "
-                                        + $"of level config '{config.name}'.");
+                throw new InvalidOperationException($"{layout.name}: no zones match the item tiers "
+                    + $"of level config '{config.name}'.");
             }
 
             return _placements;
@@ -122,7 +123,7 @@ namespace Levels
                     continue;
                 }
 
-                float radius = LevelItemsSpawner.GetRadiusXZ(pair.Key) * _tierLookup.Get(tier).Scale;
+                float radius = ItemBounds.GetRadiusXZ(pair.Key) * _tierLookup.Get(tier).Scale;
 
                 if (zone.Shape == SpawnShape.Scatter && radius > zone.Radius)
                 {
@@ -138,7 +139,8 @@ namespace Levels
             Dictionary<Item, ItemDefinition> assignedVariants,
             Transform origin,
             Bounds floorBounds,
-            LayoutSet layout)
+            LayoutSet layout,
+            int maximumBossCount)
         {
             IReadOnlyList<ZonePlacement> placements = _layoutPlanner.Placements;
 
@@ -148,7 +150,7 @@ namespace Levels
                 Item prefab = _zonePool[placement.PoolIndex];
                 ItemDefinition definition = assignedVariants[prefab];
 
-                if (definition.Tier == SizeTier.Boss && _bossCount >= MaximumBossCount)
+                if (definition.Tier == SizeTier.Boss && _bossCount >= maximumBossCount)
                 {
                     continue;
                 }

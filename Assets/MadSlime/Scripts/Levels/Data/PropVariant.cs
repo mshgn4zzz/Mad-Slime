@@ -1,8 +1,9 @@
 using System;
-using Items;
+using MadSlime.Items.Data;
+using MadSlime.Items.View;
 using UnityEngine;
 
-namespace Levels
+namespace MadSlime.Levels.Data
 {
     [Serializable]
     public class PropVariant

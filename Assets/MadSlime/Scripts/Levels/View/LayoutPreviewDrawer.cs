@@ -1,23 +1,31 @@
-using System;
 using System.Collections.Generic;
-using Items;
-using UnityEditor;
+using MadSlime.Items.Data;
+using MadSlime.Levels.Data;
+using MadSlime.Levels.Logic;
 using UnityEngine;
 
 #if UNITY_EDITOR
-
+using UnityEditor;
 #endif
 
-namespace Levels
+namespace MadSlime.Levels.View
 {
     public class LayoutPreviewDrawer : MonoBehaviour
     {
+        private const int PreviewRandomSeed = 0;
+
+#if UNITY_EDITOR
+        private GUIStyle _zoneLabelStyle;
+#endif
+
         [SerializeField] private LevelGenerator _levelGenerator;
         [SerializeField] private LayoutsLibrary _library;
         [SerializeField] private TierTable _tierTable;
         [SerializeField] private PropSet _propSet;
-        [SerializeField] private bool _mirrorX;
-        [SerializeField] private bool _mirrorZ;
+        [UnityEngine.Serialization.FormerlySerializedAs("_mirrorX")]
+        [SerializeField] private bool _isMirroredX;
+        [UnityEngine.Serialization.FormerlySerializedAs("_mirrorZ")]
+        [SerializeField] private bool _isMirroredZ;
         [SerializeField] private Color _boundsColor = Color.gray;
         [Space]
         [SerializeField] private LayoutSet _customLayout;
@@ -29,28 +37,13 @@ namespace Levels
 
         public LayoutsLibrary Library => _library;
 
-        public PropSet PropSet => _propSet;
+        public bool IsMirroredX => _isMirroredX;
 
-        public bool MirrorX => _mirrorX;
-
-        public bool MirrorZ => _mirrorZ;
+        public bool IsMirroredZ => _isMirroredZ;
 
         public LayoutSet CustomLayout => _customLayout;
 
 #if UNITY_EDITOR
-        private static GUIStyle s_zoneLabelStyle;
-
-        private static GUIStyle GetZoneLabelStyle()
-        {
-            if (s_zoneLabelStyle == null)
-            {
-                s_zoneLabelStyle = new GUIStyle();
-                s_zoneLabelStyle.normal.textColor = Color.yellow;
-            }
-
-            return s_zoneLabelStyle;
-        }
-
         private void OnDrawGizmos()
         {
             if (_levelGenerator == null || _tierTable == null || _library == null)
@@ -78,7 +71,7 @@ namespace Levels
             }
         }
 
-        private float MaxTierScale(SpawnZone zone)
+        private float GetMaxTierScale(SpawnZone zone)
         {
             float maxScale = 1f;
 
@@ -106,17 +99,17 @@ namespace Levels
 
                 Vector2 center = zone.Center;
 
-                if (_mirrorX == true)
+                if (_isMirroredX)
                 {
                     center.x = -center.x;
                 }
 
-                if (_mirrorZ == true)
+                if (_isMirroredZ)
                 {
                     center.y = -center.y;
                 }
 
-                float maxScale = MaxTierScale(zone);
+                float maxScale = GetMaxTierScale(zone);
 
                 _zoneRadii.Clear();
 
@@ -124,7 +117,7 @@ namespace Levels
                 {
                     if (_propSet.Props[propIndex] != null)
                     {
-                        _zoneRadii.Add(LevelItemsSpawner.GetRadiusXZ(_propSet.Props[propIndex]) * maxScale);
+                        _zoneRadii.Add(ItemBounds.GetRadiusXZ(_propSet.Props[propIndex]) * maxScale);
                     }
                 }
 
@@ -133,10 +126,19 @@ namespace Levels
                     _zoneRadii.Add(maxScale);
                 }
 
-                float spacing = ZoneLayoutPlanner.ResolveSpacing(zone, layout, _zoneRadii);
-                ZoneLayoutPlanner planner = new ZoneLayoutPlanner(new System.Random((layoutIndex * 7919) + (i * 17) + 3));
+                float spacing = ZoneSpacing.ResolveSpacing(zone, layout, _zoneRadii);
+                ZoneLayoutPlanner planner = new ZoneLayoutPlanner();
+                Random.State randomState = Random.state;
 
-                planner.CollectPlacements(zone, center, spacing, layout, _zoneRadii, zone.SingleType);
+                try
+                {
+                    Random.InitState(PreviewRandomSeed);
+                    planner.CollectPlacements(zone, center, spacing, layout, _zoneRadii, zone.IsSingleType);
+                }
+                finally
+                {
+                    Random.state = randomState;
+                }
 
                 _zonePoints.Clear();
 
@@ -147,22 +149,25 @@ namespace Levels
 
                 Vector3 worldCenter = transform.TransformPoint(new Vector3(center.x, 0f, center.y));
 
-                if (zone.Shape == SpawnShape.Grid)
+                switch (zone.Shape)
                 {
-                    DrawPointsBounds(_zonePoints, tierColor);
-                }
-                else if (zone.Shape == SpawnShape.CircleGrid)
-                {
-                    if (_zonePoints.Count > 0)
-                    {
-                        float outerRadius = GetMaxRadialDistance(_zonePoints, worldCenter);
+                    case SpawnShape.Grid:
+                        DrawPointsBounds(_zonePoints, tierColor);
+                        break;
 
-                        DrawZoneOutline(worldCenter, outerRadius, tierColor);
-                    }
-                }
-                else
-                {
-                    DrawZoneOutline(worldCenter, zone.Radius, tierColor);
+                    case SpawnShape.CircleGrid:
+                        if (_zonePoints.Count > 0)
+                        {
+                            float outerRadius = GetMaxRadialDistance(_zonePoints, worldCenter);
+
+                            DrawZoneOutline(worldCenter, outerRadius, tierColor);
+                        }
+
+                        break;
+
+                    default:
+                        DrawZoneOutline(worldCenter, zone.Radius, tierColor);
+                        break;
                 }
 
                 DrawZoneDots(_zonePoints, planner.Placements, _zoneRadii, tierColor);
@@ -197,7 +202,7 @@ namespace Levels
             Gizmos.DrawWireSphere(transform.position, 0.4f);
         }
 
-        private static float GetMaxRadialDistance(IReadOnlyList<Vector3> points, Vector3 center)
+        private float GetMaxRadialDistance(IReadOnlyList<Vector3> points, Vector3 center)
         {
             float maxDistance = 0f;
 
@@ -263,7 +268,7 @@ namespace Levels
             Gizmos.DrawLine(cornerD, cornerA);
         }
 
-        private static void DrawZoneOutline(Vector3 center, float radius, Color color)
+        private void DrawZoneOutline(Vector3 center, float radius, Color color)
         {
             const int segments = 36;
 
@@ -301,12 +306,17 @@ namespace Levels
             }
         }
 
-        private void DrawZoneLabel(Vector2 center, SpawnZone zone, int layoutIndex, int zoneIndex, int positionsCount)
+        private void DrawZoneLabel(
+Vector2 center,
+SpawnZone zone,
+int layoutIndex,
+int zoneIndex,
+int positionsCount)
         {
             string tierRange = $"{zone.MinTier}-{zone.MaxTier}";
             string typeMark;
 
-            if (zone.SingleType == true)
+            if (zone.IsSingleType)
             {
                 typeMark = " single";
             }
@@ -315,15 +325,15 @@ namespace Levels
                 typeMark = string.Empty;
             }
 
-                        string labelText = $"L{layoutIndex} / Zone {zoneIndex}: {zone.Shape} x{positionsCount} "
-                                + $"{tierRange}{typeMark}";
+            string labelText = $"L{layoutIndex} / Zone {zoneIndex}: {zone.Shape} x{positionsCount} "
+                    + $"{tierRange}{typeMark}";
 
             Vector3 labelPosition = transform.TransformPoint(new Vector3(center.x, 0f, center.y)) + Vector3.up;
 
             Handles.Label(labelPosition, labelText, GetZoneLabelStyle());
         }
 
-        private static Color GetTierColor(SizeTier tier)
+        private Color GetTierColor(SizeTier tier)
         {
             switch (tier)
             {
@@ -346,6 +356,18 @@ namespace Levels
                     return Color.magenta;
             }
         }
+
+        private GUIStyle GetZoneLabelStyle()
+        {
+            if (_zoneLabelStyle == null)
+            {
+                _zoneLabelStyle = new GUIStyle();
+                _zoneLabelStyle.normal.textColor = Color.yellow;
+            }
+
+            return _zoneLabelStyle;
+        }
+
 #endif
     }
 }

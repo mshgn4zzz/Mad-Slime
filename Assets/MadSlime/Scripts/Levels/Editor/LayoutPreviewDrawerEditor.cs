@@ -1,8 +1,9 @@
-using Levels;
+using MadSlime.Levels.Data;
+using MadSlime.Levels.View;
 using UnityEditor;
 using UnityEngine;
 
-namespace Levels.Editor
+namespace MadSlime.Levels.Editor
 {
     [CustomEditor(typeof(LayoutPreviewDrawer))]
     public class LayoutPreviewDrawerEditor : global::UnityEditor.Editor
@@ -19,7 +20,7 @@ namespace Levels.Editor
             {
                 EditorGUILayout.HelpBox(
                     $"Scene handles edit Custom Layout ('{drawer.CustomLayout.name}'). Clear the "
-                            + $"Custom Layout field to edit library layouts by index.",
+                    + $"Custom Layout field to edit library layouts by index.",
                     MessageType.Info);
                 return;
             }
@@ -39,8 +40,8 @@ namespace Levels.Editor
             if (selected != null)
             {
                 EditorGUILayout.HelpBox(
-                                        $"Scene handles edit layout #{_handleLayoutIndex} ('{selected.name}'). "
-                                                + $"Assign a Custom Layout to edit it directly.",
+                    $"Scene handles edit layout #{_handleLayoutIndex} ('{selected.name}'). "
+                    + $"Assign a Custom Layout to edit it directly.",
                     MessageType.Info);
             }
         }
@@ -125,16 +126,16 @@ namespace Levels.Editor
             layoutSetObject.ApplyModifiedProperties();
         }
 
-        private static Vector2 ApplyMirror(LayoutPreviewDrawer drawer, Vector2 center)
+        private Vector2 ApplyMirror(LayoutPreviewDrawer drawer, Vector2 center)
         {
             Vector2 mirrored = center;
 
-            if (drawer.MirrorX == true)
+            if (drawer.IsMirroredX)
             {
                 mirrored.x = -mirrored.x;
             }
 
-            if (drawer.MirrorZ == true)
+            if (drawer.IsMirroredZ)
             {
                 mirrored.y = -mirrored.y;
             }

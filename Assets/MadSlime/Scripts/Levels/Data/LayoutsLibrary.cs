@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Levels
+namespace MadSlime.Levels.Data
 {
     [CreateAssetMenu(menuName = "Mad Slime/Layouts Library", fileName = "NewLayoutsLibrary")]
     public class LayoutsLibrary : ScriptableObject

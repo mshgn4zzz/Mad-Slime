@@ -1,6 +1,8 @@
 using System;
+using MadSlime.Levels.Data;
+using MadSlime.Validation;
 
-namespace Levels
+namespace MadSlime.Levels.Logic
 {
     public class LevelConfigResolver
     {
@@ -8,42 +10,26 @@ namespace Levels
 
         public LevelConfigResolver(LevelsCatalog catalog)
         {
-            if (catalog == null)
-            {
-                throw new ArgumentNullException(nameof(catalog), "LevelConfigResolver requires a LevelsCatalog asset.");
-            }
+            ArgumentGuard.CheckNotNull(catalog, nameof(catalog));
 
             _catalog = catalog;
+
+            foreach (LevelRange range in _catalog.Ranges)
+            {
+                ArgumentGuard.CheckAssigned(range, _catalog.name, nameof(_catalog.Ranges));
+                ArgumentGuard.CheckPositive(range.FromLevel, _catalog.name, nameof(range.FromLevel));
+                ArgumentGuard.CheckOrder(range.FromLevel, range.ToLevel, _catalog.name, nameof(_catalog.Ranges));
+            }
         }
 
         public LevelConfig GetConfigFor(int levelNumber)
         {
-            if (_catalog.Ranges.Count == 0)
-            {
-                throw new InvalidOperationException(
-                    $"LevelsCatalog '{_catalog.name}' has no ranges assigned. Add at least one LevelRange.");
-            }
-
-            LevelConfig matched = FindRangeConfig(levelNumber);
-
-            if (IsPlayable(matched) == false)
-            {
-                throw new InvalidOperationException(
-                    $"LevelsCatalog '{_catalog.name}': level {levelNumber} resolved to a config "
-                        + $"that is not playable —  " +
-                    $"{DescribeProblem(matched)}. Fix the config of this range and run Mad "
-                        + $"Slime → Prop Factory if needed.");
-            }
-
-            return matched;
+            return FindRangeConfig(levelNumber);
         }
 
         private LevelConfig FindRangeConfig(int levelNumber)
         {
-            if (levelNumber <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(levelNumber));
-            }
+            ArgumentGuard.CheckPositive(levelNumber, nameof(levelNumber));
 
             int cycleLength = _catalog.Ranges[_catalog.Ranges.Count - 1].ToLevel;
             int cycleLevel = ((levelNumber - 1) % cycleLength) + 1;
@@ -58,27 +44,7 @@ namespace Levels
 
             throw new InvalidOperationException(
                 $"LevelsCatalog '{_catalog.name}': level {levelNumber} (cycle level {cycleLevel} of {cycleLength}) "
-                    + $"falls into no range. Check the ranges for gaps.");
-        }
-
-        private static bool IsPlayable(LevelConfig config)
-        {
-            return config != null && config.PropSet != null && config.PropSet.Variants.Count > 0;
-        }
-
-        private static string DescribeProblem(LevelConfig config)
-        {
-            if (config == null)
-            {
-                return "the asset was deleted";
-            }
-
-            if (config.PropSet == null)
-            {
-                return "no PropSet assigned";
-            }
-
-            return $"PropSet '{config.PropSet.name}' has no baked variants";
+                + $"falls into no range. Check the ranges for gaps.");
         }
     }
 }

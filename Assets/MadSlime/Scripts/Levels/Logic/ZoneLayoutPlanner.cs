@@ -1,47 +1,22 @@
 using System;
 using System.Collections.Generic;
+using MadSlime.Levels.Data;
 using UnityEngine;
 
-namespace Levels
+namespace MadSlime.Levels.Logic
 {
     public class ZoneLayoutPlanner
     {
+        private const float SquareSideCount = 4f;
+
         private const int ScatterAttemptsPerItem = 32;
 
         private const double FullCircleRadians = Math.PI * 2.0;
 
         private List<Vector3> _positions = new List<Vector3>(64);
         private List<ZonePlacement> _placements = new List<ZonePlacement>(64);
-        private System.Random _random;
-
-        public ZoneLayoutPlanner(System.Random random)
-        {
-            _random = random;
-
-            if (_random == null)
-            {
-                _random = new System.Random();
-            }
-        }
 
         public IReadOnlyList<ZonePlacement> Placements => _placements;
-
-        public static float ResolveSpacing(SpawnZone zone, LayoutSet layout, IReadOnlyList<float> zoneRadii)
-        {
-            if (zone.AutoSpacing == false && zone.Spacing > 0f)
-            {
-                return zone.Spacing;
-            }
-
-            float maxRadius = 0f;
-
-            for (int i = 0; i < zoneRadii.Count; i++)
-            {
-                maxRadius = Mathf.Max(maxRadius, zoneRadii[i]);
-            }
-
-            return Mathf.Max(0.5f, maxRadius * layout.AutoSpacingFactor);
-        }
 
         public void Collect(SpawnZone zone, Vector2 center, float spacing, LayoutSet layout, float itemInset = 0f)
         {
@@ -77,7 +52,7 @@ namespace Levels
             float spacing,
             LayoutSet layout,
             IReadOnlyList<float> poolRadii,
-            bool singleType)
+            bool isSingleType)
         {
             float largestRadius = 0f;
 
@@ -97,9 +72,9 @@ namespace Levels
 
             int singleIndex = -1;
 
-            if (singleType == true)
+            if (isSingleType)
             {
-                singleIndex = _random.Next(poolRadii.Count);
+                singleIndex = UnityEngine.Random.Range(0, poolRadii.Count);
             }
 
             for (int i = 0; i < _positions.Count; i++)
@@ -112,17 +87,17 @@ namespace Levels
                 }
                 else
                 {
-                    poolIndex = _random.Next(poolRadii.Count);
+                    poolIndex = UnityEngine.Random.Range(0, poolRadii.Count);
                 }
 
-                if (FitsInZone(zone, center, spacing, _positions[i], poolRadii[poolIndex]) == true)
+                if (IsFittingInZone(zone, center, spacing, _positions[i], poolRadii[poolIndex]))
                 {
                     _placements.Add(new ZonePlacement(_positions[i], poolIndex));
                 }
             }
         }
 
-        private bool FitsInZone(SpawnZone zone, Vector2 center, float spacing, Vector3 position, float itemRadius)
+        private bool IsFittingInZone(SpawnZone zone, Vector2 center, float spacing, Vector3 position, float itemRadius)
         {
             switch (zone.Shape)
             {
@@ -135,14 +110,14 @@ namespace Levels
 
                 case SpawnShape.SquareScatter:
                     return Mathf.Abs(position.x - center.x) + itemRadius <= zone.Radius
-                        && Mathf.Abs(position.z - center.y) + itemRadius <= zone.Radius;
+                    && Mathf.Abs(position.z - center.y) + itemRadius <= zone.Radius;
 
                 default:
                     return IsInsideRadius(zone, center, position, itemRadius);
             }
         }
 
-        private static bool IsInsideRadius(SpawnZone zone, Vector2 center, Vector3 position, float itemRadius)
+        private bool IsInsideRadius(SpawnZone zone, Vector2 center, Vector3 position, float itemRadius)
         {
             float offsetX = position.x - center.x;
             float offsetZ = position.z - center.y;
@@ -238,7 +213,7 @@ namespace Levels
         {
             for (int i = 0; i < count; i++)
             {
-                float perimeterPosition = i * 4f / count;
+                float perimeterPosition = i * SquareSideCount / count;
                 int edge = Mathf.FloorToInt(perimeterPosition);
                 float edgeOffset = ((perimeterPosition - edge) * radius * 2f) - radius;
                 Vector3 position;
@@ -266,7 +241,12 @@ namespace Levels
             }
         }
 
-        private void CollectScatter(SpawnZone zone, Vector2 center, float spacing, LayoutSet layout, float itemInset)
+        private void CollectScatter(
+            SpawnZone zone,
+            Vector2 center,
+            float spacing,
+            LayoutSet layout,
+            float itemInset)
         {
             float minDistance = spacing * layout.ScatterDistanceFactor;
             float minDistanceSqr = minDistance * minDistance;
@@ -284,17 +264,17 @@ namespace Levels
             {
                 attempts++;
 
-                double angle = _random.NextDouble() * FullCircleRadians;
-                double distance = usableRadius * Math.Sqrt(_random.NextDouble());
+                double angle = UnityEngine.Random.value * FullCircleRadians;
+                double distance = usableRadius * Math.Sqrt(UnityEngine.Random.value);
 
                 Vector3 candidate;
 
                 if (zone.Shape == SpawnShape.SquareScatter)
                 {
                     candidate = new Vector3(
-                        center.x + ((((float)_random.NextDouble() * 2f) - 1f) * usableRadius),
+                        center.x + ((((float)UnityEngine.Random.value * 2f) - 1f) * usableRadius),
                         0f,
-                        center.y + ((((float)_random.NextDouble() * 2f) - 1f) * usableRadius));
+                        center.y + ((((float)UnityEngine.Random.value * 2f) - 1f) * usableRadius));
                 }
                 else
                 {
@@ -304,7 +284,7 @@ namespace Levels
                         center.y + (Mathf.Sin((float)angle) * (float)distance));
                 }
 
-                if (IsFarEnough(candidate, minDistanceSqr) == true)
+                if (IsFarEnough(candidate, minDistanceSqr))
                 {
                     _positions.Add(candidate);
                 }

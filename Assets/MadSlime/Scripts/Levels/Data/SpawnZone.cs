@@ -1,8 +1,8 @@
 using System;
-using Items;
+using MadSlime.Items.Data;
 using UnityEngine;
 
-namespace Levels
+namespace MadSlime.Levels.Data
 {
     [Serializable]
     public class SpawnZone
@@ -15,7 +15,8 @@ namespace Levels
 
         [SerializeField] private int _count = 8;
 
-        [SerializeField] private bool _autoSpacing = true;
+        [UnityEngine.Serialization.FormerlySerializedAs("_autoSpacing")]
+        [SerializeField] private bool _isAutoSpacing = true;
 
         [SerializeField] private float _spacing = 0f;
 
@@ -23,7 +24,8 @@ namespace Levels
 
         [SerializeField] private SizeTier _maxTier = SizeTier.Small;
 
-        [SerializeField] private bool _singleType = false;
+        [UnityEngine.Serialization.FormerlySerializedAs("_singleType")]
+        [SerializeField] private bool _isSingleType = false;
 
         public SpawnShape Shape => _shape;
 
@@ -33,7 +35,7 @@ namespace Levels
 
         public int Count => _count;
 
-        public bool AutoSpacing => _autoSpacing;
+        public bool IsAutoSpacing => _isAutoSpacing;
 
         public float Spacing => _spacing;
 
@@ -41,6 +43,6 @@ namespace Levels
 
         public SizeTier MaxTier => _maxTier;
 
-        public bool SingleType => _singleType;
+        public bool IsSingleType => _isSingleType;
     }
 }

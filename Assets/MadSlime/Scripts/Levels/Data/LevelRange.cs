@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Levels
+namespace MadSlime.Levels.Data
 {
     [Serializable]
     public class LevelRange

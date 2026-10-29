@@ -1,31 +1,28 @@
-using System;
+using MadSlime.Levels.Data;
+using MadSlime.Validation;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Levels
+namespace MadSlime.Levels.Logic
 {
     public class LevelEnvironment
     {
         private Transform _parent;
-        private GameObject _instance;
-        private GameObject _prefab;
+        private LevelEnvironmentFactory _factory;
+        private EnvironmentRoot _instance;
+        private EnvironmentRoot _prefab;
 
-        public LevelEnvironment(Transform parent)
+        public LevelEnvironment(Transform parent, LevelEnvironmentFactory factory)
         {
-            if (parent == null)
-            {
-                throw new ArgumentNullException(nameof(parent));
-            }
+            ArgumentGuard.CheckNotNull(parent, nameof(parent));
 
             _parent = parent;
+            _factory = factory;
         }
 
         public void Apply(LevelTheme theme, Bounds floorBounds)
         {
-            if (theme == null)
-            {
-                throw new ArgumentNullException(nameof(theme));
-            }
+            ArgumentGuard.CheckNotNull(theme, nameof(theme));
 
             if (_prefab != theme.EnvironmentPrefab)
             {
@@ -43,7 +40,7 @@ namespace Levels
 
             if (_instance == null)
             {
-                _instance = Object.Instantiate(theme.EnvironmentPrefab, position, Quaternion.identity, _parent);
+                _instance = _factory.Create(theme.EnvironmentPrefab, position, _parent);
                 _prefab = theme.EnvironmentPrefab;
             }
             else
@@ -56,8 +53,8 @@ namespace Levels
         {
             if (_instance != null)
             {
-                _instance.SetActive(false);
-                Object.Destroy(_instance);
+                _instance.gameObject.SetActive(false);
+                Object.Destroy(_instance.gameObject);
             }
 
             _instance = null;

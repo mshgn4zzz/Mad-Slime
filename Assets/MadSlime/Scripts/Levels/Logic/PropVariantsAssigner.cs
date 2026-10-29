@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
-using Items;
+using MadSlime.Items.Data;
+using MadSlime.Items.View;
+using MadSlime.Levels.Data;
+using MadSlime.Validation;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Levels
+namespace MadSlime.Levels.Logic
 {
     public class PropVariantsAssigner
     {
@@ -19,12 +22,7 @@ namespace Levels
             _variantsByPrefab.Clear();
             _assignedByPrefab.Clear();
 
-            if (config.PropSet == null)
-            {
-                throw new InvalidOperationException(
-                    $"PropVariantsAssigner: LevelConfig '{config.name}' has no PropSet assigned. "
-                        + $"Drag a PropSet asset into the _propSet field.");
-            }
+            ArgumentGuard.CheckAssigned(config.PropSet, config.name, nameof(config.PropSet));
 
             IReadOnlyList<PropVariant> variants = config.PropSet.Variants;
 
@@ -32,7 +30,7 @@ namespace Levels
             {
                 throw new InvalidOperationException(
                     $"PropVariantsAssigner: PropSet '{config.PropSet.name}' has no baked "
-                        + $"variants. Run Mad Slime → Prop Factory.");
+                    + $"variants. Run Mad Slime → Prop Factory.");
             }
 
             CollectVariantsInRange(variants, config);
@@ -48,7 +46,7 @@ namespace Levels
 
             Shuffle(prefabs);
 
-            List<SizeTier> tiers = TiersInRange(config);
+            List<SizeTier> tiers = GetTiersInRange(config);
             int guaranteedCount = Mathf.Min(tiers.Count, prefabs.Count);
 
             for (int i = 0; i < prefabs.Count; i++)
@@ -79,7 +77,7 @@ namespace Levels
                 {
                     throw new InvalidOperationException(
                         $"PropVariantsAssigner: PropSet '{config.PropSet.name}' contains an empty "
-                            + $"variant. Re-run Mad Slime → Prop Factory.");
+                        + $"variant. Re-run Mad Slime → Prop Factory.");
                 }
 
                 if (variant.Definition.Tier < config.MinTier || variant.Definition.Tier > config.MaxTier)
@@ -107,7 +105,7 @@ namespace Levels
             }
         }
 
-        private static List<SizeTier> TiersInRange(LevelConfig config)
+        private List<SizeTier> GetTiersInRange(LevelConfig config)
         {
             List<SizeTier> tiers = new List<SizeTier>();
 
@@ -119,7 +117,7 @@ namespace Levels
             return tiers;
         }
 
-        private static ItemDefinition FindByTier(List<ItemDefinition> options, SizeTier tier)
+        private ItemDefinition FindByTier(List<ItemDefinition> options, SizeTier tier)
         {
             for (int i = 0; i < options.Count; i++)
             {

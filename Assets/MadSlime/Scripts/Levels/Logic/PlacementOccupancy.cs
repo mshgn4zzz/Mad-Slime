@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Levels
+namespace MadSlime.Levels.Logic
 {
     public class PlacementOccupancy
     {

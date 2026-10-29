@@ -17,6 +17,7 @@ MonoBehaviour:
   _minTier: 0
   _maxTier: 5
   _levelTime: 140
+  _maximumBossCount: 10
   _quotaTypesMin: 3
   _quotaTypesMax: 5
   _quotaTargetMin: 8

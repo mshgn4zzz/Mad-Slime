@@ -1,15 +1,15 @@
 using System.Collections.Generic;
-using Items;
 using UnityEngine;
 
-namespace Levels
+namespace MadSlime.Levels.Data
 {
     [CreateAssetMenu(menuName = "Mad Slime/Layout Set", fileName = "NewLayoutSet")]
     public class LayoutSet : ScriptableObject
     {
         [SerializeField] private List<SpawnZone> _zones = new List<SpawnZone>();
 
-        [SerializeField] private bool _allowMirroring = true;
+        [UnityEngine.Serialization.FormerlySerializedAs("_allowMirroring")]
+        [SerializeField] private bool _isMirroringAllowed = true;
 
         [Header("Item Placement")]
         [SerializeField] private float _autoGapTimes = 2.2f;
@@ -30,7 +30,7 @@ namespace Levels
 
         public IReadOnlyList<SpawnZone> Zones => _zones;
 
-        public bool AllowMirroring => _allowMirroring;
+        public bool IsMirroringAllowed => _isMirroringAllowed;
 
         public float AutoSpacingFactor => _autoGapTimes;
 

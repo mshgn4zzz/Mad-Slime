@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
-using Items;
+using MadSlime.Items.View;
 using UnityEngine;
 
-namespace Levels
+namespace MadSlime.Levels.Data
 {
     [CreateAssetMenu(menuName = "Mad Slime/Prop Set", fileName = "NewPropSet")]
     public class PropSet : ScriptableObject
