@@ -1,110 +1,64 @@
 using System;
-using System.Threading;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
+using VContainer;
+using CountdownMachine = MadSlime.Game.Logic.TimerStateMachine.TimerStateMachine;
 
-namespace Game
+namespace MadSlime.Game.Logic
 {
     public class Timer : MonoBehaviour
     {
-        private float _duration;
-        private float _remaining;
-        private bool _isSetupFinished;
-        private bool _isRunning = false;
-
-        private CancellationTokenSource _runCancellationTokenSource;
+        private CountdownMachine _machine;
 
         public event Action Finished;
-
         public event Action<float> Ticked;
+
+        private void OnEnable()
+        {
+            _machine.Ticked += OnTicked;
+            _machine.Finished += OnFinished;
+        }
+
+        private void OnDisable()
+        {
+            _machine.StopCount();
+            _machine.Ticked -= OnTicked;
+            _machine.Finished -= OnFinished;
+        }
+
+        private void Update()
+        {
+            _machine.Tick(Time.deltaTime);
+        }
+
+        [Inject]
+        public void Construct(CountdownMachine machine)
+        {
+            _machine = machine;
+        }
 
         public void Setup(float duration)
         {
-            if (duration <= 0f)
-            {
-                throw new ArgumentOutOfRangeException(nameof(duration), "Timer.Setup requires a positive duration in seconds.");
-            }
-
-            _duration = duration;
-            _remaining = duration;
-            _isSetupFinished = true;
+            _machine.Configure(duration);
         }
 
         public void StartCount()
         {
-            if (_isSetupFinished == false)
-            {
-                throw new InvalidOperationException("Timer.Start called before Setup. Call Setup(duration) first.");
-            }
-
-            if (_isRunning == true)
-            {
-                throw new InvalidOperationException("Timer is already running.");
-            }
-
-            StartInternal();
+            _machine.StartCount();
         }
 
         public void Stop()
         {
-            if (_isRunning == false)
-            {
-                return;
-            }
-
-            _runCancellationTokenSource?.Cancel();
-            _runCancellationTokenSource?.Dispose();
-            _runCancellationTokenSource = null;
-            _isRunning = false;
+            _machine.StopCount();
         }
 
-        private void StartInternal()
+        private void OnTicked(float remaining)
         {
-            CancellationToken destroyToken = this.GetCancellationTokenOnDestroy();
-
-            _runCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(destroyToken);
-
-            CancellationToken linkedToken = _runCancellationTokenSource.Token;
-
-            _isRunning = true;
-
-            RunTimerAsync(linkedToken).Forget();
+            Ticked?.Invoke(remaining);
         }
 
-        private async UniTaskVoid RunTimerAsync(CancellationToken cancellationToken)
+        private void OnFinished()
         {
-            try
-            {
-                while (_remaining > 0f)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
-
-                    if (Time.timeScale > 0f)
-                    {
-                        float delta = Time.deltaTime;
-
-                        _remaining -= delta;
-
-                        Ticked?.Invoke(_remaining);
-                    }
-                }
-
-                _remaining = 0f;
-                _isRunning = false;
-
-                Finished?.Invoke();
-            }
-            catch (OperationCanceledException)
-            {
-                return;
-            }
-            finally
-            {
-                _runCancellationTokenSource?.Dispose();
-                _runCancellationTokenSource = null;
-            }
+            Finished?.Invoke();
         }
     }
 }

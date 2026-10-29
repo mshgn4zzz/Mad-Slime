@@ -1,9 +1,10 @@
-using System;
-using Collectables;
-using Player;
-using Quota;
+using MadSlime.Collectables.Logic;
+using MadSlime.Player.Logic;
+using MadSlime.Player.View;
+using MadSlime.Quota.Logic;
+using MadSlime.Validation;
 
-namespace Game
+namespace MadSlime.Game.Logic
 {
     public class GameplayActivityController
     {

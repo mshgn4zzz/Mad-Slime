@@ -1,11 +1,12 @@
 using System;
+using MadSlime.Game.Interfaces;
 using YG;
 
-namespace Game
+namespace MadSlime.Game.Adapters
 {
     public class Yg2GameVisibility : IGameVisibility
     {
-        public event Action Hidden
+        public event Action VisibilitySuspended
         {
             add
             {
@@ -17,7 +18,7 @@ namespace Game
             }
         }
 
-        public event Action Shown
+        public event Action VisibilityRestored
         {
             add
             {

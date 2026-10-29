@@ -1,13 +1,18 @@
 using System;
 using System.Threading;
-using Audio;
 using Cysharp.Threading.Tasks;
-using Levels;
-using PlayerInput;
-using Quota;
-using Saves;
+using MadSlime.Audio.Data;
+using MadSlime.Audio.Interfaces;
+using MadSlime.Game.GameplayStateMachine.Interfaces;
+using MadSlime.Game.Logic;
+using MadSlime.Levels.Data;
+using MadSlime.Levels.Logic;
+using MadSlime.PlayerInput.Logic;
+using MadSlime.Quota.Logic;
+using MadSlime.Saves.Interfaces;
+using Timer = MadSlime.Game.Logic.Timer;
 
-namespace Game
+namespace MadSlime.Game.GameplayStateMachine.Logic
 {
     public class WaitingForStartState : IGameplayState
     {
@@ -24,12 +29,8 @@ namespace Game
         private IMusicPlayer _musicPlayer;
         private Playlist _playlist;
         private bool _isEntered;
-        private bool _hasWaitingPause;
-        private int _pauseRequests;
-
-        public event Action StartRequested;
-
-        public event Action<float> PreparationProgressChanged;
+        private bool _isWaitingPaused;
+        private PauseRequests _pauseRequests;
 
         public WaitingForStartState(
             PlayerInputReader inputReader,
@@ -54,8 +55,13 @@ namespace Game
             _activity = activity;
             _effects = effects;
             _pauser = pauser;
+            _pauseRequests = new PauseRequests(pauser);
             _musicPlayer = musicPlayer;
         }
+
+        public event Action StartRequested;
+
+        public event Action<float> PreparationProgressChanged;
 
         public async UniTask PrepareAsync(Playlist playlist, CancellationToken cancellationToken)
         {
@@ -70,11 +76,14 @@ namespace Game
 
             _timer.Setup(config.TimerDuration);
             await _levelGenerator.GenerateAsync(ReportGenerationProgress, cancellationToken);
-            await _playerSetup.PrepareOutlineAsync(_levelGenerator.SpawnedItems, ReportOutlineProgress, cancellationToken);
+            await _playerSetup.PrepareOutlineAsync(
+                _levelGenerator.SpawnedItems,
+                ReportOutlineProgress,
+                cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
             _quotaCounter.ResetSession();
-            _hasWaitingPause = true;
-            _pauser.RequestPause();
+            _isWaitingPaused = true;
+            _pauser.IncreasePauseRequests();
         }
 
         public void Enter()
@@ -95,16 +104,13 @@ namespace Game
             _isEntered = false;
             _inputReader.MovementKeyPressed -= OnMoveStart;
 
-            if (_hasWaitingPause)
+            if (_isWaitingPaused)
             {
-                _hasWaitingPause = false;
-                _pauser.RequestResume();
+                _isWaitingPaused = false;
+                _pauser.DecreasePauseRequests();
             }
 
-            while (_pauseRequests > 0)
-            {
-                ResumeByRequest();
-            }
+            _pauseRequests.ReleaseAll();
         }
 
         public void Cleanup()
@@ -117,25 +123,12 @@ namespace Game
 
         public void PauseByRequest()
         {
-            _pauseRequests++;
-            _pauser.RequestPause();
+            _pauseRequests.Acquire();
         }
 
         public void ResumeByRequest()
         {
-            if (_pauseRequests > 0)
-            {
-                _pauseRequests--;
-                _pauser.RequestResume();
-            }
-        }
-
-        private void OnMoveStart()
-        {
-            if (_isEntered && _pauseRequests == 0)
-            {
-                StartRequested?.Invoke();
-            }
+            _pauseRequests.Release();
         }
 
         private void ReportGenerationProgress(float progress)
@@ -146,6 +139,14 @@ namespace Game
         private void ReportOutlineProgress(float progress)
         {
             PreparationProgressChanged?.Invoke(0.85f + (progress * 0.15f));
+        }
+
+        private void OnMoveStart()
+        {
+            if (_isEntered && _pauseRequests.Count == 0)
+            {
+                StartRequested?.Invoke();
+            }
         }
     }
 }

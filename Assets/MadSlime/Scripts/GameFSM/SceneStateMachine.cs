@@ -1,110 +1,101 @@
 using System;
+using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Saves;
-using Skins;
-using UnityEngine;
+using MadSlime.Game.Logic;
+using MadSlime.GameFSM.Interfaces;
+using MadSlime.StateMachine.Logic;
+using MadSlime.Validation;
 using UnityEngine.SceneManagement;
 
-namespace Game
+namespace MadSlime.GameFSM
 {
     public class SceneStateMachine : BaseStateMachine<ISceneState>, IDisposable
     {
-        private const float ReadinessTimeoutSeconds = 10f;
-        private SceneNavigator _navigator;
-        private LoadingScreenController _loading;
-        private ISavesReadiness _readiness;
-        private SkinInventory _inventory;
+        private SceneTransitor _transitor;
+        private GameStartup _startup;
+        private IReadOnlyDictionary<Type, string> _scenes;
         private CancellationTokenSource _lifetime;
-        private CancellationToken _shutdownToken;
+        private CancellationTokenSource _preparation;
+        private CancellationTokenRegistration _shutdownRegistration;
+        private CancellationTokenRegistration _sceneRegistration;
         private Scene _currentScene;
         private ISceneState _pendingState;
         private Scene _pendingScene;
         private CancellationToken _pendingToken;
-        private SceneId _targetId;
-        private bool _hasStarted;
-        private bool _awaitingRegistration;
+        private Type _targetType;
+        private bool _isStarted;
 
         public SceneStateMachine(
-            SceneNavigator navigator,
-            LoadingScreenController loading,
-            ISavesReadiness readiness,
-            SkinInventory inventory,
+            SceneTransitor transitor,
+            GameStartup startup,
+            IReadOnlyDictionary<Type, string> scenes,
             CancellationToken shutdownToken)
         {
-            _navigator = navigator;
-            _loading = loading;
-            _readiness = readiness;
-            _inventory = inventory;
-            _shutdownToken = shutdownToken;
+            _transitor = transitor;
+            _startup = startup;
+            _scenes = scenes;
             _lifetime = CancellationTokenSource.CreateLinkedTokenSource(shutdownToken);
+            _shutdownRegistration = shutdownToken.Register(Stop);
         }
 
         public bool IsTransitioning { get; private set; }
-
         public bool IsStopped { get; private set; }
-
         public Exception Failure { get; private set; }
-
-        public SceneId CurrentSceneId => CurrentState.SceneId;
 
         public void RegisterScene(ISceneState state, Scene scene, CancellationToken lifetimeToken)
         {
-            try
+            RequireRunning();
+            ArgumentGuard.CheckNotNull(state, nameof(state));
+
+            Type type = state.GetType();
+
+            if (scene.isLoaded == false || scene.name != _scenes[type])
             {
-                RequireRunning();
-                ArgumentGuard.CheckNotNull(state, nameof(state));
-
-                if (scene.isLoaded == false || scene.name != SceneNavigator.GetSceneName(state.SceneId))
-                {
-                    throw new InvalidOperationException("Scene state does not belong to its declared scene.");
-                }
-
-                if (_hasStarted == false)
-                {
-                    _hasStarted = true;
-                    _targetId = state.SceneId;
-                    IsTransitioning = true;
-                    SetPending(state, scene, lifetimeToken);
-                    StartInitialAsync().Forget();
-                    return;
-                }
-
-                if (_awaitingRegistration == false || state.SceneId != _targetId || _pendingState != null)
-                {
-                    throw new InvalidOperationException($"Unexpected or duplicate registration of scene '{scene.name}'.");
-                }
-
-                SetPending(state, scene, lifetimeToken);
+                throw new InvalidOperationException("Scene state does not belong to its configured scene.");
             }
-            catch (Exception exception)
+
+            if (_isStarted && (IsTransitioning == false || type != _targetType || _pendingState != null))
             {
-                Fail(exception);
-                throw;
+                throw new InvalidOperationException($"Unexpected registration of scene state '{type.Name}'.");
+            }
+
+            lifetimeToken.ThrowIfCancellationRequested();
+            _pendingState = state;
+            _pendingScene = scene;
+            _pendingToken = lifetimeToken;
+
+            if (_isStarted == false)
+            {
+                _isStarted = true;
+                _targetType = type;
+                StartInitialAsync().Forget(HandleTransitionException);
             }
         }
 
-        public void UnregisterScene(ISceneState state)
+        public UniTask SwitchStateAsync<TTarget>() where TTarget : ISceneState
         {
-            if (ReferenceEquals(CurrentState, state))
-            {
-                Stop();
-            }
-        }
+            RequireRunning();
 
-        public UniTask ChangeStateAsync(SceneId target)
-        {
-            return TransitionAsync(target, false);
+            if (IsTransitioning || CurrentState?.GetType() == typeof(TTarget))
+            {
+                return UniTask.CompletedTask;
+            }
+
+            return TransitionAsync(typeof(TTarget));
         }
 
         public UniTask RestartCurrentAsync()
         {
-            return TransitionAsync(_targetId, true);
-        }
+            RequireRunning();
 
-        public void ReportPreparationProgress(float progress)
-        {
-            _loading.SetProgress(progress);
+            if (IsTransitioning)
+            {
+                return UniTask.CompletedTask;
+            }
+
+            return TransitionAsync(CurrentState?.GetType());
         }
 
         public override void Stop()
@@ -115,175 +106,106 @@ namespace Game
             }
 
             IsStopped = true;
-            _navigator.Stop();
+            _sceneRegistration.Dispose();
             _lifetime.Cancel();
+            _transitor.Stop();
+            ReleasePreparation();
 
-            ISceneState preparing = _pendingState;
+            ISceneState pending = _pendingState;
 
-            if (ReferenceEquals(CurrentState, preparing))
+            if (ReferenceEquals(CurrentState, pending))
             {
-                preparing = null;
+                pending = null;
             }
 
-            try
-            {
-                base.Stop();
-            }
-            finally
-            {
-                try
-                {
-                    preparing?.Exit();
-                }
-                finally
-                {
-                    ClearPending();
-                    _loading.Hide();
-                    IsTransitioning = false;
-                }
-            }
+            ClearPending();
+            IsTransitioning = false;
+            base.Stop();
+            pending?.Exit();
         }
 
-        public void Fail(Exception exception)
+        public void HandleTransitionException(Exception exception)
         {
-            if (Failure == null)
-            {
-                Failure = exception;
-            }
-
-            try
+            if (exception is OperationCanceledException && _lifetime.IsCancellationRequested)
             {
                 Stop();
+                return;
             }
-            catch (Exception cleanupException)
-            {
-                Debug.LogException(cleanupException);
-            }
+
+            Failure = exception;
+            Stop();
+            ExceptionDispatchInfo.Capture(exception).Throw();
         }
 
         public void Dispose()
         {
             Stop();
+            _shutdownRegistration.Dispose();
             _lifetime.Dispose();
         }
 
         private async UniTask StartInitialAsync()
         {
-            try
-            {
-                _loading.Show();
-                _loading.SetSkin(SkinInventory.InitialSkinId);
-
-                float started = Time.realtimeSinceStartup;
-
-                while (_readiness.IsReady == false)
-                {
-                    CheckTimeout(started, "Saves did not become ready");
-                    await UniTask.Yield(PlayerLoopTiming.Update, _lifetime.Token);
-                }
-
-                _inventory.Initialize();
-                _loading.SetSkin(_inventory.SelectedSkinId);
-                await UniTask.NextFrame(cancellationToken: _lifetime.Token);
-                await PrepareAndEnterAsync(default);
-            }
-            catch (OperationCanceledException) when (_shutdownToken.IsCancellationRequested || (IsStopped && Failure == null))
-            {
-                Stop();
-            }
-            catch (Exception exception)
-            {
-                Fail(exception);
-                throw;
-            }
+            IsTransitioning = true;
+            _transitor.BeginTransition();
+            await _startup.InitializeAsync(_lifetime.Token);
+            await UniTask.NextFrame(cancellationToken: _lifetime.Token);
+            await PrepareAndEnterAsync(default);
         }
 
-        private async UniTask TransitionAsync(SceneId target, bool restart)
+        private async UniTask TransitionAsync(Type targetType)
         {
-            try
+            if (CurrentState == null)
             {
-                RequireRunning();
-
-                if (IsTransitioning || CurrentState == null)
-                {
-                    throw new InvalidOperationException("A scene transition requires a running state and no other transition.");
-                }
-
-                SceneNavigator.GetSceneName(target);
-
-                if (restart == false && target == CurrentSceneId)
-                {
-                    throw new InvalidOperationException("Use RestartCurrentAsync to restart the active scene.");
-                }
-
-                IsTransitioning = true;
-                _targetId = target;
-
-                Scene outgoing = _currentScene;
-
-                _loading.Show();
-                _loading.SetSkin(_inventory.SelectedSkinId);
-                base.Stop();
-
-                _awaitingRegistration = true;
-
-                Scene incoming = await _navigator.LoadAsync(outgoing, target, _lifetime.Token);
-
-                float started = Time.realtimeSinceStartup;
-
-                while (_pendingState == null)
-                {
-                    CheckTimeout(started, $"Scene '{incoming.name}' did not register its state");
-                    await UniTask.Yield(PlayerLoopTiming.Update, _lifetime.Token);
-                }
-
-                if (_pendingScene != incoming)
-                {
-                    throw new InvalidOperationException("Registered state belongs to a different loaded scene.");
-                }
-
-                _awaitingRegistration = false;
-                await PrepareAndEnterAsync(outgoing);
+                throw new InvalidOperationException("A scene transition requires a running state.");
             }
-            catch (OperationCanceledException) when (_shutdownToken.IsCancellationRequested || (IsStopped && Failure == null))
+
+            string sceneName = _scenes[targetType];
+
+            IsTransitioning = true;
+            _targetType = targetType;
+
+            Scene outgoing = _currentScene;
+
+            _transitor.BeginTransition();
+            _sceneRegistration.Dispose();
+            base.Stop();
+
+            Scene incoming = await _transitor.LoadAsync(outgoing, sceneName, _lifetime.Token);
+
+            await UniTask.WaitUntil(() => _pendingState != null, cancellationToken: _lifetime.Token)
+                .Timeout(TimeSpan.FromSeconds(10));
+
+            if (_pendingScene != incoming)
             {
-                Stop();
+                throw new InvalidOperationException("Registered state belongs to a different loaded scene.");
             }
-            catch (Exception exception)
-            {
-                Fail(exception);
-                throw;
-            }
+
+            await PrepareAndEnterAsync(outgoing);
         }
 
         private async UniTask PrepareAndEnterAsync(Scene outgoing)
         {
-            using (CancellationTokenSource preparation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token, _pendingToken))
-            {
-                await _pendingState.PrepareAsync(preparation.Token);
-                await _loading.CompleteAsync(preparation.Token);
-                preparation.Token.ThrowIfCancellationRequested();
+            _preparation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token, _pendingToken);
 
-                if (outgoing.IsValid())
-                {
-                    await _navigator.UnloadAsync(outgoing);
-                }
+            CancellationToken token = _preparation.Token;
 
-                preparation.Token.ThrowIfCancellationRequested();
-                SwitchTo(_pendingState);
-                _currentScene = _pendingScene;
-                ClearPending();
-                _loading.Hide();
-                IsTransitioning = false;
-            }
+            await _pendingState.PrepareAsync(token);
+            await _transitor.CompleteAsync(outgoing, token);
+            token.ThrowIfCancellationRequested();
+            SwitchTo(_pendingState);
+            _currentScene = _pendingScene;
+            _sceneRegistration = _pendingToken.Register(Stop);
+            ClearPending();
+            ReleasePreparation();
+            _transitor.EndTransition();
+            IsTransitioning = false;
         }
 
-        private void SetPending(ISceneState state, Scene scene, CancellationToken token)
+        private void ReleasePreparation()
         {
-            token.ThrowIfCancellationRequested();
-            _pendingState = state;
-            _pendingScene = scene;
-            _pendingToken = token;
+            _preparation?.Dispose();
+            _preparation = null;
         }
 
         private void ClearPending()
@@ -291,7 +213,6 @@ namespace Game
             _pendingState = null;
             _pendingScene = default;
             _pendingToken = default;
-            _awaitingRegistration = false;
         }
 
         private void RequireRunning()
@@ -302,14 +223,6 @@ namespace Game
             }
 
             _lifetime.Token.ThrowIfCancellationRequested();
-        }
-
-        private static void CheckTimeout(float started, string message)
-        {
-            if (Time.realtimeSinceStartup - started > ReadinessTimeoutSeconds)
-            {
-                throw new InvalidOperationException($"{message} within {ReadinessTimeoutSeconds} seconds.");
-            }
         }
     }
 }

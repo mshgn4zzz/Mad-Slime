@@ -1,8 +1,10 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using MadSlime.Game.GameplayStateMachine.Interfaces;
+using MadSlime.Game.Logic;
 
-namespace Game
+namespace MadSlime.Game.GameplayStateMachine.Logic
 {
     public class CompletedState : IGameplayState
     {
@@ -10,14 +12,14 @@ namespace Game
         private CancellationTokenSource _delaySource;
         private float _endDelay;
 
-        public event Action Entered;
-
-        public event Action FillRequested;
-
         public CompletedState(Pauser pauser)
         {
             _pauser = pauser;
         }
+
+        public event Action Entered;
+
+        public event Action FillRequested;
 
         public void Configure(float endDelay)
         {
@@ -35,7 +37,7 @@ namespace Game
 
             CancellationToken token = _delaySource.Token;
 
-            _pauser.RequestPause();
+            _pauser.IncreasePauseRequests();
             Entered?.Invoke();
             FinishDelayAsync(token).Forget();
         }
@@ -52,7 +54,7 @@ namespace Game
             _delaySource = null;
             source.Cancel();
             source.Dispose();
-            _pauser.RequestResume();
+            _pauser.DecreasePauseRequests();
         }
 
         private async UniTask FinishDelayAsync(CancellationToken token)

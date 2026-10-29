@@ -1,4 +1,4 @@
-namespace Game
+namespace MadSlime.Game.Interfaces
 {
     public interface IGameplayReporter
     {

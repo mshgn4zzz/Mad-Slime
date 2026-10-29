@@ -1,12 +1,11 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using MadSlime.StateMachine.Interfaces;
 
-namespace Game
+namespace MadSlime.GameFSM.Interfaces
 {
     public interface ISceneState : IState
     {
-        SceneId SceneId { get; }
-
         UniTask PrepareAsync(CancellationToken cancellationToken);
     }
 }

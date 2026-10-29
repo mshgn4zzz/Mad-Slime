@@ -1,6 +1,7 @@
+using MadSlime.Game.Interfaces;
 using YG;
 
-namespace Game
+namespace MadSlime.Game.Adapters
 {
     public class Yg2GameplayReporter : IGameplayReporter
     {

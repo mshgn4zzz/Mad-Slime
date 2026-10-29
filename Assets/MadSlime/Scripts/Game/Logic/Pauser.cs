@@ -1,10 +1,11 @@
 using System;
-using Ads;
-using Saves;
+using MadSlime.Ads.Interfaces;
+using MadSlime.Game.Interfaces;
+using MadSlime.Saves.Interfaces;
 using UnityEngine;
 using VContainer;
 
-namespace Game
+namespace MadSlime.Game.Logic
 {
     [DisallowMultipleComponent]
     public class Pauser : MonoBehaviour
@@ -13,28 +14,15 @@ namespace Game
         private IGameVisibility _visibility;
         private ICollectedItemsStorage _collectedItems;
         private int _pauseRequestCount;
-        private bool _hasVisibilityPause;
+        private bool _isVisibilityPaused;
         private bool _isPlatformPaused;
 
         public event Action StateChanged;
 
-        public bool IsPaused()
-        {
-            return _pauseRequestCount > 0 || _isPlatformPaused;
-        }
-
-        [Inject]
-        public void Construct(IAdsService adsService, IGameVisibility visibility, ICollectedItemsStorage collectedItems)
-        {
-            _adsService = adsService;
-            _visibility = visibility;
-            _collectedItems = collectedItems;
-        }
-
         private void OnEnable()
         {
-            _visibility.Hidden += OnHidden;
-            _visibility.Shown += OnShown;
+            _visibility.VisibilitySuspended += OnHidden;
+            _visibility.VisibilityRestored += OnShown;
             _adsService.PauseGameChanged += OnAdsPauseGame;
             _isPlatformPaused = _adsService.IsPauseGame;
             ApplyState();
@@ -42,18 +30,34 @@ namespace Game
 
         private void OnDisable()
         {
-            _visibility.Hidden -= OnHidden;
-            _visibility.Shown -= OnShown;
+            _visibility.VisibilitySuspended -= OnHidden;
+            _visibility.VisibilityRestored -= OnShown;
             _adsService.PauseGameChanged -= OnAdsPauseGame;
         }
 
-        public void RequestPause()
+        public bool IsPaused()
+        {
+            return _pauseRequestCount > 0 || _isPlatformPaused;
+        }
+
+        [Inject]
+        public void Construct(
+            IAdsService adsService,
+            IGameVisibility visibility,
+            ICollectedItemsStorage collectedItems)
+        {
+            _adsService = adsService;
+            _visibility = visibility;
+            _collectedItems = collectedItems;
+        }
+
+        public void IncreasePauseRequests()
         {
             _pauseRequestCount++;
             ApplyState();
         }
 
-        public void RequestResume()
+        public void DecreasePauseRequests()
         {
             if (_pauseRequestCount <= 0)
             {
@@ -68,7 +72,7 @@ namespace Game
         {
             _pauseRequestCount = 0;
 
-            if (_hasVisibilityPause == true)
+            if (_isVisibilityPaused)
             {
                 _pauseRequestCount = 1;
             }
@@ -76,40 +80,11 @@ namespace Game
             ApplyState();
         }
 
-        private void OnHidden()
-        {
-            if (_hasVisibilityPause == true)
-            {
-                return;
-            }
-
-            _hasVisibilityPause = true;
-            RequestPause();
-            _collectedItems.CommitCollectedItems();
-        }
-
-        private void OnShown()
-        {
-            if (_hasVisibilityPause == false)
-            {
-                return;
-            }
-
-            _hasVisibilityPause = false;
-            RequestResume();
-        }
-
-        private void OnAdsPauseGame(bool isPaused)
-        {
-            _isPlatformPaused = isPaused;
-            ApplyState();
-        }
-
         private void ApplyState()
         {
-            AudioListener.pause = _hasVisibilityPause || _isPlatformPaused;
+            AudioListener.pause = _isVisibilityPaused || _isPlatformPaused;
 
-            if (IsPaused() == true)
+            if (IsPaused())
             {
                 Time.timeScale = 0f;
             }
@@ -119,6 +94,35 @@ namespace Game
             }
 
             StateChanged?.Invoke();
+        }
+
+        private void OnHidden()
+        {
+            if (_isVisibilityPaused)
+            {
+                return;
+            }
+
+            _isVisibilityPaused = true;
+            IncreasePauseRequests();
+            _collectedItems.CommitCollectedItems();
+        }
+
+        private void OnShown()
+        {
+            if (_isVisibilityPaused == false)
+            {
+                return;
+            }
+
+            _isVisibilityPaused = false;
+            DecreasePauseRequests();
+        }
+
+        private void OnAdsPauseGame(bool isPaused)
+        {
+            _isPlatformPaused = isPaused;
+            ApplyState();
         }
     }
 }

@@ -1,10 +1,13 @@
 using System;
-using Collectables;
-using PlayerInput;
-using Quota;
+using MadSlime.Collectables.Logic;
+using MadSlime.Game.GameplayStateMachine.Interfaces;
+using MadSlime.Game.Interfaces;
+using MadSlime.Game.Logic;
+using MadSlime.PlayerInput.Logic;
+using MadSlime.Quota.Logic;
 using UnityEngine;
 
-namespace Game
+namespace MadSlime.Game.GameplayStateMachine.Logic
 {
     public class PlayingState : IGameplayState
     {
@@ -21,11 +24,7 @@ namespace Game
         private bool _isEntered;
         private bool _isCompletionRequested;
         private bool _isCountdownStarted;
-        private int _pauseRequests;
-
-        public event Action Started;
-
-        public event Action CompletionRequested;
+        private PauseRequests _pauseRequests;
 
         public PlayingState(
             Timer timer,
@@ -44,10 +43,15 @@ namespace Game
             _activity = activity;
             _effects = effects;
             _pauser = pauser;
+            _pauseRequests = new PauseRequests(pauser);
             _reporter = reporter;
             _playerSetup = playerSetup;
             _inputReader = inputReader;
         }
+
+        public event Action Started;
+
+        public event Action CompletionRequested;
 
         public void Configure(float finalSeconds)
         {
@@ -64,10 +68,7 @@ namespace Game
             _isEntered = true;
             _isCompletionRequested = false;
             _isCountdownStarted = false;
-            _timer.Ticked += OnTimerTicked;
-            _timer.Finished += OnCompleted;
-            _quotaCounter.QuotaCompleted += OnCompleted;
-            _pauser.StateChanged += OnPauseStateChanged;
+            Subscribe();
             _quotaCounter.Attach(_itemCollector);
             _reporter.ReportStart();
             _inputReader.enabled = true;
@@ -84,10 +85,7 @@ namespace Game
             }
 
             _isEntered = false;
-            _timer.Ticked -= OnTimerTicked;
-            _timer.Finished -= OnCompleted;
-            _quotaCounter.QuotaCompleted -= OnCompleted;
-            _pauser.StateChanged -= OnPauseStateChanged;
+            Unsubscribe();
             _inputReader.enabled = false;
             _activity.SetRunning(false);
             _timer.Stop();
@@ -96,27 +94,35 @@ namespace Game
             _effects.Stop();
             _playerSetup.StopSession();
 
-            while (_pauseRequests > 0)
-            {
-                ResumeByRequest();
-            }
+            _pauseRequests.ReleaseAll();
 
             _reporter.ReportStop();
         }
 
         public void PauseByRequest()
         {
-            _pauseRequests++;
-            _pauser.RequestPause();
+            _pauseRequests.Acquire();
         }
 
         public void ResumeByRequest()
         {
-            if (_pauseRequests > 0)
-            {
-                _pauseRequests--;
-                _pauser.RequestResume();
-            }
+            _pauseRequests.Release();
+        }
+
+        private void Subscribe()
+        {
+            _timer.Ticked += OnTimerTicked;
+            _timer.Finished += OnCompleted;
+            _quotaCounter.QuotaCompleted += OnCompleted;
+            _pauser.StateChanged += OnPauseStateChanged;
+        }
+
+        private void Unsubscribe()
+        {
+            _timer.Ticked -= OnTimerTicked;
+            _timer.Finished -= OnCompleted;
+            _quotaCounter.QuotaCompleted -= OnCompleted;
+            _pauser.StateChanged -= OnPauseStateChanged;
         }
 
         private void OnPauseStateChanged()

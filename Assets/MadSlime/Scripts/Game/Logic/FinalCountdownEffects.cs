@@ -1,55 +1,43 @@
-using System;
-using Audio;
-using Player;
-using Upgrades;
+using System.Collections.Generic;
+using MadSlime.Validation;
 
-namespace Game
+namespace MadSlime.Game.Logic
 {
     public class FinalCountdownEffects
     {
-        private AdrenalineBoost _adrenalineBoost;
-        private FinalCountdownVignette _vignette;
-        private TimerTickSound _tickSound;
-        private CrawlAnimator _crawlAnimator;
+        private List<IFinalCountdownEffect> _effects;
 
-        public FinalCountdownEffects(
-            AdrenalineBoost adrenalineBoost,
-            FinalCountdownVignette vignette,
-            TimerTickSound tickSound,
-            CrawlAnimator crawlAnimator)
+        public FinalCountdownEffects(IEnumerable<IFinalCountdownEffect> effects)
         {
-            ArgumentGuard.CheckNotNull(adrenalineBoost, nameof(adrenalineBoost));
-
-            ArgumentGuard.CheckNotNull(vignette, nameof(vignette));
-
-            ArgumentGuard.CheckNotNull(tickSound, nameof(tickSound));
-
-            ArgumentGuard.CheckNotNull(crawlAnimator, nameof(crawlAnimator));
-
-            _adrenalineBoost = adrenalineBoost;
-            _vignette = vignette;
-            _tickSound = tickSound;
-            _crawlAnimator = crawlAnimator;
-        }
-
-        public void SetUrgency(float urgency)
-        {
-            _crawlAnimator.SetUrgency(urgency);
+            ArgumentGuard.CheckNotNull(effects, nameof(effects));
+            _effects = new List<IFinalCountdownEffect>(effects);
         }
 
         public void Start()
         {
-            _adrenalineBoost.Enable();
-            _vignette.StartPulse();
-            _tickSound.StartTicking();
+            foreach (IFinalCountdownEffect effect in _effects)
+            {
+                effect.Start();
+            }
+        }
+
+        public void SetUrgency(float urgency)
+        {
+            foreach (IFinalCountdownEffect effect in _effects)
+            {
+                if (effect is ICountdownTimeReceiver countdownTimeReceiver)
+                {
+                    countdownTimeReceiver.UpdateProgress(urgency);
+                }
+            }
         }
 
         public void Stop()
         {
-            _crawlAnimator.SetUrgency(0f);
-            _adrenalineBoost.Disable();
-            _vignette.StopPulse();
-            _tickSound.StopTicking();
+            foreach (IFinalCountdownEffect effect in _effects)
+            {
+                effect.Stop();
+            }
         }
     }
 }

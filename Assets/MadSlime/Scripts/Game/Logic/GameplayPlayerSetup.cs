@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using CameraSystem;
 using Cysharp.Threading.Tasks;
-using Items;
-using Player;
-using Quota;
+using MadSlime.CameraSystem.Logic;
+using MadSlime.CameraSystem.View;
+using MadSlime.Items.View;
+using MadSlime.Player.Logic;
+using MadSlime.Player.View;
+using MadSlime.Quota.Logic;
+using MadSlime.Validation;
 
-namespace Game
+namespace MadSlime.Game.Logic
 {
     public class GameplayPlayerSetup
     {
@@ -17,6 +20,8 @@ namespace Game
         private SmellAbilityActivator _smellAbility;
         private GrowthAnimator _growthAnimator;
         private CameraFollow _cameraFollow;
+        private CameraShakeAnimator _cameraShakeAnimator;
+        private CameraFovKickAnimator _cameraFovKickAnimator;
 
         public GameplayPlayerSetup(
             Movement movement,
@@ -24,37 +29,21 @@ namespace Game
             PlayerScaler playerScaler,
             SmellAbilityActivator smellAbility,
             GrowthAnimator growthAnimator,
-            CameraFollow cameraFollow)
+            CameraFollow cameraFollow,
+            CameraShakeAnimator cameraShakeAnimator,
+            CameraFovKickAnimator cameraFovKickAnimator)
         {
-            if (movement == null)
-            {
-                throw new ArgumentNullException(nameof(movement));
-            }
+            ArgumentGuard.CheckNotNull(movement, nameof(movement));
 
-            if (playerTier == null)
-            {
-                throw new ArgumentNullException(nameof(playerTier));
-            }
+            ArgumentGuard.CheckNotNull(playerTier, nameof(playerTier));
 
-            if (playerScaler == null)
-            {
-                throw new ArgumentNullException(nameof(playerScaler));
-            }
+            ArgumentGuard.CheckNotNull(playerScaler, nameof(playerScaler));
 
-            if (smellAbility == null)
-            {
-                throw new ArgumentNullException(nameof(smellAbility));
-            }
+            ArgumentGuard.CheckNotNull(smellAbility, nameof(smellAbility));
 
-            if (growthAnimator == null)
-            {
-                throw new ArgumentNullException(nameof(growthAnimator));
-            }
+            ArgumentGuard.CheckNotNull(growthAnimator, nameof(growthAnimator));
 
-            if (cameraFollow == null)
-            {
-                throw new ArgumentNullException(nameof(cameraFollow));
-            }
+            ArgumentGuard.CheckNotNull(cameraFollow, nameof(cameraFollow));
 
             _movement = movement;
             _playerTier = playerTier;
@@ -62,6 +51,8 @@ namespace Game
             _smellAbility = smellAbility;
             _growthAnimator = growthAnimator;
             _cameraFollow = cameraFollow;
+            _cameraShakeAnimator = cameraShakeAnimator;
+            _cameraFovKickAnimator = cameraFovKickAnimator;
         }
 
         public void PrepareSession()
@@ -72,7 +63,10 @@ namespace Game
             _smellAbility.SetPaused(true);
         }
 
-        public UniTask PrepareOutlineAsync(IReadOnlyList<Item> items, Action<float> onProgress, CancellationToken cancellationToken)
+        public UniTask PrepareOutlineAsync(
+            IReadOnlyList<Item> items,
+            Action<float> onProgress,
+            CancellationToken cancellationToken)
         {
             return _smellAbility.PrepareAsync(items, onProgress, cancellationToken);
         }
@@ -80,6 +74,8 @@ namespace Game
         public void StopSession()
         {
             _cameraFollow.StopMotion();
+            _cameraShakeAnimator.enabled = false;
+            _cameraFovKickAnimator.enabled = false;
             _growthAnimator.Stop();
         }
     }

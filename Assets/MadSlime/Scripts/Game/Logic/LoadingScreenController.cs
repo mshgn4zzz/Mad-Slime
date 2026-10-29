@@ -1,17 +1,17 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using MadSlime.Game.View;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace Game
+namespace MadSlime.Game.Logic
 {
     public class LoadingScreenController
     {
-        private const string ControllerName = "LoadingScreenController";
-
         private Canvas _prefab;
         private Transform _parent;
-        private Canvas _instance;
+        private LoadingScreenFactory _factory = new LoadingScreenFactory();
         private LoadingScreenView _view;
 
         public LoadingScreenController(Canvas prefab, Transform parent)
@@ -22,25 +22,9 @@ namespace Game
 
         public void Show()
         {
-            if (_prefab == null)
+            if (_view == null)
             {
-                throw new InvalidOperationException(
-                    $"{ControllerName}: loading screen prefab is not assigned. Drag a loading screen Canvas "
-                        + $"prefab into the _loadingScreenPrefab field of ProjectLifetimeScope.");
-            }
-
-            if (_instance != null)
-            {
-                throw new InvalidOperationException("A loading screen is already open.");
-            }
-
-            _instance = UnityEngine.Object.Instantiate(_prefab, _parent);
-
-            if (_instance.TryGetComponent(out _view) == false)
-            {
-                DestroyInstance();
-                throw new InvalidOperationException(
-                    $"{ControllerName}: the loading prefab must contain LoadingScreenView.");
+                _view = _factory.Create(_prefab, _parent);
             }
         }
 
@@ -72,7 +56,7 @@ namespace Game
 
         public void Hide()
         {
-            if (_instance == null)
+            if (_view == null)
             {
                 return;
             }
@@ -82,8 +66,7 @@ namespace Game
 
         private void DestroyInstance()
         {
-            UnityEngine.Object.Destroy(_instance.gameObject);
-            _instance = null;
+            UnityEngine.Object.Destroy(_view.gameObject);
             _view = null;
         }
     }

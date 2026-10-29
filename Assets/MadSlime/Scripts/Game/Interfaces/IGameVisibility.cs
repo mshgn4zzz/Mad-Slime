@@ -1,11 +1,11 @@
 using System;
 
-namespace Game
+namespace MadSlime.Game.Interfaces
 {
     public interface IGameVisibility
     {
-        event Action Hidden;
+        event Action VisibilitySuspended;
 
-        event Action Shown;
+        event Action VisibilityRestored;
     }
 }

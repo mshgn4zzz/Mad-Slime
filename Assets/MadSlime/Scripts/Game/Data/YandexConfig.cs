@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game
+namespace MadSlime.Game.Data
 {
     [CreateAssetMenu(menuName = "Mad Slime/Yandex Config", fileName = "NewYandexConfig")]
     public class YandexConfig : ScriptableObject

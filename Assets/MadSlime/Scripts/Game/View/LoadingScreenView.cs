@@ -1,13 +1,13 @@
-using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using Shop;
-using Skins;
+using MadSlime.Shop.Data;
+using MadSlime.Skins.Data;
+using MadSlime.Validation;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Game
+namespace MadSlime.Game.View
 {
     public class LoadingScreenView : MonoBehaviour
     {
@@ -24,12 +24,16 @@ namespace Game
 
         private void Awake()
         {
-            if (_skinCatalog == null || _outline == null || _fill == null)
-            {
-                throw new InvalidOperationException($"{name}: skin catalog and both loading images must be assigned.");
-            }
+            ArgumentGuard.CheckAssigned(_skinCatalog, name, nameof(_skinCatalog));
+            ArgumentGuard.CheckAssigned(_outline, name, nameof(_outline));
+            ArgumentGuard.CheckAssigned(_fill, name, nameof(_fill));
 
             _fill.fillAmount = 0f;
+        }
+
+        private void OnDestroy()
+        {
+            _fillTween?.Kill();
         }
 
         public void SetSkin(string skinId)
@@ -41,11 +45,8 @@ namespace Game
                 skin = FindSkin(SkinInventory.InitialSkinId);
             }
 
-            if (skin == null || skin.Icon == null)
-            {
-                                throw new InvalidOperationException($"{name}: the initial Slime icon must exist in "
-                                        + $"the loading skin catalog.");
-            }
+            ArgumentGuard.CheckAssigned(skin, name, nameof(skin));
+            ArgumentGuard.CheckAssigned(skin.Icon, name, nameof(skin.Icon));
 
             _outline.sprite = skin.Icon;
             _fill.sprite = skin.Icon;
@@ -87,11 +88,6 @@ namespace Game
         private bool IsFilled()
         {
             return _displayedProgress >= 1f;
-        }
-
-        private void OnDestroy()
-        {
-            _fillTween?.Kill();
         }
 
         private SkinItem FindSkin(string skinId)

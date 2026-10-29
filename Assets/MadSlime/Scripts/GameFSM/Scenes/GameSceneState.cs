@@ -1,9 +1,12 @@
 using System;
-using Audio;
+using MadSlime.Audio.Data;
+using MadSlime.Game.GameplayStateMachine.Logic;
+using MadSlime.Game.Logic;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace Game
+namespace MadSlime.GameFSM.Scenes
 {
     public class GameSceneState : SceneState<GameplayStateMachine>
     {
@@ -11,15 +14,10 @@ namespace Game
         [SerializeField, Min(0f)] private float _endDelay = 1f;
         [SerializeField, Min(0.1f)] private float _finalSeconds = 20f;
 
-        private SceneStateMachine _sceneMachine;
         private Pauser _pauser;
 
         public event Action GameplayStarted;
         public event Action SessionFinished;
-        public event Action MenuRequested;
-        public event Action FillRequested;
-
-        public override SceneId SceneId => SceneId.Game;
 
         [Inject]
         public void Construct(GameplayStateMachine machine, SceneStateMachine sceneMachine, Pauser pauser)
@@ -27,15 +25,18 @@ namespace Game
             ArgumentGuard.CheckNotNull(pauser, nameof(pauser));
 
             Initialize(machine, sceneMachine);
-            _sceneMachine = sceneMachine;
             _pauser = pauser;
         }
 
         public void ExitToMenu()
         {
-            MenuRequested?.Invoke();
+            if (IsTransitionAllowed() == false)
+            {
+                return;
+            }
+
             _pauser.ResetToPlay();
-            RequestTransition(SceneId.Menu);
+            RequestTransition<MenuSceneState>();
         }
 
         public void PauseByRequest()
@@ -50,10 +51,7 @@ namespace Game
 
         protected override void ValidateConfiguration()
         {
-            if (_musicPlaylist == null)
-            {
-                throw new InvalidOperationException($"{name}: assign the game music playlist.");
-            }
+            ArgumentGuard.CheckAssigned(_musicPlaylist, name, nameof(_musicPlaylist));
         }
 
         protected override void ConfigureMachine()
@@ -61,20 +59,23 @@ namespace Game
             Machine.Configure(_musicPlaylist, _endDelay, _finalSeconds);
         }
 
-        protected override void SubscribeMachineEvents()
+        protected override void Subscribe()
         {
             Machine.GameplayStarted += OnGameplayStarted;
             Machine.SessionFinished += OnSessionFinished;
             Machine.FillRequested += OnFillRequested;
-            Machine.PreparationProgressChanged += OnPreparationProgressChanged;
         }
 
-        protected override void UnsubscribeMachineEvents()
+        protected override void Unsubscribe()
         {
+            if (Machine == null)
+            {
+                return;
+            }
+
             Machine.GameplayStarted -= OnGameplayStarted;
             Machine.SessionFinished -= OnSessionFinished;
             Machine.FillRequested -= OnFillRequested;
-            Machine.PreparationProgressChanged -= OnPreparationProgressChanged;
         }
 
         private void OnGameplayStarted()
@@ -89,14 +90,13 @@ namespace Game
 
         private void OnFillRequested()
         {
-            FillRequested?.Invoke();
-            _pauser.ResetToPlay();
-            RequestTransition(SceneId.Fill);
-        }
+            if (IsTransitionAllowed() == false)
+            {
+                return;
+            }
 
-        private void OnPreparationProgressChanged(float progress)
-        {
-            _sceneMachine.ReportPreparationProgress(progress);
+            _pauser.ResetToPlay();
+            RequestTransition<FillSceneState>();
         }
     }
 }
