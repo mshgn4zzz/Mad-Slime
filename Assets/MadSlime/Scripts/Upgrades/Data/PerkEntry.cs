@@ -1,25 +1,25 @@
 using System;
 using UnityEngine;
 
-namespace Upgrades
+namespace MadSlime.Upgrades.Data
 {
-[Serializable]
-public class PerkEntry
-{
-    [SerializeField] private PerkType _type;
+    [Serializable]
+    public class PerkEntry
+    {
+        [SerializeField] private PerkType _type;
 
-    [SerializeField] private Sprite _icon;
+        [SerializeField] private Sprite _icon;
 
-    [SerializeField, Min(0)] private int _cost = 3000;
+        [SerializeField, Min(0)] private int _cost = 3000;
 
-    [SerializeField, Min(0f)] private float _boost;
+        [SerializeField, Min(0f)] private float _boost;
 
-    public PerkType Type => _type;
+        public PerkType Type => _type;
 
-    public Sprite Icon => _icon;
+        public Sprite Icon => _icon;
 
-    public int Cost => _cost;
+        public int Cost => _cost;
 
-    public float Value => _boost;
-}
+        public float Value => _boost;
+    }
 }

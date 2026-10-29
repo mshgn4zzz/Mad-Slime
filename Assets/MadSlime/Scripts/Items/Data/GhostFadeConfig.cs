@@ -1,7 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-namespace Items
+namespace MadSlime.Items.Data
 {
     [CreateAssetMenu(fileName = "NewGhostFadeConfig", menuName = "Mad Slime/Ghost Fade Config")]
     public class GhostFadeConfig : ScriptableObject

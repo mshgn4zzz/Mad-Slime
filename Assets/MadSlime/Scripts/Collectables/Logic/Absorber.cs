@@ -1,44 +1,27 @@
-using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Player;
+using DG.Tweening;
+using MadSlime.Player.Data;
+using MadSlime.Validation;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Collectables
+namespace MadSlime.Collectables.Logic
 {
     public class Absorber : MonoBehaviour
     {
+        private const float NegativeArcProbability = 0.5f;
+
         [SerializeField] private PlayerConfig _config;
 
         private void Awake()
         {
-            if (_config == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerConfig is not assigned. Drag the PlayerConfig asset into the _config field.");
-            }
-
-            if (_config.MinAbsorbDuration > _config.MaxAbsorbDuration)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerConfig has MinAbsorbDuration {_config.MinAbsorbDuration} greater "
-                        + $"than MaxAbsorbDuration {_config.MaxAbsorbDuration}.");
-            }
-
-            if (_config.MinArcFraction > _config.MaxArcFraction)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerConfig has MinArcFraction {_config.MinArcFraction} greater than "
-                        + $"MaxArcFraction {_config.MaxArcFraction}.");
-            }
-
-            if (_config.MinSpinSpeed > _config.MaxSpinSpeed)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerConfig has MinSpinSpeed {_config.MinSpinSpeed} greater than "
-                        + $"MaxSpinSpeed {_config.MaxSpinSpeed}.");
-            }
+            ArgumentGuard.CheckAssigned(_config, name, nameof(_config));
+            ArgumentGuard.CheckOrder(
+                _config.MinAbsorbDuration, _config.MaxAbsorbDuration, name, nameof(_config.MinAbsorbDuration));
+            ArgumentGuard.CheckOrder(
+                _config.MinArcFraction, _config.MaxArcFraction, name, nameof(_config.MinArcFraction));
+            ArgumentGuard.CheckOrder(_config.MinSpinSpeed, _config.MaxSpinSpeed, name, nameof(_config.MinSpinSpeed));
         }
 
         public async UniTask AbsorbAsync(Transform itemTransform, CancellationToken cancellationToken)
@@ -49,26 +32,45 @@ namespace Collectables
             Vector3 controlPosition = CalculateControlPosition(startPosition, transform.position);
             Vector3 spinAxis = Random.onUnitSphere;
             float spinSpeed = Random.Range(_config.MinSpinSpeed, _config.MaxSpinSpeed);
-            float elapsedTime = 0f;
+            Quaternion startRotation = itemTransform.rotation;
+            float progress = 0f;
+            UniTaskCompletionSource completion = new UniTaskCompletionSource();
 
-            while (elapsedTime < duration)
+            cancellationToken.ThrowIfCancellationRequested();
+
+            Tween absorption = DOTween.To(
+                () => progress,
+                value =>
+                {
+                    progress = value;
+
+                    float easedProgress = DOVirtual.EasedValue(0f, 1f, value, _config.AbsorbEase);
+
+                    itemTransform.position = global::MadSlime.Geometry.BezierCurve.GetPoint(
+                        startPosition, controlPosition, transform.position, easedProgress);
+                    itemTransform.rotation = Quaternion.AngleAxis(spinSpeed * duration * value, spinAxis)
+                        * startRotation;
+
+                    float shrink = Mathf.InverseLerp(_config.ShrinkStart, 1f, value);
+
+                    itemTransform.localScale = startScale * (1f - shrink);
+                },
+                1f,
+                duration)
+                .SetEase(Ease.Linear)
+                .SetTarget(itemTransform)
+                .SetLink(itemTransform.gameObject, LinkBehaviour.KillOnDisable);
+
+            absorption.OnComplete(() => completion.TrySetResult());
+            absorption.OnKill(() => completion.TrySetCanceled());
+
+            try
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                elapsedTime += Time.deltaTime;
-
-                float progress = Mathf.Clamp01(elapsedTime / duration);
-                float easedProgress = Mathf.Pow(progress, _config.AbsorbEasePower);
-
-                itemTransform.position = GetBezierPoint(
-                    startPosition, controlPosition, transform.position, easedProgress);
-                itemTransform.Rotate(spinAxis, spinSpeed * Time.deltaTime, Space.World);
-
-                float shrink = Mathf.Clamp01(Mathf.InverseLerp(_config.ShrinkStart, 1f, progress));
-
-                itemTransform.localScale = startScale * (1f - shrink);
-
-                await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
+                await completion.Task.AttachExternalCancellation(cancellationToken);
+            }
+            finally
+            {
+                absorption.Kill();
             }
         }
 
@@ -102,7 +104,7 @@ namespace Collectables
 
             float side = 1f;
 
-            if (Random.value < 0.5f)
+            if (Random.value < NegativeArcProbability)
             {
                 side = -1f;
             }
@@ -110,15 +112,6 @@ namespace Collectables
             float arcMagnitude = distance * Random.Range(_config.MinArcFraction, _config.MaxArcFraction) * side;
 
             return Vector3.Lerp(startPosition, endPosition, 0.5f) + (perpendicular * arcMagnitude);
-        }
-
-        private static Vector3 GetBezierPoint(Vector3 start, Vector3 control, Vector3 end, float progress)
-        {
-            float invertedProgress = 1f - progress;
-
-            return (invertedProgress * invertedProgress * start)
-                + (2f * invertedProgress * progress * control)
-                + (progress * progress * end);
         }
     }
 }

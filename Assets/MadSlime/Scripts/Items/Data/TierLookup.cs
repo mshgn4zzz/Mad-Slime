@@ -1,6 +1,7 @@
 using System;
+using MadSlime.Validation;
 
-namespace Items
+namespace MadSlime.Items.Data
 {
     public class TierLookup
     {
@@ -8,10 +9,7 @@ namespace Items
 
         public TierLookup(TierTable table)
         {
-            if (table == null)
-            {
-                throw new ArgumentNullException(nameof(table));
-            }
+            ArgumentGuard.CheckNotNull(table, nameof(table));
 
             _table = table;
         }
@@ -24,11 +22,8 @@ namespace Items
 
                 if (entry.Tier == tier)
                 {
-                    if (entry.Scale <= 0f || entry.Mass <= 0)
-                    {
-                                                throw new InvalidOperationException($"{_table.name}: tier '{tier}' "
-                                                        + $"requires positive scale and mass.");
-                    }
+                    ArgumentGuard.CheckPositive(entry.Scale, _table.name, nameof(entry.Scale));
+                    ArgumentGuard.CheckPositive(entry.Mass, _table.name, nameof(entry.Mass));
 
                     return entry;
                 }

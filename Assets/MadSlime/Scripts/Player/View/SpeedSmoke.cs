@@ -1,8 +1,10 @@
-using System;
+using MadSlime.Player.Data;
+using MadSlime.Player.Logic;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace Player
+namespace MadSlime.Player.View
 {
     public class SpeedSmoke : MonoBehaviour
     {
@@ -16,40 +18,15 @@ namespace Player
         private Movement _movement;
         private bool _isSmoking;
 
-        [Inject]
-        public void Construct(PlayerConfig config, Movement movement)
-        {
-            _config = config;
-            _movement = movement;
-        }
-
         private void Awake()
         {
-            if (_smoke == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Smoke is not assigned. Place a looping smoke ParticleSystem in "
-                        + $"the scene and drag it into the _smoke field.");
-            }
+            ArgumentGuard.CheckAssigned(_smoke, name, nameof(_smoke));
 
-            if (_config == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerConfig was not injected. Check that GameLifetimeScope "
-                        + $"registers PlayerConfig and SpeedSmoke.");
-            }
+            ArgumentGuard.CheckAssigned(_config, name, nameof(_config));
 
-            if (_movement == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Movement was not injected. Check that GameLifetimeScope registers "
-                        + $"Movement and SpeedSmoke.");
-            }
+            ArgumentGuard.CheckAssigned(_movement, name, nameof(_movement));
 
-            if (_playerScaler == null)
-            {
-                throw new InvalidOperationException($"{name}: PlayerScaler must be assigned for smoke growth.");
-            }
+            ArgumentGuard.CheckAssigned(_playerScaler, name, nameof(_playerScaler));
 
             _baseSmokeScale = _smoke.transform.localScale;
             _baseSmokePosition = _smoke.transform.localPosition;
@@ -73,15 +50,11 @@ namespace Player
             SetSmoking(false);
         }
 
-        private void OnScaleChanged(float multiplier)
+        [Inject]
+        public void Construct(PlayerConfig config, Movement movement)
         {
-            _smoke.transform.localScale = _baseSmokeScale * multiplier;
-            _smoke.transform.localPosition = _baseSmokePosition * multiplier;
-        }
-
-        private void OnSpeedChanged()
-        {
-            Refresh();
+            _config = config;
+            _movement = movement;
         }
 
         private void Refresh()
@@ -100,7 +73,7 @@ namespace Player
 
             _isSmoking = isSmoking;
 
-            if (isSmoking == true)
+            if (isSmoking)
             {
                 _smoke.Play(true);
             }
@@ -108,6 +81,17 @@ namespace Player
             {
                 _smoke.Stop(true, ParticleSystemStopBehavior.StopEmitting);
             }
+        }
+
+        private void OnScaleChanged(float multiplier)
+        {
+            _smoke.transform.localScale = _baseSmokeScale * multiplier;
+            _smoke.transform.localPosition = _baseSmokePosition * multiplier;
+        }
+
+        private void OnSpeedChanged()
+        {
+            Refresh();
         }
     }
 }

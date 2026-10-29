@@ -1,39 +1,26 @@
-using System;
 using DG.Tweening;
+using MadSlime.Player.Data;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace Player
+namespace MadSlime.Player.View
 {
     public class ScalePunch : MonoBehaviour
     {
+        private const float FullProgress = 1f;
         [SerializeField] private PlayerConfig _config;
         [SerializeField] private ModelDeformer _deformer;
-
-        private const float FullProgress = 1f;
 
         private float _progress;
         private Tween _squashTween;
 
         private void Awake()
         {
-            if (_config == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerConfig is not assigned. Drag the PlayerConfig asset into the _config field.");
-            }
+            ArgumentGuard.CheckAssigned(_config, name, nameof(_config));
 
-            if (_config.SquashCurve == null || _config.SquashCurve.length == 0)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerConfig has an empty SquashCurve. Add at least one keyframe to "
-                        + $"the Collect Squash curve in PlayerConfig.");
-            }
+            ArgumentGuard.CheckNotEmpty(_config.SquashCurve, name, nameof(_config.SquashCurve));
 
-            if (_deformer == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: ModelDeformer is not assigned.");
-            }
+            ArgumentGuard.CheckAssigned(_deformer, name, nameof(_deformer));
         }
 
         private void OnDisable()
@@ -59,12 +46,6 @@ namespace Player
                 .OnComplete(OnSquashCompleted);
         }
 
-        private void OnSquashCompleted()
-        {
-            _progress = 0f;
-            _deformer.SetCollectCompression(0f);
-        }
-
         private float ReadProgress()
         {
             return _progress;
@@ -88,6 +69,12 @@ namespace Player
 
             _squashTween.Kill();
             _squashTween = null;
+        }
+
+        private void OnSquashCompleted()
+        {
+            _progress = 0f;
+            _deformer.SetCollectCompression(0f);
         }
     }
 }

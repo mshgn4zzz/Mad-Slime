@@ -1,8 +1,8 @@
 using System;
-using Items;
+using MadSlime.Items.Data;
 using UnityEngine;
 
-namespace Player
+namespace MadSlime.Player.Data
 {
     [Serializable]
     public class PlayerTierThreshold

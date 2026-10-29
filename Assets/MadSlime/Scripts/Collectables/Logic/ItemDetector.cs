@@ -1,8 +1,8 @@
-using Items;
+using MadSlime.Items.View;
 
-namespace Collectables
+namespace MadSlime.Collectables.Logic
 {
-    public class ItemDetector : GenericOverlapDetector<Items.Item>
+    public class ItemDetector : GenericOverlapDetector<Item>
     {
     }
 }

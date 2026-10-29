@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
-using CameraSystem;
-using Items;
+using MadSlime.CameraSystem.Logic;
+using MadSlime.Items.Data;
+using MadSlime.Player.View;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace Player
+namespace MadSlime.Player.Logic
 {
     public class PlayerScaler : MonoBehaviour
     {
@@ -16,10 +18,10 @@ namespace Player
         [SerializeField] private GrowthAnimator _growthAnimator;
         [SerializeField] private List<RadiusRecipientEntry> _radiusRecipients = new List<RadiusRecipientEntry>();
 
+        private Clamper _clamper;
+        private float _baseClampRadius;
         private PlayerTier _playerTier;
         private TierResolver _tierResolver;
-
-        public event Action<float> RelativeScaleChanged;
 
         private float _baseColliderRadius;
         private float _baseColliderHeight;
@@ -28,55 +30,32 @@ namespace Player
         private float _initialMultiplier = 1f;
         private float _relativeScale = 1f;
 
-        [Inject]
-        public void Construct(PlayerTier playerTier, TierResolver tierResolver)
-        {
-            _playerTier = playerTier;
-            _tierResolver = tierResolver;
-        }
+        public event Action<float> RelativeScaleChanged;
+
+        public float RelativeScale => _relativeScale;
+
+        public Vector3 WorldCenter => _playerCollider.bounds.center;
 
         private void Awake()
         {
-            if (_playerTier == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerTier was not injected. Check that GameLifetimeScope "
-                        + $"registers PlayerTier and PlayerScaler.");
-            }
+            ArgumentGuard.CheckAssigned(_playerTier, name, nameof(_playerTier));
 
-            if (_modelTransform == null)
-            {
-                throw new InvalidOperationException($"{name}: ModelTransform is not assigned.");
-            }
+            ArgumentGuard.CheckAssigned(_modelTransform, name, nameof(_modelTransform));
 
-            if (_rootTransform == null)
-            {
-                throw new InvalidOperationException($"{name}: RootTransform is not assigned.");
-            }
+            ArgumentGuard.CheckAssigned(_rootTransform, name, nameof(_rootTransform));
 
-            if (_playerCollider == null)
-            {
-                throw new InvalidOperationException($"{name}: PlayerCollider is not assigned.");
-            }
+            ArgumentGuard.CheckAssigned(_playerCollider, name, nameof(_playerCollider));
 
-            if (_cameraFollow == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: CameraFollow is not assigned. Drag the camera's CameraFollow "
-                        + $"component into the _cameraFollow field.");
-            }
+            ArgumentGuard.CheckAssigned(_cameraFollow, name, nameof(_cameraFollow));
 
-            if (_growthAnimator == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: GrowthAnimator is not assigned. Drag the GrowthAnimator component "
-                        + $"into the _growthAnimator field.");
-            }
+            ArgumentGuard.CheckAssigned(_growthAnimator, name, nameof(_growthAnimator));
 
             for (int i = 0; i < _radiusRecipients.Count; i++)
             {
                 _radiusRecipients[i].Initialize(name);
             }
+
+            _baseClampRadius = _clamper.Radius;
 
             _baseColliderHeight = _playerCollider.height;
             _baseColliderRadius = _playerCollider.radius;
@@ -93,6 +72,15 @@ namespace Player
             _playerTier.TierChanged -= OnTierChanged;
         }
 
+        [Inject]
+        public void Construct(PlayerTier playerTier, TierResolver tierResolver, Clamper clamper)
+        {
+            ArgumentGuard.CheckNotNull(clamper, nameof(clamper));
+            _clamper = clamper;
+            _playerTier = playerTier;
+            _tierResolver = tierResolver;
+        }
+
         public void ApplyInitialScale()
         {
             SizeTier currentTier = _playerTier.CurrentTier;
@@ -105,26 +93,6 @@ namespace Player
             _currentMultiplier = targetMultiplier;
             ApplyMultiplier();
         }
-
-        private void OnTierChanged(SizeTier previousTier, SizeTier currentTier)
-        {
-            _cameraFollow.SetOffsetMultiplier(_tierResolver.GetCameraOffsetFor(currentTier));
-
-            float targetMultiplier = _tierResolver.GetScaleFor(currentTier);
-
-            _growthAnimator.Play(_currentMultiplier, targetMultiplier, OnGrowthValueChanged);
-        }
-
-        private void OnGrowthValueChanged(float multiplier)
-        {
-            _currentMultiplier = multiplier;
-
-            ApplyMultiplier();
-        }
-
-        public float RelativeScale => _relativeScale;
-
-        public Vector3 WorldCenter => _playerCollider.bounds.center;
 
         private void ApplyMultiplier()
         {
@@ -141,12 +109,30 @@ namespace Player
             _rootTransform.position =
                 new Vector3(_rootTransform.position.x, _playerCollider.radius, _rootTransform.position.z);
 
+            _clamper.SetRadius(_baseClampRadius * _currentMultiplier);
+
             for (int i = 0; i < _radiusRecipients.Count; i++)
             {
                 RadiusRecipientEntry entry = _radiusRecipients[i];
 
                 entry.Recipient.SetRadius(entry.BaseRadius * _currentMultiplier);
             }
+        }
+
+        private void OnTierChanged(SizeTier previousTier, SizeTier currentTier)
+        {
+            _cameraFollow.SetOffsetMultiplier(_tierResolver.GetCameraOffsetFor(currentTier));
+
+            float targetMultiplier = _tierResolver.GetScaleFor(currentTier);
+
+            _growthAnimator.Play(_currentMultiplier, targetMultiplier, OnGrowthValueChanged);
+        }
+
+        private void OnGrowthValueChanged(float multiplier)
+        {
+            _currentMultiplier = multiplier;
+
+            ApplyMultiplier();
         }
     }
 }

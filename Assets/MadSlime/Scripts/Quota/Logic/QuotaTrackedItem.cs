@@ -1,7 +1,7 @@
-using Items;
+using MadSlime.Items.View;
 using UnityEngine;
 
-namespace Quota
+namespace MadSlime.Quota.Logic
 {
     internal struct QuotaTrackedItem
     {
@@ -9,17 +9,17 @@ namespace Quota
         private Collider _collider;
         private QuotaTypeState _type;
 
-        public GhostAnimator Animator => _animator;
-
-        public Collider Collider => _collider;
-
-        public QuotaTypeState Type => _type;
-
         public QuotaTrackedItem(GhostAnimator animator, Collider collider, QuotaTypeState type)
         {
             _animator = animator;
             _collider = collider;
             _type = type;
         }
+
+        public GhostAnimator Animator => _animator;
+
+        public Collider Collider => _collider;
+
+        public QuotaTypeState Type => _type;
     }
 }

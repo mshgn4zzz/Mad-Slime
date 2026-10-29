@@ -1,16 +1,44 @@
 using System;
-using System.Collections.Generic;
-using Saves;
-using UnityEngine;
-using VContainer;
+using MadSlime.Saves.Interfaces;
+using MadSlime.Upgrades.Data;
+using MadSlime.Validation;
 
-namespace Upgrades
+namespace MadSlime.Upgrades.Logic
 {
-    public class PlayerUpgrades : MonoBehaviour
+    public class PlayerUpgrades
     {
-        [SerializeField] private UpgradesConfig _config;
+        private readonly UpgradesConfig _config;
 
-        private IUpgradesStorage _storage;
+        private readonly IUpgradesStorage _storage;
+
+        public PlayerUpgrades(UpgradesConfig config, IUpgradesStorage storage)
+        {
+            _config = config;
+            _storage = storage;
+
+            ArgumentGuard.CheckNotNull(_config, nameof(config));
+
+            ArgumentGuard.CheckNotNull(_storage, nameof(storage));
+
+            for (int i = 0; i < _config.Upgrades.Count; i++)
+            {
+                UpgradeEntry entry = _config.Upgrades[i];
+
+                if (entry.StepValues.Count != entry.MaxSteps)
+                {
+                    throw new InvalidOperationException(
+                        $"PlayerUpgrades: upgrade '{entry.Type}' in '{_config.name}' has {entry.StepValues.Count} " +
+                        $"step values, but MaxSteps is {entry.MaxSteps}. Fill one value per step.");
+                }
+            }
+
+            for (int i = 0; i < _config.Perks.Count; i++)
+            {
+                ValidatePerkExists(_config.Perks[i].Type);
+            }
+        }
+
+        public UpgradesConfig Config => _config;
 
         public float GetSpeedMultiplier()
         {
@@ -32,58 +60,19 @@ namespace Upgrades
             return GetMultiplier(UpgradeType.Metabolism);
         }
 
-        public bool HasSmell()
+        public bool IsSmellUnlocked()
         {
             return IsPerkPurchased(PerkType.Smell);
         }
 
-        public bool HasAdrenaline()
+        public bool IsAdrenalineUnlocked()
         {
             return IsPerkPurchased(PerkType.Adrenaline);
         }
 
-        public bool HasAmbitions()
+        public bool IsAmbitionsUnlocked()
         {
             return IsPerkPurchased(PerkType.Ambitions);
-        }
-
-        [Inject]
-        public void Construct(IUpgradesStorage storage)
-        {
-            _storage = storage;
-        }
-
-        private void Awake()
-        {
-            if (_config == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: UpgradesConfig is not assigned. Drag the UpgradesConfig asset into the _config field.");
-            }
-
-            if (_storage == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: IUpgradesStorage was not injected. Check that "
-                        + $"ProjectLifetimeScope registers UpgradesStorage and PlayerUpgrades.");
-            }
-
-            for (int i = 0; i < _config.Upgrades.Count; i++)
-            {
-                UpgradeEntry entry = _config.Upgrades[i];
-
-                if (entry.StepValues.Count != entry.MaxSteps)
-                {
-                    throw new InvalidOperationException(
-                        $"PlayerUpgrades: upgrade '{entry.Type}' in '{_config.name}' has {entry.StepValues.Count} " +
-                        $"step values, but MaxSteps is {entry.MaxSteps}. Fill one value per step.");
-                }
-            }
-
-            for (int i = 0; i < _config.Perks.Count; i++)
-            {
-                ValidatePerkExists(_config.Perks[i].Type);
-            }
         }
 
         public int GetLevel(UpgradeType type)
@@ -98,7 +87,7 @@ namespace Upgrades
 
         public int GetNextCost(UpgradeType type)
         {
-            if (IsMaxed(type) == true)
+            if (IsMaxed(type))
             {
                 throw new InvalidOperationException(
                     $"PlayerUpgrades: upgrade '{type}' is maxed and has no next cost.");
@@ -118,7 +107,7 @@ namespace Upgrades
 
         public void PurchaseStepped(UpgradeType type)
         {
-            if (IsMaxed(type) == true)
+            if (IsMaxed(type))
             {
                 throw new InvalidOperationException(
                     $"PlayerUpgrades: upgrade '{type}' is already maxed.");
@@ -139,7 +128,7 @@ namespace Upgrades
 
         public void PurchasePerk(PerkType type)
         {
-            if (IsPerkPurchased(type) == true)
+            if (IsPerkPurchased(type))
             {
                 throw new InvalidOperationException(
                     $"PlayerUpgrades: perk '{type}' is already purchased.");
@@ -149,12 +138,6 @@ namespace Upgrades
 
             _storage.PurchasePerk(type);
         }
-
-        public UpgradesConfig Config => _config;
-
-        public IReadOnlyList<UpgradeEntry> UpgradeEntries => _config.Upgrades;
-
-        public IReadOnlyList<PerkEntry> PerkEntries => _config.Perks;
 
         public int GetMaxSteps(UpgradeType type)
         {
@@ -173,18 +156,6 @@ namespace Upgrades
             UpgradeEntry entry = GetUpgrade(type);
 
             return SumValues(entry, GetLevel(type));
-        }
-
-        private float GetMultiplier(UpgradeType type)
-        {
-            UpgradeEntry entry = GetUpgrade(type);
-
-            return 1f + SumValues(entry, GetLevel(type));
-        }
-
-        private void ValidatePerkExists(PerkType type)
-        {
-            GetPerk(type);
         }
 
         public UpgradeEntry GetUpgrade(UpgradeType type)
@@ -213,6 +184,18 @@ namespace Upgrades
 
             throw new InvalidOperationException(
                 $"UpgradesConfig '{_config.name}': no entry for perk '{type}'. Add a row for it.");
+        }
+
+        private float GetMultiplier(UpgradeType type)
+        {
+            UpgradeEntry entry = GetUpgrade(type);
+
+            return 1f + SumValues(entry, GetLevel(type));
+        }
+
+        private void ValidatePerkExists(PerkType type)
+        {
+            GetPerk(type);
         }
 
         private float SumValues(UpgradeEntry entry, int level)

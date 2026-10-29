@@ -1,9 +1,11 @@
 using System;
-using Items;
+using MadSlime.Items.Data;
+using MadSlime.Player.Logic;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace Player
+namespace MadSlime.Player.View
 {
     public class TierUpFx : MonoBehaviour
     {
@@ -11,33 +13,17 @@ namespace Player
 
         private PlayerTier _playerTier;
 
-        [Inject]
-        public void Construct(PlayerTier playerTier)
-        {
-            _playerTier = playerTier;
-        }
-
         private void Awake()
         {
-            if (_playerTier == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerTier was not injected. Check that GameLifetimeScope "
-                        + $"registers PlayerTier and TierUpFx.");
-            }
+            ArgumentGuard.CheckAssigned(_playerTier, name, nameof(_playerTier));
 
-            if (_burst == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Burst is not assigned. Drag a one-shot (not looping) "
-                        + $"ParticleSystem into the _burst field.");
-            }
+            ArgumentGuard.CheckAssigned(_burst, name, nameof(_burst));
 
-            if (_burst.main.loop == true)
+            if (_burst.main.loop)
             {
                 throw new InvalidOperationException(
                     $"{name}: the assigned ParticleSystem is looping. The tier-up burst must be "
-                        + $"one-shot: uncheck Loop.");
+                    + $"one-shot: uncheck Loop.");
             }
 
             _burst.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
@@ -51,6 +37,12 @@ namespace Player
         private void OnDisable()
         {
             _playerTier.TierChanged -= OnTierChanged;
+        }
+
+        [Inject]
+        public void Construct(PlayerTier playerTier)
+        {
+            _playerTier = playerTier;
         }
 
         private void OnTierChanged(SizeTier previousTier, SizeTier currentTier)

@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
-using Items;
-using UnityEngine;
+using MadSlime.Items.Data;
+using MadSlime.Quota.Data;
+using MadSlime.Validation;
 
-namespace Quota
+namespace MadSlime.Quota.Logic
 {
     public class QuotaBoard
     {
         private List<QuotaEntry> _entries = new List<QuotaEntry>();
+
+        private int _totalTarget;
 
         public event Action<int, QuotaEntry> QuotaChanged;
 
@@ -15,16 +18,11 @@ namespace Quota
 
         public IReadOnlyList<QuotaEntry> Entries => _entries;
 
-        private int _totalTarget;
-
         public int TotalTarget => _totalTarget;
 
         public void Reset(IReadOnlyList<QuotaEntry> quota)
         {
-            if (quota == null)
-            {
-                throw new ArgumentNullException(nameof(quota), "QuotaBoard.Reset requires a quota list.");
-            }
+            ArgumentGuard.CheckNotNull(quota, nameof(quota));
 
             _entries.Clear();
             _totalTarget = 0;

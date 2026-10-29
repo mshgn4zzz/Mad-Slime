@@ -1,8 +1,9 @@
 using System;
-using Items;
+using MadSlime.Items.Data;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace Quota
+namespace MadSlime.Quota.Data
 {
     [Serializable]
     public class QuotaEntry
@@ -11,6 +12,16 @@ namespace Quota
         [SerializeField] private int _targetCount = 1;
 
         private int _collected;
+
+        public QuotaEntry(ItemDefinition definition, int targetCount)
+        {
+            ArgumentGuard.CheckNotNull(definition, nameof(definition));
+
+            ArgumentGuard.CheckNonNegative(targetCount, nameof(targetCount));
+
+            _definition = definition;
+            _targetCount = targetCount;
+        }
 
         public ItemDefinition Definition => _definition;
 
@@ -21,22 +32,6 @@ namespace Quota
         public int GetRemaining()
         {
             return Mathf.Max(0, _targetCount - _collected);
-        }
-
-        public QuotaEntry(ItemDefinition definition, int targetCount)
-        {
-            if (definition == null)
-            {
-                throw new ArgumentNullException(nameof(definition), "QuotaEntry requires definition to be non-null.");
-            }
-
-            if (targetCount < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(targetCount), "QuotaEntry requires targetCount to be non-negative.");
-            }
-
-            _definition = definition;
-            _targetCount = targetCount;
         }
 
         public void RegisterCollected()

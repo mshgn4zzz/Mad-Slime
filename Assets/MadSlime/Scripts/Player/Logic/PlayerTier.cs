@@ -1,16 +1,26 @@
 using System;
-using Items;
-using UnityEngine;
-using VContainer;
+using MadSlime.Items.Data;
+using MadSlime.Player.Data;
+using MadSlime.Validation;
 
-namespace Player
+namespace MadSlime.Player.Logic
 {
-    public class PlayerTier : MonoBehaviour
+    public class PlayerTier
     {
+        private readonly PlayerConfig _config;
+        private readonly TierResolver _tierResolver;
         private int _mass;
         private SizeTier _currentTier = SizeTier.Small;
-        private PlayerConfig _config;
-        private TierResolver _tierResolver;
+
+        public PlayerTier(PlayerConfig config, TierResolver tierResolver)
+        {
+            _config = config;
+            _tierResolver = tierResolver;
+
+            ArgumentGuard.CheckNotNull(_tierResolver, nameof(tierResolver));
+
+            ArgumentGuard.CheckNotNull(_config, nameof(config));
+        }
 
         public event Action<SizeTier, SizeTier> TierChanged;
 
@@ -20,30 +30,6 @@ namespace Player
 
         public SizeTier CurrentTier => _currentTier;
 
-        [Inject]
-        public void Construct(PlayerConfig config, TierResolver tierResolver)
-        {
-            _config = config;
-            _tierResolver = tierResolver;
-        }
-
-        private void Awake()
-        {
-            if (_tierResolver == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: TierResolver was not injected. Check that GameLifetimeScope "
-                        + $"registers TierResolver and PlayerTier.");
-            }
-
-            if (_config == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerConfig was not injected. Check that GameLifetimeScope is "
-                        + $"configured and PlayerTier is registered.");
-            }
-        }
-
         public void Initialize()
         {
             _mass = _config.StartMass;
@@ -52,12 +38,7 @@ namespace Player
 
         public void Add(int amount)
         {
-            if (amount < 0)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(amount),
-                    "PlayerTier.Add requires amount to be non-negative. The provided value was negative.");
-            }
+            ArgumentGuard.CheckNonNegative(amount, nameof(amount));
 
             int previous = _mass;
 

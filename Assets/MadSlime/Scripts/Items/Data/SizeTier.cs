@@ -1,4 +1,4 @@
-namespace Items
+namespace MadSlime.Items.Data
 {
     public enum SizeTier
     {

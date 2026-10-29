@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Items;
-using Player;
+using MadSlime.Items.View;
+using MadSlime.Player.Logic;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace Collectables
+namespace MadSlime.Collectables.Logic
 {
     public class ItemCollector : MonoBehaviour
     {
@@ -21,36 +22,13 @@ namespace Collectables
 
         public event Action<Item> ItemCollected;
 
-        [Inject]
-        public void Construct(CollectAvailability collectAvailability, ItemDetector detector, Absorber absorber)
-        {
-            _collectAvailability = collectAvailability;
-            _detector = detector;
-            _absorber = absorber;
-        }
-
         private void Awake()
         {
-            if (_collectAvailability == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: CollectAvailability was not injected. Check that GameLifetimeScope "
-                        + $"registers CollectAvailability and ItemCollector.");
-            }
+            ArgumentGuard.CheckAssigned(_collectAvailability, name, nameof(_collectAvailability));
 
-            if (_detector == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Detector was not injected. Check that GameLifetimeScope registers "
-                        + $"ItemDetector and ItemCollector.");
-            }
+            ArgumentGuard.CheckAssigned(_detector, name, nameof(_detector));
 
-            if (_absorber == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Absorber was not injected. Check that GameLifetimeScope registers "
-                        + $"Absorber and ItemCollector.");
-            }
+            ArgumentGuard.CheckAssigned(_absorber, name, nameof(_absorber));
         }
 
         private void OnEnable()
@@ -63,6 +41,14 @@ namespace Collectables
             _detector.Detected -= OnItemDetected;
 
             StopCollecting();
+        }
+
+        [Inject]
+        public void Construct(CollectAvailability collectAvailability, ItemDetector detector, Absorber absorber)
+        {
+            _collectAvailability = collectAvailability;
+            _detector = detector;
+            _absorber = absorber;
         }
 
         public void StartCollecting()
@@ -103,6 +89,23 @@ namespace Collectables
             _itemsInAbsorption.Clear();
         }
 
+        private async UniTaskVoid AbsorbAsync(Item item, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _absorber.AbsorbAsync(item.transform, cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                _itemsInAbsorption.Remove(item);
+                return;
+            }
+
+            _itemsInAbsorption.Remove(item);
+
+            item.gameObject.SetActive(false);
+        }
+
         private void OnItemDetected(Item item)
         {
             if (_isRunning == false)
@@ -110,19 +113,14 @@ namespace Collectables
                 return;
             }
 
-            if (item.Definition == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: detected item '{item.name}' has no Definition assigned. " +
-                    "Assign a definition to its prefab or delete the item from the scene.");
-            }
+            ArgumentGuard.CheckAssigned(item.Definition, item.name, nameof(item.Definition));
 
-            if (_collectAvailability.CanCollect(item.Definition.Tier) == false)
+            if (_collectAvailability.IsCollectable(item.Definition.Tier) == false)
             {
                 return;
             }
 
-            if (_itemsInAbsorption.Contains(item) == true)
+            if (_itemsInAbsorption.Contains(item))
             {
                 return;
             }
@@ -144,23 +142,6 @@ namespace Collectables
             {
                 AbsorbAsync(item, cancellationToken).Forget();
             }
-        }
-
-        private async UniTaskVoid AbsorbAsync(Item item, CancellationToken cancellationToken)
-        {
-            try
-            {
-                await _absorber.AbsorbAsync(item.transform, cancellationToken);
-            }
-            catch (OperationCanceledException)
-            {
-                _itemsInAbsorption.Remove(item);
-                return;
-            }
-
-            _itemsInAbsorption.Remove(item);
-
-            item.gameObject.SetActive(false);
         }
     }
 }

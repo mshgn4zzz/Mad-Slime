@@ -13,6 +13,4 @@ MonoBehaviour:
   m_Name: AttractConfig
   m_EditorClassIdentifier: 
   _pullSpeed: 8
-  _catchBoost: 40
-  _boostPower: 60
   _orbitStrength: 0.25

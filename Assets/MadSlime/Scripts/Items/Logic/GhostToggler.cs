@@ -1,21 +1,15 @@
-using Collectables;
-using Player;
+using MadSlime.Collectables.Logic;
+using MadSlime.Items.View;
+using MadSlime.Player.Logic;
 using UnityEngine;
 using VContainer;
 
-namespace Items
+namespace MadSlime.Items.Logic
 {
     public class GhostToggler : MonoBehaviour
     {
         private CameraObstacleDetector _detector;
         private CollectAvailability _availability;
-
-        [Inject]
-        public void Construct(CameraObstacleDetector detector, CollectAvailability availability)
-        {
-            _detector = detector;
-            _availability = availability;
-        }
 
         private void OnEnable()
         {
@@ -29,6 +23,13 @@ namespace Items
             _detector.Exited -= OnExited;
         }
 
+        [Inject]
+        public void Construct(CameraObstacleDetector detector, CollectAvailability availability)
+        {
+            _detector = detector;
+            _availability = availability;
+        }
+
         private void OnDetected(GhostAnimator animator)
         {
             if (animator == null || animator.isActiveAndEnabled == false)
@@ -36,9 +37,9 @@ namespace Items
                 return;
             }
 
-            if (animator.TryGetComponent(out Item item) == true)
+            if (animator.TryGetComponent(out Item item))
             {
-                animator.SetGhost(_availability.CanCollect(item.Definition.Tier) == false);
+                animator.SetGhost(_availability.IsCollectable(item.Definition.Tier) == false);
                 return;
             }
 

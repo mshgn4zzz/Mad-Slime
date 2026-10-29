@@ -1,120 +1,79 @@
 using System;
-using System.Collections.Generic;
-using Player;
-using Unity.Profiling;
 using UnityEngine;
 
-namespace Collectables
+namespace MadSlime.Collectables.Logic
 {
-    public abstract class GenericOverlapDetector<T> : OverlapRadiusDetector where T : class
+    public abstract class GenericOverlapDetector<T> : OverlapRadiusDetector where T : MonoBehaviour
     {
         private const int BufferSize = 256;
 
         [SerializeField] private LayerMask _layerMask;
         [SerializeField] private Color _gizmoColor = Color.cyan;
 
-        private Collider[] _buffer = new Collider[BufferSize];
-        private HashSet<T> _previousTargets = new HashSet<T>();
-        private HashSet<T> _currentTargets = new HashSet<T>();
+        private readonly Collider[] _buffer = new Collider[BufferSize];
+        private DetectedTargets<T> _targets = new DetectedTargets<T>();
 
-        private static ProfilerMarker s_scanMarker = new ProfilerMarker($"{typeof(T).Name}.Scan");
-        private static ProfilerMarker s_collectHitsMarker = new ProfilerMarker($"{typeof(T).Name}.CollectHits");
-        private static ProfilerMarker s_processTargetsMarker = new ProfilerMarker($"{typeof(T).Name}.ProcessTargets");
-        private static ProfilerMarker s_processExitsMarker = new ProfilerMarker($"{typeof(T).Name}.ProcessExits");
+        public event Action<T> Detected
+        {
+            add
+            {
+                _targets.Detected += value;
+            }
+            remove
+            {
+                _targets.Detected -= value;
+            }
+        }
 
-        public event Action<T> Detected;
-
-        public event Action<T> Exited;
+        public event Action<T> Exited
+        {
+            add
+            {
+                _targets.Exited += value;
+            }
+            remove
+            {
+                _targets.Exited -= value;
+            }
+        }
 
         protected virtual void Update()
         {
-            using ProfilerMarker.AutoScope scanScope = s_scanMarker.Auto();
-
-            _currentTargets.Clear();
+            _targets.BeginScan();
 
             int hitsCount = CollectHits();
 
             ProcessTargets(hitsCount);
-            ProcessExits();
-            SwapTargetSets();
-        }
-
-        private int CollectHits()
-        {
-            using ProfilerMarker.AutoScope collectHitsScope = s_collectHitsMarker.Auto();
-
-            int hitsCount = Physics.OverlapSphereNonAlloc(transform.position, DetectionRadius, _buffer, _layerMask);
-
-            while (hitsCount == _buffer.Length)
-            {
-                Array.Resize(ref _buffer, _buffer.Length * 2);
-                hitsCount = Physics.OverlapSphereNonAlloc(transform.position, DetectionRadius, _buffer, _layerMask);
-            }
-
-            return hitsCount;
-        }
-
-        private void ProcessTargets(int hitsCount)
-        {
-            using ProfilerMarker.AutoScope processTargetsScope = s_processTargetsMarker.Auto();
-
-            for (int i = 0; i < hitsCount; i++)
-            {
-                if (_buffer[i].TryGetComponent(out T target) == false || _currentTargets.Add(target) == false)
-                {
-                    continue;
-                }
-
-                Detected?.Invoke(target);
-            }
-        }
-
-        private void ProcessExits()
-        {
-            using ProfilerMarker.AutoScope processExitsScope = s_processExitsMarker.Auto();
-
-            foreach (T target in _previousTargets)
-            {
-                if (_currentTargets.Contains(target) == false)
-                {
-                    if (target is UnityEngine.Object destroyed && destroyed == null)
-                    {
-                        continue;
-                    }
-
-                    Exited?.Invoke(target);
-                }
-            }
-        }
-
-        private void SwapTargetSets()
-        {
-            HashSet<T> reusableTargets = _previousTargets;
-
-            _previousTargets = _currentTargets;
-            _currentTargets = reusableTargets;
+            _targets.CompleteScan();
         }
 
         protected virtual void OnDisable()
         {
-            foreach (T target in _previousTargets)
-            {
-                if (target is UnityEngine.Object destroyed && destroyed == null)
-                {
-                    continue;
-                }
-
-                Exited?.Invoke(target);
-            }
-
-            _previousTargets.Clear();
-            _currentTargets.Clear();
+            _targets.Clear();
         }
 
         private void OnDrawGizmos()
         {
             Gizmos.color = _gizmoColor;
-            Gizmos.DrawWireSphere(transform.position, DetectionRadius);
+            Gizmos.DrawWireSphere(transform.position, Radius);
+        }
+
+        private int CollectHits()
+        {
+            return Physics.OverlapSphereNonAlloc(transform.position, Radius, _buffer, _layerMask);
+        }
+
+        private void ProcessTargets(int hitsCount)
+        {
+            for (int i = 0; i < hitsCount; i++)
+            {
+                if (_buffer[i].TryGetComponent(out T target) == false)
+                {
+                    continue;
+                }
+
+                _targets.Add(target);
+            }
         }
     }
 }

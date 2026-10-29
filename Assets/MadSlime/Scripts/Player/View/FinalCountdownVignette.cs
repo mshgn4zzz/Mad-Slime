@@ -1,9 +1,9 @@
-using System;
 using DG.Tweening;
+using MadSlime.Validation;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Player
+namespace MadSlime.Player.View
 {
     public class FinalCountdownVignette : MonoBehaviour
     {
@@ -17,12 +17,7 @@ namespace Player
 
         private void Awake()
         {
-            if (_vignetteImage == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: VignetteImage is not assigned. Drag the fullscreen vignette Image "
-                        + $"into the _vignetteImage field.");
-            }
+            ArgumentGuard.CheckAssigned(_vignetteImage, name, nameof(_vignetteImage));
 
             _vignetteImage.enabled = false;
         }

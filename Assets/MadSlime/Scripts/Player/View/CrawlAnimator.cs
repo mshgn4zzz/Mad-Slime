@@ -1,8 +1,10 @@
-using System;
+using MadSlime.Player.Data;
+using MadSlime.Player.Logic;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace Player
+namespace MadSlime.Player.View
 {
     public class CrawlAnimator : MonoBehaviour
     {
@@ -17,46 +19,15 @@ namespace Player
         private float _crawlStrengthVelocityRef;
         private float _frequency;
 
-        [Inject]
-        public void Construct(PlayerConfig config)
-        {
-            _config = config;
-            _frequency = config.MovementSquashFrequency;
-        }
-
         private void Awake()
         {
-            if (_mover == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Mover is not assigned. Drag the Mover component into the _mover field.");
-            }
+            ArgumentGuard.CheckAssigned(_mover, name, nameof(_mover));
 
-            if (_config == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerConfig was not injected. Check that GameLifetimeScope "
-                        + $"registers PlayerConfig and CrawlAnimator.");
-            }
+            ArgumentGuard.CheckAssigned(_config, name, nameof(_config));
 
-            if (_config.CrawlStretchCurve == null || _config.CrawlStretchCurve.length == 0)
-            {
-                throw new InvalidOperationException(
-                    "PlayerConfig has an empty CrawlStretchCurve. Add keyframes to the Crawl section.");
-            }
+            ArgumentGuard.CheckNotEmpty(_config.CrawlStretchCurve, name, nameof(_config.CrawlStretchCurve));
 
-            if (_deformer == null)
-            {
-                throw new InvalidOperationException($"{name}: assign the player ModelDeformer.");
-            }
-        }
-
-        public void SetUrgency(float urgency)
-        {
-            float clampedUrgency = Mathf.Clamp01(urgency);
-            float multiplier = Mathf.Lerp(1f, _config.FinalSquashFrequencyMultiplier, clampedUrgency);
-
-            _frequency = _config.MovementSquashFrequency * multiplier;
+            ArgumentGuard.CheckAssigned(_deformer, name, nameof(_deformer));
         }
 
         private void OnDisable()
@@ -80,12 +51,27 @@ namespace Player
             ApplyDeform();
         }
 
+        [Inject]
+        public void Construct(PlayerConfig config)
+        {
+            _config = config;
+            _frequency = config.MovementSquashFrequency;
+        }
+
+        public void SetUrgency(float urgency)
+        {
+            float clampedUrgency = Mathf.Clamp01(urgency);
+            float multiplier = Mathf.Lerp(1f, _config.FinalSquashFrequencyMultiplier, clampedUrgency);
+
+            _frequency = _config.MovementSquashFrequency * multiplier;
+        }
+
         private void UpdateCrawlStrength(float deltaTime)
         {
             bool isMoving = _mover.Velocity.sqrMagnitude > RestStrengthEpsilon;
             float targetStrength;
 
-            if (isMoving == true)
+            if (isMoving)
             {
                 targetStrength = 1f;
             }
@@ -97,12 +83,12 @@ namespace Player
             _crawlStrength = Mathf.Clamp01
             (
                 Mathf.SmoothDamp(
-                    _crawlStrength,
-                    targetStrength,
-                    ref _crawlStrengthVelocityRef,
-                    _config.CrawlRampTime,
-                    Mathf.Infinity,
-                    deltaTime));
+                _crawlStrength,
+                targetStrength,
+                ref _crawlStrengthVelocityRef,
+                _config.CrawlRampTime,
+                Mathf.Infinity,
+                deltaTime));
         }
 
         private void AdvanceCrawlPhase()

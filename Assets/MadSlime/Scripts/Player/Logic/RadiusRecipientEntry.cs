@@ -1,7 +1,9 @@
 using System;
+using MadSlime.Player.Interfaces;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace Player
+namespace MadSlime.Player.Logic
 {
     [Serializable]
     public class RadiusRecipientEntry
@@ -17,13 +19,9 @@ namespace Player
 
         public void Initialize(string ownerName)
         {
-            if (_recipient == null)
-            {
-                throw new InvalidOperationException(
-                    $"{ownerName}: a radius recipient entry has no recipient assigned.");
-            }
+            ArgumentGuard.CheckAssigned(_recipient, ownerName, nameof(_recipient));
 
-            if (_recipient is IRadiusRecipient radiusRecipient == false)
+            if ((_recipient is IRadiusRecipient radiusRecipient) == false)
             {
                 throw new InvalidOperationException(
                     $"{ownerName}: recipient '{_recipient.name}' does not implement IRadiusRecipient.");

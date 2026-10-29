@@ -1,19 +1,13 @@
-namespace Quota
+using MadSlime.Quota.Data;
+
+namespace MadSlime.Quota.Logic
 {
     internal class QuotaTypeState
     {
         private QuotaEntry _entry;
         private bool _isHighlighted;
-        private bool _isDirty;
-        private bool _hasChanged;
-
-        public QuotaEntry Entry => _entry;
-
-        public bool IsHighlighted => _isHighlighted;
-
-        public bool IsDirty => _isDirty;
-
-        public bool HasChanged => _hasChanged;
+        private bool _isRecalculationRequired;
+        private bool _isHighlightChanged;
 
         public QuotaTypeState(QuotaEntry entry, bool isHighlighted)
         {
@@ -21,21 +15,29 @@ namespace Quota
             _isHighlighted = isHighlighted;
         }
 
-        public void MarkDirty()
+        public QuotaEntry Entry => _entry;
+
+        public bool IsHighlighted => _isHighlighted;
+
+        public bool IsRecalculationRequired => _isRecalculationRequired;
+
+        public bool IsHighlightChanged => _isHighlightChanged;
+
+        public void RequireRecalculation()
         {
-            _isDirty = true;
+            _isRecalculationRequired = true;
         }
 
         public void UpdateHighlight(bool isHighlighted)
         {
-            _hasChanged = _isHighlighted != isHighlighted;
+            _isHighlightChanged = _isHighlighted != isHighlighted;
             _isHighlighted = isHighlighted;
-            _isDirty = false;
+            _isRecalculationRequired = false;
         }
 
         public void ClearChanges()
         {
-            _hasChanged = false;
+            _isHighlightChanged = false;
         }
     }
 }

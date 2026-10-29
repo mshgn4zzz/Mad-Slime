@@ -1,12 +1,11 @@
 using System;
-using System.Collections.Generic;
-using CameraSystem;
-using Items;
-using Player;
+using MadSlime.Items.View;
+using MadSlime.Player.Logic;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace Collectables
+namespace MadSlime.Collectables.Logic
 {
     [DefaultExecutionOrder(100)]
     public class CameraObstacleDetector : OverlapRadiusDetector
@@ -16,47 +15,49 @@ namespace Collectables
         [SerializeField] private LayerMask _layerMask;
         [SerializeField] private Color _gizmoColor = Color.cyan;
 
-        private CameraFollow _cameraFollow;
+        private Camera _camera;
         private PlayerScaler _playerScaler;
         private RaycastHit[] _buffer = new RaycastHit[BufferSize];
-        private HashSet<GhostAnimator> _previousTargets = new HashSet<GhostAnimator>();
-        private HashSet<GhostAnimator> _currentTargets = new HashSet<GhostAnimator>();
+        private DetectedTargets<GhostAnimator> _targets = new DetectedTargets<GhostAnimator>();
 
-        public event Action<GhostAnimator> Detected;
-
-        public event Action<GhostAnimator> Exited;
-
-        [Inject]
-        public void Construct(CameraFollow cameraFollow, PlayerScaler playerScaler)
+        public event Action<GhostAnimator> Detected
         {
-            _cameraFollow = cameraFollow;
-            _playerScaler = playerScaler;
+            add
+            {
+                _targets.Detected += value;
+            }
+            remove
+            {
+                _targets.Detected -= value;
+            }
+        }
+
+        public event Action<GhostAnimator> Exited
+        {
+            add
+            {
+                _targets.Exited += value;
+            }
+            remove
+            {
+                _targets.Exited -= value;
+            }
         }
 
         private void Awake()
         {
-            if (_cameraFollow == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: CameraFollow was not injected. Check that GameLifetimeScope "
-                        + $"registers CameraFollow and CameraObstacleDetector.");
-            }
+            ArgumentGuard.CheckAssigned(_camera, name, nameof(_camera));
 
-            if (_playerScaler == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerScaler was not injected. Check that GameLifetimeScope "
-                        + $"registers PlayerScaler and CameraObstacleDetector.");
-            }
+            ArgumentGuard.CheckAssigned(_playerScaler, name, nameof(_playerScaler));
         }
 
         private void LateUpdate()
         {
-            Vector3 origin = _cameraFollow.transform.position;
+            Vector3 origin = _camera.transform.position;
             Vector3 toPlayer = _playerScaler.WorldCenter - origin;
             float distance = toPlayer.magnitude;
 
-            _currentTargets.Clear();
+            _targets.BeginScan();
 
             if (distance > Mathf.Epsilon)
             {
@@ -66,69 +67,67 @@ namespace Collectables
                 {
                     GhostAnimator animator = _buffer[i].collider.GetComponentInParent<GhostAnimator>();
 
-                    if (animator != null && animator.isActiveAndEnabled == true
-                        && _currentTargets.Add(animator) == true)
+                    if (animator != null && animator.isActiveAndEnabled)
                     {
-                        Detected?.Invoke(animator);
+                        _targets.Add(animator);
                     }
                 }
             }
 
-            foreach (GhostAnimator animator in _previousTargets)
-            {
-                if (animator != null && _currentTargets.Contains(animator) == false)
-                {
-                    Exited?.Invoke(animator);
-                }
-            }
-
-            HashSet<GhostAnimator> reusableTargets = _previousTargets;
-
-            _previousTargets = _currentTargets;
-            _currentTargets = reusableTargets;
-        }
-
-        private int CollectHits(Vector3 origin, Vector3 direction, float distance)
-        {
-            int hitsCount = Physics.SphereCastNonAlloc(origin, DetectionRadius, direction, _buffer, distance, _layerMask);
-
-            while (hitsCount == _buffer.Length)
-            {
-                Array.Resize(ref _buffer, _buffer.Length * 2);
-                hitsCount = Physics.SphereCastNonAlloc(origin, DetectionRadius, direction, _buffer, distance, _layerMask);
-            }
-
-            return hitsCount;
+            _targets.CompleteScan();
         }
 
         private void OnDisable()
         {
-            foreach (GhostAnimator animator in _previousTargets)
-            {
-                if (animator != null)
-                {
-                    Exited?.Invoke(animator);
-                }
-            }
-
-            _previousTargets.Clear();
-            _currentTargets.Clear();
+            _targets.Clear();
         }
 
         private void OnDrawGizmosSelected()
         {
-            if (_cameraFollow == null || _playerScaler == null)
+            if (_camera == null || _playerScaler == null)
             {
                 return;
             }
 
-            Vector3 origin = _cameraFollow.transform.position;
+            Vector3 origin = _camera.transform.position;
             Vector3 target = _playerScaler.WorldCenter;
 
             Gizmos.color = _gizmoColor;
             Gizmos.DrawLine(origin, target);
-            Gizmos.DrawWireSphere(origin, DetectionRadius);
-            Gizmos.DrawWireSphere(target, DetectionRadius);
+            Gizmos.DrawWireSphere(origin, Radius);
+            Gizmos.DrawWireSphere(target, Radius);
+        }
+
+        [Inject]
+        public void Construct(Camera camera, PlayerScaler playerScaler)
+        {
+            _camera = camera;
+            _playerScaler = playerScaler;
+        }
+
+        private int CollectHits(Vector3 origin, Vector3 direction, float distance)
+        {
+            int hitsCount = Physics.SphereCastNonAlloc(
+                origin,
+                Radius,
+                direction,
+                _buffer,
+                distance,
+                _layerMask);
+
+            while (hitsCount == _buffer.Length)
+            {
+                Array.Resize(ref _buffer, _buffer.Length * 2);
+                hitsCount = Physics.SphereCastNonAlloc(
+                    origin,
+                    Radius,
+                    direction,
+                    _buffer,
+                    distance,
+                    _layerMask);
+            }
+
+            return hitsCount;
         }
     }
 }

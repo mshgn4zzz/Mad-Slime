@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Upgrades
+namespace MadSlime.Upgrades.Data
 {
     [CreateAssetMenu(menuName = "Mad Slime/Upgrades Config", fileName = "NewUpgradesConfig")]
     public class UpgradesConfig : ScriptableObject

@@ -1,9 +1,10 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace Player
+namespace MadSlime.Player.View
 {
     public class GrowthAnimator : MonoBehaviour
     {
@@ -13,12 +14,14 @@ namespace Player
 
         private CancellationTokenSource _growCancellationTokenSource;
 
+        private void OnDisable()
+        {
+            CancelGrowth();
+        }
+
         public void Play(float fromValue, float targetValue, Action<float> onValueChanged)
         {
-            if (onValueChanged == null)
-            {
-                throw new ArgumentNullException(nameof(onValueChanged), "GrowthAnimator.Play requires a value listener.");
-            }
+            ArgumentGuard.CheckNotNull(onValueChanged, nameof(onValueChanged));
 
             CancelGrowth();
 
@@ -28,7 +31,7 @@ namespace Player
             GrowAsync(fromValue, targetValue, onValueChanged, _growCancellationTokenSource.Token).Forget();
         }
 
-        private void OnDisable()
+        public void Stop()
         {
             CancelGrowth();
         }
@@ -72,11 +75,6 @@ namespace Player
             return 1f
                 + ((_bounce + 1f) * shiftedProgress * shiftedProgress * shiftedProgress)
                 + (_bounce * shiftedProgress * shiftedProgress);
-        }
-
-        public void Stop()
-        {
-            CancelGrowth();
         }
 
         private void CancelGrowth()

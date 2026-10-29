@@ -1,22 +1,20 @@
-using System;
+using MadSlime.Player.Interfaces;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace Collectables
+namespace MadSlime.Collectables.Logic
 {
-    public abstract class OverlapRadiusDetector : MonoBehaviour, Player.IRadiusRecipient
+    public abstract class OverlapRadiusDetector : MonoBehaviour, IRadiusRecipient
     {
-        [SerializeField, Min(0.001f)] protected float DetectionRadius = 1.5f;
+        [SerializeField, Min(0.001f)] private float _detectionRadius = 1.5f;
 
-        public float Radius => DetectionRadius;
+        public float Radius => _detectionRadius;
 
         public void SetRadius(float radius)
         {
-            if (radius <= 0f)
-            {
-                throw new ArgumentOutOfRangeException(nameof(radius));
-            }
+            ArgumentGuard.CheckPositive(radius, nameof(radius));
 
-            DetectionRadius = radius;
+            _detectionRadius = radius;
         }
     }
 }

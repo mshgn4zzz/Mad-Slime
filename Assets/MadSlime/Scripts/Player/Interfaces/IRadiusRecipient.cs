@@ -1,4 +1,4 @@
-namespace Player
+namespace MadSlime.Player.Interfaces
 {
     public interface IRadiusRecipient
     {

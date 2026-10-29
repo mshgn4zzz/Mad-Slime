@@ -1,8 +1,9 @@
 using System;
-using Skins;
+using MadSlime.Skins.Logic;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace Player
+namespace MadSlime.Player.View
 {
     public class ModelDeformer : MonoBehaviour
     {
@@ -34,8 +35,8 @@ namespace Player
 
             if (_skinApplier == null || _deformationRoot == null || _playerCollider == null || _shader == null)
             {
-                                throw new InvalidOperationException($"{name}: skin applier, deformation root, "
-                                        + $"player collider and shader are required.");
+                throw new InvalidOperationException($"{name}: skin applier, deformation root, "
+                    + $"player collider and shader are required.");
             }
         }
 
@@ -67,65 +68,9 @@ namespace Player
             ApplyCompression();
         }
 
-        private void OnModelChanged(GameObject model)
-        {
-            ReleaseMaterials();
-            _renderers = model.GetComponentsInChildren<Renderer>(true);
-            _originalMaterials = new Material[_renderers.Length][];
-            _ownedMaterials = new Material[_renderers.Length][];
-            _blocks = new MaterialPropertyBlock[_renderers.Length];
-
-            Bounds modelBounds = CalculateBounds();
-            Vector3 colliderBottom = _playerCollider.center + (Vector3.down * (_playerCollider.height * 0.5f));
-            Vector3 worldBottom = _playerCollider.transform.TransformPoint(colliderBottom);
-            float anchorBottom = _deformationRoot.InverseTransformPoint(worldBottom).y;
-            float offset = anchorBottom - modelBounds.min.y;
-
-            model.transform.position += _deformationRoot.TransformVector(Vector3.up * offset);
-
-            float height = Mathf.Max(MinimumHeight, modelBounds.size.y);
-
-            for (int i = 0; i < _renderers.Length; i++)
-            {
-                Renderer renderer = _renderers[i];
-                Material[] originals = renderer.sharedMaterials;
-                Material[] materials = new Material[originals.Length];
-
-                _originalMaterials[i] = originals;
-                _ownedMaterials[i] = materials;
-
-                for (int materialIndex = 0; materialIndex < originals.Length; materialIndex++)
-                {
-                    materials[materialIndex] = new Material(originals[materialIndex]);
-                    materials[materialIndex].shader = _shader;
-                }
-
-                renderer.sharedMaterials = materials;
-
-                Matrix4x4 toModel = _deformationRoot.worldToLocalMatrix * renderer.transform.localToWorldMatrix;
-                Matrix4x4 toObject = toModel.inverse;
-                MaterialPropertyBlock block = new MaterialPropertyBlock();
-
-                renderer.GetPropertyBlock(block);
-                block.SetMatrix("_SquashToModel", toModel);
-                block.SetMatrix("_SquashToObject", toObject);
-                block.SetMatrix("_SquashNormalToModel", toObject.transpose);
-                block.SetMatrix("_SquashNormalToObject", toModel.transpose);
-                block.SetFloat("_SquashBottom", anchorBottom);
-                block.SetFloat("_SquashHeight", height);
-                block.SetFloat("_SquashPinnedFraction", _pinnedFraction);
-                _blocks[i] = block;
-            }
-
-            ApplyCompression();
-        }
-
         private Bounds CalculateBounds()
         {
-            if (_renderers.Length == 0)
-            {
-                throw new InvalidOperationException($"{name}: selected skin has no renderer.");
-            }
+            ArgumentGuard.CheckNotEmpty(_renderers, name, nameof(_renderers));
 
             Bounds combined = new Bounds();
             bool isInitialized = false;
@@ -224,6 +169,59 @@ namespace Player
             _originalMaterials = null;
             _ownedMaterials = null;
             _blocks = null;
+        }
+
+        private void OnModelChanged(GameObject model)
+        {
+            ReleaseMaterials();
+            _renderers = model.GetComponentsInChildren<Renderer>(true);
+            _originalMaterials = new Material[_renderers.Length][];
+            _ownedMaterials = new Material[_renderers.Length][];
+            _blocks = new MaterialPropertyBlock[_renderers.Length];
+
+            Bounds modelBounds = CalculateBounds();
+            Vector3 colliderBottom = _playerCollider.center + (Vector3.down * (_playerCollider.height * 0.5f));
+            Vector3 worldBottom = _playerCollider.transform.TransformPoint(colliderBottom);
+            float anchorBottom = _deformationRoot.InverseTransformPoint(worldBottom).y;
+            float offset = anchorBottom - modelBounds.min.y;
+
+            model.transform.position += _deformationRoot.TransformVector(Vector3.up * offset);
+
+            float height = Mathf.Max(MinimumHeight, modelBounds.size.y);
+
+            for (int i = 0; i < _renderers.Length; i++)
+            {
+                Renderer renderer = _renderers[i];
+                Material[] originals = renderer.sharedMaterials;
+                Material[] materials = new Material[originals.Length];
+
+                _originalMaterials[i] = originals;
+                _ownedMaterials[i] = materials;
+
+                for (int materialIndex = 0; materialIndex < originals.Length; materialIndex++)
+                {
+                    materials[materialIndex] = new Material(originals[materialIndex]);
+                    materials[materialIndex].shader = _shader;
+                }
+
+                renderer.sharedMaterials = materials;
+
+                Matrix4x4 toModel = _deformationRoot.worldToLocalMatrix * renderer.transform.localToWorldMatrix;
+                Matrix4x4 toObject = toModel.inverse;
+                MaterialPropertyBlock block = new MaterialPropertyBlock();
+
+                renderer.GetPropertyBlock(block);
+                block.SetMatrix("_SquashToModel", toModel);
+                block.SetMatrix("_SquashToObject", toObject);
+                block.SetMatrix("_SquashNormalToModel", toObject.transpose);
+                block.SetMatrix("_SquashNormalToObject", toModel.transpose);
+                block.SetFloat("_SquashBottom", anchorBottom);
+                block.SetFloat("_SquashHeight", height);
+                block.SetFloat("_SquashPinnedFraction", _pinnedFraction);
+                _blocks[i] = block;
+            }
+
+            ApplyCompression();
         }
     }
 }

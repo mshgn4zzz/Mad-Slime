@@ -1,10 +1,11 @@
 using System;
-using Collectables;
-using Items;
+using MadSlime.Collectables.Logic;
+using MadSlime.Items.View;
+using MadSlime.Upgrades.Logic;
+using MadSlime.Validation;
 using UnityEngine;
-using Upgrades;
 
-namespace Quota
+namespace MadSlime.Quota.Logic
 {
     public class QuotaCounter
     {
@@ -18,6 +19,16 @@ namespace Quota
         private int _collectedQuotaCount;
         private float _collectedForeignFill;
         private bool _isCompleted;
+
+        public QuotaCounter(QuotaBoard board, PlayerUpgrades upgrades)
+        {
+            ArgumentGuard.CheckNotNull(board, nameof(board));
+
+            ArgumentGuard.CheckNotNull(upgrades, nameof(upgrades));
+
+            _board = board;
+            _upgrades = upgrades;
+        }
 
         public event Action QuotaCompleted;
 
@@ -37,28 +48,9 @@ namespace Quota
             return Mathf.Clamp01(percent);
         }
 
-        public QuotaCounter(QuotaBoard board, PlayerUpgrades upgrades)
-        {
-            if (board == null)
-            {
-                throw new ArgumentNullException(nameof(board), "QuotaCounter requires a QuotaBoard.");
-            }
-
-            if (upgrades == null)
-            {
-                throw new ArgumentNullException(nameof(upgrades), "QuotaCounter requires PlayerUpgrades.");
-            }
-
-            _board = board;
-            _upgrades = upgrades;
-        }
-
         public void Attach(ItemCollector collector)
         {
-            if (collector == null)
-            {
-                throw new ArgumentNullException(nameof(collector), "QuotaCounter.Attach requires an ItemCollector.");
-            }
+            ArgumentGuard.CheckNotNull(collector, nameof(collector));
 
             if (_attachedCollector != null)
             {
@@ -88,21 +80,9 @@ namespace Quota
             _isCompleted = false;
         }
 
-        private void OnItemCollected(Item item)
-        {
-            if (_board.TryRegisterCollected(item.Definition) == true)
-            {
-                _collectedQuotaCount++;
-                CheckCompletion();
-                return;
-            }
-
-            _collectedForeignFill += ForeignFillWeight * _upgrades.GetForeignFillMultiplier();
-        }
-
         private void CheckCompletion()
         {
-            if (_isCompleted == true)
+            if (_isCompleted)
             {
                 return;
             }
@@ -114,6 +94,18 @@ namespace Quota
 
             _isCompleted = true;
             QuotaCompleted?.Invoke();
+        }
+
+        private void OnItemCollected(Item item)
+        {
+            if (_board.TryRegisterCollected(item.Definition))
+            {
+                _collectedQuotaCount++;
+                CheckCompletion();
+                return;
+            }
+
+            _collectedForeignFill += ForeignFillWeight * _upgrades.GetForeignFillMultiplier();
         }
     }
 }

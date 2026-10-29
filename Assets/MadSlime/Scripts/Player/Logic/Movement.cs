@@ -1,20 +1,19 @@
 using System;
-using Items;
-using PlayerInput;
+using MadSlime.Items.Data;
+using MadSlime.PlayerInput.Logic;
+using MadSlime.Upgrades.Logic;
+using MadSlime.Validation;
 using UnityEngine;
-using Upgrades;
 using VContainer;
 
-namespace Player
+namespace MadSlime.Player.Logic
 {
     public class Movement : MonoBehaviour
     {
-        private static Vector3 s_forward = new Vector3(0f, 0f, 1f);
-        private static Vector3 s_right = new Vector3(1f, 0f, 0f);
-
         [SerializeField] private Mover _mover;
         [SerializeField] private Rotator _rotator;
 
+        private Clamper _clamper;
         private PlayerTier _playerTier;
         private TierResolver _tierResolver;
         private PlayerUpgrades _upgrades;
@@ -22,76 +21,29 @@ namespace Player
         private float _boostMultiplier = 1f;
         private bool _isControlEnabled;
 
-        public event Action SpeedChanged;
-
         private float _currentSpeed;
-        private float _movementSpeed;
+        private float _speed;
+
+        public event Action SpeedChanged;
 
         public float CurrentSpeed => _currentSpeed;
 
-        [Inject]
-        public void Construct(PlayerTier playerTier, TierResolver tierResolver, PlayerUpgrades upgrades, PlayerInputReader inputReader)
-        {
-            _playerTier = playerTier;
-            _tierResolver = tierResolver;
-            _upgrades = upgrades;
-            _inputReader = inputReader;
-        }
-
         private void Awake()
         {
-            if (_mover == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Mover is not assigned. Drag the Mover component into the _mover field.");
-            }
+            ArgumentGuard.CheckAssigned(_mover, name, nameof(_mover));
 
-            if (_rotator == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Rotator is not assigned. Drag the Rotator component into the _rotator field.");
-            }
+            ArgumentGuard.CheckAssigned(_rotator, name, nameof(_rotator));
 
-            if (_playerTier == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerTier was not injected. Check that GameLifetimeScope "
-                        + $"registers PlayerTier and Movement.");
-            }
+            ArgumentGuard.CheckAssigned(_playerTier, name, nameof(_playerTier));
 
-            if (_tierResolver == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: TierResolver was not injected. Check that GameLifetimeScope "
-                        + $"registers TierResolver and Movement.");
-            }
+            ArgumentGuard.CheckAssigned(_tierResolver, name, nameof(_tierResolver));
 
-            if (_upgrades == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerUpgrades was not injected. Check that GameLifetimeScope "
-                        + $"registers PlayerUpgrades and Movement.");
-            }
+            ArgumentGuard.CheckAssigned(_upgrades, name, nameof(_upgrades));
 
-            if (_inputReader == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerInputReader was not injected. Check that GameLifetimeScope "
-                        + $"registers PlayerInputReader and Movement.");
-            }
+            ArgumentGuard.CheckAssigned(_inputReader, name, nameof(_inputReader));
 
-            if (TryGetComponent(out Clamper clamper) == false)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Clamper is missing. Add a Clamper component to the player root.");
-            }
-
-            _mover.Setup(clamper);
-        }
-
-        public void Initialize()
-        {
-            ApplySpeed();
+            ArgumentGuard.CheckNotNull(_clamper, nameof(_clamper));
+            _mover.Setup(_clamper);
         }
 
         private void OnEnable()
@@ -113,9 +65,29 @@ namespace Player
 
             Vector3 moveDirection = ConvertToWorldDirection(_inputReader.MoveInput);
 
-            _mover.Move(moveDirection, _movementSpeed);
+            _mover.Move(moveDirection, _speed);
             SetActualSpeed(_mover.Velocity.magnitude);
             _rotator.Rotate(moveDirection);
+        }
+
+        [Inject]
+        public void Construct(
+            Clamper clamper,
+            PlayerTier playerTier,
+            TierResolver tierResolver,
+            PlayerUpgrades upgrades,
+            PlayerInputReader inputReader)
+        {
+            _clamper = clamper;
+            _playerTier = playerTier;
+            _tierResolver = tierResolver;
+            _upgrades = upgrades;
+            _inputReader = inputReader;
+        }
+
+        public void Initialize()
+        {
+            ApplySpeed();
         }
 
         public void EnableControl()
@@ -132,18 +104,10 @@ namespace Player
 
         public void SetBoostMultiplier(float multiplier)
         {
-            if (multiplier <= 0f)
-            {
-                throw new ArgumentOutOfRangeException(nameof(multiplier), "Movement.SetBoostMultiplier requires a positive multiplier.");
-            }
+            ArgumentGuard.CheckPositive(multiplier, nameof(multiplier));
 
             _boostMultiplier = multiplier;
 
-            ApplySpeed();
-        }
-
-        private void OnTierChanged(SizeTier previousTier, SizeTier currentTier)
-        {
             ApplySpeed();
         }
 
@@ -151,7 +115,7 @@ namespace Player
         {
             float baseSpeed = _tierResolver.GetSpeedFor(_playerTier.CurrentTier) * _upgrades.GetSpeedMultiplier();
 
-            _movementSpeed = baseSpeed * _boostMultiplier;
+            _speed = baseSpeed * _boostMultiplier;
         }
 
         private void SetActualSpeed(float speed)
@@ -167,7 +131,12 @@ namespace Player
 
         private Vector3 ConvertToWorldDirection(Vector2 input)
         {
-            return (s_forward * input.y) + (s_right * input.x);
+            return new Vector3(input.x, 0f, input.y);
+        }
+
+        private void OnTierChanged(SizeTier previousTier, SizeTier currentTier)
+        {
+            ApplySpeed();
         }
     }
 }

@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Items;
-using Levels;
+using MadSlime.Items.Data;
+using MadSlime.Levels.Data;
+using MadSlime.Quota.Data;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Quota
+namespace MadSlime.Quota.Logic
 {
     public class QuotaGenerator
     {
@@ -91,7 +92,10 @@ namespace Quota
             {
                 int swapIndex = Random.Range(0, i + 1);
 
-                (_candidates[i], _candidates[swapIndex]) = (_candidates[swapIndex], _candidates[i]);
+                ItemDefinition candidate = _candidates[i];
+
+                _candidates[i] = _candidates[swapIndex];
+                _candidates[swapIndex] = candidate;
             }
         }
 
@@ -101,8 +105,8 @@ namespace Quota
                 || config.QuotaTargetMin <= 0 || config.QuotaTargetMax < config.QuotaTargetMin
                 || config.QuotaMaxSameTier <= 0)
             {
-                                throw new InvalidOperationException($"{config.name}: quota ranges and preferred "
-                                        + $"tier limit must be positive and ordered.");
+                throw new InvalidOperationException($"{config.name}: quota ranges and preferred "
+                    + $"tier limit must be positive and ordered.");
             }
         }
     }

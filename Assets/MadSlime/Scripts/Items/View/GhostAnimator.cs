@@ -1,17 +1,19 @@
 using System;
 using DG.Tweening;
+using MadSlime.Items.Data;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace Items
+namespace MadSlime.Items.View
 {
     public class GhostAnimator : MonoBehaviour
     {
         private const float SolidOpacity = 1f;
 
-        private static int s_opacityId = Shader.PropertyToID("_Opacity");
-
         [SerializeField] private Material _ghostMaterial;
         [SerializeField] private GhostFadeConfig _ghostFadeConfig;
+
+        private int _opacityId;
 
         private Renderer[] _renderers;
         private Outline _outline;
@@ -26,41 +28,24 @@ namespace Items
 
         private void Awake()
         {
-            if (_ghostMaterial == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: GhostMaterial is not assigned. Drag a Material with the "
-                        + $"MadSlime/GhostDither shader into the _ghostMaterial field.");
-            }
+            _opacityId = Shader.PropertyToID("_Opacity");
 
-            if (_ghostMaterial.HasProperty(s_opacityId) == false)
+            ArgumentGuard.CheckAssigned(_ghostMaterial, name, nameof(_ghostMaterial));
+
+            if (_ghostMaterial.HasProperty(_opacityId) == false)
             {
                 throw new InvalidOperationException(
                     $"{name}: GhostMaterial has no _Opacity property. Drag a Material with the "
-                        + $"MadSlime/GhostDither shader into the _ghostMaterial field.");
+                    + $"MadSlime/GhostDither shader into the _ghostMaterial field.");
             }
 
-            if (_ghostFadeConfig == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: GhostFadeConfig is not assigned. Drag a GhostFadeConfig asset "
-                        + $"into the _ghostFadeConfig field.");
-            }
+            ArgumentGuard.CheckAssigned(_ghostFadeConfig, name, nameof(_ghostFadeConfig));
 
-            if (_ghostFadeConfig.FadeDuration <= 0f)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: GhostFadeConfig '{_ghostFadeConfig.name}' has FadeDuration <= 0. Set a "
-                        + $"positive duration in the config asset.");
-            }
+            ArgumentGuard.CheckPositive(_ghostFadeConfig.FadeDuration, name, nameof(_ghostFadeConfig.FadeDuration));
 
             _renderers = GetComponentsInChildren<Renderer>(true);
 
-            if (_renderers.Length == 0)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: no Renderers found in children. Assign a visual model to this object.");
-            }
+            ArgumentGuard.CheckNotEmpty(_renderers, name, nameof(_renderers));
 
             _originalMaterials = new Material[_renderers.Length][];
             _ghostMaterials = new Material[_renderers.Length][];
@@ -74,7 +59,7 @@ namespace Items
             }
 
             _propertyBlock = new MaterialPropertyBlock();
-            _ghostTargetOpacity = _ghostMaterial.GetFloat(s_opacityId);
+            _ghostTargetOpacity = _ghostMaterial.GetFloat(_opacityId);
             _currentOpacity = SolidOpacity;
         }
 
@@ -139,7 +124,7 @@ namespace Items
 
             _isHighlighted = isHighlighted;
 
-            if (_isGhost == true)
+            if (_isGhost)
             {
                 return;
             }
@@ -164,17 +149,6 @@ namespace Items
             return _currentOpacity;
         }
 
-        private void OnFadeCompleted()
-        {
-            if (Mathf.Approximately(_currentOpacity, SolidOpacity) == false)
-            {
-                return;
-            }
-
-            RestoreOriginalMaterials();
-            ApplyOutline();
-        }
-
         private void ApplyOutline()
         {
             if (_outline != null)
@@ -194,7 +168,7 @@ namespace Items
         private void ApplyOpacity(float opacity)
         {
             _currentOpacity = opacity;
-            _propertyBlock.SetFloat(s_opacityId, opacity);
+            _propertyBlock.SetFloat(_opacityId, opacity);
 
             for (int i = 0; i < _renderers.Length; i++)
             {
@@ -234,6 +208,17 @@ namespace Items
                 _renderers[i].SetPropertyBlock(null);
                 _renderers[i].sharedMaterials = _originalMaterials[i];
             }
+        }
+
+        private void OnFadeCompleted()
+        {
+            if (Mathf.Approximately(_currentOpacity, SolidOpacity) == false)
+            {
+                return;
+            }
+
+            RestoreOriginalMaterials();
+            ApplyOutline();
         }
     }
 }

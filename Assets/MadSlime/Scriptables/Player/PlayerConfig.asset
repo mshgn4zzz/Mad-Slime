@@ -21,7 +21,7 @@ MonoBehaviour:
   _maxSpinSpeed: 1080
   _smokeSpeed: 20
   _shrinkStart: 0.5
-  _absorbPower: 2.5
+  _absorbEase: 5
   _squashDuration: 0.3
   _squashCurve:
     serializedVersion: 2
@@ -138,3 +138,4 @@ MonoBehaviour:
     _growTimes: 150
     _speed: 100
     _cameraZoom: 16
+  _movementClampRadius: 0.5

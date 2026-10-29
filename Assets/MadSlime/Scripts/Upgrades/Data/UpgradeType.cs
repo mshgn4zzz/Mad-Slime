@@ -1,4 +1,4 @@
-namespace Upgrades
+namespace MadSlime.Upgrades.Data
 {
     public enum UpgradeType
     {

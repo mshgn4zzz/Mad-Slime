@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Items
+namespace MadSlime.Items.View
 {
     [RequireComponent(typeof(GhostAnimator))]
     public class ItemBody : MonoBehaviour

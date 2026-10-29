@@ -1,6 +1,6 @@
-using Items;
+using MadSlime.Items.View;
 
-namespace Collectables
+namespace MadSlime.Collectables.Logic
 {
     public class QuotaItemDetector : GenericOverlapDetector<Item>
     {

@@ -1,52 +1,36 @@
 using System;
-using Player;
-using UnityEngine;
-using VContainer;
+using MadSlime.Player.Logic;
+using MadSlime.Upgrades.Data;
+using MadSlime.Validation;
 
-namespace Upgrades
+namespace MadSlime.Upgrades.Logic
 {
-    public class AdrenalineBoost : MonoBehaviour
+    public class AdrenalineBoost
     {
-        private PlayerUpgrades _upgrades;
-        private Movement _movement;
+        private readonly PlayerUpgrades _upgrades;
+        private readonly Movement _movement;
         private bool _isBoosted;
 
-        public event Action BoostStarted;
-
-        public event Action BoostEnded;
-
-        [Inject]
-        public void Construct(PlayerUpgrades upgrades, Movement movement)
+        public AdrenalineBoost(PlayerUpgrades upgrades, Movement movement)
         {
             _upgrades = upgrades;
             _movement = movement;
+
+            ArgumentGuard.CheckNotNull(_upgrades, nameof(upgrades));
+
+            ArgumentGuard.CheckNotNull(_movement, nameof(movement));
         }
 
-        private void Awake()
-        {
-            if (_upgrades == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerUpgrades was not injected. Check that ProjectLifetimeScope "
-                        + $"registers PlayerUpgrades.");
-            }
-
-            if (_movement == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Movement was not injected. Check that GameLifetimeScope registers "
-                        + $"Movement and AdrenalineBoost.");
-            }
-        }
+        public event Action BoostStarted;
 
         public void Enable()
         {
-            if (_isBoosted == true)
+            if (_isBoosted)
             {
                 return;
             }
 
-            if (_upgrades.HasAdrenaline() == false)
+            if (_upgrades.IsAdrenalineUnlocked() == false)
             {
                 return;
             }
@@ -66,8 +50,6 @@ namespace Upgrades
 
             _isBoosted = false;
             _movement.SetBoostMultiplier(1f);
-
-            BoostEnded?.Invoke();
         }
     }
 }

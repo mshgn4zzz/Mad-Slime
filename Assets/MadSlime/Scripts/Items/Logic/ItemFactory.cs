@@ -1,8 +1,10 @@
 using System;
+using MadSlime.Items.Data;
+using MadSlime.Items.View;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Items
+namespace MadSlime.Items.Logic
 {
     public class ItemFactory
     {
@@ -10,7 +12,7 @@ namespace Items
         {
             Item item = Object.Instantiate(prefab, position, Quaternion.identity, parent);
 
-            item.SetDefinition(definition);
+            item.Initialize(definition);
 
             if (item.TryGetComponent(out ItemBody body) == false)
             {

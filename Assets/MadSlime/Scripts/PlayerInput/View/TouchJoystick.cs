@@ -1,11 +1,11 @@
 using System;
+using MadSlime.Validation;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Layouts;
 using UnityEngine.InputSystem.OnScreen;
 
-namespace PlayerInput
+namespace MadSlime.PlayerInput.View
 {
     public class TouchJoystick : OnScreenControl, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
@@ -20,47 +20,11 @@ namespace PlayerInput
         private int _activePointerId;
         private bool _isDragging;
 
-        private void Awake()
-        {
-            if (_background == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Background is not assigned. Drag a Background RectTransform into the _background field.");
-            }
-
-            if (_handle == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Handle is not assigned. Drag a Handle RectTransform into the _handle field.");
-            }
-
-            if (transform is RectTransform == false)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: TouchJoystick must be attached to a UI element with a RectTransform.");
-            }
-
-            if (_canvas == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Canvas is not assigned. Drag the Canvas that contains the "
-                        + $"joystick into the _canvas field.");
-            }
-
-            if (_movementRange <= 0f)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(_movementRange), _movementRange, $"{name}: MovementRange must be positive.");
-            }
-
-            _zone = (RectTransform)transform;
-
-            HideVisuals();
-        }
+        protected override string controlPathInternal { get; set; } = "<Gamepad>/leftStick";
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            if (_isDragging == true)
+            if (_isDragging)
             {
                 return;
             }
@@ -82,7 +46,7 @@ namespace PlayerInput
             _handle.anchoredPosition = Vector2.zero;
 
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                    _background, eventData.position, eventData.pressEventCamera, out _dragOrigin) == false)
+                _background, eventData.position, eventData.pressEventCamera, out _dragOrigin) == false)
             {
                 _dragOrigin = Vector2.zero;
             }
@@ -98,7 +62,7 @@ namespace PlayerInput
             }
 
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                    _background, eventData.position, eventData.pressEventCamera, out Vector2 localPoint) == false)
+                _background, eventData.position, eventData.pressEventCamera, out Vector2 localPoint) == false)
             {
                 return;
             }
@@ -129,11 +93,30 @@ namespace PlayerInput
             base.OnDisable();
         }
 
-        protected override string controlPathInternal { get; set; } = "<Gamepad>/leftStick";
-
-        private static bool IsTouchAvailable()
+        private void Awake()
         {
-            if (Application.isEditor == true)
+            ArgumentGuard.CheckAssigned(_background, name, nameof(_background));
+
+            ArgumentGuard.CheckAssigned(_handle, name, nameof(_handle));
+
+            if ((transform is RectTransform) == false)
+            {
+                throw new InvalidOperationException(
+                    $"{name}: TouchJoystick must be attached to a UI element with a RectTransform.");
+            }
+
+            ArgumentGuard.CheckAssigned(_canvas, name, nameof(_canvas));
+
+            ArgumentGuard.CheckPositive(_movementRange, nameof(_movementRange));
+
+            _zone = (RectTransform)transform;
+
+            HideVisuals();
+        }
+
+        private bool IsTouchAvailable()
+        {
+            if (Application.isEditor)
             {
                 return true;
             }
@@ -141,7 +124,7 @@ namespace PlayerInput
             return Touchscreen.current != null;
         }
 
-        private static Vector2 InverseScale(Vector2 value, Vector3 scale)
+        private Vector2 InverseScale(Vector2 value, Vector3 scale)
         {
             return new Vector2(value.x / scale.x, value.y / scale.y);
         }

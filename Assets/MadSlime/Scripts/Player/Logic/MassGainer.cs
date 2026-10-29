@@ -1,12 +1,13 @@
-using System;
-using Collectables;
-using Items;
-using Quota;
+using MadSlime.Collectables.Logic;
+using MadSlime.Items.Data;
+using MadSlime.Items.View;
+using MadSlime.Player.View;
+using MadSlime.Quota.Logic;
+using MadSlime.Upgrades.Logic;
 using UnityEngine;
-using Upgrades;
 using VContainer;
 
-namespace Player
+namespace MadSlime.Player.Logic
 {
     public class MassGainer : MonoBehaviour
     {
@@ -18,6 +19,16 @@ namespace Player
         private QuotaBoard _quotaBoard;
         private TierLookup _tierLookup;
         private ScalePunch _collectPunch;
+
+        private void OnEnable()
+        {
+            _itemCollector.ItemCollected += OnItemCollected;
+        }
+
+        private void OnDisable()
+        {
+            _itemCollector.ItemCollected -= OnItemCollected;
+        }
 
         [Inject]
         public void Construct(
@@ -36,16 +47,6 @@ namespace Player
             _collectPunch = collectPunch;
         }
 
-        private void OnEnable()
-        {
-            _itemCollector.ItemCollected += OnItemCollected;
-        }
-
-        private void OnDisable()
-        {
-            _itemCollector.ItemCollected -= OnItemCollected;
-        }
-
         private void OnItemCollected(Item item)
         {
             if (item.Definition.Tier == _playerTier.CurrentTier)
@@ -57,7 +58,7 @@ namespace Player
 
             float massMultiplier;
 
-            if (isQuotaItem == true)
+            if (isQuotaItem)
             {
                 massMultiplier = _upgrades.GetQuotaMassMultiplier();
             }
@@ -66,7 +67,9 @@ namespace Player
                 massMultiplier = _upgrades.GetMassMultiplier();
             }
 
-            int mass = Mathf.Max(MinMassPerItem, Mathf.RoundToInt(_tierLookup.Get(item.Definition.Tier).Mass * massMultiplier));
+            int mass = Mathf.Max(
+                MinMassPerItem,
+                Mathf.RoundToInt(_tierLookup.Get(item.Definition.Tier).Mass * massMultiplier));
 
             _playerTier.Add(mass);
         }

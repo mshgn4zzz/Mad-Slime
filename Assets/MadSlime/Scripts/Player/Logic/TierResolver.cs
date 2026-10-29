@@ -1,29 +1,30 @@
 using System;
 using System.Collections.Generic;
-using Items;
+using MadSlime.Items.Data;
+using MadSlime.Player.Data;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace Player
+namespace MadSlime.Player.Logic
 {
-    public class TierResolver : MonoBehaviour
+    public class TierResolver
     {
-        [SerializeField] private PlayerConfig _config;
+        private readonly PlayerConfig _config;
 
         private List<PlayerTierThreshold> _sortedByMass = new List<PlayerTierThreshold>();
 
-        private void Awake()
+        public TierResolver(PlayerConfig config)
         {
-            if (_config == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerConfig is not assigned. Drag the PlayerConfig asset into the _config field.");
-            }
+            _config = config;
 
-            if (_config.Thresholds.Count == 0)
+            ArgumentGuard.CheckNotNull(_config, nameof(config));
+
+            ArgumentGuard.CheckNotEmpty(_config.Thresholds, _config.name, nameof(_config.Thresholds));
+
+            foreach (PlayerTierThreshold threshold in _config.Thresholds)
             {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerConfig '{_config.name}' has no tier thresholds. Add at "
-                        + $"least one threshold row to the asset.");
+                ArgumentGuard.CheckAssigned(threshold, _config.name, nameof(_config.Thresholds));
+                ArgumentGuard.CheckPositive(threshold.ScaleMultiplier, _config.name, nameof(threshold.ScaleMultiplier));
             }
 
             _sortedByMass.AddRange(_config.Thresholds);
@@ -111,24 +112,15 @@ namespace Player
             {
                 if (_sortedByMass[i].Tier == tier)
                 {
-                    ValidateScale(_sortedByMass[i], tier);
+                    ArgumentGuard.CheckPositive(
+                        _sortedByMass[i].ScaleMultiplier, _config.name, nameof(PlayerTierThreshold.ScaleMultiplier));
                     return _sortedByMass[i];
                 }
             }
 
             throw new InvalidOperationException(
-                $"{name}: PlayerConfig '{_config.name}' has no threshold for tier '{tier}'. Add the threshold row.");
-        }
-
-        private void ValidateScale(PlayerTierThreshold threshold, SizeTier tier)
-        {
-            if (threshold.ScaleMultiplier <= 0f)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: threshold for tier '{tier}' in PlayerConfig '{_config.name}' has ScaleMultiplier "
-                        + $"{threshold.ScaleMultiplier}. It must be greater than zero, "
-                        + $"otherwise the slime would collapse.");
-            }
+                $"TierResolver: PlayerConfig '{_config.name}' has no threshold for tier '{tier}'. "
+                + "Add the threshold row.");
         }
     }
 }

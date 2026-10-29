@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Items
+namespace MadSlime.Items.Data
 {
     [CreateAssetMenu(menuName = "Mad Slime/Tier Table", fileName = "NewTierTable")]
     public class TierTable : ScriptableObject

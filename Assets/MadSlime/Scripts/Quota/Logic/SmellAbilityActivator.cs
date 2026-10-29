@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Collectables;
 using Cysharp.Threading.Tasks;
-using Items;
+using MadSlime.Collectables.Logic;
+using MadSlime.Items.View;
+using MadSlime.Upgrades.Logic;
+using MadSlime.Validation;
 using UnityEngine;
-using Upgrades;
 using VContainer;
 
-namespace Quota
+namespace MadSlime.Quota.Logic
 {
     public class SmellAbilityActivator : MonoBehaviour
     {
@@ -20,53 +21,36 @@ namespace Quota
         private bool _isAvailable;
         private bool _isPaused = true;
 
+        private void Awake()
+        {
+            ArgumentGuard.CheckAssigned(_highlighter, name, nameof(_highlighter));
+            ArgumentGuard.CheckAssigned(_upgrades, name, nameof(_upgrades));
+            ArgumentGuard.CheckAssigned(_detector, name, nameof(_detector));
+            ArgumentGuard.CheckAssigned(_outlineInitializer, name, nameof(_outlineInitializer));
+        }
+
         [Inject]
-        public void Construct(PlayerUpgrades upgrades, QuotaItemDetector detector, QuotaOutlineInitializer outlineInitializer)
+        public void Construct(
+            PlayerUpgrades upgrades,
+            QuotaItemDetector detector,
+            QuotaOutlineInitializer outlineInitializer)
         {
             _upgrades = upgrades;
             _detector = detector;
             _outlineInitializer = outlineInitializer;
         }
 
-        private void Awake()
-        {
-            if (_highlighter == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: Highlighter is not assigned. Drag the QuotaItemHighlighter "
-                        + $"component into the _highlighter field.");
-            }
-
-            if (_upgrades == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerUpgrades was not injected. Check that ProjectLifetimeScope "
-                        + $"registers PlayerUpgrades and SmellAbilityActivator.");
-            }
-
-            if (_detector == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: QuotaItemDetector was not injected. Check that GameLifetimeScope "
-                        + $"registers QuotaItemDetector and SmellAbilityActivator.");
-            }
-
-            if (_outlineInitializer == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: QuotaOutlineInitializer was not injected. Check that GameLifetimeScope "
-                        + $"registers QuotaOutlineInitializer and SmellAbilityActivator.");
-            }
-        }
-
-        public async UniTask PrepareAsync(IReadOnlyList<Item> items, Action<float> progress, CancellationToken cancellationToken)
+        public async UniTask PrepareAsync(
+            IReadOnlyList<Item> items,
+            Action<float> progress,
+            CancellationToken cancellationToken)
         {
             _isAvailable = false;
             _isPaused = true;
             ApplyState();
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (_upgrades.HasSmell() == false)
+            if (_upgrades.IsSmellUnlocked() == false)
             {
                 progress?.Invoke(1f);
                 return;

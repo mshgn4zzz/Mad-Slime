@@ -1,7 +1,7 @@
-using System;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace Player
+namespace MadSlime.Player.Logic
 {
     public class Mover : MonoBehaviour
     {
@@ -12,10 +12,7 @@ namespace Player
 
         public void Setup(Clamper clamper)
         {
-            if (clamper == null)
-            {
-                throw new ArgumentNullException(nameof(clamper));
-            }
+            ArgumentGuard.CheckNotNull(clamper, nameof(clamper));
 
             _clamper = clamper;
         }
@@ -27,10 +24,7 @@ namespace Player
 
         public void Move(Vector3 direction, float speed)
         {
-            if (speed < 0f)
-            {
-                throw new ArgumentOutOfRangeException(nameof(speed));
-            }
+            ArgumentGuard.CheckNonNegative(speed, nameof(speed));
 
             Vector3 startPosition = transform.position;
             Vector3 stepVelocity = Vector3.ClampMagnitude(direction, 1f) * speed;

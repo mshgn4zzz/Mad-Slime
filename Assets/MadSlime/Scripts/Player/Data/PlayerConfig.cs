@@ -1,11 +1,15 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
-namespace Player
+namespace MadSlime.Player.Data
 {
     [CreateAssetMenu(menuName = "Mad Slime/Player Config", fileName = "NewPlayerConfig")]
     public class PlayerConfig : ScriptableObject
     {
+        [Header("Movement Bounds")]
+        [SerializeField, Min(0f)] private float _movementClampRadius = 0.5f;
+
         [Header("Absorption")]
         [SerializeField, Min(0.05f)] private float _minAbsorbDuration = 0.1f;
 
@@ -25,12 +29,13 @@ namespace Player
 
         [SerializeField, Range(0.1f, 0.95f)] private float _shrinkStart = 0.6f;
 
-        [SerializeField, Range(1f, 5f)] private float _absorbPower = 2f;
+        [SerializeField] private Ease _absorbEase = Ease.InQuad;
 
         [Header("Collect Squash")]
         [SerializeField, Min(0.01f)] private float _squashDuration = 0.2f;
 
-        [SerializeField] private AnimationCurve _squashCurve = new AnimationCurve(
+        [SerializeField]
+        private AnimationCurve _squashCurve = new AnimationCurve(
             new Keyframe(0f, 1f),
             new Keyframe(0.35f, 0.88f),
             new Keyframe(1f, 1f));
@@ -48,7 +53,8 @@ namespace Player
         [SerializeField, Range(0f, 0.5f)] private float _crawlSquash = 0.22f;
 
         [Header("Movement Cycle")]
-        [SerializeField] private AnimationCurve _crawlCurve = new AnimationCurve(
+        [SerializeField]
+        private AnimationCurve _crawlCurve = new AnimationCurve(
             new Keyframe(0f, 0f),
             new Keyframe(0.35f, 1f),
             new Keyframe(0.7f, 0.4f),
@@ -64,6 +70,8 @@ namespace Player
         [SerializeField, Min(0)] private int _startMass;
 
         [SerializeField] private List<PlayerTierThreshold> _tiers = new List<PlayerTierThreshold>();
+
+        public float MovementClampRadius => _movementClampRadius;
 
         public float MinAbsorbDuration => _minAbsorbDuration;
 
@@ -83,7 +91,7 @@ namespace Player
 
         public float ShrinkStart => _shrinkStart;
 
-        public float AbsorbEasePower => _absorbPower;
+        public Ease AbsorbEase => _absorbEase;
 
         public float SquashDuration => _squashDuration;
 
@@ -110,18 +118,5 @@ namespace Player
         public int StartMass => _startMass;
 
         public IReadOnlyList<PlayerTierThreshold> Thresholds => _tiers;
-
-        private void OnValidate()
-        {
-            for (int i = 0; i < _tiers.Count; i++)
-            {
-                if (_tiers[i] != null && _tiers[i].ScaleMultiplier <= 0f)
-                {
-                    Debug.LogError(
-                        $"{name}: threshold #{i} has ScaleMultiplier {_tiers[i].ScaleMultiplier}. "
-                                + $"Set it above zero or the slime would collapse on that tier.");
-                }
-            }
-        }
     }
 }

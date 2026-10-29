@@ -1,47 +1,31 @@
-using System;
-using Items;
-using UnityEngine;
-using Upgrades;
-using VContainer;
+using MadSlime.Items.Data;
+using MadSlime.Upgrades.Logic;
+using MadSlime.Validation;
 
-namespace Player
+namespace MadSlime.Player.Logic
 {
-    public class CollectAvailability : MonoBehaviour
+    public class CollectAvailability
     {
         private const int AmbitionTierOffset = 1;
 
-        private PlayerTier _playerTier;
-        private PlayerUpgrades _upgrades;
+        private readonly PlayerTier _playerTier;
+        private readonly PlayerUpgrades _upgrades;
 
-        [Inject]
-        public void Construct(PlayerTier playerTier, PlayerUpgrades upgrades)
+        public CollectAvailability(PlayerTier playerTier, PlayerUpgrades upgrades)
         {
             _playerTier = playerTier;
             _upgrades = upgrades;
+
+            ArgumentGuard.CheckNotNull(_playerTier, nameof(playerTier));
+
+            ArgumentGuard.CheckNotNull(_upgrades, nameof(upgrades));
         }
 
-        private void Awake()
-        {
-            if (_playerTier == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerTier was not injected. Check that GameLifetimeScope "
-                        + $"registers PlayerTier and CollectAvailability.");
-            }
-
-            if (_upgrades == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: PlayerUpgrades was not injected. Check that ProjectLifetimeScope "
-                        + $"registers PlayerUpgrades and CollectAvailability.");
-            }
-        }
-
-        public bool CanCollect(SizeTier itemTier)
+        public bool IsCollectable(SizeTier itemTier)
         {
             int allowedTier = (int)_playerTier.CurrentTier;
 
-            if (_upgrades.HasAmbitions() == true)
+            if (_upgrades.IsAmbitionsUnlocked())
             {
                 allowedTier += AmbitionTierOffset;
             }

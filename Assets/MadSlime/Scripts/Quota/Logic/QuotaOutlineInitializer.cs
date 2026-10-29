@@ -2,26 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Items;
-using Unity.Profiling;
+using MadSlime.Items.Data;
+using MadSlime.Items.View;
+using MadSlime.Quota.Data;
+using MadSlime.Validation;
 using UnityEngine;
 
-namespace Quota
+namespace MadSlime.Quota.Logic
 {
     public class QuotaOutlineInitializer
     {
         private const float FrameBudgetSeconds = 0.006f;
-        private static ProfilerMarker s_prepareItemMarker =
-            new ProfilerMarker("QuotaOutlineInitializer.PrepareItem");
 
+        private QuotaOutlineFactory _outlineFactory = new QuotaOutlineFactory();
         private QuotaBoard _board;
 
         public QuotaOutlineInitializer(QuotaBoard board)
         {
-            if (board == null)
-            {
-                throw new ArgumentNullException(nameof(board));
-            }
+            ArgumentGuard.CheckNotNull(board, nameof(board));
 
             _board = board;
         }
@@ -33,10 +31,7 @@ namespace Quota
             Action<float> progress,
             CancellationToken cancellationToken)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
+            ArgumentGuard.CheckNotNull(items, nameof(items));
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -80,19 +75,13 @@ namespace Quota
 
         private void PrepareItem(Item item, Color color, float width)
         {
-            using ProfilerMarker.AutoScope prepareItemScope = s_prepareItemMarker.Auto();
-
             if (item.TryGetComponent(out GhostAnimator animator) == false)
             {
                 throw new InvalidOperationException($"{item.name}: quota item requires a GhostAnimator.");
             }
 
-            if (item.TryGetComponent(out Outline outline) == false)
-            {
-                outline = item.gameObject.AddComponent<Outline>();
-            }
+            Outline outline = _outlineFactory.GetOrCreate(item, color, width);
 
-            outline.Prepare(color, width);
             animator.BindOutline(outline);
         }
     }

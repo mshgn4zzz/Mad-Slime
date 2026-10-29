@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Items
+namespace MadSlime.Items.Data
 {
     [CreateAssetMenu(menuName = "Mad Slime/Item Definition", fileName = "NewItemDefinition")]
     public class ItemDefinition : ScriptableObject

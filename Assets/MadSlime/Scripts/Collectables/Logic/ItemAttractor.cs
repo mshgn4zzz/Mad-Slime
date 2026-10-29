@@ -1,79 +1,26 @@
-using System;
-using Items;
-using Player;
+using MadSlime.Collectables.Data;
+using MadSlime.Items.View;
+using MadSlime.Player.Logic;
+using MadSlime.Validation;
 using UnityEngine;
 using VContainer;
 
-namespace Collectables
+namespace MadSlime.Collectables.Logic
 {
     public class ItemAttractor : MonoBehaviour
     {
-        private const float MinDistanceSqr = 0.0001f;
-
         [SerializeField] private AttractConfig _config;
 
         private CollectAvailability _collectAvailability;
         private AttractableDetector _detector;
-        private ItemDetector _collectDetector;
-
-        [Inject]
-        public void Construct(CollectAvailability collectAvailability, AttractableDetector detector, ItemDetector collectDetector)
-        {
-            _collectAvailability = collectAvailability;
-            _detector = detector;
-            _collectDetector = collectDetector;
-        }
 
         private void Awake()
         {
-            if (_config == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: AttractConfig is not assigned. Drag an AttractConfig asset into the _config field.");
-            }
+            ArgumentGuard.CheckAssigned(_config, name, nameof(_config));
 
-            if (_collectAvailability == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: CollectAvailability was not injected. Check that GameLifetimeScope "
-                        + $"registers CollectAvailability and ItemAttractor.");
-            }
+            ArgumentGuard.CheckAssigned(_collectAvailability, name, nameof(_collectAvailability));
 
-            if (_detector == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: AttractableDetector was not injected. Check that GameLifetimeScope "
-                        + $"registers AttractableDetector and ItemAttractor.");
-            }
-
-            if (_collectDetector == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: ItemDetector was not injected. Check that GameLifetimeScope "
-                        + $"registers ItemDetector and ItemAttractor.");
-            }
-
-            if (_detector.Radius <= _collectDetector.Radius)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: AttractableDetector radius ({_detector.Radius}) must be greater than "
-                        + $"ItemDetector radius ({_collectDetector.Radius}). " +
-                    "The acceleration ramp lives between them: from the attract edge down to the capture point.");
-            }
-
-            if (_config.ApproachMultiplier < 1f)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: AttractConfig '{_config.name}' has ApproachMultiplier < 1. " +
-                    "It is the pull speed multiplier at the capture point, so it must be 1 or greater.");
-            }
-
-            if (_config.ApproachPower <= 0f)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: AttractConfig '{_config.name}' has ApproachPower <= 0. " +
-                    "It must be positive: 1 = linear, 2 = parabola, higher values approach exponential growth.");
-            }
+            ArgumentGuard.CheckAssigned(_detector, name, nameof(_detector));
         }
 
         private void OnEnable()
@@ -86,16 +33,20 @@ namespace Collectables
             _detector.Detected -= OnAttractableDetected;
         }
 
+        [Inject]
+        public void Construct(
+            CollectAvailability collectAvailability,
+            AttractableDetector detector)
+        {
+            _collectAvailability = collectAvailability;
+            _detector = detector;
+        }
+
         private void OnAttractableDetected(Item attractable)
         {
-            if (attractable.Definition == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name}: detected item '{attractable.name}' has no Definition assigned. " +
-                    "Assign a definition to its prefab or delete the item from the scene.");
-            }
+            ArgumentGuard.CheckAssigned(attractable.Definition, attractable.name, nameof(attractable.Definition));
 
-            if (_collectAvailability.CanCollect(attractable.Definition.Tier) == false)
+            if (_collectAvailability.IsCollectable(attractable.Definition.Tier) == false)
             {
                 return;
             }
@@ -105,22 +56,10 @@ namespace Collectables
 
             toPlayer.y = 0f;
 
-            float sqrDistance = toPlayer.sqrMagnitude;
-
-            if (sqrDistance < MinDistanceSqr)
-            {
-                return;
-            }
-
-            float distance = Mathf.Sqrt(sqrDistance);
-            float approach = 1f - Mathf.Clamp01(
-                (distance - _collectDetector.Radius) / (_detector.Radius - _collectDetector.Radius));
-            float multiplier = 1f + ((_config.ApproachMultiplier - 1f) * Mathf.Pow(approach, _config.ApproachPower));
-            float speed = _config.AttractionForce * multiplier;
-
-            Vector3 radial = toPlayer / distance;
-
-            target.position += radial * (speed * Time.deltaTime);
+            target.position = Vector3.MoveTowards(
+                target.position,
+                target.position + toPlayer,
+                _config.AttractionForce * Time.deltaTime);
         }
     }
 }

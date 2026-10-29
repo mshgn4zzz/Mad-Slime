@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Player
+namespace MadSlime.Player.Logic
 {
     public class Rotator : MonoBehaviour
     {
